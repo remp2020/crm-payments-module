@@ -1,0 +1,2 @@
+{_dashboard.payments.sum.title} <i class="fa fa-question-circle" data-toggle="tooltip" data-original-title="{_dashboard.payments.sum.tooltip, ['start' => date('d.m.Y H:i:s', strtotime('first day of last month 00:00')), 'end' => date('d.m.Y H:i:s', strtotime('-1 month'))]}."></i>
+{$thisMonthAmount|diff:$lastMonthDayAmount|noescape}

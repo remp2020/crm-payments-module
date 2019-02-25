@@ -1,0 +1,4 @@
+{php echo chr(239) . chr(187) . chr(191)}"ID";"name";"code";"active";"visible"
+{foreach $types as $type}
+"{$type->id}";"{$type->name}";"{$type->code}";"{$type->active}";"{$type->visible}"
+{/foreach}

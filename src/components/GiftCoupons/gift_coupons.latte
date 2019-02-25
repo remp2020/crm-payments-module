@@ -1,0 +1,57 @@
+<div style="position: relative; margin-top: 10px;">
+    <button class="btn btn-default btn-sm dropdown-toggle" type="button" id="giftCouponsMenu{$payment->id}" data-toggle="dropdown" aria-expanded="true">
+        {_payments.admin.gift_coupons.button_title}
+        <span class="caret"></span>
+    </button>
+    <ul class="dropdown-menu" role="menu" aria-labelledby="giftCouponsMenu{$payment->id}">
+        {foreach $giftCoupons as $giftCoupon}
+            <li role="presentation">
+                <a role="menuitem" tabindex="-1" href="#" data-toggle="modal" data-target="#show-coupon-{$giftCoupon->id}">{$giftCoupon->email}</a>
+            </li>
+        {/foreach}
+        </a>
+    </ul>
+</div>
+
+{foreach $giftCoupons as $giftCoupon}
+<div class="modal fade" id="show-coupon-{$giftCoupon->id}">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+                <h4 class="modal-title">{_payments.admin.gift_coupons.modal_title} #{$giftCoupon->id}</h4>
+            </div>
+            <div class="modal-body">
+                <p>
+                    <strong>{_payments.admin.gift_coupons.email}:</strong>
+                    {if $user = $users[$giftCoupon->email]}
+                        <a href="{plink :Users:UsersAdmin:show $user->id}" target="_blank">{$user->email}</a>
+                    {else}
+                        {$giftCoupon->email}
+                    {/if}<br>
+
+                    <strong>{_payments.admin.gift_coupons.start_at}:</strong>
+                    {$giftCoupon->starts_at|date:"d.m.y h:i"}<br>
+
+                    <strong>{_payments.admin.gift_coupons.sent}:</strong>
+                    {if $giftCoupon->status === Crm\PaymentsModule\Repository\PaymentGiftCouponsRepository::STATUS_NOT_SENT}{_payments.admin.gift_coupons.no}{else}{_payments.admin.gift_coupons.yes}{/if}<br>
+
+                    {if $giftCoupon->status === Crm\PaymentsModule\Repository\PaymentGiftCouponsRepository::STATUS_SENT}
+                        <h4>{_payments.admin.gift_coupons.subscription}:</h4>
+                        {if $giftCoupon->subscription_id}
+                            <strong>Typ: </strong> {$giftCoupon->subscription->type} <br>
+                            <strong>Od: </strong> {$giftCoupon->subscription->start_time|date:"d.m.y h:i"} <br>
+                            <strong>Do: </strong> {$giftCoupon->subscription->end_time|date:"d.m.y h:i"} <br>
+                            {dump $giftCoupon->subscription}
+                        {else}
+                            {_payments.admin.gift_coupons.not_created}
+                        {/if}
+                    {/if}
+                </p>
+            </div>
+        </div>
+    </div>
+</div>
+{/foreach}

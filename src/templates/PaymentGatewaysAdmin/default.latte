@@ -1,0 +1,95 @@
+{block #title}Platobné brány{/block}
+
+{block #content}
+
+ <div class="row">
+
+  <div class="col-md-12">
+    <h1>
+      Platobné brány
+      <small>
+        / celkovo {$totalPaymentGateways}
+      </small>
+      <a href="{link PaymentGatewaysAdmin:new}" class="btn btn-success btn-lg pull-right"><i class="fa fa-user"></i>  Nová brána</a>
+      <a href="{link PaymentGatewaysAdmin:export}" style="margin-right:10px" target="_blank"class="btn btn-default btn-lg pull-right"><i class="fa fa-external-link"></i>  Export</a>
+    </h1>
+    <hr>
+  </div>
+
+  <div class="col-md-12">
+
+    <table class="table table-striped table-hover table-bordered">
+      <thead>
+        <tr>
+          <th>#ID / poradie</th>
+          <th>Meno</th>
+          <th>Obrazok</th>
+          <th>Aktívne</th>
+          <th>Viditeľné</th>
+          <th>Actions</th>
+        </tr>
+      </thead>
+      <tbody>
+        {foreach $paymentGateways as $type}
+          <tr>
+            <td><small>{$type->id} /</small> ({$type->sorting})</td>
+            <td>
+              <a href="{link PaymentGatewaysAdmin:Show $type->id}">
+                {$type->name}
+              </a>
+              <small>{$type->code}</small>
+              {if $type->default}
+                <span class="label label-success">Default</span>
+              {/if}
+              {if $type->is_recurrent}
+                <span class="label label-primary">Recurrent</span>
+              {/if}
+
+              <span class="pull-right">
+                {control smallGraph-$type->id}
+              </span>
+            </td>
+            <td>
+              {if $type->image}
+                <img src="{$type->image}" title="{$type->code}" width="80"><br>
+                <code>{$type->image}</code>
+              {else}
+                <span class="label label-default">bez obrázku</span>
+              {/if}
+            </td>
+            <td>
+            	{if $type->active}
+            		<span class="label label-success">aktívne</span>
+            	{else}
+            		<span class="label label-default">neaktívne</span>
+            	{/if}
+            </td>
+            <td>
+                Objednávkový proces
+            	{if $type->visible}
+                	<span class="label label-success">viditeľné</span>
+                {else}
+                	<span class="label label-default">skryté</span>
+                {/if}
+                <br />Shop
+                {if $type->shop}
+                    <span class="label label-success">viditeľné</span>
+                {else}
+                    <span class="label label-default">skryté</span>
+                {/if}
+            </td>
+            <td style="white-space: nowrap">
+              <p class="text-nowrap">
+                <a href="{link PaymentGatewaysAdmin:Show $type->id}" class="btn btn-sm btn-info" title="Zobraz"><i class="fa fa-eye"></i> </a>
+                <a href="{link PaymentGatewaysAdmin:Edit $type->id}" class="btn btn-sm btn-primary" title="Uprav"><i class="fa fa-edit"></i> </a>
+              </p>
+            </td>
+          </tr>
+        {/foreach}
+      </tbody>
+    </table>
+  </div>
+
+ </div>
+
+{/block}

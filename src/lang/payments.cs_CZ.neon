@@ -1,0 +1,69 @@
+menu:
+	stats: Platby
+	payments: Moje platby
+admin:
+	donation: Dar k předplatnému
+
+	actual_free_subscribers_stat_widget:
+		title: Předplatitelé bez platby
+		help: Předplatné bez platby. Jeden uživatel je jednou i když měl více předplatných.
+
+	actual_nonfree_subscribers_stat_widget:
+		title: Předplatitelé s placeným předplatným
+		help: "Počet předplatitelů s aktivním předplatným, kteří mají typ předplatného jiný než free. Jeden uživatel je jednou i když měl více předplatných."
+
+	gift_coupons:
+		button_title: Darované předplatné
+		modal_title: Darované předplatné
+		email: E-mail
+		start_at: Start
+		sent: Odeslán
+		subscription: Předplatné
+		yes: ano
+		not_created: nevytvořené
+
+	subscribers_with_payment_widget:
+		last_day: Posledních 24 hodin
+		last_days: Posledních %count% dní
+		description: Rozdíl v počtu předplatitelů s platbou za dané období.
+
+gateway:
+	recurrent: automatické obnovování
+
+frontend:
+	my:
+		my_payments: Moje platby
+		payment_type: Způsob platby
+		payment_day: Dne
+		variable_symbol: Variabilní symbol
+		price: Cena
+		is_recurrent: Opakovaná platba
+		invoices: Faktury
+		stop_recurrent: Zastavit opakování
+		restart_recurrent: Znovu zapnout
+		user_stopped: Vámi zastavené
+		user_stopped_requested: Zastavené na Vaši žádost
+		failed_recurrent: Neúspěšné opakování
+		success_recurrent: Automaticky prodloužená
+		no_payments: Nemáte žádné platby
+		buy_offer: Můžete si předplatné zakoupit a získat tak přístup k obsahu
+		next_recurrent_payment: "Máte zapnuté automatické obnovování předplatného, nejbližší platba v hodnotě <strong>%charge_amount% Kč</strong> proběhne <strong>%charge_date%</strong>."
+	recurrent_stop:
+		title: Zastavení opakované platby
+		cancel: "Ne, ještě si to promyslím"
+		confirm: "Ano, zastavit opakované platby"
+		success: "Opakovaná platba byla zastavena."
+		invalid: Neplatn7 požadavek o zastavení automatické platby. Zkuste to prosím znovu.
+	reactivate:
+		success: 'Automatická platba byla obnovena.'
+		error: 'Automatickou platbu není možné obnovit.'
+		error_create_new: 'Automatickou platbu není možné obnovit. Prosím vytvořte novou.'
+	banktransfer:
+		title: Platba převodem
+		lead: Informace pro zakoupení předplatného pomocí bankovního převodu
+		amount: Částka
+		account_number: Číslo účtu
+		variable_symbol: Variabilní symbol
+		recipient_message: Zpráva pro příjemce
+		delay_info: Připsání platby na účet může trvat 1 až 2 pracovní dny. Předplatné se aktivuje až po připsání platby na náš účet.
+		thank_you: Děkujeme

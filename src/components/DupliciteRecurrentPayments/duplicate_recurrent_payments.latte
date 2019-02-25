@@ -1,0 +1,57 @@
+{if count($recurrentPayments) == 0}
+    <p>Nenašli sa žiadne duplicitné recurentné platby</p>
+{else}
+    {snippet mailQueuelisting}
+
+        <table class="table table-striped table-hover">
+            <thead>
+            <th>ID</th>
+            <th>CID</th>
+            <th>Vytvorená</th>
+            <th>Upravená</th>
+            <th>Zaplatenie prebehne</th>
+            <th>Typ predplatného</th>
+            <th>Karta expiruje</th>
+            <th>Status</th>
+            <th>Akcie</th>
+            </thead>
+            <tbody>
+            {foreach $recurrentPayments as $recurrentPayment}
+                <tr>
+                    <td> #{$recurrentPayment->user_id}</td>
+                    <td colspan="8">
+                        <strong><a href="{plink :Users:UsersAdmin:Show $recurrentPayment->user_id}">{$recurrentPayment->user->email}</a></strong>
+                    </td>
+                </tr>
+                {foreach $recurrentPayment->user->related('recurrent_payments') as $payment}
+                    {if $payment->state == 'active' &&  $payment->charge_at > new \DateTime()}
+                        <tr>
+                            <td>
+                                <small>#{$payment->id}</small>
+                                <i n:if="$payment->note" class="fa fa-info-circle text-danger fa-wh" data-toggle="tooltip" data-placement="top" title="{$payment->note|breaklines}"></i>
+                            </td>
+                            <td><code>{$payment->cid}</code></td>
+                            <td class="text-muted">{$payment->created_at|userDate}</td>
+                            <td class="text-muted">{$payment->updated_at|userDate}</td>
+                            <td>{$payment->charge_at|userDate}</td>
+                            <td>
+                                <a href="{plink :Subscriptions:SubscriptionTypesAdmin:Show $payment->subscription_type_id}">{$payment->subscription_type->name}</a>
+                                {if $payment->next_subscription_type_id}
+                                    <br>
+                                    nasledujúce bude <a href="{plink :Subscriptions:SubscriptionTypesAdmin:Show $payment->next_subscription_type_id}">{$payment->next_subscription_type->name}</a>
+                                {/if}
+                            </td>
+                            <td><small class="text text-muted">{if $payment->expires_at}{$payment->expires_at|userDate}{else}N/A{/if}</small></td>
+                            <td>{$payment->status}</td>
+                            <td>
+                                <a class="btn btn-primary" href="{link StopRecurrentPayment! $payment->id}" onclick="return confirm('Naozaj?')"><i class="fa fa-close"></i> Zastaviť opakovanú platbu</a>
+                            </td>
+                        </tr>
+                    {/if}
+                {/foreach}
+            {/foreach}
+            </tbody>
+        </table>
+
+    {/snippet}
+{/if}

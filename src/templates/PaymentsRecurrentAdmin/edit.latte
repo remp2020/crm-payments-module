@@ -1,0 +1,27 @@
+{block #title}Úprava rekurentného profilu #{$recurrentPayment->id}{/block}
+
+{block #content}
+
+<div class="row">
+    <div class="col-md-12">
+        <a href="{link :Users:UsersAdmin:Show $recurrentPayment->user_id}"><i class="fa fa-angle-left"></i> späť na používateľa</a>
+        <div class="page-header">
+            <h1>
+                Úprava rekurentného profilu :
+                <small>[#{$recurrentPayment->id}]</small> ku platbe <small>#{$recurrentPayment->parent_payment->variable_symbol}</small>
+            </h1>
+        </div>
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-md-8">
+        {control recurrentPaymentForm}
+
+        <script>
+            $('#' + {$control["recurrentPaymentForm"]['next_subscription_type_id']->htmlId}).off('change').on('change', function () {
+                $('#' + {$control["recurrentPaymentForm"]['custom_amount']->htmlId}).val(null);
+            });
+        </script>
+    </div>
+</div>

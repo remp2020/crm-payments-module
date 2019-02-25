@@ -1,0 +1,13 @@
+<span class="badge progress-bar-{if $now - $then > 0}success{else}danger{/if}">
+    {if $now - $then > 0}+{/if}{$now - $then}
+</span>
+
+{if $daysDiff > 1}
+    {_payments.admin.subscribers_with_payment_widget.last_days, ['count' => $daysDiff]}
+{else}
+    {_payments.admin.subscribers_with_payment_widget.last_day}
+{/if}
+
+<i class="fa fa-question-circle"
+   data-toggle="tooltip"
+   data-original-title="{_payments.admin.subscribers_with_payment_widget.description}"></i>

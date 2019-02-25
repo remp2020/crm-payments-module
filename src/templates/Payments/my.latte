@@ -1,0 +1,80 @@
+{block #content}
+
+<div class="page-header">
+    <h1 n:block=title>{_payments.frontend.my.my_payments}</h1>
+</div>
+
+<div class="row">
+    <p n:if="$recurrentPayment" class="text-muted well text-center">
+        {_payments.frontend.my.next_recurrent_payment, ['charge_amount' => $resolver->resolveChargeAmount($recurrentPayment), 'charge_date' => call_user_func($this->filters->userdate, $recurrentPayment->charge_at, true)]|noescape}
+    </p>
+
+    <div class="col-md-12">
+
+        {if $payments->count('*') > 0}
+        <div class="table-responsive">
+        <table class="table table-striped">
+            <thead>
+            <tr>
+                <th>{_payments.frontend.my.payment_type}</th>
+                <th>{_payments.frontend.my.payment_day}</th>
+                <th>{_payments.frontend.my.variable_symbol}</th>
+                <th>{_payments.frontend.my.price}</th>
+                <th>{_payments.frontend.my.is_recurrent}</th>
+                <th>{_payments.frontend.my.invoices}</th>
+            </tr>
+            </thead>
+            <tbody>
+            {foreach $payments as $payment}
+                <tr n:if="$payment->status == \Crm\PaymentsModule\Repository\PaymentsRepository::STATUS_PAID">
+                    <td>
+                        {$payment->payment_gateway->name}
+                    </td>
+                    <td>
+                        {$payment->paid_at|userDate:true}
+                    </td>
+                    <td>
+                        {$payment->variable_symbol}
+                    </td>
+                    <td>
+                        {$payment->amount|price}
+                    </td>
+                    <td>
+                       {foreach $payment->related('recurrent_payments', 'parent_payment_id') as $recurrent}
+                            {if $recurrent->payment_id == NULL}
+                                {if $recurrent->state == \Crm\PaymentsModule\Repository\RecurrentPaymentsRepository::STATE_ACTIVE}
+                                    <a class="btn btn-sm btn-primary" n:href="recurrentStop $recurrent->id">{_payments.frontend.my.stop_recurrent}</a>
+                                {elseif $recurrent->state == \Crm\PaymentsModule\Repository\RecurrentPaymentsRepository::STATE_USER_STOP}
+                                    {_payments.frontend.my.user_stopped}<br>
+                                    <a n:if="$recurrent->cid && $recurrent->charge_at > new \DateTime()" n:href="Reactivate! $recurrent->id" class="btn btn-sm btn-green">{_payments.frontend.my.restart_recurrent}</a>
+                                {elseif $recurrent->state == \Crm\PaymentsModule\Repository\RecurrentPaymentsRepository::STATE_ADMIN_STOP}
+                                    <span class="label label-info">{_payments.frontend.my.user_stopped_requested}</span>
+                                {elseif $recurrent->state == \Crm\PaymentsModule\Repository\RecurrentPaymentsRepository::STATE_SYSTEM_STOP}
+                                    <span class="label label-danger">{_payments.frontend.my.failed_recurrent}</span>
+                                {/if}
+                            {else}
+                                {if $recurrent->state == \Crm\PaymentsModule\Repository\RecurrentPaymentsRepository::STATE_CHARGE_FAILED}
+                                    <span class="label label-danger">{_payments.frontend.my.failed_recurrent}</span>
+                                {else}
+                                    <span class="label label-success">{_payments.frontend.my.success_recurrent}</span>
+                                {/if}
+                            {/if}
+                        {/foreach}
+                    </td>
+                    <td>
+                        {control listingWidget 'frontend.payments.listing.action', $payment}
+                    </td>
+                </tr>
+            {/foreach}
+            </tbody>
+        </table>
+        </div>
+        {else}
+        <blockquote>
+            <p class="lead">
+                {_payments.frontend.my.no_payments}. <a href="{link :Subscriptions:Subscriptions:New}">{_payments.frontend.my.buy_offer}</a>
+            </p>
+        </blockquote>
+        {/if}
+    </div>
+</div>

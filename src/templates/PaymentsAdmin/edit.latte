@@ -1,0 +1,153 @@
+{block #title}Uprava platby {$payment->variable_symbol}{/block}
+
+{block #content}
+
+<div class="row">
+  <div class="col-md-12">
+  <a href="{link :Users:UsersAdmin:Show $user->id}"><i class="fa fa-angle-left"></i> späť na záznam</a>
+    <div class="page-header">
+      <h1>
+        Úprava platby:
+        <small>[{$payment->id}]</small>
+      	{$payment->variable_symbol}
+      </h1>
+    </div>
+  </div>
+</div>
+
+<div class="row">
+  <div class="col-md-8">
+    {control paymentForm}
+    {ifset $control[paymentForm][products]}
+        {include onProductChangeCallback, id => $control[paymentForm][products][product_ids]->htmlId}
+    {/ifset}
+  </div>
+</div>
+
+{include 'paymentItemsTemplate.latte'}
+
+{/block}
+
+{block scripts}
+    <script type="text/javascript">
+        $('.variable_symbol_generate').click(function(event) {
+            event.preventDefault();
+            var href = $(this).attr('href');
+
+            $.ajax({
+                url: href
+            }).done(function(response) {
+                $('#frm-paymentForm-variable_symbol').val(response.variable_symbol);
+            }).fail(function() {
+                alert("Nepodarilo sa ziskat variabilny symbol");
+            });
+            return false;
+        });
+
+        // payment items
+
+        var subscriptionTypesElem = $('input[name="subscription_types"]');
+        var subscriptionTypes = JSON.parse(subscriptionTypesElem.val());
+
+        var $subscriptionType = $('#' + {$control[paymentForm][subscription_type_id]->htmlId});
+        var paymentItemsDisabled = {$payment->status !== 'form'};
+
+        $subscriptionType.off('change').on('change', function () {
+            // set items
+            var items = [];
+
+            if ($(this).val()) {
+                items = subscriptionTypes[$(this).val()].items.slice(0);
+            }
+            if ($('input[name="payment_items"]').val()) {
+                items = JSON.parse($('input[name="payment_items"]').val());
+                $('input[name="payment_items"]').val("")
+            }
+
+            // generate form elements
+            $('#payment-items').remove();
+            var domItems = $('<div id="payment-items" style="display: none"></div>');
+            domItems.insertAfter($subscriptionType.closest('.form-group'));
+            for (var i = 0; i < items.length; i++) {
+                var item = $('<div class="payment-item"></div>').append($('#payment-items-template').html());
+                item.find('span[data-tag="iterator"]').html(i + 1);
+                item.find('input[data-tag="name"]').val(items[i].name).attr('disabled', paymentItemsDisabled);
+                item.find('input[data-tag="amount"]').val(items[i].amount).attr('disabled', paymentItemsDisabled);
+                item.find('input[data-tag="vat"]').val(items[i].vat).attr('disabled', paymentItemsDisabled);
+                domItems.append(item)
+            }
+
+            resetListeners();
+            updatePaymentAmount();
+        });
+
+        $('form').submit(function () {
+            $(this).find('input[name="payment_items"]').val(serializeItems());
+            return true;
+        });
+
+        $subscriptionType.trigger('change');
+
+        function updatePaymentAmount() {
+            var amount = 0;
+
+            // subscription
+            $('#payment-items input[data-tag="amount"]').each(function () {
+                amount += Number($(this).val().replace(',', '.'));
+            });
+            $('#payment-items').show();
+
+            // event trigger
+            $priceElem = $('#' + {$control[paymentForm][amount]->htmlId});
+            $priceElem.val(amount.toFixed(2));
+            $(document).trigger('price:update', [$priceElem]);
+        }
+
+        function resetListeners() {
+            $('#payment-items input[data-tag="amount"]').off('change').on('change', function () {
+                updatePaymentAmount();
+            });
+        }
+
+        function serializeItems() {
+            var items = [];
+            $('.payment-item').each(function () {
+                var item = {};
+                $(this).find('input').each(function () {
+                    item[$(this).data('tag')] = $(this).val().replace(',', '.');
+                });
+                items.push(item);
+            });
+            return JSON.stringify(items);
+        }
+    </script>
+
+{/block}
+
+
+
+{define onProductChangeCallback}
+  <script>
+      var $elem = $('#'+{$id});
+      var values = function() {
+          return $elem.val() !== null ? $elem.val() : [];
+      };
+      var selected = values();
+
+      $elem.on('focus', function() {
+          selected = values();
+      }).off('change').on('change', function () {
+          if (selected.length < values().length) {
+              var productId = values().filter(function (a) {
+                  return selected.indexOf(a) === -1;
+              });
+              var count = prompt('Zadajte počet kusov', 1);
+              var productCountsElem = $('input[name="products[product_counts]"]');
+              var productCounts = JSON.parse(productCountsElem.val());
+              productCounts[productId] = count;
+              productCountsElem.val(JSON.stringify(productCounts));
+          }
+          selected = values();
+      });
+  </script>
+{/define}

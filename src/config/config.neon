@@ -1,0 +1,93 @@
+services:
+	moduleManager:
+		setup:
+			- addModule(Crm\PaymentsModule\PaymentsModule())
+
+	- Crm\PaymentsModule\Repository\PaymentGatewaysRepository
+	- Crm\PaymentsModule\Repository\PaymentsRepository('%donationVatRate%')
+	- Crm\PaymentsModule\Repository\PaymentGiftCouponsRepository
+	- Crm\PaymentsModule\Repository\PaymentLogsRepository
+	- Crm\PaymentsModule\Repository\PaymentMetaRepository
+	- Crm\PaymentsModule\Forms\PaymentFormFactory
+	- Crm\PaymentsModule\Forms\PaymentGatewayFormFactory
+	- Crm\PaymentsModule\Forms\AccountantExportFormFactory
+	- Crm\PaymentsModule\GatewayFactory
+	- Crm\PaymentsModule\RecurrentPaymentsResolver
+	- Crm\PaymentsModule\Forms\RecurrentPaymentFormFactory
+	- Crm\PaymentsModule\PaymentProcessor
+	- Crm\PaymentsModule\Builder\ParsedMailLogsBuilder
+	- Crm\PaymentsModule\Repository\RecurrentPaymentsRepository
+	- Crm\PaymentsModule\MailConfirmation\ParsedMailLogsRepository
+	- Crm\PaymentsModule\MailConfirmation\TatraBankaMailDownloader
+	- Crm\PaymentsModule\MailConfirmation\CsobMailDownloader
+	- Crm\PaymentsModule\MailConfirmation\MailProcessor
+	- Crm\PaymentsModule\Components\ChangePaymentStatusFactoryInterface
+	- Crm\PaymentsModule\Components\DuplicateRecurrentPaymentsControlFactoryInterface
+	- Crm\PaymentsModule\Components\GiftCouponsFactoryInterface
+	- Crm\PaymentsModule\Components\LastPaymentsControlFactoryInterface
+	- Crm\PaymentsModule\Components\TotalUserPayments
+	- Crm\PaymentsModule\Commands\RecurrentPaymentsCardCheck
+	- Crm\PaymentsModule\Commands\RecurrentPaymentsChargeCommand
+	- Crm\PaymentsModule\Commands\CsobMailConfirmationCommand
+	- Crm\PaymentsModule\Commands\TatraBankaMailConfirmationCommand
+	- Crm\PaymentsModule\Commands\UpdateRecurrentPaymentsExpiresCommand
+	- Crm\PaymentsModule\Commands\StopRecurrentPaymentsExpiresCommand
+	- Crm\PaymentsModule\Commands\LastPaymentsCheckCommand
+	- Crm\PaymentsModule\Commands\CidGetterCommand
+	- Crm\PaymentsModule\Api\VariableSymbolApiHandler
+	- Crm\PaymentsModule\MailConfirmation\CidGetterDownloader
+	variableSymbol: Crm\PaymentsModule\Repository\VariableSymbol
+	- Crm\PaymentsModule\Commands\RepairRecurrentsCommand
+	- Crm\PaymentsModule\Commands\RepairRecurrentUpgradesCommand
+	- Crm\PaymentsModule\Commands\CalculateAveragesCommand
+	- Crm\PaymentsModule\Gateways\Paypal
+	- Crm\PaymentsModule\Gateways\PaypalReference
+	- Crm\PaymentsModule\Gateways\Tatrapay
+	- Crm\PaymentsModule\Gateways\Cardpay
+	- Crm\PaymentsModule\Gateways\Comfortpay
+	- Crm\PaymentsModule\Gateways\BankTransfer
+	- Crm\PaymentsModule\Gateways\Csob
+	- Crm\PaymentsModule\Gateways\CsobOneClick
+	- Crm\PaymentsModule\Hermes\CreateRecurrentPaymentHandler
+	- Crm\PaymentsModule\Segment\PaymentCriteria
+	- Crm\PaymentsModule\Segment\RecurrentPaymentCriteria
+	- Crm\PaymentsModule\User\PaymentsUserDataProvider
+	- Crm\PaymentsModule\User\RecurrentPaymentsUserDataProvider
+	- Crm\PaymentsModule\Segment\AmountCriteria
+	- Crm\PaymentsModule\Segment\StatusCriteria
+	- Crm\PaymentsModule\Segment\ReferenceCriteria
+	- Crm\PaymentsModule\Seeders\ConfigsSeeder
+	- Crm\PaymentsModule\Seeders\PaymentGatewaysSeeder
+	- Crm\PaymentsModule\Seeders\SegmentsSeeder
+	- Crm\PaymentsModule\Events\PaymentStatusChangeHandler
+	- Crm\PaymentsModule\Events\SubscriptionPreUpdateHandler
+	expander:
+		class: Crm\PaymentsModule\Upgrade\Expander
+	- Crm\PaymentsModule\Upgrade\UpgradeFactory
+	- Crm\PaymentsModule\Repository\PaymentItemsRepository
+	subscribersWithPaymentWidgetFactory:
+		class: Crm\PaymentsModule\Components\SubscribersWithPaymentWidgetFactory
+
+	# widgets
+	- Crm\PaymentsModule\Components\UserPaymentsListing
+	- Crm\PaymentsModule\Components\ParsedMailsFailedNotification
+	- Crm\PaymentsModule\Components\TotalAmountStatWidget
+	- Crm\PaymentsModule\Components\ActualPaidSubscribersStatWidget
+	- Crm\PaymentsModule\Components\ActualFreeSubscribersStatWidget
+	- Crm\PaymentsModule\Components\TodayAmountStatWidget
+	- Crm\PaymentsModule\Components\MonthAmountStatWidget
+	- Crm\PaymentsModule\Components\MonthToDateAmountStatWidget
+	- Crm\PaymentsModule\Components\SubscriptionsWithActiveUnchargedRecurrentEndingWithinPeriodWidget
+	- Crm\PaymentsModule\Components\SubscriptionsWithoutExtensionEndingWithinPeriodWidget
+	- Crm\PaymentsModule\Components\SubscriptionTypeReports
+	- Crm\PaymentsModule\DataProvider\FilterGiftedSubscriptionsDataProvider
+	- Crm\PaymentsModule\DataProvider\PaymentFromVariableSymbolDataProvider
+	- Crm\PaymentsModule\DataProvider\SubscriptionsWithActiveUnchargedRecurrentEndingWithinPeriodDataProvider
+	- Crm\PaymentsModule\DataProvider\SubscriptionsWithoutExtensionEndingWithinPeriodDataProvider
+	- Crm\PaymentsModule\Subscription\ActualPaymentSubscription
+
+	# zlavomat
+	- Crm\PaymentsModule\Gateways\Zlavomat
+
+	# viamo
+	- Crm\PaymentsModule\Gateways\Viamo

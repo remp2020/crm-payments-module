@@ -1,0 +1,22 @@
+<div class="modal fade" id="change-status-modal-{$payment->id}">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+        <h4 class="modal-title">Zmena stavu platby #{$payment->id}</h4>
+      </div>
+      <div class="modal-body">
+        <p>
+        	Variabilný symbol: <code>{$payment->variable_symbol}</code> <i n:if="$payment->note" class="fa fa-info-circle text-danger fa-wh" data-toggle="tooltip" data-placement="top" title="{$payment->note|breaklines}"></i><br>
+        	Vytvorená: {$payment->created_at|userDate}<br>
+        	Stav: <b>{$payment->status}</b> zmeniť na <b>PAID</b><br>
+        </p>
+      </div>
+      <div class="modal-footer">
+        <a href="#" type="button" class="" data-dismiss="modal">Zruš</a>&nbsp;&nbsp;&nbsp;
+        <a href="{link ChangeStatusToPaidWithoutEmail! $payment->id}" type="button" class="btn btn-default">Zmeň a nepošli notifikáciu</a>
+        <a href="{link ChangeStatusToPaidWithEmail! $payment->id}" type="button" class="btn btn-primary">Zmeň a pošli notifikáciu</a>
+      </div>
+    </div>
+  </div>
+</div>

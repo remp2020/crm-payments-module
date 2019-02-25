@@ -1,0 +1,58 @@
+<div class="row">
+    <div class="col-md-12">
+        <ul class="nav nav-tabs" role="tablist">
+            {foreach $reportTables as $title => $report}
+                <li role="presentation"{first} class="active"{/first}><a aria-controls="{$title|webalize}" role="tab" data-toggle="tab" href="#{$title|webalize}">{$title}</a></li>
+            {/foreach}
+        </ul>
+
+        <div class="tab-content">
+            {foreach $reportTables as $title => $reports}
+                <div role="tabpanel" class="tab-pane{first} active{/first}" id="{$title|webalize}" style="margin-top:1em">
+
+                    {var $cols = []}
+                    {foreach $reports as $report}
+                        {foreach array_keys($report['data']) as $key}
+                            {if !in_array($key, $cols)}{var $cols[] = $key}{/if}
+                        {/foreach}
+                    {/foreach}
+
+                    <table class="table table-bordered table-hover">
+                    <thead>
+                    <tr>
+                        <th></th>
+                        <th n:foreach="$cols as $col">{$col}</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    <tr n:foreach="$reports as $report">
+                        <td>
+                            {$report['label']}
+                        </td>
+
+                        {foreach $cols as $col}
+                            {var $check = false}
+                            {ifset $report['check'][$col]}
+                                {var $check = $report['check'][$col]}
+                            {/ifset}
+                            <td{if $check === 0} class="success"{elseif $check !== false} class="danger"{/if}>
+
+                                {ifset $report['data'][$col]}
+                                    {$report['data'][$col]}
+                                {else}
+                                    0
+                                {/ifset}
+
+                                {if $check !== false && $check !== 0}
+                                    <small class="text-muted">({$check})</small>
+                                {/if}
+                            </td>
+                        {/foreach}
+                    </tr>
+                    </tbody>
+                    </table>
+                </div>
+            {/foreach}
+        </div>
+    </div>
+</div>

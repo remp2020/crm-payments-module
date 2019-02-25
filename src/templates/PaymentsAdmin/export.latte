@@ -1,0 +1,4 @@
+{php echo chr(239) . chr(187) . chr(191)}"id";"created_at";"variable_symbol";"amount";"status";"payment_gateway";"subscription_type";"user";"referer"
+{foreach $payments as $payment}
+"{$payment->id}";"{$payment->created_at}";"{$payment->variable_symbol}";"{$payment->amount}";"{$payment->status}";"{$payment->payment_gateway_id}";"{$payment->subscription_type_id}";"{$payment->user_id}";"{$payment->referer}"
+{/foreach}

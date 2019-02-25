@@ -1,0 +1,32 @@
+<div class="panel panel-default">
+  <div class="panel-heading">Celkovo minul</div>
+  <div class="panel-body">
+	{if $totalSum > 0}
+	  <p>
+        <span class="text-success" style="font-size:1.5em; font-weight:700">{$totalSum|price}</span> za
+        <br>
+        {ifset $meta['subscription_payments']}{if $meta['subscription_payments']}
+          <span style="font-size:1.2em">{$meta['subscription_payments']}</span> {if $meta['subscription_payments'] == 1}platbu{elseif $meta['subscription_payments'] < 5}platby{else}platieb{/if} za predplatné<br>
+        {/if}{/ifset}
+        {ifset $meta['product_payments']}{if $meta['product_payments']}
+          {$meta['product_payments']} {if $meta['product_payments'] == 1}platbu{elseif $meta['product_payments'] < 5}platby{else}platieb{/if} v obchode<br>
+        {/if}{/ifset}
+
+        {ifset $meta['avg_month_payment']}
+          <hr>
+          <span style="font-size:1.4em">{$meta['avg_month_payment']|price}</span> primerne mesačne
+          <br>
+          <small>
+            {if $meta['avg_month_payment'] >= $averageMonthSum}
+              <span class="text-success"><i class="fa fa-caret-up"></i> {$meta['avg_month_payment'] - $averageMonthSum|price} viac</span> ako primer
+            {else}
+              <span class="text-warning"><i class="fa fa-caret-down"></i> {$averageMonthSum - $meta['avg_month_payment']|price} menej</span> ako primer
+            {/if}
+          </small>
+        {/ifset}
+      </p>
+	{else}
+	  <p class="text-muted" style="font-size:1.8em; font-weight:700">{0|price}</p>
+	{/if}
+  </div>
+</div>

@@ -1,0 +1,22 @@
+{block #content}
+
+<div class="page-header">
+    <h1 n:block=title>{_payments.frontend.recurrent_stop.title}</h1>
+</div>
+
+<div class="row">
+    <div class="col-md-12">
+
+        {php $chargeAt = ($recurrentPayment->charge_at|userDate:true) }
+        {control snippet 'recurrent-stop', 'chargeAt' => $chargeAt, 'chargeAmount' => $resolver->resolveChargeAmount($recurrentPayment)}
+
+        <p class="text-center">
+            <a n:href="my" class="btn btn-success">
+                {_payments.frontend.recurrent_stop.cancel}
+            </a>
+            <a n:href="StopRecurrentPayment! $recurrentPayment->id" class="btn btn-danger">
+                {_payments.frontend.recurrent_stop.confirm}
+            </a>
+        </p>
+    </div>
+</div>

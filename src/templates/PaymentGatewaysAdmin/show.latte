@@ -1,0 +1,98 @@
+{block #title}{$type->name}{/block}
+
+{block #content}
+
+<div class="row">
+    <div class="col-md-12">
+        <a href="{link PaymentGatewaysAdmin:}"><i class="fa fa-angle-left"></i> späť na zoznam</a>
+
+        <div class="page-header">
+            <h1>
+                <small>[{$type->id}]</small>
+                {$type->name}
+                <a href="{link PaymentGatewaysAdmin:Edit $type->id}" class="btn btn-primary btn-lg pull-right"><i class="fa fa-edit"></i>  Upraviť type predplatného</a>
+            </h1>
+        </div>
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-md-12">
+        <p>
+        <ul class="list-group">
+            <li class="list-group-item"><b>Interné označenie:</b> <code>{$type->code}</code></li>
+            <li class="list-group-item"><b>Vytvorený:</b> {$type->created_at|userDate}</li>
+            <li class="list-group-item"><b>Modifikovaný:</b> {$type->modified_at|userDate}</li>
+            <li class="list-group-item">
+                <b>Obrázok:</b>
+                {if $type->image}
+                    <img src="{$type->image}" title="{$type->code}"><br>
+                    <code>{$type->image}</code>
+                {else}
+                    <span class="label label-default">bez obrázku</span>
+                {/if}
+            </li>
+            <li class="list-group-item"><b>Popis:</b> {$type->description}</li>
+            <li class="list-group-item">
+                <b>Aktívny:</b>
+                {if $type->active}
+                    <span class="label label-success">aktívne</span>
+                {else}
+                    <span class="label label-default">neaktívne</span>
+                {/if}
+            </li>
+            <li class="list-group-item">
+                <b>Viditelny:</b>
+                {if $type->visible}
+                    <span class="label label-success">viditeľné</span>
+                {else}
+                    <span class="label label-default">skryté</span>
+                {/if}
+            </li>
+            <li class="list-group-item">
+                <b>Viditelny v Shope:</b>
+                {if $type->shop}
+                    <span class="label label-success">viditeľné</span>
+                {else}
+                    <span class="label label-default">skryté</span>
+                {/if}
+            </li>
+            <li class="list-group-item">
+                <b>Recurrentá:</b>
+                {if $type->is_recurrent}
+                    <span class="label label-primary">Je recurrentná</span>
+                {else}
+                    <span class="label label-default">Nie je recurrentná</span>
+                {/if}
+            </li>
+
+            <li class="list-group-item">
+                <b>Default:</b>
+                {if $type->default}
+                    <span class="label label-success">default</span>
+                {else}
+                    <span class="label label-default">nie</span>
+                {/if}
+            </li>
+            <li class="list-group-item"><b>Poradie:</b> {$type->sorting}</li>
+        </ul>
+
+        </p>
+    </div>
+</div>
+
+<hr>
+<div class="row">
+    <div class="col-md-12">
+        {control paymentGatewayGraph}
+    </div>
+</div>
+
+<hr>
+<div class="row">
+    <div class="col-md-12">
+        <h3>Posledné platby</h3>
+
+        {control lastPayments}
+    </div>
+</div>
