@@ -329,18 +329,13 @@ class PaymentsAdminPresenter extends AdminPresenter
 SELECT
   payments.id, 
   amount, 
-  COALESCE(payment_items, 0) AS payment_items_sum, 
-  COALESCE(payment_products, 0) AS payment_products_sum, 
+  COALESCE(payment_items, 0) AS payment_items_sum,  
   COALESCE(postal_fees, 0) AS postal_fees_sum
 FROM payments
 
 LEFT JOIN (
-  SELECT payment_id, SUM(amount) AS payment_items FROM payment_items GROUP BY payment_id
+  SELECT payment_id, SUM(amount*count) AS payment_items FROM payment_items GROUP BY payment_id
 ) t1 ON payments.id = t1.payment_id
-
-LEFT JOIN (
-  SELECT payment_id, SUM(price*count) AS payment_products FROM payment_products GROUP BY payment_id
-) t2 ON payments.id = t2.payment_id
 
 LEFT JOIN (
   SELECT payment_id, SUM(postal_fee_amount) AS postal_fees FROM orders GROUP BY payment_id
@@ -348,7 +343,7 @@ LEFT JOIN (
 
 WHERE payments.id IN ({$filter->getSql()})
 GROUP BY payments.id
-HAVING payment_items_sum + payment_products_sum + postal_fees_sum != payments.amount
+HAVING payment_items_sum + postal_fees_sum != payments.amount
 SQL;
         $checksum = $this->paymentsRepository->getDatabase()->queryArgs($sql, $filter->getSqlBuilder()->getParameters());
 
