@@ -157,7 +157,7 @@ class PaymentsAdminPresenter extends AdminPresenter
             $start->format('Y-m-01 00:00:00'),
             $end->format('Y-m-01 00:00:00')
         )
-            ->where(':payment_products.product_id IS NOT NULL')
+            ->where(':payment_items.product_id IS NOT NULL')
             ->order('created_at DESC')->order('id DESC');
 
         $stats = [];
@@ -168,9 +168,9 @@ class PaymentsAdminPresenter extends AdminPresenter
         foreach ($payments as $payment) {
             $paymentSum = 0;
 
-            // we're intentionally not using $this->paymentsRepository->unbundleProducts,
+            // we're intentionally not using $this->paymentsRepository->unBundleProducts,
             // because the pricing of individual products doesn't need to match price of the bundle
-            foreach ($payment->related('payment_products') as $paymentProduct) {
+            foreach ($payment->related('payment_items')->where(['product_id IS NOT ?' => null]) as $paymentProduct) {
                 if (!$paymentProduct->price) {
                     continue;
                 }
@@ -179,13 +179,13 @@ class PaymentsAdminPresenter extends AdminPresenter
                 if (!isset($stats['product_sums'][$product->id])) {
                     $stats['product_sums'][$product->id] = [];
                 }
-                if (!isset($stats['product_sums'][$product->id][strval($paymentProduct->price)])) {
-                    $stats['product_sums'][$product->id][strval($paymentProduct->price)] = 0;
+                if (!isset($stats['product_sums'][$product->id][strval($paymentProduct->amount)])) {
+                    $stats['product_sums'][$product->id][strval($paymentProduct->amount)] = 0;
                 }
                 $stats['products'][$product->id] = $product;
-                $stats['product_sums'][$product->id][strval($paymentProduct->price)] += $paymentProduct->count * $paymentProduct->price;
-                $paymentSum += $paymentProduct->count * $paymentProduct->price;
-                $total += $paymentProduct->count * $paymentProduct->price;
+                $stats['product_sums'][$product->id][strval($paymentProduct->amount)] += $paymentProduct->count * $paymentProduct->amount;
+                $paymentSum += $paymentProduct->count * $paymentProduct->amount;
+                $total += $paymentProduct->count * $paymentProduct->amount;
             }
 
             foreach ($payment->related('orders') as $order) {
@@ -415,7 +415,7 @@ SQL;
                         $paymentItem->name,
                         $paymentItem->vat,
                         number_format($paymentItem->amount, 2, ',', ''),
-                        1,
+                        $paymentItem->count,
                         $payment->status,
                         $payment->payment_gateway_id,
                         $payment->subscription_type_id,
@@ -434,41 +434,7 @@ SQL;
                         $address ? $address->zip : '',
                         $payment->note,
                     ];
-                    $actualAmount += $paymentItem->amount;
-
-                    echo  $this->formatExportLine($row);
-                }
-
-                $paymentProducts = $payment->related('payment_products');
-                foreach ($paymentProducts as $paymentProduct) {
-                    $row = [
-                        $payment->id,
-                        $payment->modified_at->format('d.m.Y H:i:s'),
-                        $payment->paid_at ? $payment->paid_at->format('d.m.Y H:i:s') : '',
-                        $payment->variable_symbol,
-                        $paymentProduct->product->name,
-                        $paymentProduct->vat,
-                        number_format($paymentProduct->price, 2, ',', ''),
-                        $paymentProduct->count,
-                        $payment->status,
-                        $payment->payment_gateway_id,
-                        $payment->subscription_type_id,
-                        $payment->user_id,
-                        $payment->user->email,
-                        $payment->referer,
-                        $payment->subscription_id ? $payment->subscription->start_time->format('d.m.Y') : '',
-                        $payment->subscription_id ? $payment->subscription->end_time->format('d.m.Y') : '',
-                        $payment->invoice_id ? $payment->invoice->invoice_number->number : '',
-                        $address ? $address->first_name : '',
-                        $address ? $address->last_name : '',
-                        $address ? $address->company_name : '',
-                        $address ? $address->address : '',
-                        $address ? $address->number : '',
-                        $address ? $address->city : '',
-                        $address ? $address->zip : '',
-                        $payment->note,
-                    ];
-                    $actualAmount += $paymentProduct->price * $paymentProduct->count;
+                    $actualAmount += $paymentItem->amount * $paymentItem->count;
 
                     echo  $this->formatExportLine($row);
                 }

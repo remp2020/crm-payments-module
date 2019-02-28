@@ -1,42 +1,42 @@
 <div class="row text-danger">
     <div class="col-md-2">
         <p>
-            <strong>{_dashboard.time.today}: </strong> <a class="text-danger" style="text-decoration: underline;" href="{plink :Subscriptions:SubscriptionsEnds:default startTime => date('00:00:00 d.m.Y', strtotime('today')), endTime => date('23:59:59 d.m.Y', strtotime('today')), withoutNext => 1, withoutRecurrent => 1}">{$subscriptionsNotRenewedToday} ks</a>
+            <strong>{_dashboard.time.today}: </strong> <a class="text-danger" style="text-decoration: underline;" href="{plink :Subscriptions:SubscriptionsEnds:default startTime => date('00:00:00 d.m.Y', strtotime('today')), endTime => date('23:59:59 d.m.Y', strtotime('today')), withoutNext => 1, withoutRecurrent => 1, freeSubscriptions => 1}">{$subscriptionsNotRenewedToday} ks</a>
             <i data-toggle="tooltip" data-placement="top" title="{_dashboard.subscriptions.ending.no_renew_between.tooltip} {php echo date('d.m.Y', strtotime('today')) } 00:00:00 - 23:59:59" class="fa fa-question-circle"></i>
         </p>
     </div>
 
     <div class="col-md-2">
         <p>
-            <strong>{_dashboard.time.tomorrow}: </strong> <a class="text-danger" style="text-decoration: underline;" href="{plink :Subscriptions:SubscriptionsEnds:default startTime => date('00:00:00 d.m.Y', strtotime('tomorrow')), endTime => date('23:59:59 d.m.Y', strtotime('+1 days')), withoutNext => 1, withoutRecurrent => 1}">{$subscriptionsNotRenewedTomorow} ks</a>
+            <strong>{_dashboard.time.tomorrow}: </strong> <a class="text-danger" style="text-decoration: underline;" href="{plink :Subscriptions:SubscriptionsEnds:default startTime => date('00:00:00 d.m.Y', strtotime('tomorrow')), endTime => date('23:59:59 d.m.Y', strtotime('+1 days')), withoutNext => 1, withoutRecurrent => 1, freeSubscriptions => 1}">{$subscriptionsNotRenewedTomorow} ks</a>
             <i data-toggle="tooltip" data-placement="top" title="{_dashboard.subscriptions.ending.no_renew_between.tooltip} {php echo date('d.m.Y', strtotime('tomorrow')) } 00:00:00 - 23:59:59" class="fa fa-question-circle"></i>
         </p>
     </div>
 
     <div class="col-md-2">
         <p>
-            <strong>{_dashboard.time.after_tomorrow}: </strong> <a class="text-danger" style="text-decoration: underline;" href="{plink :Subscriptions:SubscriptionsEnds:default startTime => date('00:00:00 d.m.Y', strtotime('+2 days')), endTime => date('23:59:59 d.m.Y', strtotime('+2 days')), withoutNext => 1, withoutRecurrent => 1}">{$subscriptionsNotRenewedAfterTomorow} ks</a>
+            <strong>{_dashboard.time.after_tomorrow}: </strong> <a class="text-danger" style="text-decoration: underline;" href="{plink :Subscriptions:SubscriptionsEnds:default startTime => date('00:00:00 d.m.Y', strtotime('+2 days')), endTime => date('23:59:59 d.m.Y', strtotime('+2 days')), withoutNext => 1, withoutRecurrent => 1, freeSubscriptions => 1}">{$subscriptionsNotRenewedAfterTomorow} ks</a>
             <i data-toggle="tooltip" data-placement="top" title="{_dashboard.subscriptions.ending.no_renew_between.tooltip} {php echo date('d.m.Y', strtotime('+2 day')) } 00:00:00 - 23:59:59" class="fa fa-question-circle"></i>
         </p>
     </div>
 
     <div class="col-md-2">
         <p>
-            <strong>{_dashboard.time.seven_days}: </strong> <a class="text-danger" style="text-decoration: underline;" href="{plink :Subscriptions:SubscriptionsEnds:default startTime => date('00:00:00 d.m.Y', strtotime('today')), endTime => date('23:59:59 d.m.Y', strtotime('+7 days')), withoutNext => 1, withoutRecurrent => 1}">{$subscriptionsNotRenewedInOneWeek} ks</a>
+            <strong>{_dashboard.time.seven_days}: </strong> <a class="text-danger" style="text-decoration: underline;" href="{plink :Subscriptions:SubscriptionsEnds:default startTime => date('00:00:00 d.m.Y', strtotime('today')), endTime => date('23:59:59 d.m.Y', strtotime('+7 days')), withoutNext => 1, withoutRecurrent => 1, freeSubscriptions => 1}">{$subscriptionsNotRenewedInOneWeek} ks</a>
             <i data-toggle="tooltip" data-placement="top" title="{_dashboard.subscriptions.ending.no_renew_between.tooltip} {php echo date('d.m.Y', strtotime('today')) } 00:00:00 - {php echo date('d.m.Y', strtotime('+7 days')) } 23:59:59" class="fa fa-question-circle"></i>
         </p>
     </div>
 
     <div class="col-md-2">
         <p>
-            <strong>{_dashboard.time.fourteen_days}: </strong> <a class="text-danger" style="text-decoration: underline;" href="{plink :Subscriptions:SubscriptionsEnds:default startTime => date('00:00:00 d.m.Y', strtotime('today')), endTime => date('23:59:59 d.m.Y', strtotime('+14 days')), withoutNext => 1, withoutRecurrent => 1}">{$subscriptionsNotRenewedInTwoWeeks} ks</a>
+            <strong>{_dashboard.time.fourteen_days}: </strong> <a class="text-danger" style="text-decoration: underline;" href="{plink :Subscriptions:SubscriptionsEnds:default startTime => date('00:00:00 d.m.Y', strtotime('today')), endTime => date('23:59:59 d.m.Y', strtotime('+14 days')), withoutNext => 1, withoutRecurrent => 1, freeSubscriptions => 1}">{$subscriptionsNotRenewedInTwoWeeks} ks</a>
             <i data-toggle="tooltip" data-placement="top" title="{_dashboard.subscriptions.ending.no_renew_between.tooltip} {php echo date('d.m.Y', strtotime('today')) } 00:00:00 - {php echo date('d.m.Y', strtotime('+14 days')) } 23:59:59" class="fa fa-question-circle"></i>
         </p>
     </div>
 
     <div class="col-md-2">
         <p>
-            <strong>{_dashboard.time.thirtyone_days}: </strong> <a class="text-danger" style="text-decoration: underline;" href="{plink :Subscriptions:SubscriptionsEnds:default startTime => date('00:00:00 d.m.Y', strtotime('today')), endTime => date('23:59:59 d.m.Y', strtotime('+31 days')), withoutNext => 1, withoutRecurrent => 1}">{$subscriptionsNotRenewedInOneMonth} ks</a>
+            <strong>{_dashboard.time.thirtyone_days}: </strong> <a class="text-danger" style="text-decoration: underline;" href="{plink :Subscriptions:SubscriptionsEnds:default startTime => date('00:00:00 d.m.Y', strtotime('today')), endTime => date('23:59:59 d.m.Y', strtotime('+31 days')), withoutNext => 1, withoutRecurrent => 1, freeSubscriptions => 1}">{$subscriptionsNotRenewedInOneMonth} ks</a>
             <i data-toggle="tooltip" data-placement="top" title="{_dashboard.subscriptions.ending.no_renew_between.tooltip} {php echo date('d.m.Y', strtotime('today')) } 00:00:00 - {php echo date('d.m.Y', strtotime('+31 days')) } 23:59:59" class="fa fa-question-circle"></i>
         </p>
     </div>

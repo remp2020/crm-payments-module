@@ -427,16 +427,19 @@ class PaymentsRepository extends Repository
         return $this->getTable()->where(['NOT note' => null])->order('created_at DESC');
     }
 
-    public function unbundleProducts(ActiveRow $payment, callable $callback)
+    public function unBundleProducts(ActiveRow $payment, callable $callback)
     {
-        foreach ($payment->related('payment_products') as $paymentProduct) {
-            $product = $paymentProduct->product;
+        foreach ($payment->related('payment_items') as $paymentItem) {
+            if (!$paymentItem->product_id) {
+                continue;
+            }
+            $product = $paymentItem->product;
             if ($product->bundle) {
                 foreach ($product->related('product_bundles') as $productBundle) {
-                    $callback($productBundle->item, $paymentProduct->count, $paymentProduct->price);
+                    $callback($productBundle->item, $paymentItem->count, $paymentItem->amount);
                 }
             } else {
-                $callback($product, $paymentProduct->count, $paymentProduct->price);
+                $callback($product, $paymentItem->count, $paymentItem->amount);
             }
         }
     }
