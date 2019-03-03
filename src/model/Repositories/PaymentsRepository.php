@@ -3,6 +3,7 @@
 namespace Crm\PaymentsModule\Repository;
 
 use Crm\ApplicationModule\Cache\CacheRepository;
+use Crm\ApplicationModule\Graphs\Criteria;
 use Crm\ApplicationModule\Graphs\GraphData;
 use Crm\ApplicationModule\Graphs\GraphDataItem;
 use Crm\ApplicationModule\Hermes\HermesMessage;

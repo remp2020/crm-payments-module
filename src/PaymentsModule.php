@@ -319,6 +319,18 @@ class PaymentsModule extends CrmModule
             $this->paymentsRepository->subscriptionsWithoutExtensionEndingNextMonthCount(true);
             $this->paymentsRepository->subscriptionsWithActiveUnchargedRecurrentEndingNextTwoWeeksCount(true);
             $this->paymentsRepository->subscriptionsWithActiveUnchargedRecurrentEndingNextMonthCount(true);
+
+            $cachedPaymentStatusHistograms = [
+                PaymentsRepository::STATUS_FORM,
+                PaymentsRepository::STATUS_PAID,
+                PaymentsRepository::STATUS_FAIL,
+                PaymentsRepository::STATUS_TIMEOUT,
+                PaymentsRepository::STATUS_REFUND,
+            ];
+
+            foreach ($cachedPaymentStatusHistograms as $status) {
+                $this->paymentsRepository->paymentsLastMonthDailyHistogram($status, true);
+            }
         }
     }
 }

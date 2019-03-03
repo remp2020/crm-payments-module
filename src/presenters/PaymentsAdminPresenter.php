@@ -671,19 +671,10 @@ SQL;
 
     private function generateSmallBarGraphComponent($status, $title, SmallBarGraphControlFactoryInterface $factory)
     {
-        $graphDataItem = new GraphDataItem();
-        $graphDataItem->setCriteria((new Criteria())
-            ->setTableName('payments')
-            ->setWhere("AND payments.status = '$status'"));
-
-        $graphData = $this->context->getService('graph_data');
-        $graphData->addGraphDataItem($graphDataItem);
-        $graphData->setScaleRange('day')
-            ->setStart('-31 days');
+        $data = $this->paymentsRepository->paymentsLastMonthDailyHistogram($status);
 
         $control = $factory->create();
-        $control->setGraphTitle($title)
-            ->addSerie($graphData->getData());
+        $control->setGraphTitle($title)->addSerie($data);
 
         return $control;
     }
