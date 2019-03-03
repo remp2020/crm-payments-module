@@ -703,7 +703,7 @@ SQL;
             ->order('payments.created_at DESC');
     }
 
-    public function paymentsLastMonthDailyHistogram($status, $forceCacheUpdate = true)
+    public function paymentsLastMonthDailyHistogram($status, $forceCacheUpdate = false)
     {
         $cacheKey = "payments_status_{$status}_last_month_daily_histogram";
 
