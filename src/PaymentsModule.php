@@ -31,6 +31,7 @@ use Crm\PaymentsModule\DataProvider\FilterGiftedSubscriptionsDataProvider;
 use Crm\PaymentsModule\DataProvider\PaymentFromVariableSymbolDataProvider;
 use Crm\PaymentsModule\DataProvider\SubscriptionsWithActiveUnchargedRecurrentEndingWithinPeriodDataProvider;
 use Crm\PaymentsModule\DataProvider\SubscriptionsWithoutExtensionEndingWithinPeriodDataProvider;
+use Crm\PaymentsModule\MailConfirmation\ParsedMailLogsRepository;
 use Crm\PaymentsModule\Repository\PaymentsRepository;
 use Crm\PaymentsModule\Seeders\ConfigsSeeder;
 use Crm\PaymentsModule\Seeders\PaymentGatewaysSeeder;
@@ -45,10 +46,17 @@ class PaymentsModule extends CrmModule
 {
     private $paymentsRepository;
 
-    public function __construct(Container $container, Translator $translator, PaymentsRepository $paymentsRepository)
-    {
+    private $parsedMailLogsRepository;
+
+    public function __construct(
+        Container $container,
+        Translator $translator,
+        PaymentsRepository $paymentsRepository,
+        ParsedMailLogsRepository $parsedMailLogsRepository
+    ) {
         parent::__construct($container, $translator);
         $this->paymentsRepository = $paymentsRepository;
+        $this->parsedMailLogsRepository = $parsedMailLogsRepository;
     }
 
     public function registerAdminMenuItems(MenuContainerInterface $menuContainer)
@@ -331,6 +339,8 @@ class PaymentsModule extends CrmModule
             foreach ($cachedPaymentStatusHistograms as $status) {
                 $this->paymentsRepository->paymentsLastMonthDailyHistogram($status, true);
             }
+
+            $this->parsedMailLogsRepository->formPaymentsWithWrongAmount(true);
         }
     }
 }

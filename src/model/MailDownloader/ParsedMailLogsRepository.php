@@ -2,8 +2,12 @@
 
 namespace Crm\PaymentsModule\MailConfirmation;
 
+use Crm\ApplicationModule\Cache\CacheRepository;
 use Crm\ApplicationModule\Repository;
+use Crm\PaymentsModule\Repository\PaymentsRepository;
 use Crm\PaymentsModule\VariableSymbolVariant;
+use Nette\Caching\IStorage;
+use Nette\Database\Context;
 
 class ParsedMailLogsRepository extends Repository
 {
@@ -17,6 +21,21 @@ class ParsedMailLogsRepository extends Repository
     const STATE_NOT_VALID_SIGN = 'no_valid_sign';
 
     protected $tableName = 'parsed_mail_logs';
+
+    private $paymentsRepository;
+
+    private $cacheRepository;
+
+    public function __construct(
+        Context $database,
+        IStorage $cacheStorage = null,
+        PaymentsRepository $paymentsRepository,
+        CacheRepository $cacheRepository
+    ) {
+        parent::__construct($database, $cacheStorage);
+        $this->paymentsRepository = $paymentsRepository;
+        $this->cacheRepository = $cacheRepository;
+    }
 
     public function all($vs = '', $state = '')
     {
@@ -40,5 +59,38 @@ class ParsedMailLogsRepository extends Repository
     public function lastLog()
     {
         return $this->getTable()->order('created_at DESC')->limit(1)->fetch();
+    }
+
+    /**
+     * Cached form payments with wrong amount
+     * @param bool $forceCacheUpdate
+     *
+     * @return array
+     */
+    public function formPaymentsWithWrongAmount($forceCacheUpdate = false)
+    {
+        $callable = function () {
+            $wrongAmountPayments = $this->all('', 'different_amount');
+
+            $listPayments = [];
+            foreach ($wrongAmountPayments as $wrongAmountPayment) {
+                $payment = $this->paymentsRepository->findLastByVS($wrongAmountPayment->variable_symbol);
+                if ($payment && $payment->status == PaymentsRepository::STATUS_FORM) {
+                    $listPayments[] = [
+                        'user_id' => $payment->user->id,
+                        'amount' => $wrongAmountPayment->amount,
+                        'email' => $payment->user->email
+                    ];
+                }
+            }
+            return json_encode($listPayments);
+        };
+
+        return json_decode($this->cacheRepository->loadByKeyAndUpdate(
+            'payments_paid_sum',
+            $callable,
+            \Nette\Utils\DateTime::from(CacheRepository::LONGER_REFRESH_TIME),
+            $forceCacheUpdate
+        ), true);
     }
 }
