@@ -3,6 +3,8 @@
 namespace Crm\PaymentsModule\Repository;
 
 use Crm\ApplicationModule\Cache\CacheRepository;
+use Crm\ApplicationModule\Graphs\GraphData;
+use Crm\ApplicationModule\Graphs\GraphDataItem;
 use Crm\ApplicationModule\Hermes\HermesMessage;
 use Crm\ApplicationModule\Repository;
 use Crm\ApplicationModule\Repository\AuditLogRepository;
@@ -57,6 +59,8 @@ class PaymentsRepository extends Repository
 
     private $cacheRepository;
 
+    private $graphData;
+
     public function __construct(
         $donationVatRate,
         Context $database,
@@ -71,7 +75,8 @@ class PaymentsRepository extends Repository
         \Tomaj\Hermes\Emitter $hermesEmitter,
         PaymentMetaRepository $paymentMetaRepository,
         ITranslator $translator,
-        CacheRepository $cacheRepository
+        CacheRepository $cacheRepository,
+        GraphData $graphData
     ) {
         parent::__construct($database);
         $this->variableSymbol = $variableSymbol;
@@ -87,6 +92,7 @@ class PaymentsRepository extends Repository
         $this->translator = $translator;
         $this->donationVatRate = $donationVatRate;
         $this->cacheRepository = $cacheRepository;
+        $this->graphData = $graphData;
     }
 
     public function add(
@@ -391,7 +397,7 @@ class PaymentsRepository extends Repository
             return $this->cacheRepository->loadByKeyAndUpdate(
                 'payments_paid_sum',
                 $callable,
-                \Nette\Utils\DateTime::from('-10 minutes'),
+                \Nette\Utils\DateTime::from(CacheRepository::DEFAULT_REFRESH_TIME),
                 $forceCacheUpdate
             );
         }
@@ -450,7 +456,7 @@ class PaymentsRepository extends Repository
             return $this->cacheRepository->loadByKeyAndUpdate(
                 'payments_count',
                 $callable,
-                \Nette\Utils\DateTime::from('-5 minutes'),
+                \Nette\Utils\DateTime::from(CacheRepository::DEFAULT_REFRESH_TIME),
                 $forceCacheUpdate
             );
         }
@@ -548,7 +554,7 @@ class PaymentsRepository extends Repository
         return $this->cacheRepository->loadByKeyAndUpdate(
             'subscriptions_with_active_uncharged_recurrent_ending_next_two_weeks_count',
             $callable,
-            \Nette\Utils\DateTime::from('-10 minutes'),
+            \Nette\Utils\DateTime::from(CacheRepository::DEFAULT_REFRESH_TIME),
             $forceCacheUpdate
         );
     }
@@ -565,7 +571,7 @@ class PaymentsRepository extends Repository
         return $this->cacheRepository->loadByKeyAndUpdate(
             'subscriptions_with_active_uncharged_recurrent_ending_next_month_count',
             $callable,
-            \Nette\Utils\DateTime::from('-10 minutes'),
+            \Nette\Utils\DateTime::from(CacheRepository::DEFAULT_REFRESH_TIME),
             $forceCacheUpdate
         );
     }
@@ -606,7 +612,7 @@ class PaymentsRepository extends Repository
         return $this->cacheRepository->loadByKeyAndUpdate(
             'subscriptions_without_extension_ending_next_two_weeks_count',
             $callable,
-            \Nette\Utils\DateTime::from('-10 minutes'),
+            \Nette\Utils\DateTime::from(CacheRepository::DEFAULT_REFRESH_TIME),
             $forceCacheUpdate
         );
     }
@@ -629,7 +635,7 @@ class PaymentsRepository extends Repository
         return $this->cacheRepository->loadByKeyAndUpdate(
             'subscriptions_without_extension_ending_next_month_count',
             $callable,
-            \Nette\Utils\DateTime::from('-10 minutes'),
+            \Nette\Utils\DateTime::from(CacheRepository::DEFAULT_REFRESH_TIME),
             $forceCacheUpdate
         );
     }
@@ -694,5 +700,31 @@ SQL;
             ->where('payments.status = ?', self::STATUS_FORM)
             ->where('payments.created_at >= ?', $from)
             ->order('payments.created_at DESC');
+    }
+
+    public function paymentsLastMonthDailyHistogram($status, $forceCacheUpdate = true)
+    {
+        $cacheKey = "payments_status_{$status}_last_month_daily_histogram";
+
+        $callable = function () use ($status) {
+            $graphDataItem = new GraphDataItem();
+            $graphDataItem->setCriteria((new Criteria())
+                ->setTableName('payments')
+                ->setWhere("AND payments.status = '$status'"));
+
+            $this->graphData->clear();
+            $this->graphData->addGraphDataItem($graphDataItem);
+            $this->graphData->setScaleRange('day')->setStart('-31 days');
+
+            $data = $this->graphData->getData();
+            return json_encode($data);
+        };
+
+        return json_decode($this->cacheRepository->loadByKeyAndUpdate(
+            $cacheKey,
+            $callable,
+            \Nette\Utils\DateTime::from(CacheRepository::DEFAULT_REFRESH_TIME),
+            $forceCacheUpdate
+        ), true);
     }
 }
