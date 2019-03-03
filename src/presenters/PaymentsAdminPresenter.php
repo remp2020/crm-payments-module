@@ -87,15 +87,17 @@ class PaymentsAdminPresenter extends AdminPresenter
     public function renderDefault()
     {
         $payments = $this->filteredPayments();
+        $filteredCount = $payments->count('*');
 
         $vp = new VisualPaginator();
         $this->addComponent($vp, 'vp');
         $paginator = $vp->getPaginator();
-        $paginator->setItemCount($payments->count('*'));
+        $paginator->setItemCount($filteredCount);
         $paginator->setItemsPerPage($this->onPage);
         $this->template->vp = $vp;
+        $this->template->filteredCount = $filteredCount;
         $this->template->payments = $payments->limit($paginator->getLength(), $paginator->getOffset());
-        $this->template->totalPayments = $this->paymentsRepository->totalCount();
+        $this->template->totalPayments = $this->paymentsRepository->totalCount(true);
     }
 
     private function filteredPayments()
@@ -608,7 +610,7 @@ SQL;
         $paginator->setItemsPerPage($this->onPage);
         $this->template->vp = $vp;
         $this->template->payments = $payments->limit($paginator->getLength(), $paginator->getOffset());
-        $this->template->totalPayments = $this->paymentsRepository->totalCount();
+        $this->template->totalPayments = $this->paymentsRepository->totalCount(true);
     }
 
     public function createComponentPaymentForm()

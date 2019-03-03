@@ -311,6 +311,7 @@ class PaymentsModule extends CrmModule
         if (in_array('precalc', $tags, true)) {
             $output->writeln("<info>Refreshing payment stats cache</info>");
 
+            $this->paymentsRepository->totalCount(true, true);
             $this->paymentsRepository->totalAmountSum(true, true);
             $this->paymentsRepository->freeSubscribersCount(true, true);
             $this->paymentsRepository->paidSubscribersCount(true, true);

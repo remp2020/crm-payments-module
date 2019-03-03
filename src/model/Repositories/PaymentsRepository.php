@@ -441,6 +441,22 @@ class PaymentsRepository extends Repository
         }
     }
 
+    public function totalCount($allowCached = false, $forceCacheUpdate = false)
+    {
+        $callable = function () {
+            return parent::totalCount();
+        };
+        if ($allowCached) {
+            return $this->cacheRepository->loadByKeyAndUpdate(
+                'payments_count',
+                $callable,
+                \Nette\Utils\DateTime::from('-5 minutes'),
+                $forceCacheUpdate
+            );
+        }
+        return $callable();
+    }
+
     public function paidSubscribersCount($allowCached = false, $forceCacheUpdate = false)
     {
         $callable = function () {
