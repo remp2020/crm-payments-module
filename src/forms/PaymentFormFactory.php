@@ -221,6 +221,19 @@ class PaymentFormFactory
             ->addConditionOn($manualSubscription, Form::EQUAL, self::MANUAL_SUBSCRIPTION_START_END)
             ->setRequired(true);
 
+        // allow change of manual subscription start & end dates only for 'form' payments
+        if ($payment && $payment->status !== 'form') {
+            $manualSubscription
+                ->setAttribute('readonly', 'readonly')
+                ->setDisabled();
+            $subscriptionStartAt
+                ->setAttribute('readonly', 'readonly')
+                ->setDisabled();
+            $subscriptionEndAt
+                ->setAttribute('readonly', 'readonly')
+                ->setDisabled();
+        }
+
         $form->addTextArea('note', 'Poznámka')
             ->setAttribute('placeholder', 'Vlastná poznámka k platbe')
             ->getControlPrototype()->addAttributes(['class' => 'autosize']);
