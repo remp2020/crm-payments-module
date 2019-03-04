@@ -63,7 +63,7 @@ class SubscribersWithPaymentWidget extends BaseWidget
         }
 
         $date = new DateTime;
-        $daysDiff = $date->diff($this->date)->d;
+        $daysDiff = $date->diff($this->date)->days;
 
         $now = $this->segmentsValuesRepository->valuesBySegmentCode($this->segmentCode)
             ->order('date DESC')
