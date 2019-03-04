@@ -286,8 +286,7 @@ class PaymentFormFactory
                 throw new \Exception("manual subscription start attempted without providing start date");
             }
             $subscriptionStartAt = DateTime::from($values['subscription_start_at']);
-        }
-        if ($values['manual_subscription'] === self::MANUAL_SUBSCRIPTION_START_END) {
+        } elseif ($values['manual_subscription'] === self::MANUAL_SUBSCRIPTION_START_END) {
             if ($values['subscription_start_at'] === null) {
                 throw new \Exception("manual subscription start attempted without providing start date");
             }
@@ -297,6 +296,8 @@ class PaymentFormFactory
             }
             $subscriptionEndAt = DateTime::from($values['subscription_end_at']);
         }
+
+        unset($values['manual_subscription']);
 
         $paymentGateway = $this->paymentGatewaysRepository->find($values['payment_gateway_id']);
 
