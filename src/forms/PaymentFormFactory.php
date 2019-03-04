@@ -84,6 +84,12 @@ class PaymentFormFactory
                 ];
             }
             $defaults['payment_items'] = Json::encode($items);
+
+            if (isset($defaults['subscription_end_at']) && isset($defaults['subscription_start_at'])) {
+                $defaults['manual_subscription'] = self::MANUAL_SUBSCRIPTION_START_END;
+            } elseif (isset($defaults['subscription_start_at'])) {
+                $defaults['manual_subscription'] = self::MANUAL_SUBSCRIPTION_START;
+            }
         }
 
         $form = new Form;
