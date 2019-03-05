@@ -84,6 +84,12 @@ class PaymentFormFactory
                 ];
             }
             $defaults['payment_items'] = Json::encode($items);
+
+            if (isset($defaults['subscription_end_at']) && isset($defaults['subscription_start_at'])) {
+                $defaults['manual_subscription'] = self::MANUAL_SUBSCRIPTION_START_END;
+            } elseif (isset($defaults['subscription_start_at'])) {
+                $defaults['manual_subscription'] = self::MANUAL_SUBSCRIPTION_START;
+            }
         }
 
         $form = new Form;
@@ -215,6 +221,19 @@ class PaymentFormFactory
             ->addConditionOn($manualSubscription, Form::EQUAL, self::MANUAL_SUBSCRIPTION_START_END)
             ->setRequired(true);
 
+        // allow change of manual subscription start & end dates only for 'form' payments
+        if ($payment && $payment->status !== 'form') {
+            $manualSubscription
+                ->setAttribute('readonly', 'readonly')
+                ->setDisabled();
+            $subscriptionStartAt
+                ->setAttribute('readonly', 'readonly')
+                ->setDisabled();
+            $subscriptionEndAt
+                ->setAttribute('readonly', 'readonly')
+                ->setDisabled();
+        }
+
         $form->addTextArea('note', 'Poznámka')
             ->setAttribute('placeholder', 'Vlastná poznámka k platbe')
             ->getControlPrototype()->addAttributes(['class' => 'autosize']);
@@ -286,8 +305,7 @@ class PaymentFormFactory
                 throw new \Exception("manual subscription start attempted without providing start date");
             }
             $subscriptionStartAt = DateTime::from($values['subscription_start_at']);
-        }
-        if ($values['manual_subscription'] === self::MANUAL_SUBSCRIPTION_START_END) {
+        } elseif ($values['manual_subscription'] === self::MANUAL_SUBSCRIPTION_START_END) {
             if ($values['subscription_start_at'] === null) {
                 throw new \Exception("manual subscription start attempted without providing start date");
             }
@@ -297,6 +315,8 @@ class PaymentFormFactory
             }
             $subscriptionEndAt = DateTime::from($values['subscription_end_at']);
         }
+
+        unset($values['manual_subscription']);
 
         $paymentGateway = $this->paymentGatewaysRepository->find($values['payment_gateway_id']);
 

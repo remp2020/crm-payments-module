@@ -30,7 +30,7 @@ class ReferenceCriteria implements CriteriaInterface
         $where = [];
 
         if ($params->has('reference')) {
-            $where[] = " payments.variable_symbol = '{$params->string('reference')->value()}'";
+            $where[] = " payments.variable_symbol = {$params->string('reference')->escapedString()}";
         }
 
         return "SELECT DISTINCT(payments.id) AS id
