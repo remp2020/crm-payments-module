@@ -35,21 +35,11 @@ class PaymentItemsRepository extends Repository
         $this->emitter = $emitter;
     }
 
-    public function add(IRow $payment, string $name, $amount, int $vat = null, int $subscriptionTypeId = null, IRow $product = null, int $count = 1)
+    public function add(IRow $payment, string $name, $amount, int $vat, int $subscriptionTypeId = null, IRow $product = null, int $count = 1)
     {
         $type = 'subscription_type';
         if (!$subscriptionTypeId && $product) {
             $type = 'product';
-        }
-
-        // TODO - refactor - move to separate table, or change as integer in product
-        if ($vat == null && $product) {
-            $vatLevels = [
-                'normal' => $this->applicationConfig->get('vat_normal_level'),
-                'lower' => $this->applicationConfig->get('vat_lower_level'),
-                'zero' => $this->applicationConfig->get('vat_zero_level'),
-            ];
-            $vat = $vatLevels[$product->vat_level];
         }
 
         $paymentItem = $this->insert([
