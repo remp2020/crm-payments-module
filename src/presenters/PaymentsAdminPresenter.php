@@ -170,22 +170,22 @@ class PaymentsAdminPresenter extends AdminPresenter
 
             // we're intentionally not using $this->paymentsRepository->unBundleProducts,
             // because the pricing of individual products doesn't need to match price of the bundle
-            foreach ($payment->related('payment_items')->where(['product_id IS NOT ?' => null]) as $paymentProduct) {
-                if (!$paymentProduct->price) {
+            foreach ($payment->related('payment_items')->where('product_id IS NOT NULL') as $paymentItem) {
+                if (!$paymentItem->amount) {
                     continue;
                 }
 
-                $product = $paymentProduct->product;
+                $product = $paymentItem->product;
                 if (!isset($stats['product_sums'][$product->id])) {
                     $stats['product_sums'][$product->id] = [];
                 }
-                if (!isset($stats['product_sums'][$product->id][strval($paymentProduct->amount)])) {
-                    $stats['product_sums'][$product->id][strval($paymentProduct->amount)] = 0;
+                if (!isset($stats['product_sums'][$product->id][strval($paymentItem->amount)])) {
+                    $stats['product_sums'][$product->id][strval($paymentItem->amount)] = 0;
                 }
                 $stats['products'][$product->id] = $product;
-                $stats['product_sums'][$product->id][strval($paymentProduct->amount)] += $paymentProduct->count * $paymentProduct->amount;
-                $paymentSum += $paymentProduct->count * $paymentProduct->amount;
-                $total += $paymentProduct->count * $paymentProduct->amount;
+                $stats['product_sums'][$product->id][strval($paymentItem->amount)] += $paymentItem->count * $paymentItem->amount;
+                $paymentSum += $paymentItem->count * $paymentItem->amount;
+                $total += $paymentItem->count * $paymentItem->amount;
             }
 
             foreach ($payment->related('orders') as $order) {

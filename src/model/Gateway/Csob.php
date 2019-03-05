@@ -75,41 +75,6 @@ class Csob extends GatewayAbstract implements PaymentInterface
             }
         }
 
-
-
-//        $cart = [];
-//        if ($payment->subscription_type) {
-//            $cart[] = [
-//                'name' => !empty($payment->subscription_type->user_label) ? $payment->subscription_type->user_label : $payment->subscription_type->name,
-//                'quantity' => 1,
-//                'price' => $payment->amount,
-//            ];
-//        }
-
-//        $products = [];
-//        $productsAmount = 0;
-//        $productsCount = 0;
-//        foreach ($payment->related('payment_products') as $paymentProduct) {
-//            $products[] = [
-//                'name' => !empty($paymentProduct->product->user_label) ? $paymentProduct->product->user_label : $payment->subscription_type->name,
-//                'quantity' => $paymentProduct->count,
-//                'price' => $paymentProduct->price * $paymentProduct->count,
-//            ];
-//            $productsCount += $paymentProduct->count;
-//            $productsAmount += $paymentProduct->price * $paymentProduct->count;
-//        }
-//
-//
-//        if (count($products) <= 2) {
-//            $cart += $products;
-//        } else {
-//            $cart[] = [
-//                'name' => $this->applicationConfig->get('csob_shop_name') ?? $this->applicationConfig->get('site_title'),
-//                'quantity' => $productsCount,
-//                'price' => $productsAmount,
-//            ];
-//        }
-
         $this->response = $this->gateway->checkout([
             'returnUrl' => $this->generateReturnUrl($payment) . '?vs=' . $payment->variable_symbol,
             'transactionId' => $payment->variable_symbol,
