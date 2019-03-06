@@ -8,6 +8,7 @@ use Crm\PaymentsModule\Repository\PaymentsRepository;
 use Crm\PaymentsModule\VariableSymbolVariant;
 use Nette\Caching\IStorage;
 use Nette\Database\Context;
+use Nette\Utils\Json;
 
 class ParsedMailLogsRepository extends Repository
 {
@@ -61,11 +62,14 @@ class ParsedMailLogsRepository extends Repository
         return $this->getTable()->order('created_at DESC')->limit(1)->fetch();
     }
 
+
     /**
      * Cached form payments with wrong amount
+     *
      * @param bool $forceCacheUpdate
      *
      * @return array
+     * @throws \Nette\Utils\JsonException
      */
     public function formPaymentsWithWrongAmount($forceCacheUpdate = false): array
     {
@@ -83,14 +87,15 @@ class ParsedMailLogsRepository extends Repository
                     ];
                 }
             }
-            return json_encode($listPayments);
+
+            return Json::encode($listPayments);
         };
 
-        return json_decode($this->cacheRepository->loadAndUpdate(
+        return Json::decode($this->cacheRepository->loadAndUpdate(
             'payments_paid_sum',
             $callable,
             \Nette\Utils\DateTime::from(CacheRepository::REFRESH_TIME_1_HOUR),
             $forceCacheUpdate
-        ), true);
+        ), Json::FORCE_ARRAY);
     }
 }

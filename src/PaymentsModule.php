@@ -32,12 +32,14 @@ use Crm\PaymentsModule\DataProvider\PaymentFromVariableSymbolDataProvider;
 use Crm\PaymentsModule\DataProvider\SubscriptionsWithActiveUnchargedRecurrentEndingWithinPeriodDataProvider;
 use Crm\PaymentsModule\DataProvider\SubscriptionsWithoutExtensionEndingWithinPeriodDataProvider;
 use Crm\PaymentsModule\MailConfirmation\ParsedMailLogsRepository;
+use Crm\PaymentsModule\Presenters\PaymentsAdminPresenter;
 use Crm\PaymentsModule\Repository\PaymentsRepository;
 use Crm\PaymentsModule\Seeders\ConfigsSeeder;
 use Crm\PaymentsModule\Seeders\PaymentGatewaysSeeder;
 use Crm\PaymentsModule\Seeders\SegmentsSeeder;
 use Kdyby\Translation\Translator;
 use League\Event\Emitter;
+use Mpdf\Tag\P;
 use Nette\DI\Container;
 use Symfony\Component\Console\Output\OutputInterface;
 use Tomaj\Hermes\Dispatcher;
@@ -48,15 +50,19 @@ class PaymentsModule extends CrmModule
 
     private $parsedMailLogsRepository;
 
+    private $paymentsHistogramFactory;
+
     public function __construct(
         Container $container,
         Translator $translator,
         PaymentsRepository $paymentsRepository,
-        ParsedMailLogsRepository $parsedMailLogsRepository
+        ParsedMailLogsRepository $parsedMailLogsRepository,
+        PaymentsHistogramFactory $paymentsHistogramFactory
     ) {
         parent::__construct($container, $translator);
         $this->paymentsRepository = $paymentsRepository;
         $this->parsedMailLogsRepository = $parsedMailLogsRepository;
+        $this->paymentsHistogramFactory = $paymentsHistogramFactory;
     }
 
     public function registerAdminMenuItems(MenuContainerInterface $menuContainer)
@@ -337,7 +343,7 @@ class PaymentsModule extends CrmModule
             ];
 
             foreach ($cachedPaymentStatusHistograms as $status) {
-                $this->paymentsRepository->paymentsLastMonthDailyHistogram($status, true);
+                $this->paymentsHistogramFactory->paymentsLastMonthDailyHistogram($status, true);
             }
 
             $this->parsedMailLogsRepository->formPaymentsWithWrongAmount(true);

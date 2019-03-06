@@ -2,10 +2,12 @@
 
 namespace Crm\PaymentsModule\Presenters;
 
+use Crm\ApplicationModule\Cache\CacheRepository;
 use Crm\ApplicationModule\Components\Graphs\SmallBarGraphControlFactoryInterface;
 use Crm\ApplicationModule\Components\VisualPaginator;
 use Crm\ApplicationModule\DataProvider\DataProviderManager;
 use Crm\ApplicationModule\Graphs\Criteria;
+use Crm\ApplicationModule\Graphs\GraphData;
 use Crm\ApplicationModule\Graphs\GraphDataItem;
 use Crm\AdminModule\Presenters\AdminPresenter;
 use Crm\PaymentsModule\Components\ChangePaymentStatusFactoryInterface;
@@ -14,6 +16,7 @@ use Crm\PaymentsModule\DataProvider\AdminFilterFormDataProviderInterface;
 use Crm\PaymentsModule\Forms\AccountantExportFormFactory;
 use Crm\PaymentsModule\Forms\PaymentFormFactory;
 use Crm\PaymentsModule\PaymentProcessor;
+use Crm\PaymentsModule\PaymentsHistogramFactory;
 use Crm\PaymentsModule\Repository\PaymentGatewaysRepository;
 use Crm\PaymentsModule\Repository\PaymentsRepository;
 use Crm\PaymentsModule\Repository\RecurrentPaymentsRepository;
@@ -56,6 +59,9 @@ class PaymentsAdminPresenter extends AdminPresenter
 
     /** @var DataProviderManager @inject */
     public $dataProviderManager;
+
+    /** @var PaymentsHistogramFactory @inject */
+    public $paymentsHistogramFactory;
 
     /** @persistent */
     public $payment_gateway;
@@ -671,7 +677,7 @@ SQL;
 
     private function generateSmallBarGraphComponent($status, $title, SmallBarGraphControlFactoryInterface $factory)
     {
-        $data = $this->paymentsRepository->paymentsLastMonthDailyHistogram($status);
+        $data = $this->paymentsHistogramFactory->paymentsLastMonthDailyHistogram($status);
 
         $control = $factory->create();
         $control->setGraphTitle($title)->addSerie($data);
@@ -681,13 +687,11 @@ SQL;
 
     protected function createComponentChangePaymentStatus(ChangePaymentStatusFactoryInterface $factory)
     {
-        $control = $factory->create();
-        return $control;
+        return $factory->create();
     }
 
     protected function createComponentGiftCoupons(GiftCouponsFactoryInterface $factory)
     {
-        $control = $factory->create();
-        return $control;
+        return $factory->create();
     }
 }
