@@ -237,6 +237,7 @@ class PaymentsModule extends CrmModule
     public function registerSegmentCriteria(CriteriaStorage $criteriaStorage)
     {
         $criteriaStorage->register('users', 'payment', $this->getInstance(\Crm\PaymentsModule\Segment\PaymentCriteria::class));
+        $criteriaStorage->register('users', 'payment_counts', $this->getInstance(\Crm\PaymentsModule\Segment\PaymentCountsCriteria::class));
         $criteriaStorage->register('users', 'recurrent_payment', $this->getInstance(\Crm\PaymentsModule\Segment\RecurrentPaymentCriteria::class));
 
         $criteriaStorage->register('payments', 'amount', $this->getInstance(\Crm\PaymentsModule\Segment\AmountCriteria::class));

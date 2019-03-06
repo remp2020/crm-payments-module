@@ -33,8 +33,25 @@ class PaymentCriteria implements CriteriaInterface
     public function params(): array
     {
         return [
-            new BooleanParam('additional_amount', "Donation", "Filters payments with / without donation"),
-            new DateTimeParam('created', "Created", "Filters payments created within selected period"),
+            new BooleanParam(
+                "additional_amount",
+                "Donation",
+                "Filters users with payments with / without donation"
+            ),
+            new DateTimeParam(
+                "created",
+                "Created",
+                "Filters users with payments created within selected period"
+            ),
+            new StringArrayParam(
+                "status",
+                "Status",
+                "Filters users with payments with specific status",
+                false,
+                [PaymentsRepository::STATUS_PAID],
+                null,
+                array_keys($this->paymentsRepository->getStatusPairs())
+            ),
         ];
     }
 
