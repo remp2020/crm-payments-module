@@ -321,7 +321,7 @@ class PaymentsModule extends CrmModule
     public function cache(OutputInterface $output, array $tags = [])
     {
         if (in_array('precalc', $tags, true)) {
-            $output->writeln('* Refreshing <info>payment stats</info> cache');
+            $output->writeln('  * Refreshing <info>payment stats</info> cache');
 
             $this->paymentsRepository->totalCount(true, true);
             $this->paymentsRepository->totalAmountSum(true, true);

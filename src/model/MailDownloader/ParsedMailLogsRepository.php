@@ -92,7 +92,7 @@ class ParsedMailLogsRepository extends Repository
         };
 
         return Json::decode($this->cacheRepository->loadAndUpdate(
-            'payments_paid_sum',
+            'payments_with_wrong_sum',
             $callable,
             \Nette\Utils\DateTime::from(CacheRepository::REFRESH_TIME_1_HOUR),
             $forceCacheUpdate
