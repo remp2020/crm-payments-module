@@ -28,9 +28,9 @@ class ParsedMailLogsRepository extends Repository
 
     public function __construct(
         Context $database,
-        IStorage $cacheStorage = null,
         PaymentsRepository $paymentsRepository,
-        CacheRepository $cacheRepository
+        CacheRepository $cacheRepository,
+        IStorage $cacheStorage = null
     ) {
         parent::__construct($database, $cacheStorage);
         $this->paymentsRepository = $paymentsRepository;
@@ -67,7 +67,7 @@ class ParsedMailLogsRepository extends Repository
      *
      * @return array
      */
-    public function formPaymentsWithWrongAmount($forceCacheUpdate = false)
+    public function formPaymentsWithWrongAmount($forceCacheUpdate = false): array
     {
         $callable = function () {
             $wrongAmountPayments = $this->all('', 'different_amount');
