@@ -86,10 +86,10 @@ class ParsedMailLogsRepository extends Repository
             return json_encode($listPayments);
         };
 
-        return json_decode($this->cacheRepository->loadByKeyAndUpdate(
+        return json_decode($this->cacheRepository->loadAndUpdate(
             'payments_paid_sum',
             $callable,
-            \Nette\Utils\DateTime::from(CacheRepository::LONGER_REFRESH_TIME),
+            \Nette\Utils\DateTime::from(CacheRepository::REFRESH_TIME_1_HOUR),
             $forceCacheUpdate
         ), true);
     }
