@@ -39,14 +39,14 @@ class PaymentCountsCriteria implements CriteriaInterface
         ];
     }
 
-    public function join(ParamsBag $paramBag): string
+    public function join(ParamsBag $params): string
     {
         $where = [];
         $join = [];
 
-        if ($paramBag->has('subscription_payments')) {
+        if ($params->has('subscription_payments')) {
             $join[] = "LEFT JOIN user_meta spum ON `key` = 'subscription_payments' AND spum.user_id = users.id";
-            $where += $paramBag->number('subscription_payments')->conditions('COALESCE(`spum`.`value`, 0)');
+            $where += $params->number('subscription_payments')->conditions('COALESCE(`spum`.`value`, 0)');
         }
 
         return "SELECT DISTINCT(users.id) AS id, " . Fields::formatSql($this->fields()) . "
