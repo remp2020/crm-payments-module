@@ -76,7 +76,7 @@ class PaymentItemsRepository extends Repository
         ])->delete();
         foreach ($productIds as $productId => $count) {
             $product = $this->productsRepository->find($productId);
-            $this->add($payment, $product->name, $product->price, 20, null, $product, $count);
+            $this->add($payment, $product->name, $product->price, $product->vat, null, $product, $count);
         }
     }
 

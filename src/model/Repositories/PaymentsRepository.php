@@ -203,7 +203,8 @@ class PaymentsRepository extends Repository
                 $paymentItem->amount,
                 $paymentItem->vat,
                 $paymentItem->subscription_type_id,
-                $paymentItem->product
+                $paymentItem->product,
+                $paymentItem->count
             );
         }
 
