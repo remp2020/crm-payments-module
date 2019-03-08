@@ -139,6 +139,7 @@ class PaymentsRepository extends Repository
         $payment = $this->insert($data);
 
         // subscriptions
+        // TODO NAJDI!
         if (!empty($paymentItems)) {
             foreach ($paymentItems as $item) {
                 $this->paymentItemsRepository->add(
@@ -197,15 +198,10 @@ class PaymentsRepository extends Repository
         ]);
 
         foreach ($payment->related('payment_items') as $paymentItem) {
-            $this->paymentItemsRepository->add(
-                $newPayment,
-                $paymentItem->name,
-                $paymentItem->amount,
-                $paymentItem->vat,
-                $paymentItem->subscription_type_id,
-                $paymentItem->product,
-                $paymentItem->count
-            );
+            $paymentItemArray = $paymentItem->toArray();
+            $paymentItemArray['payment_id'] = $payment->id;
+            unset($paymentItemArray['id']);
+            $this->paymentItemsRepository->getTable()->insert($paymentItemArray);
         }
 
         return $newPayment;
@@ -224,11 +220,11 @@ class PaymentsRepository extends Repository
         return $items;
     }
 
+    // TODO NAJDI! VYHODIT PAYMENT ITEMS
     public function update(IRow &$row, $data, $paymentItems = [])
     {
-        $paymentId = $row->id;
         if (!empty($paymentItems)) {
-            $this->paymentItemsRepository->deleteForPaymentId($paymentId);
+            $this->paymentItemsRepository->deleteByPayment($row);
 
             foreach ($paymentItems as $item) {
                 $this->paymentItemsRepository->add(

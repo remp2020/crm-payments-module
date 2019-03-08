@@ -4,7 +4,10 @@ namespace Crm\PaymentsModule\Repository;
 
 use Crm\ApplicationModule\Config\ApplicationConfig;
 use Crm\ApplicationModule\Repository;
+use Crm\PaymentsModule\PaymentItem\PaymentItemContainer;
 use Crm\ProductsModule\Events\CartItemAddedEvent;
+use Crm\PaymentsModule\PaymentItem\PaymentItemInterface;
+use Crm\ProductsModule\PaymentItem\ProductPaymentItem;
 use Crm\ProductsModule\Repository\ProductsRepository;
 use League\Event\Emitter;
 use Nette\Caching\IStorage;
@@ -35,6 +38,27 @@ class PaymentItemsRepository extends Repository
         $this->emitter = $emitter;
     }
 
+    public function add(IRow $payment, PaymentItemContainer $container)
+    {
+        /** @var PaymentItemInterface $item */
+        foreach ($container->items() as $item) {
+            $data = [
+                'payment_id' => $payment->id,
+                'type' => $item->type(),
+                'count' => $item->count(),
+                'name' => $item->name(),
+                'amount' => $item->price(),
+                'vat' => $item->vat(),
+                'created_at' => new DateTime(),
+                'updated_at' => new DateTime(),
+            ];
+            foreach ($item->data() as $key => $value) {
+                $data[$key] = $value;
+            }
+            $this->insert($data);
+        }
+    }
+/*
     public function add(IRow $payment, string $name, $amount, int $vat, int $subscriptionTypeId = null, IRow $product = null, int $count = 1)
     {
         $type = 'subscription_type';
@@ -61,35 +85,12 @@ class PaymentItemsRepository extends Repository
 
         return $paymentItem;
     }
+*/
 
-    public function deleteForPaymentId(int $paymentId)
+    public function deleteByPayment(IRow $payment)
     {
         return $this->getTable()
-                    ->where('payment_id', $paymentId)
-                    ->delete();
-    }
-
-    public function reset(IRow $payment, array $productIds = []): void
-    {
-        $this->getTable()->where([
-            'payment_id' => $payment->id,
-        ])->delete();
-        foreach ($productIds as $productId => $count) {
-            $product = $this->productsRepository->find($productId);
-            $this->add($payment, $product->name, $product->price, $product->vat, null, $product, $count);
-        }
-    }
-
-    public function hasUniqueProduct(IRow $product, int $userId): bool
-    {
-        return $this->getTable()->where(['payment.user_id' => $userId, 'payment.status' => PaymentsRepository::STATUS_PAID, 'product_id' => $product->id])->count('*') > 0;
-    }
-
-    public function getProductSalesCount(IRow $product)
-    {
-        return $this->getTable()
-            ->where('product_id', $product->id)
-            ->where('payment.status', PaymentsRepository::STATUS_PAID)
-            ->fetchField('COUNT(`count`)');
+            ->where('payment_id', $payment->id)
+            ->delete();
     }
 }
