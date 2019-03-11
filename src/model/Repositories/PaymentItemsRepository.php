@@ -5,9 +5,7 @@ namespace Crm\PaymentsModule\Repository;
 use Crm\ApplicationModule\Config\ApplicationConfig;
 use Crm\ApplicationModule\Repository;
 use Crm\PaymentsModule\PaymentItem\PaymentItemContainer;
-use Crm\ProductsModule\Events\CartItemAddedEvent;
 use Crm\PaymentsModule\PaymentItem\PaymentItemInterface;
-use Crm\ProductsModule\PaymentItem\ProductPaymentItem;
 use Crm\ProductsModule\Repository\ProductsRepository;
 use League\Event\Emitter;
 use Nette\Caching\IStorage;
@@ -38,8 +36,9 @@ class PaymentItemsRepository extends Repository
         $this->emitter = $emitter;
     }
 
-    public function add(IRow $payment, PaymentItemContainer $container)
+    public function add(IRow $payment, PaymentItemContainer $container): array
     {
+        $rows = [];
         /** @var PaymentItemInterface $item */
         foreach ($container->items() as $item) {
             $data = [
@@ -55,8 +54,9 @@ class PaymentItemsRepository extends Repository
             foreach ($item->data() as $key => $value) {
                 $data[$key] = $value;
             }
-            $this->insert($data);
+            $rows[] = $this->insert($data);
         }
+        return $rows;
     }
 /*
     public function add(IRow $payment, string $name, $amount, int $vat, int $subscriptionTypeId = null, IRow $product = null, int $count = 1)

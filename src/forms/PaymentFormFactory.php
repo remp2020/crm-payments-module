@@ -4,15 +4,20 @@ namespace Crm\PaymentsModule\Forms;
 
 use Crm\ApplicationModule\DataProvider\DataProviderManager;
 use Crm\PaymentsModule\DataProvider\PaymentFormDataProviderInterface;
+use Crm\PaymentsModule\PaymentItem\DonationPaymentItem;
+use Crm\PaymentsModule\PaymentItem\PaymentItemContainer;
 use Crm\PaymentsModule\Repository\PaymentGatewaysRepository;
 use Crm\PaymentsModule\Repository\PaymentsRepository;
+use Crm\SubscriptionsModule\PaymentItem\SubscriptionTypePaymentItem;
 use Crm\SubscriptionsModule\Repository\SubscriptionTypesRepository;
 use Crm\SubscriptionsModule\Subscription\SubscriptionType;
 use Crm\UsersModule\Repository\AddressesRepository;
 use Crm\UsersModule\Repository\UsersRepository;
+use Kdyby\Translation\Translator;
 use Nette\Application\UI\Form;
 use Nette\Database\Table\IRow;
 use Nette\Forms\Controls\TextInput;
+use Nette\Localization\ITranslator;
 use Nette\Utils\ArrayHash;
 use Nette\Utils\DateTime;
 use Nette\Utils\Html;
@@ -23,6 +28,8 @@ class PaymentFormFactory
 {
     const MANUAL_SUBSCRIPTION_START = 'start_at';
     const MANUAL_SUBSCRIPTION_START_END = 'start_end_at';
+
+    private $donationPaymentVat;
 
     private $paymentsRepository;
 
@@ -36,6 +43,8 @@ class PaymentFormFactory
 
     private $dataProviderManager;
 
+    private $translator;
+
     public $onSave;
 
     public $onUpdate;
@@ -43,19 +52,23 @@ class PaymentFormFactory
     private $onCallback;
 
     public function __construct(
+        $donationPaymentVat,
         PaymentsRepository $paymentsRepository,
         PaymentGatewaysRepository $paymentGatewaysRepository,
         SubscriptionTypesRepository $subscriptionTypesRepository,
         UsersRepository $usersRepository,
         AddressesRepository $addressesRepository,
-        DataProviderManager $dataProviderManager
+        DataProviderManager $dataProviderManager,
+        ITranslator $translator
     ) {
+        $this->donationPaymentVat = $donationPaymentVat;
         $this->paymentsRepository = $paymentsRepository;
         $this->paymentGatewaysRepository = $paymentGatewaysRepository;
         $this->subscriptionTypesRepository = $subscriptionTypesRepository;
         $this->usersRepository = $usersRepository;
         $this->addressesRepository = $addressesRepository;
         $this->dataProviderManager = $dataProviderManager;
+        $this->translator = $translator;
     }
 
     /**
@@ -334,7 +347,10 @@ class PaymentFormFactory
             unset($values['payment_id']);
         }
 
-        $items = [];
+        $paymentItemContainer = new PaymentItemContainer();
+//        dump($values);
+//        dump($subscriptionType);
+
         if ((isset($values['custom_payment_items']) && $values['custom_payment_items'])
             || ($payment && $payment->status === 'form')
         ) {
@@ -345,13 +361,33 @@ class PaymentFormFactory
                 if ($item->amount < 0) {
                     $form['subscription_type_id']->addError('Cena položiek musí byť nezáporná');
                 }
-                $items[] = ArrayHash::from([
-                    'amount' => $item->amount,
-                    'name' => $item->name,
-                    'vat' => $item->vat,
-                ]);
+                if ($subscriptionType) {
+//                    die('x');
+                    $paymentItem = new SubscriptionTypePaymentItem($subscriptionType, 1);
+                    $paymentItem->forceName($item->name);
+                    $paymentItem->forceVat($item->vat);
+                    $paymentItem->forcePrice($item->amount);
+
+                    $paymentItemContainer->addItem($paymentItem);
+                }
             }
+        } else {
+            if ($subscriptionType) {
+                $paymentItemContainer->addItems(SubscriptionTypePaymentItem::fromSubscriptionType($subscriptionType));
+//                dump($paymentItemContainer);
+//                die('j');
+            }
+//            die('p');
         }
+
+//        die('c');
+
+        // test
+        //  * vytvorenie beznej plaltby na subscripotionk
+        //  * vytvoreni benzej platby na produkty
+        //  X vytvorenie platby na subscription + produckt
+        //  - platba s custom itemamy
+        //  - editacia platieb s itemami??
 
         if ($payment !== null) {
             unset($values['payment_items']);
@@ -366,7 +402,11 @@ class PaymentFormFactory
                 $values['additional_type'] = $payment->additional_type;
             }
 
-            $this->paymentsRepository->update($payment, $values, $items);
+            if ($values['additional_amount']) {
+                $paymentItemContainer->addItem(new DonationPaymentItem($this->translator->translate('payments.admin.donation'), $values['additional_amount'], $this->donationPaymentVat));
+            }
+
+            $this->paymentsRepository->update($payment, $values, $paymentItemContainer);
             if ($currentStatus !== $values['status']) {
                 $this->paymentsRepository->updateStatus($payment, $values['status'], $sendNotification);
             }
@@ -393,29 +433,31 @@ class PaymentFormFactory
                 $additionalType = $values['additional_type'];
             }
 
+            if ($additionalAmount) {
+                $paymentItemContainer->addItem(new DonationPaymentItem($this->translator->translate('payments.admin.donation'), $additionalAmount, $this->donationPaymentVat));
+            }
+//            dump($paymentItemContainer); die('pp');
+
             $user = $this->usersRepository->find($values['user_id']);
 
             $payment = $this->paymentsRepository->add(
                 $subscriptionType,
                 $paymentGateway,
                 $user,
+                $paymentItemContainer,
                 $values['referer'],
-                null,
+                $values['amount'],
                 $subscriptionStartAt,
                 $subscriptionEndAt,
-                null,
+                $values['note'],
                 $additionalAmount,
                 $additionalType,
                 $variableSymbol,
                 $address,
-                false,
-                $items
+                false
             );
 
-            $updateArray = [
-                'amount' => $values['amount'],
-                'note' => $values['note'],
-            ];
+            $updateArray = [];
             if (isset($values['paid_at'])) {
                 $updateArray['paid_at'] = $values['paid_at'];
             }

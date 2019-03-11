@@ -8,6 +8,7 @@ use Crm\PaymentsModule\Events\RecurrentPaymentFailTryEvent;
 use Crm\PaymentsModule\Events\RecurrentPaymentRenewedEvent;
 use Crm\PaymentsModule\GatewayFactory;
 use Crm\PaymentsModule\GatewayFail;
+use Crm\PaymentsModule\PaymentItem\PaymentItemContainer;
 use Crm\PaymentsModule\RecurrentPaymentFailStop;
 use Crm\PaymentsModule\RecurrentPaymentFailTry;
 use Crm\PaymentsModule\RecurrentPaymentFastCharge;
@@ -16,6 +17,7 @@ use Crm\PaymentsModule\Repository\PaymentLogsRepository;
 use Crm\PaymentsModule\Repository\PaymentsRepository;
 use Crm\PaymentsModule\Repository\RecurrentPaymentsRepository;
 use Crm\PaymentsModule\Upgrade\Expander;
+use Crm\SubscriptionsModule\PaymentItem\SubscriptionTypePaymentItem;
 use Crm\SubscriptionsModule\Repository\SubscriptionTypesRepository;
 use League\Event\Emitter;
 use Nette\Localization\ITranslator;
@@ -143,10 +145,24 @@ class RecurrentPaymentsChargeCommand extends Command
                     }
                 }
 
+                // TODO - remove this code and also generating $items array as well
+                // possible solution should be add `recurrent` field to payment_items
+                // and copy only this items with recurrent flag
+                // for now this should be ok because we are not selling recurring products
+                $paymentItemContainer = new PaymentItemContainer();
+                foreach ($items as $item) {
+                    $paymentItem = (new SubscriptionTypePaymentItem($subscriptionType))
+                        ->forceName($item['name'])
+                        ->forcePrice($item['amount'])
+                        ->forceVat($item['vat']);
+                    $paymentItemContainer->addItem($paymentItem);
+                }
+
                 $payment = $this->paymentsRepository->add(
                     $subscriptionType,
                     $recurrentPayment->payment_gateway,
                     $recurrentPayment->user,
+                    $paymentItemContainer,
                     null,
                     $amount,
                     null,
@@ -156,8 +172,7 @@ class RecurrentPaymentsChargeCommand extends Command
                     $additionalType,
                     null,
                     null,
-                    true,
-                    $items
+                    true
                 );
             }
 

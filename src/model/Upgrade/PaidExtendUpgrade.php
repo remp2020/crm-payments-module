@@ -3,8 +3,10 @@
 namespace Crm\PaymentsModule\Upgrade;
 
 use Crm\ApplicationModule\Hermes\HermesMessage;
+use Crm\PaymentsModule\PaymentItem\PaymentItemContainer;
 use Crm\PaymentsModule\Repository\PaymentGatewaysRepository;
 use Crm\PaymentsModule\Repository\PaymentsRepository;
+use Crm\SubscriptionsModule\PaymentItem\SubscriptionTypePaymentItem;
 use Crm\SubscriptionsModule\Repository\SubscriptionsRepository;
 use League\Event\Emitter;
 use Nette\Database\Table\ActiveRow;
@@ -66,24 +68,18 @@ class PaidExtendUpgrade extends Upgrader
         $toSubscriptionType = $this->getToSubscriptionType();
         $upgradedItem = $this->getToSubscriptionTypeItem();
 
+        $chargePrice = $this->getChargePrice();
+        $item = new SubscriptionTypePaymentItem($toSubscriptionType, 1, $upgradedItem->name, $chargePrice, $upgradedItem->vat);
+        $paymentItemContainer = (new PaymentItemContainer())->addItem($item);
+
         // vytvorime novu platu
         $payment = $this->paymentsRepository->add(
             $toSubscriptionType,
             $gateway,
             $payment->user,
+            $paymentItemContainer,
             '',
-            $this->getChargePrice(),
-            null,
-            null,
-            null,
-            0,
-            null,
-            null,
-            null,
-            false,
-            [
-                ['name' => $upgradedItem->name, 'amount' => $this->getChargePrice(), 'vat' => $upgradedItem->vat],
-            ]
+            $chargePrice
         );
 
         $upgradeType = Expander::UPGRADE_PAID_EXTEND;
@@ -93,7 +89,7 @@ class PaidExtendUpgrade extends Upgrader
 
         $this->paymentsRepository->update($payment, [
             'upgrade_type' => $upgradeType,
-            'note' => "Upgrade z '{$actualUserSubscription->subscription_type->name}' na '{$toSubscriptionType->name}'",
+            'note' => "Upgrade from '{$actualUserSubscription->subscription_type->name}' to '{$toSubscriptionType->name}'",
             'modified_at' => new DateTime(),
         ]);
         $this->paymentsRepository->addMeta($payment, $this->utmParams);

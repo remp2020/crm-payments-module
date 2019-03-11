@@ -9,6 +9,7 @@ use Crm\ApplicationModule\Repository\AuditLogRepository;
 use Crm\ApplicationModule\Request;
 use Crm\PaymentsModule\Events\NewPaymentEvent;
 use Crm\PaymentsModule\Events\PaymentChangeStatusEvent;
+use Crm\PaymentsModule\PaymentItem\PaymentItemContainer;
 use Crm\PaymentsModule\VariableSymbolVariant;
 use Crm\SubscriptionsModule\Repository\SubscriptionsRepository;
 use Crm\SubscriptionsModule\Repository\SubscriptionTypesRepository;
@@ -93,6 +94,7 @@ class PaymentsRepository extends Repository
         ActiveRow $subscriptionType = null,
         ActiveRow $paymentGateway,
         ActiveRow $user,
+        PaymentItemContainer $paymentItemContainer,
         $referer = null,
         $amount = null,
         DateTime $subscriptionStartAt = null,
@@ -103,7 +105,6 @@ class PaymentsRepository extends Repository
         $variableSymbol = null,
         IRow $address = null,
         $recurrentCharge = false,
-        $paymentItems = [],
         $invoiceable = true
     ) {
         $data = [
@@ -138,29 +139,31 @@ class PaymentsRepository extends Repository
         /** @var ActiveRow $payment */
         $payment = $this->insert($data);
 
+        $this->paymentItemsRepository->add($payment, $paymentItemContainer);
+
         // subscriptions
         // TODO NAJDI!
-        if (!empty($paymentItems)) {
-            foreach ($paymentItems as $item) {
-                $this->paymentItemsRepository->add(
-                    $payment,
-                    $item['name'],
-                    $item['amount'],
-                    $item['vat'],
-                    $payment->subscription_type_id
-                );
-            }
-        } elseif ($payment->subscription_type_id) {
-            $subscriptionTypeItems = $payment->subscription_type->related('subscription_type_items')->order('sorting');
-            foreach ($subscriptionTypeItems as $subscriptionTypeItem) {
-                $this->paymentItemsRepository->add($payment, $subscriptionTypeItem->name, $subscriptionTypeItem->amount, $subscriptionTypeItem->vat, $payment->subscription_type_id);
-            }
-        }
-
-        // donations
-        if ($payment->additional_amount) {
-            $this->paymentItemsRepository->add($payment, $this->translator->translate('payments.admin.donation'), $payment->additional_amount, $this->donationVatRate, null);
-        }
+//        if (!empty($paymentItems)) {
+//            foreach ($paymentItems as $item) {
+//                $this->paymentItemsRepository->add(
+//                    $payment,
+//                    $item['name'],
+//                    $item['amount'],
+//                    $item['vat'],
+//                    $payment->subscription_type_id
+//                );
+//            }
+//        } elseif ($payment->subscription_type_id) {
+//            $subscriptionTypeItems = $payment->subscription_type->related('subscription_type_items')->order('sorting');
+//            foreach ($subscriptionTypeItems as $subscriptionTypeItem) {
+//                $this->paymentItemsRepository->add($payment, $subscriptionTypeItem->name, $subscriptionTypeItem->amount, $subscriptionTypeItem->vat, $payment->subscription_type_id);
+//            }
+//        }
+//
+//        // donations
+//        if ($payment->additional_amount) {
+//            $this->paymentItemsRepository->add($payment, $this->translator->translate('payments.admin.donation'), $payment->additional_amount, $this->donationVatRate, null);
+//        }
 
         $this->emitter->emit(new NewPaymentEvent($payment));
         return $payment;
@@ -220,21 +223,11 @@ class PaymentsRepository extends Repository
         return $items;
     }
 
-    // TODO NAJDI! VYHODIT PAYMENT ITEMS
-    public function update(IRow &$row, $data, $paymentItems = [])
+    public function update(IRow &$row, $data, PaymentItemContainer $paymentItemContainer = null)
     {
-        if (!empty($paymentItems)) {
+        if ($paymentItemContainer) {
             $this->paymentItemsRepository->deleteByPayment($row);
-
-            foreach ($paymentItems as $item) {
-                $this->paymentItemsRepository->add(
-                    $row,
-                    $item['name'],
-                    $item['amount'],
-                    $item['vat'],
-                    $row->subscription_type_id
-                );
-            }
+            $this->paymentItemsRepository->add($row, $paymentItemContainer);
         }
 
         $values['modified_at'] = new DateTime();

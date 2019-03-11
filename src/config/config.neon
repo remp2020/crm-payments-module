@@ -8,7 +8,7 @@ services:
 	- Crm\PaymentsModule\Repository\PaymentGiftCouponsRepository
 	- Crm\PaymentsModule\Repository\PaymentLogsRepository
 	- Crm\PaymentsModule\Repository\PaymentMetaRepository
-	- Crm\PaymentsModule\Forms\PaymentFormFactory
+	- Crm\PaymentsModule\Forms\PaymentFormFactory(%payments.donationVatRate%)
 	- Crm\PaymentsModule\Forms\PaymentGatewayFormFactory
 	- Crm\PaymentsModule\Forms\AccountantExportFormFactory
 	- Crm\PaymentsModule\GatewayFactory

@@ -4,9 +4,11 @@ namespace Crm\PaymentsModule\Upgrade;
 
 use Crm\ApplicationModule\Hermes\HermesMessage;
 use Crm\PaymentsModule\GatewayFactory;
+use Crm\PaymentsModule\PaymentItem\PaymentItemContainer;
 use Crm\PaymentsModule\Repository\PaymentLogsRepository;
 use Crm\PaymentsModule\Repository\PaymentsRepository;
 use Crm\PaymentsModule\Repository\RecurrentPaymentsRepository;
+use Crm\SubscriptionsModule\PaymentItem\SubscriptionTypePaymentItem;
 use Crm\SubscriptionsModule\Repository\SubscriptionsRepository;
 use Exception;
 use League\Event\Emitter;
@@ -73,24 +75,21 @@ class PaidRecurrentUpgrade extends Upgrader
         $toSubscriptionType = $this->getToSubscriptionType();
         $upgradedItem = $this->getToSubscriptionTypeItem();
 
+        $chargePrice = $this->getChargePrice();
+        $item = new SubscriptionTypePaymentItem($toSubscriptionType, 1, $upgradedItem->name, $chargePrice, $upgradedItem->vat);
+        $paymentItemContainer = (new PaymentItemContainer())->addItem($item);
+
         // spravit novu platbu a rovno ju chargnut
         $newPayment = $this->paymentsRepository->add(
             $toSubscriptionType,
             $payment->payment_gateway,
             $payment->user,
+            $paymentItemContainer,
             '',
-            $this->getChargePrice(),
+            $chargePrice,
             null,
             null,
-            "Platba za upgrade z {$actualUserSubscription->subscription_type->name} na {$toSubscriptionType->name}",
-            0,
-            null,
-            null,
-            null,
-            false,
-            [
-                ['name' => $upgradedItem->name, 'amount' => $this->getChargePrice(), 'vat' => $upgradedItem->vat],
-            ]
+            "Payment for upgrade from {$actualUserSubscription->subscription_type->name} to {$toSubscriptionType->name}"
         );
 
         $this->paymentsRepository->update($newPayment, [
