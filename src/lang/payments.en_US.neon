@@ -68,3 +68,6 @@ frontend:
 		recipient_message: Message for recipient
 		delay_info: Payment settlement can take up to 2 business days. Subscription will be started after the payment is settled on our account.
 		thank_you: Thank you
+	proforma_invoice:
+		title: Proforma invoice payment
+		thank_you: Thank you for the order, the invoice will be sent to your email within 3 working days.
