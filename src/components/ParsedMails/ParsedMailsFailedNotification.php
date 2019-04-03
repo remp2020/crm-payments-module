@@ -5,7 +5,6 @@ namespace Crm\PaymentsModule\Components;
 use Crm\ApplicationModule\Widget\BaseWidget;
 use Crm\ApplicationModule\Widget\WidgetManager;
 use Crm\PaymentsModule\MailConfirmation\ParsedMailLogsRepository;
-use Crm\PaymentsModule\Repository\PaymentsRepository;
 
 class ParsedMailsFailedNotification extends BaseWidget
 {
@@ -14,20 +13,15 @@ class ParsedMailsFailedNotification extends BaseWidget
     /** @var ParsedMailLogsRepository */
     private $parsedMailLogsRepository;
 
-    /** @var  PaymentsRepository */
-    private $paymentsRepository;
-
     /** @var WidgetManager */
     protected $widgetManager;
 
     public function __construct(
         WidgetManager $widgetManager,
-        ParsedMailLogsRepository $parsedMailLogsRepository,
-        PaymentsRepository $paymentsRepository
+        ParsedMailLogsRepository $parsedMailLogsRepository
     ) {
         parent::__construct($widgetManager);
         $this->parsedMailLogsRepository = $parsedMailLogsRepository;
-        $this->paymentsRepository = $paymentsRepository;
     }
 
     public function header($id = '')
