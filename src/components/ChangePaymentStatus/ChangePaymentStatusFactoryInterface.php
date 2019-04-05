@@ -4,6 +4,5 @@ namespace Crm\PaymentsModule\Components;
 
 interface ChangePaymentStatusFactoryInterface
 {
-    /** @return ChangePaymentStatus */
-    public function create();
+    public function create(): ChangePaymentStatus;
 }

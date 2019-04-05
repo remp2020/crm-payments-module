@@ -6,9 +6,7 @@ use Crm\PaymentsModule\Builder\ParsedMailLogsBuilder;
 use Crm\PaymentsModule\model\MailDownloader\MailProcessorException;
 use Crm\PaymentsModule\PaymentProcessor;
 use Crm\PaymentsModule\Repository\PaymentsRepository;
-use Crm\PaymentsModule\Repository\RecurrentPaymentsRepository;
 use DateInterval;
-use Nette\DI\Container;
 use Nette\Utils\DateTime;
 use Symfony\Component\Console\Output\OutputInterface;
 use Tomaj\BankMailsParser\MailContent;
@@ -17,9 +15,6 @@ class MailProcessor
 {
     /** @var PaymentsRepository */
     private $paymentsRepository;
-
-    /** @var  RecurrentPaymentsRepository */
-    private $recurrentPaymentsRepository;
 
     /** @var PaymentProcessor */
     private $paymentProcessor;
@@ -36,19 +31,12 @@ class MailProcessor
     /** @var  OutputInterface */
     private $output;
 
-    /** @var  Container */
-    private $context;
-
     public function __construct(
         PaymentsRepository $paymentsRepository,
-        RecurrentPaymentsRepository $recurrentPaymentsRepository,
         PaymentProcessor $paymentProcessor,
-        ParsedMailLogsBuilder $parsedMailLogsBuilder,
-        Container $context
+        ParsedMailLogsBuilder $parsedMailLogsBuilder
     ) {
-        $this->context = $context;
         $this->paymentsRepository = $paymentsRepository;
-        $this->recurrentPaymentsRepository = $recurrentPaymentsRepository;
         $this->paymentProcessor = $paymentProcessor;
         $this->parsedMailLogsBuilder = $parsedMailLogsBuilder;
     }

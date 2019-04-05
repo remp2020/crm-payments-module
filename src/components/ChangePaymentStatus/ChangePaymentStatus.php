@@ -5,7 +5,6 @@ namespace Crm\PaymentsModule\Components;
 use Crm\ApplicationModule\Widget\BaseWidget;
 use Crm\ApplicationModule\Widget\WidgetManager;
 use Crm\PaymentsModule\Repository\PaymentsRepository;
-use League\Event\Emitter;
 
 class ChangePaymentStatus extends BaseWidget
 {
@@ -14,14 +13,12 @@ class ChangePaymentStatus extends BaseWidget
     /** @var PaymentsRepository */
     private $paymentsRepository;
 
-    /** @var Emitter */
-    private $emitter;
-
-    public function __construct(WidgetManager $widgetManager, PaymentsRepository $paymentsRepository, Emitter $emitter)
-    {
+    public function __construct(
+        WidgetManager $widgetManager,
+        PaymentsRepository $paymentsRepository
+    ) {
         parent::__construct($widgetManager);
         $this->paymentsRepository = $paymentsRepository;
-        $this->emitter = $emitter;
     }
 
     public function header($id = '')
