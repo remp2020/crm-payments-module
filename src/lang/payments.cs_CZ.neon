@@ -69,4 +69,4 @@ frontend:
 		thank_you: Děkujeme
 	proforma_invoice:
 		title: Platba předfakturou
-		thank_you: Děkujeme za vaši objednávku, předfakturu Vám zašleme do 3 pracovních dnů e-mailem.
+		thank_you: 'Děkujeme za vaši objednávku, předfakturu Vám zašleme do 3 pracovních dnů e-mailem.'
