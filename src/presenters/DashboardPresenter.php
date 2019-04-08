@@ -35,6 +35,11 @@ class DashboardPresenter extends AdminPresenter
 
     public function renderArpu()
     {
+        $this->template->graphParams = [
+            'recurrentCharge' => $this->recurrentCharge,
+            'dateFrom' => $this->dateFrom,
+            'dateTo' => $this->dateTo
+        ];
     }
 
     public function createComponentDateFilterForm(DateFilterFormFactory $dateFilterFormFactory)
@@ -117,45 +122,6 @@ class DashboardPresenter extends AdminPresenter
         if ($this->recurrentCharge !== null) {
             $titleTransKey = "dashboard.payments.arpu.{$this->recurrentCharge}.title";
             $helpTransKey = "dashboard.payments.arpu.{$this->recurrentCharge}.tooltip";
-        }
-
-        $control = $factory->create();
-        $control = $control->addGraphDataItem($graphDataItem)
-            ->setGraphTitle($this->translator->translate($titleTransKey) . ' *')
-            ->setGraphHelp($this->translator->translate($helpTransKey) . ' *');
-
-        return $control;
-    }
-
-    public function createComponentGoogleSubscriptionsAndDonationsArpuGraph(
-        GoogleLineGraphGroupControlFactoryInterface $factory
-    ) {
-        $items = [];
-
-        $graphDataItem = new GraphDataItem();
-        $graphDataItem->setCriteria((new Criteria())
-            ->setTableName('payments')
-            ->setWhere("
-                AND payments.status = 'paid' {$this->recurrentChargeWhere()}
-                AND payments.id NOT IN (
-                    SELECT payment_id FROM payment_meta
-                    WHERE `key` = 'crowdfunding' 
-                    AND `value` = 1
-                )
-                AND payment_items.type IN ('donation', 'subscription_type')
-            ")
-            ->setJoin('JOIN payment_items ON payments.id = payment_items.payment_id')
-            ->setValueField('SUM(payment_items.amount) / COUNT(payments.id)')
-            ->setTimeField('paid_at')
-            ->setStart($this->dateFrom)
-            ->setEnd($this->dateTo));
-        $graphDataItem->setName($this->translator->translate('dashboard.payments.arpu.graph_label'));
-
-        $titleTransKey = 'dashboard.payments.arpu_subscriptions.all.title';
-        $helpTransKey = 'dashboard.payments.arpu_subscriptions.all.tooltip';
-        if ($this->recurrentCharge !== null) {
-            $titleTransKey = "dashboard.payments.arpu_subscriptions.{$this->recurrentCharge}.title";
-            $helpTransKey = "dashboard.payments.arpu_subscriptions.{$this->recurrentCharge}.tooltip";
         }
 
         $control = $factory->create();
