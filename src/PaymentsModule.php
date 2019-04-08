@@ -95,9 +95,6 @@ class PaymentsModule extends CrmModule
         $menuItem = new MenuItem('Podporovatel a Bonus', ':Payments:PaymentsAdmin:SupporterPayments', 'fa fa-sync-alt', 800);
         $mainMenu->addChild($menuItem);
 
-        $menuItem = new MenuItem('Uctovnicke Exporty', ':Payments:PaymentsAdmin:Accountant', 'fa fa-money-bill-alt', 900);
-        $mainMenu->addChild($menuItem);
-
         $menuContainer->attachMenuItem($mainMenu);
 
         // dashboard menu item
