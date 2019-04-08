@@ -117,11 +117,11 @@ class DashboardPresenter extends AdminPresenter
             ->setEnd($this->dateTo));
         $graphDataItem->setName($this->translator->translate('dashboard.payments.arpu.graph_label'));
 
-        $titleTransKey = 'dashboard.payments.arpu.all.title';
-        $helpTransKey = 'dashboard.payments.arpu.all.tooltip';
+        $titleTransKey = 'payments.admin.arpu.all.title';
+        $helpTransKey = 'payments.admin.arpu.all.tooltip';
         if ($this->recurrentCharge !== null) {
-            $titleTransKey = "dashboard.payments.arpu.{$this->recurrentCharge}.title";
-            $helpTransKey = "dashboard.payments.arpu.{$this->recurrentCharge}.tooltip";
+            $titleTransKey = "payments.admin.arpu.{$this->recurrentCharge}.title";
+            $helpTransKey = "payments.admin.arpu.{$this->recurrentCharge}.tooltip";
         }
 
         $control = $factory->create();
