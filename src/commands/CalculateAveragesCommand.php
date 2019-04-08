@@ -2,9 +2,7 @@
 
 namespace Crm\PaymentsModule\Commands;
 
-// TODO: [payments_module] refactor or move from payments module (dependencies on ProductsModule and SubscriptionsModule)
 use Crm\PaymentsModule\Repository\PaymentsRepository;
-use Crm\ProductsModule\PaymentItem\ProductPaymentItem;
 use Nette\Database\Context;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
@@ -22,7 +20,7 @@ class CalculateAveragesCommand extends \Symfony\Component\Console\Command\Comman
     protected function configure()
     {
         $this->setName('payments:calculate_averages')
-            ->setDescription('Calculate averages');
+            ->setDescription('Calculate payment-related averages');
     }
 
     protected function execute(InputInterface $input, OutputInterface $output)
@@ -40,27 +38,6 @@ class CalculateAveragesCommand extends \Symfony\Component\Console\Command\Comman
                         status='$paidStatus'
                         AND payments.user_id = users.id
                         AND payments.subscription_id IS NOT NULL
-                ),
-                NOW(),
-                NOW()
-            FROM users
-            ON DUPLICATE KEY UPDATE `updated_at`=NOW(), `value`=VALUES(value);
-SQL
-        );
-
-        $productType = ProductPaymentItem::TYPE;
-        $this->database->query(<<<SQL
-            INSERT INTO user_meta (`user_id`,`key`,`value`,`created_at`,`updated_at`)
-            SELECT
-                id,
-                'product_payments',
-                (
-                    SELECT COUNT(DISTINCT(payments.id))
-                    FROM payments
-                    INNER JOIN payment_items ON payment_items.payment_id = payments.id AND payment_items.type = '$productType'
-                    WHERE
-                        payments.status='$paidStatus'
-                        AND payments.user_id = users.id
                 ),
                 NOW(),
                 NOW()
