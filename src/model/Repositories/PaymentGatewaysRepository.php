@@ -92,9 +92,4 @@ class PaymentGatewaysRepository extends Repository
         $values['modified_at'] = new DateTime();
         parent::update($row, $data);
     }
-
-    public function getSalesFunnelGateways(IRow $funnel)
-    {
-        return $this->getTable()->where(['id' => array_keys($funnel->related('sales_funnels_payment_gateways')->fetchPairs('payment_gateway_id', 'payment_gateway_id'))]);
-    }
 }
