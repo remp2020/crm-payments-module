@@ -25,5 +25,4 @@ class PaymentItemsListWidget extends BaseWidget
         $this->template->setFile(__DIR__ . DIRECTORY_SEPARATOR . $this->templateName);
         $this->template->render();
     }
-
 }
