@@ -38,6 +38,11 @@ admin:
 		recurrent:
 			title: ARPU - suma všetkých rekurentných platieb / počet
 			tooltip: 'Zobrazuje sumu všetkých rekurentne vytvorených platieb v danom období delene počet platieb - ARPU'
+	stats:
+		title: Štatistiky platieb
+		menu:
+			general: Všeobecné
+			arpu: ARPU
 
 gateway:
 	recurrent: automaticky obnovované

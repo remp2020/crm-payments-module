@@ -38,6 +38,11 @@ admin:
 		recurrent:
 			title: ARPU - sum of all recurrent divided by count of payments
 			tooltip: 'Shows sum of recurrent payments in selected period divided by number of payments - ARPA'
+	stats:
+		title: Payment stats
+		menu:
+			general: General
+			arpu: ARPU
 
 gateway:
 	recurrent: recurrent payment

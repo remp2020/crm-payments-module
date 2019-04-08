@@ -38,7 +38,7 @@ class DashboardPresenter extends AdminPresenter
         $this->template->graphParams = [
             'recurrentCharge' => $this->recurrentCharge,
             'dateFrom' => $this->dateFrom,
-            'dateTo' => $this->dateTo
+            'dateTo' => $this->dateTo,
         ];
     }
 
