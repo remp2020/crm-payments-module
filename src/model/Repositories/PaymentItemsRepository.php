@@ -6,7 +6,6 @@ use Crm\ApplicationModule\Config\ApplicationConfig;
 use Crm\ApplicationModule\Repository;
 use Crm\PaymentsModule\PaymentItem\PaymentItemContainer;
 use Crm\PaymentsModule\PaymentItem\PaymentItemInterface;
-use Crm\ProductsModule\Repository\ProductsRepository;
 use League\Event\Emitter;
 use Nette\Caching\IStorage;
 use Nette\Database\Context;
@@ -17,21 +16,17 @@ class PaymentItemsRepository extends Repository
 {
     protected $tableName = 'payment_items';
 
-    private $productsRepository;
-
     private $applicationConfig;
 
     private $emitter;
 
     public function __construct(
         Context $database,
-        ProductsRepository $productsRepository,
         ApplicationConfig $applicationConfig,
         Emitter $emitter,
         IStorage $cacheStorage = null
     ) {
         parent::__construct($database, $cacheStorage);
-        $this->productsRepository = $productsRepository;
         $this->applicationConfig = $applicationConfig;
         $this->emitter = $emitter;
     }
