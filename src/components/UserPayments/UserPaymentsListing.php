@@ -2,6 +2,7 @@
 
 namespace Crm\PaymentsModule\Components;
 
+use Crm\ApplicationModule\Components\SimpleWidgetFactoryInterface;
 use Crm\ApplicationModule\Widget\BaseWidget;
 use Crm\ApplicationModule\Widget\WidgetManager;
 use Crm\PaymentsModule\MailConfirmation\ParsedMailLogsRepository;
@@ -110,6 +111,12 @@ class UserPaymentsListing extends BaseWidget
         return $control;
     }
     protected function createComponentGiftCoupons(GiftCouponsFactoryInterface $factory)
+    {
+        $control = $factory->create();
+        return $control;
+    }
+
+    protected function createComponentSimpleWidget(SimpleWidgetFactoryInterface $factory)
     {
         $control = $factory->create();
         return $control;

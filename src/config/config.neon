@@ -27,6 +27,7 @@ services:
 	- Crm\PaymentsModule\Components\GiftCouponsFactoryInterface
 	- Crm\PaymentsModule\Components\LastPaymentsControlFactoryInterface
 	- Crm\PaymentsModule\Components\TotalUserPayments
+	- Crm\PaymentsModule\Components\PaymentItemsListWidget
 	- Crm\PaymentsModule\Commands\RecurrentPaymentsCardCheck
 	- Crm\PaymentsModule\Commands\RecurrentPaymentsChargeCommand
 	- Crm\PaymentsModule\Commands\CsobMailConfirmationCommand

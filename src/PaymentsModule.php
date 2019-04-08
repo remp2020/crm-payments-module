@@ -194,6 +194,10 @@ class PaymentsModule extends CrmModule
             $this->getInstance(\Crm\PaymentsModule\Components\SubscriptionTypeReports::class),
             500
         );
+        $widgetManager->registerWidget(
+            'payments.admin.payment_item_listing',
+            $this->getInstance(\Crm\PaymentsModule\Components\PaymentItemsListWidget::class)
+        );
     }
 
     public function registerCommands(CommandsContainerInterface $commandsContainer)
