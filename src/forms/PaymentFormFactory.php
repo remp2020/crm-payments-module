@@ -259,6 +259,7 @@ class PaymentFormFactory
         }
 
         $form->addHidden('user_id', $user->id);
+        $form->addHidden('redirect', $user->id);
 
         $form->addSubmit('send', 'Ulož')
             ->getControlPrototype()
@@ -284,7 +285,6 @@ class PaymentFormFactory
         $subscriptionEndAt = null;
         $sendNotification = $values['send_notification'];
 
-        unset($values['display_order']);
         unset($values['subscription_types']);
         unset($values['send_notification']);
 
