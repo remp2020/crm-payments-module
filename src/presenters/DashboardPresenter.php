@@ -115,7 +115,7 @@ class DashboardPresenter extends AdminPresenter
             ->setTimeField('paid_at')
             ->setStart($this->dateFrom)
             ->setEnd($this->dateTo));
-        $graphDataItem->setName($this->translator->translate('dashboard.payments.arpu.graph_label'));
+        $graphDataItem->setName($this->translator->translate('payments.admin.arpu.graph_label'));
 
         $titleTransKey = 'payments.admin.arpu.all.title';
         $helpTransKey = 'payments.admin.arpu.all.tooltip';
