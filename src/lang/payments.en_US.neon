@@ -27,6 +27,22 @@ admin:
 		last_day: Last 24 hours
 		last_days: Last %count% days
 		description: Difference in the number of subscribers with payment for the given period.
+	arpu:
+		graph_label: ARPU
+		all:
+			title: ARPU - sum of all payments divided by count of payments
+			tooltip: Shows sum of all payments in selected period divided by number of payments - ARPA
+		manual:
+			title: ARPU - sum of all new payments divided by count of payments
+			tooltip: 'Shows sum of new payments (not recurrent) in selected period divided by number of payments - ARPA'
+		recurrent:
+			title: ARPU - sum of all recurrent divided by count of payments
+			tooltip: 'Shows sum of recurrent payments in selected period divided by number of payments - ARPA'
+	stats:
+		title: Payment stats
+		menu:
+			general: General
+			arpu: ARPU
 
 gateway:
 	recurrent: recurrent payment

@@ -27,6 +27,22 @@ admin:
 		last_day: Posledných 24 hodín
 		last_days: Posledných %count% dní
 		description: Rozdiel v počte predplatiteľov s platbou za dané obdobie.
+	arpu:
+		graph_label: ARPU
+		all:
+			title: ARPU - suma všetkých platieb / počet
+			tooltip: Zobrazuje sumu všetkých platieb v danom období delene počet platieb - ARPU
+		manual:
+			title: ARPU - suma všetkých nových platieb / počet
+			tooltip: 'Zobrazuje sumu všetkých nových platieb (nevytvorených rekurentne) v danom období delene počet platieb - ARPU'
+		recurrent:
+			title: ARPU - suma všetkých rekurentných platieb / počet
+			tooltip: 'Zobrazuje sumu všetkých rekurentne vytvorených platieb v danom období delene počet platieb - ARPU'
+	stats:
+		title: Štatistiky platieb
+		menu:
+			general: Všeobecné
+			arpu: ARPU
 
 gateway:
 	recurrent: automaticky obnovované
