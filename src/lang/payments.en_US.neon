@@ -13,16 +13,6 @@ admin:
 		title: Subscribers with paid subscriptions
 		help: "All subscribers with active subscriptions which have type of subscription other than 'free'. Every user is counted only one time even though he has more subscriptions."
 
-	gift_coupons:
-		button_title: Gift subscriptions
-		modal_title: Gift subscription
-		email: E-mail
-		start_at: Start at
-		sent: Sent
-		subscription: Subscription
-		yes: yes
-		not_created: not created
-
 	subscribers_with_payment_widget:
 		last_day: Last 24 hours
 		last_days: Last %count% days

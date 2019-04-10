@@ -12,16 +12,6 @@ admin:
 		title: Předplatitelé s placeným předplatným
 		help: "Počet předplatitelů s aktivním předplatným, kteří mají typ předplatného jiný než free. Jeden uživatel je jednou i když měl více předplatných."
 
-	gift_coupons:
-		button_title: Darované předplatné
-		modal_title: Darované předplatné
-		email: E-mail
-		start_at: Start
-		sent: Odeslán
-		subscription: Předplatné
-		yes: ano
-		not_created: nevytvořené
-
 	subscribers_with_payment_widget:
 		last_day: Posledních 24 hodin
 		last_days: Posledních %count% dní

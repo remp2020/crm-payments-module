@@ -7,7 +7,6 @@ use Crm\ApplicationModule\Components\VisualPaginator;
 use Crm\ApplicationModule\DataProvider\DataProviderManager;
 use Crm\AdminModule\Presenters\AdminPresenter;
 use Crm\PaymentsModule\Components\ChangePaymentStatusFactoryInterface;
-use Crm\PaymentsModule\Components\GiftCouponsFactoryInterface;
 use Crm\PaymentsModule\DataProvider\AdminFilterFormDataProviderInterface;
 use Crm\PaymentsModule\Forms\PaymentFormFactory;
 use Crm\PaymentsModule\PaymentsHistogramFactory;
@@ -281,11 +280,6 @@ class PaymentsAdminPresenter extends AdminPresenter
     }
 
     protected function createComponentChangePaymentStatus(ChangePaymentStatusFactoryInterface $factory)
-    {
-        return $factory->create();
-    }
-
-    protected function createComponentGiftCoupons(GiftCouponsFactoryInterface $factory)
     {
         return $factory->create();
     }
