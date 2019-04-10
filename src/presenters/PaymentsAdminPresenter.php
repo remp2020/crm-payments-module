@@ -322,16 +322,10 @@ class PaymentsAdminPresenter extends AdminPresenter
 
         $form = $this->factory->create($id, $user);
         $this->factory->onSave = function ($form, $payment) {
-            if (isset($form->values['display_order']) && $form->values['display_order']) {
-                $this->redirect(':Products:OrdersAdmin:New', ['paymentId' => $payment->id]);
-            }
             $this->flashMessage('Platba bola vytvorená.');
             $this->redirect(':Users:UsersAdmin:Show', $payment->user->id);
         };
         $this->factory->onUpdate = function ($form, $payment) {
-            if (isset($form->values['display_order']) && $form->values['display_order']) {
-                $this->redirect(':Products:OrdersAdmin:New', ['paymentId' => $payment->id]);
-            }
             $this->flashMessage('Platba bola aktualizovaná.');
             $this->redirect(':Users:UsersAdmin:Show', $payment->user->id);
         };
