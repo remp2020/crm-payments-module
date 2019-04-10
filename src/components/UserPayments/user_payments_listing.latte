@@ -35,7 +35,9 @@
         <td>
           <div class="list-group">
             {foreach $payment->related('payment_items') as $paymentItem}
-              {control simpleWidget 'payments.admin.payment_item_listing', $paymentItem}
+              <div class="list-group-item">
+                {control simpleWidget 'payments.admin.payment_item_listing', $paymentItem}
+              </div>
             {/foreach}
 
             {if $payment->address_id}
