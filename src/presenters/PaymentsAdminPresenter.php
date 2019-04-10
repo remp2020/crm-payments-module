@@ -13,11 +13,8 @@ use Crm\PaymentsModule\Forms\PaymentFormFactory;
 use Crm\PaymentsModule\PaymentsHistogramFactory;
 use Crm\PaymentsModule\Repository\PaymentGatewaysRepository;
 use Crm\PaymentsModule\Repository\PaymentsRepository;
-use Crm\ProductsModule\PaymentItem\PostalFeePaymentItem;
-use Crm\ProductsModule\PaymentItem\ProductPaymentItem;
 use Crm\SubscriptionsModule\Repository\SubscriptionTypesRepository;
 use Crm\UsersModule\Repository\UsersRepository;
-use DateTime;
 use Nette\Application\BadRequestException;
 use Nette\Application\UI\Form;
 use Tomaj\Form\Renderer\BootstrapInlineRenderer;
@@ -113,90 +110,6 @@ class PaymentsAdminPresenter extends AdminPresenter
         }
 
         return $payments;
-    }
-
-    private function filteredPaymentsForExports()
-    {
-        $start = DateTime::createFromFormat('Y-m', $this->month);
-        $end = DateTime::createFromFormat('Y-m', $this->month);
-        $end->modify('+1 month');
-        return $this->paymentsRepository->all(
-            '',
-            $this->payment_gateway,
-            $this->subscription_type,
-            $this->status,
-            $start->format('Y-m-01 00:00:00'),
-            $end->format('Y-m-01 00:00:00')
-        )->order('created_at DESC')->order('id DESC');
-    }
-
-    private function filteredProductStatsForExports()
-    {
-        $start = DateTime::createFromFormat('Y-m', $this->month);
-        $end = DateTime::createFromFormat('Y-m', $this->month);
-        $end->modify('+1 month');
-
-        $payments = $this->paymentsRepository->all(
-            '',
-            null,
-            null,
-            $this->status,
-            $start->format('Y-m-01 00:00:00'),
-            $end->format('Y-m-01 00:00:00')
-        )
-            ->where(':payment_items.type = ?', ProductPaymentItem::TYPE)
-            ->order('created_at DESC')->order('id DESC');
-
-        $stats = [];
-        $total = 0;
-
-        $badPayments = [];
-
-        foreach ($payments as $payment) {
-            $paymentSum = 0;
-
-            // we're intentionally not using $this->paymentsRepository->unBundleProducts,
-            // because the pricing of individual products doesn't need to match price of the bundle
-            foreach ($payment->related('payment_items')->where('type = ?', ProductPaymentItem::TYPE) as $paymentItem) {
-                if (!$paymentItem->amount) {
-                    continue;
-                }
-
-                $product = $paymentItem->product;
-                if (!isset($stats['product_sums'][$product->id])) {
-                    $stats['product_sums'][$product->id] = [];
-                }
-                if (!isset($stats['product_sums'][$product->id][strval($paymentItem->amount)])) {
-                    $stats['product_sums'][$product->id][strval($paymentItem->amount)] = 0;
-                }
-                $stats['products'][$product->id] = $product;
-                $stats['product_sums'][$product->id][strval($paymentItem->amount)] += $paymentItem->count * $paymentItem->amount;
-                $paymentSum += $paymentItem->count * $paymentItem->amount;
-                $total += $paymentItem->count * $paymentItem->amount;
-            }
-
-            foreach ($payment->related('payment_items')->where('type = ?', PostalFeePaymentItem::TYPE) as $paymentItem) {
-                if (!isset($stats['postal_fee_sums'][$paymentItem->postal_fee_id])) {
-                    $stats['postal_fee_sums'][$paymentItem->postal_fee_id] = [];
-                }
-                if (!isset($stats['postal_fee_sums'][$paymentItem->postal_fee_id][strval($paymentItem->amount)])) {
-                    $stats['postal_fee_sums'][$paymentItem->postal_fee_id][strval($paymentItem->amount)] = 0.0;
-                }
-                $stats['postal_fees'][$paymentItem->postal_fee_id] = $paymentItem->postal_fee;
-                $stats['postal_fee_sums'][$paymentItem->postal_fee_id][strval($paymentItem->amount)] += floatval($paymentItem->amount * $paymentItem->count);
-                $total += $paymentItem->amount * $paymentItem->count;
-                $paymentSum += $paymentItem->amount * $paymentItem->count;
-            }
-            if (round($paymentSum, 2) != $payment->amount) {
-                $badPayments[] = [
-                    'id' => $payment->id,
-                    'calculated' => $paymentSum,
-                    'expected' => $payment->amount,
-                ];
-                throw new \Exception("products sum and postal fee doesn't match with payment amount for payment {$payment->id}: calculated {$paymentSum}, expected {$payment->amount}");
-            }
-        }
-        return [$stats, $total];
     }
 
     public function createComponentAdminFilterForm()
