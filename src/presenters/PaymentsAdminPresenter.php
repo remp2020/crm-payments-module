@@ -9,13 +9,10 @@ use Crm\AdminModule\Presenters\AdminPresenter;
 use Crm\PaymentsModule\Components\ChangePaymentStatusFactoryInterface;
 use Crm\PaymentsModule\Components\GiftCouponsFactoryInterface;
 use Crm\PaymentsModule\DataProvider\AdminFilterFormDataProviderInterface;
-use Crm\PaymentsModule\Forms\AccountantExportFormFactory;
 use Crm\PaymentsModule\Forms\PaymentFormFactory;
-use Crm\PaymentsModule\PaymentProcessor;
 use Crm\PaymentsModule\PaymentsHistogramFactory;
 use Crm\PaymentsModule\Repository\PaymentGatewaysRepository;
 use Crm\PaymentsModule\Repository\PaymentsRepository;
-use Crm\PaymentsModule\Repository\RecurrentPaymentsRepository;
 use Crm\ProductsModule\PaymentItem\PostalFeePaymentItem;
 use Crm\ProductsModule\PaymentItem\ProductPaymentItem;
 use Crm\SubscriptionsModule\Repository\SubscriptionTypesRepository;
@@ -36,20 +33,11 @@ class PaymentsAdminPresenter extends AdminPresenter
     /** @var SubscriptionTypesRepository @inject */
     public $subscriptionTypesRepository;
 
-    /** @var PaymentProcessor @inject */
-    public $paymentProcessor;
-
     /** @var UsersRepository @inject */
     public $usersRepository;
 
     /** @var PaymentFormFactory @inject */
     public $factory;
-
-    /** @var  RecurrentPaymentsRepository @inject */
-    public $recurrentPaymentsRepository;
-
-    /** @var AccountantExportFormFactory @inject */
-    public $accountantExportFormFactory;
 
     /** @var DataProviderManager @inject */
     public $dataProviderManager;
@@ -266,32 +254,6 @@ class PaymentsAdminPresenter extends AdminPresenter
         return $form;
     }
 
-    public function createComponentPaymentsExportForm()
-    {
-        $form = $this->accountantExportFormFactory->create();
-        $form->onSuccess[] = function ($form, $values) {
-            $this->redirect('PaymentsAdmin:AccountantPaymentExport', [
-                'payment_gateway' => $values['payment_gateway'],
-                'subscription_type' => $values['subscription_type'],
-                'status' => $values['status'],
-                'month' => $values['month']
-            ]);
-        };
-        return $form;
-    }
-
-    public function createComponentProductsExportForm()
-    {
-        $form = $this->accountantExportFormFactory->create('month', 'status');
-        $form->onSuccess[] = function ($form, $values) {
-            $this->redirect('PaymentsAdmin:AccountantProductExport', [
-                'month' => $values['month'],
-                'status' => $values['status'],
-            ]);
-        };
-        return $form;
-    }
-
     public function adminFilterSubmited($form, $values)
     {
         $this->redirect($this->action, array_filter((array)$values));
@@ -310,184 +272,6 @@ class PaymentsAdminPresenter extends AdminPresenter
         $this->getHttpResponse()->addHeader('Content-Type', 'application/csv');
         $this->getHttpResponse()->addHeader('Content-Disposition', 'attachment; filename=export.csv');
         $this->template->payments = $this->filteredPayments();
-    }
-
-    public function renderAccountantPaymentExport()
-    {
-        // data checksum
-        $filter = $this->filteredPaymentsForExports()->select('payments.id');
-
-        $sql = <<<SQL
-SELECT
-  payments.id, 
-  amount, 
-  COALESCE(payment_items, 0) AS payment_items_sum  
-FROM payments
-
-LEFT JOIN (
-  SELECT payment_id, SUM(amount*count) AS payment_items FROM payment_items GROUP BY payment_id
-) t1 ON payments.id = t1.payment_id
-
-WHERE payments.id IN ({$filter->getSql()})
-GROUP BY payments.id
-HAVING payment_items_sum != payments.amount
-SQL;
-        $checksum = $this->paymentsRepository->getDatabase()->queryArgs($sql, $filter->getSqlBuilder()->getParameters());
-
-        foreach ($checksum->fetchAll() as $invalidPayment) {
-            throw new \Exception("
-            POZOR! - v uctovnickom exporte nesedi suma itemov so sumou platby! 
-            [payment#{$invalidPayment->id} {$invalidPayment->amount} vs. 
-            [items {$invalidPayment->payment_items_sum}]");
-        }
-
-        // actual export
-
-        set_time_limit(300);
-        $this->getHttpResponse()->addHeader('Content-Type', 'text/csv; charset=utf-8');
-        $this->getHttpResponse()->addHeader('Content-Disposition', 'attachment; filename=' . $this->month . '-export.csv');
-        $payments = $this->filteredPaymentsForExports();
-        $step = 1000;
-        $offset = 0;
-
-        echo chr(239) . chr(187) . chr(191);
-        echo $this->formatExportLine([
-            "ID",
-            "modified_at",
-            "paid_at",
-            "variable_symbol",
-            "title",
-            "vat",
-            "item_price",
-            "amount",
-            "status",
-            "payment_gateway",
-            "subscription_type",
-            "user",
-            "email",
-            "referer",
-            "start_time",
-            "end_time",
-            "invoice",
-            "address_first_name",
-            "address_last_name",
-            "address_company",
-            "address_address",
-            "address_number",
-            "address_city",
-            "address_zip",
-            "payment_note",
-        ]);
-
-        while ($records = $payments->limit($step, $offset)->fetchAll()) {
-            foreach ($records as $i => $payment) {
-                $address = $payment->user->related('addresses')->where('deleted_at IS NULL')->limit(1)->fetch();
-
-                $actualAmount = 0;
-
-                $paymentItems = $payment->related('payment_items')->order('created_at');
-                foreach ($paymentItems as $paymentItem) {
-                    $row = [
-                        $payment->id,
-                        $payment->modified_at->format('d.m.Y H:i:s'),
-                        $payment->paid_at ? $payment->paid_at->format('d.m.Y H:i:s') : '',
-                        $payment->variable_symbol,
-                        $paymentItem->name,
-                        $paymentItem->vat,
-                        number_format($paymentItem->amount, 2, ',', ''),
-                        $paymentItem->count,
-                        $payment->status,
-                        $payment->payment_gateway_id,
-                        $payment->subscription_type_id,
-                        $payment->user_id,
-                        $payment->user->email,
-                        $payment->referer,
-                        $payment->subscription_id ? $payment->subscription->start_time->format('d.m.Y') : '',
-                        $payment->subscription_id ? $payment->subscription->end_time->format('d.m.Y') : '',
-                        $payment->invoice_id ? $payment->invoice->invoice_number->number : '',
-                        $address ? $address->first_name : '',
-                        $address ? $address->last_name : '',
-                        $address ? $address->company_name : '',
-                        $address ? $address->address : '',
-                        $address ? $address->number : '',
-                        $address ? $address->city : '',
-                        $address ? $address->zip : '',
-                        $payment->note,
-                    ];
-                    $actualAmount += $paymentItem->amount * $paymentItem->count;
-
-                    echo  $this->formatExportLine($row);
-                }
-
-                if (number_format($actualAmount, 2) != number_format($payment->amount, 2)) {
-                    throw new \Exception("POZOR! - v uctovnickom exporte nesedi suma itemov so sumou platby! [payment#{$payment->id} {$payment->amount} vs. {$actualAmount}]");
-                }
-            }
-            $offset += $step;
-        }
-
-        exit;
-    }
-
-    private function formatExportLine($row)
-    {
-        $line = [];
-        foreach ($row as $item) {
-            if ($item === '') {
-                $line[] = null;
-            } else {
-                $line[] = '"' . addslashes($item) . '"';
-            }
-        }
-        return implode(';', $line) . "\n";
-    }
-
-    public function renderAccountantProductExport()
-    {
-        list($stats, $total) = $this->filteredProductStatsForExports();
-        $this->getHttpResponse()->addHeader('Content-Type', 'text/csv; charset=utf-8');
-        $this->getHttpResponse()->addHeader('Content-Disposition', 'attachment; filename=' . $this->month . '-export.csv');
-
-        echo chr(239) . chr(187) . chr(191);
-        echo $this->formatExportLine([
-            "product_name",
-            "price",
-            "count",
-            "sum",
-        ]);
-
-        if (!empty($stats)) {
-            foreach ($stats['product_sums'] as $productId => $productStats) {
-                foreach ($productStats as $priceLevel => $sum) {
-                    $row = [
-                        $stats['products'][$productId]->name,
-                        number_format(floatval($priceLevel), 2, ',', ''),
-                        $sum / floatval($priceLevel),
-                        number_format($sum, 2, ',', ''),
-                    ];
-                    echo $this->formatExportLine($row);
-                }
-            }
-
-            foreach ($stats['postal_fee_sums'] as $postalFeeId => $postalFeeStat) {
-                foreach ($postalFeeStat as $priceLevel => $sum) {
-                    $row = [
-                        $stats['postal_fees'][$postalFeeId]->title,
-                        number_format(floatval($priceLevel), 2, ',', ''),
-                        $sum / floatval($priceLevel),
-                        number_format($sum, 2, ',', ''),
-                    ];
-                    echo $this->formatExportLine($row);
-                }
-            }
-        }
-
-        echo $this->formatExportLine(['Total', '', '', number_format($total, 2, ',', '')]);
-        exit;
-    }
-
-    public function renderAccountant()
-    {
     }
 
     public function renderEdit($id, $userId)

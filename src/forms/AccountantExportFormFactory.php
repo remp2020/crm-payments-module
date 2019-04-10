@@ -7,6 +7,7 @@ use Crm\PaymentsModule\Repository\PaymentsRepository;
 use Crm\SubscriptionsModule\Repository\SubscriptionTypesRepository;
 use Nette\Application\UI\Form;
 use Nette\Database\Table\ActiveRow;
+use Nette\Utils\DateTime;
 use Tomaj\Form\Renderer\BootstrapRenderer;
 
 class AccountantExportFormFactory
@@ -33,12 +34,12 @@ class AccountantExportFormFactory
         $form->setRenderer(new BootstrapRenderer());
 
         $paymentGateways = $this->paymentGatewaysRepository->getAllActive()->fetchPairs('id', 'name');
-        $paymentGateways[0] = '--';
-        $form->addSelect('payment_gateway', 'Platobna brana', $paymentGateways);
+        $form->addSelect('payment_gateway', 'Platobna brana', $paymentGateways)
+            ->setPrompt('--');
 
         $statuses = $this->paymentsRepository->getStatusPairs();
-        $statuses[0] = '--';
-        $form->addSelect('status', 'Stav platby', $statuses);
+        $form->addSelect('status', 'Stav platby', $statuses)
+            ->setPrompt('--');
 
         $subscriptionTypes = $this->subscriptionTypesRepository->getAllActive()->fetchAll();
         $subscriptionTypesArray = [];
@@ -48,8 +49,8 @@ class AccountantExportFormFactory
             $subscriptionTypesArray[$subscriptionType->id] = $subscriptionType->length . ' - ' . $subscriptionType->price . ' - ' . $subscriptionType->name;
         }
 
-        $subscriptionTypesArray[0] = '--';
-        $form->addSelect('subscription_type', 'Typ predpatneho', $subscriptionTypesArray);
+        $form->addSelect('subscription_type', 'Typ predpatneho', $subscriptionTypesArray)
+            ->setPrompt('--');
 
         $last = new \DateTime();
         $last->setDate(2014, 12, 1);
@@ -64,10 +65,8 @@ class AccountantExportFormFactory
         $form->addSelect('month', 'Mesiac', $dates);
 
         $form->setDefaults([
-            'month' => isset($_GET['month']) ? $_GET['month'] : $now->format('Y-m'),
-            'payment_gateway' => isset($_GET['payment_gateway']) ? $_GET['payment_gateway'] : 0,
-            'subscription_type' => isset($_GET['subscription_type']) ? $_GET['subscription_type'] : 0,
-            'status' => $_GET['status'] ?? 'paid',
+            'status' => PaymentsRepository::STATUS_PAID,
+            'month' => DateTime::from('-1 month')->format('Y-m'),
         ]);
 
         if (!empty($filteredFields)) {
