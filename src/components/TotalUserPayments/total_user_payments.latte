@@ -1,32 +1,44 @@
 <div class="panel panel-default">
-  <div class="panel-heading">Celkovo minul</div>
+  <div class="panel-heading">{_payments.admin.total_user_payments.spent}</div>
   <div class="panel-body">
 	{if $totalSum > 0}
-	  <p>
-        <span class="text-success" style="font-size:1.5em; font-weight:700">{$totalSum|price}</span> za
-        <br>
-        {ifset $meta['subscription_payments']}{if $meta['subscription_payments']}
-          <span style="font-size:1.2em">{$meta['subscription_payments']}</span> {if $meta['subscription_payments'] == 1}platbu{elseif $meta['subscription_payments'] < 5}platby{else}platieb{/if} za predplatné<br>
-        {/if}{/ifset}
-        {ifset $meta['product_payments']}{if $meta['product_payments']}
-          {$meta['product_payments']} {if $meta['product_payments'] == 1}platbu{elseif $meta['product_payments'] < 5}platby{else}platieb{/if} v obchode<br>
-        {/if}{/ifset}
+
+        {if isset($meta['subscription_payments_amount']) && isset($meta['subscription_payments'])}
+            <span class="text-success" style="font-size:1.5em">
+             <strong>{$meta['subscription_payments_amount']|price}</strong>
+            </span>
+
+            {_payments.admin.total_user_payments.for}
+            <span class="text-success" style="font-size:1.2em">
+                <strong>{$meta['subscription_payments']}</strong>
+            </span>
+            {_payments.admin.total_user_payments.for_subscription_payments, $meta['subscription_payments']}<br>
+        {/if}
+
+        {control simpleWidget 'payments.admin.total_user_payments', $meta}
 
         {ifset $meta['avg_month_payment']}
           <hr>
-          <span style="font-size:1.4em">{$meta['avg_month_payment']|price}</span> primerne mesačne
+
+          <span style="font-size:1.4em">{$meta['avg_month_payment']|price}</span> {_payments.admin.total_user_payments.monthly_average}
           <br>
+
           <small>
             {if $meta['avg_month_payment'] >= $averageMonthSum}
-              <span class="text-success"><i class="fa fa-caret-up"></i> {$meta['avg_month_payment'] - $averageMonthSum|price} viac</span> ako primer
+              <span class="text-success">
+                  <i class="fa fa-caret-up"></i> {$meta['avg_month_payment'] - $averageMonthSum|price} {_payments.admin.total_user_payments.more}
+              </span> {_payments.admin.total_user_payments.than_average}
             {else}
-              <span class="text-warning"><i class="fa fa-caret-down"></i> {$averageMonthSum - $meta['avg_month_payment']|price} menej</span> ako primer
+              <span class="text-warning">
+                  <i class="fa fa-caret-down"></i> {$averageMonthSum - $meta['avg_month_payment']|price} {_payments.admin.total_user_payments.less}
+              </span> {_payments.admin.total_user_payments.than_average}
             {/if}
           </small>
         {/ifset}
-      </p>
 	{else}
-	  <p class="text-muted" style="font-size:1.8em; font-weight:700">{0|price}</p>
+	  <p class="text-muted" style="font-size:1.8em">
+          <strong>{0|price}</strong>
+      </p>
 	{/if}
   </div>
 </div>

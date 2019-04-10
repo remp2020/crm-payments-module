@@ -34,6 +34,15 @@ admin:
 			general: Všeobecné
 			arpu: ARPU
 
+	total_user_payments:
+		spent: Celkovo minul
+		for: za
+		for_subscription_payments: "{1}platbu za predplatné|[2,4]platby za predplatné|[5,Inf]platieb za predplatné"
+		monthly_average: priemerne mesačne
+		more: viac
+		less: menej
+		than_average: ako priemer
+
 gateway:
 	recurrent: automaticky obnovované
 

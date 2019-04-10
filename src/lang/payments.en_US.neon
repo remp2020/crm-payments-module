@@ -34,6 +34,15 @@ admin:
 			general: General
 			arpu: ARPU
 
+	total_user_payments:
+		spent: Spent in total
+		for: for
+		for_subscription_payments: "{1}subscription payment|[2,Inf]subscription payments"
+		monthly_average: average monthly payment
+		more: more
+		less: less
+		than_average: than average
+
 gateway:
 	recurrent: recurrent payment
 
