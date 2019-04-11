@@ -60,6 +60,10 @@ class RecurrentPaymentsRepository extends Repository
             ->order('RAND()');
     }
 
+    /**
+     * @param $userId
+     * @return \Crm\ApplicationModule\Selection
+     */
     public function userRecurrentPayments($userId)
     {
         return $this->getTable()->where(['user_id' => $userId])->order('id DESC, charge_at DESC');
