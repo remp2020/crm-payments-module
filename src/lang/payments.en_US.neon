@@ -70,4 +70,5 @@ frontend:
 		thank_you: Thank you
 	proforma_invoice:
 		title: Proforma invoice payment
+		form_title: 'Please fill up your invoice details to complete the order'
 		thank_you: 'Thank you for the order, the invoice will be sent to your email within 3 working days.'
