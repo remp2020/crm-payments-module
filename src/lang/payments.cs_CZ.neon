@@ -25,6 +25,9 @@ admin:
 			less: méně
 			than_average: jako průměr
 
+		device_user_listing_widget:
+			device: Zařízení
+
 	donation: Dar k předplatnému
 
 	arpu:
