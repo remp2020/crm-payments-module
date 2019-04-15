@@ -3,30 +3,31 @@ menu:
 	payments: Payments
 
 admin:
+	component:
+		actual_free_subscribers_stat_widget:
+			title: Subscribers without payment
+			help: Subscription without payment. One user is one when I have multiple subscriptions.
+
+		actual_nonfree_subscribers_stat_widget:
+			title: Subscribers with paid subscriptions
+			help: "All subscribers with active subscriptions which have type of subscription other than 'free'. Every user is counted only one time even though he has more subscriptions."
+
+		subscribers_with_payment_widget:
+			last_day: Last 24 hours
+			last_days: Last %count% days
+			description: Difference in the number of subscribers with payment for the given period.
+
+		total_user_payments:
+			spent: Spent in total
+			for: for
+			for_subscription_payments: "{1}subscription payment|[2,Inf]subscription payments"
+			monthly_average: average monthly payment
+			more: more
+			less: less
+			than_average: than average
+
 	donation: Donation
 
-	actual_free_subscribers_stat_widget:
-		title: Subscribers without payment
-		help: Subscription without payment. One user is one when I have multiple subscriptions.
-
-	actual_nonfree_subscribers_stat_widget:
-		title: Subscribers with paid subscriptions
-		help: "All subscribers with active subscriptions which have type of subscription other than 'free'. Every user is counted only one time even though he has more subscriptions."
-
-	gift_coupons:
-		button_title: Gift subscriptions
-		modal_title: Gift subscription
-		email: E-mail
-		start_at: Start at
-		sent: Sent
-		subscription: Subscription
-		yes: yes
-		not_created: not created
-
-	subscribers_with_payment_widget:
-		last_day: Last 24 hours
-		last_days: Last %count% days
-		description: Difference in the number of subscribers with payment for the given period.
 	arpu:
 		graph_label: ARPU
 		all:

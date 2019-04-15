@@ -259,7 +259,6 @@ class PaymentFormFactory
         }
 
         $form->addHidden('user_id', $user->id);
-        $form->addHidden('redirect', $user->id);
 
         $form->addSubmit('send', 'Ulož')
             ->getControlPrototype()

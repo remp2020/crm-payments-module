@@ -27,7 +27,6 @@ use Crm\PaymentsModule\Commands\RepairRecurrentUpgradesCommand;
 use Crm\PaymentsModule\Commands\StopRecurrentPaymentsExpiresCommand;
 use Crm\PaymentsModule\Commands\TatraBankaMailConfirmationCommand;
 use Crm\PaymentsModule\Commands\UpdateRecurrentPaymentsExpiresCommand;
-use Crm\PaymentsModule\DataProvider\FilterGiftedSubscriptionsDataProvider;
 use Crm\PaymentsModule\DataProvider\PaymentFromVariableSymbolDataProvider;
 use Crm\PaymentsModule\DataProvider\SubscriptionsWithActiveUnchargedRecurrentEndingWithinPeriodDataProvider;
 use Crm\PaymentsModule\DataProvider\SubscriptionsWithoutExtensionEndingWithinPeriodDataProvider;
@@ -291,10 +290,6 @@ class PaymentsModule extends CrmModule
         $dataProviderManager->registerDataProvider(
             'subscriptions.dataprovider.payment_from_variable_symbol',
             $this->getInstance(PaymentFromVariableSymbolDataProvider::class)
-        );
-        $dataProviderManager->registerDataProvider(
-            'subscriptions.dataprovider.filter_gifted_subscriptions',
-            $this->getInstance(FilterGiftedSubscriptionsDataProvider::class)
         );
     }
 

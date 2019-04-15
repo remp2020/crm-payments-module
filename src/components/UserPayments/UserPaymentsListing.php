@@ -15,13 +15,10 @@ class UserPaymentsListing extends BaseWidget
 {
     private $templateName = 'user_payments_listing.latte';
 
-    /** @var PaymentsRepository */
     private $paymentsRepository;
 
-    /** @var RecurrentPaymentsRepository */
     private $recurrentPaymentsRepository;
 
-    /** @var ParsedMailLogsRepository  */
     private $parsedMailLogsRepository;
 
     public function __construct(
@@ -106,11 +103,6 @@ class UserPaymentsListing extends BaseWidget
     }
 
     protected function createComponentChangePaymentStatus(ChangePaymentStatusFactoryInterface $factory)
-    {
-        $control = $factory->create();
-        return $control;
-    }
-    protected function createComponentGiftCoupons(GiftCouponsFactoryInterface $factory)
     {
         $control = $factory->create();
         return $control;
