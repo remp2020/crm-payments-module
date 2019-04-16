@@ -62,9 +62,7 @@ class RecurrentPaymentsRepository extends Repository
 
     public function userRecurrentPayments($userId)
     {
-        return $this->getTable()
-            ->where(['user_id' => $userId])
-            ->order('id DESC, charge_at DESC');
+        return $this->getTable()->where(['user_id' => $userId])->order('id DESC, charge_at DESC');
     }
 
     public function reactiveByUser($id, $userId)
