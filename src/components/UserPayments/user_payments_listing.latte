@@ -97,11 +97,11 @@
         </td>
 
         <td>
-          <div class="list-group" style="font-size: 0.9em;">
+          <ul class="list-group" style="font-size: 0.9em;">
             {control simpleWidget 'payments.admin.payment_source_listing', $payment}
 
             <li n:if="$payment->referer" class="list-group-item"><strong>Referer: </strong> <a href="{$payment->referer|checkurl}">{$payment->referer|substr:0, 64}...</a></li>
-          </div>
+          </ul>
         </td>
 
         <td style="white-space: nowrap">
