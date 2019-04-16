@@ -38,8 +38,6 @@ services:
 	- Crm\PaymentsModule\Api\VariableSymbolApiHandler
 	- Crm\PaymentsModule\MailConfirmation\CidGetterDownloader
 	variableSymbol: Crm\PaymentsModule\Repository\VariableSymbol
-	- Crm\PaymentsModule\Commands\RepairRecurrentsCommand
-	- Crm\PaymentsModule\Commands\RepairRecurrentUpgradesCommand
 	- Crm\PaymentsModule\Commands\CalculateAveragesCommand
 	- Crm\PaymentsModule\Gateways\Paypal
 	- Crm\PaymentsModule\Gateways\PaypalReference
