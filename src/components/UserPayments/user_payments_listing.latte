@@ -13,17 +13,19 @@
       <th>Položky</th>
       <th>Stav</th>
       <th>Vytvorené</th>
-      <th>Referer</th>
+      <th>Zdroje platby</th>
       <th>Akcie</th>
     </thead>
     <tbody>
       <tr n:foreach="$payments as $payment">
         <td><small class="text-muted">#{$payment->id}</small></td>
+
         <td>
           {$payment->variable_symbol}
           <i n:if="$payment->note" class="fa fa-info-circle text-danger fa-wh" data-toggle="tooltip" data-placement="top" title="{$payment->note|breaklines}"></i>
           <span n:if="$payment->upgrade_type" class="label label-info">Upgrade {$payment->upgrade_type}</span>
         </td>
+
         <td>
           {$payment->amount|price}
           <span n:if="$payment->additional_type" class="label label-primary">
@@ -31,7 +33,9 @@
             {if $payment->additional_type == 'recurrent'} recurrent{/if}
           </span>
         </td>
+
         <td>{$payment->payment_gateway->name}</td>
+
         <td>
           <div class="list-group">
             {foreach $payment->related('payment_items') as $paymentItem}
@@ -45,6 +49,7 @@
             {/if}
           </div>
         </td>
+
         <td>
           <div class="dropdown clearfix">
             {var $btn_class = 'btn-default'}
@@ -72,6 +77,7 @@
             </ul>
           </div>
         </td>
+
         <td>
           <small class="text-muted">{$payment->created_at|userDate}</small>
           {if $payment->paid_at}
@@ -89,20 +95,15 @@
           {/if}
           <br>
         </td>
+
         <td>
-          {var $content = $payment->related('content_conversions')->limit(1)->fetch()}
-          {if $content && $content->content_id}
-            {var $c = $content->content}
-            <a href="{plink :Content:Content:Show $c->id}">{$c->title}</a>
-            <br><small>{$c->section} / {$c->author}</small>
-          {else}
-            <code n:if="$payment->referer">{$payment->referer}</code>
-          {/if}
-          {var $userAgent = new \Sinergi\BrowserDetector\UserAgent($payment->user_agent)}
-          {var $d = new \Sinergi\BrowserDetector\Device($userAgent)}
-          <span class="label label-default" n:if="$d->getName() && $d->getName() != 'unknown'">{$d->getName()}</span>
-          <span n:if="$payment->sales_funnel_id" class="text-muted">(funnel <a href="{plink :SalesFunnel:SalesFunnelsAdmin:show $payment->sales_funnel_id}">{$payment->sales_funnel->name}</a>)</span>
+          <ul class="list-group" style="font-size: 0.9em;">
+            {control simpleWidget 'payments.admin.payment_source_listing', $payment}
+
+            <li n:if="$payment->referer" class="list-group-item"><strong>Referer: </strong> <a href="{$payment->referer|checkurl}">{$payment->referer|substr:0, 64}...</a></li>
+          </ul>
         </td>
+
         <td style="white-space: nowrap">
           <a href="{plink :Payments:PaymentsAdmin:Edit $payment->id, $payment->user_id}" class="btn btn-primary btn-sm"><i class="fa fa-edit"></i> Uprav</a>
           {control listingWidget 'admin.payments.listing.action', $payment}

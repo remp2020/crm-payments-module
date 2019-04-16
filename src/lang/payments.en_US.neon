@@ -26,6 +26,9 @@ admin:
 			less: less
 			than_average: than average
 
+		device_user_listing_widget:
+			device: Device
+
 	donation: Donation
 
 	arpu:

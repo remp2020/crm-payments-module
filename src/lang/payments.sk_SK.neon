@@ -26,6 +26,9 @@ admin:
 			less: menej
 			than_average: ako priemer
 
+		device_user_listing_widget:
+			device: Zariadenie
+
 	donation: Dar k predplatnému
 
 	arpu:
