@@ -60,6 +60,26 @@ class RecurrentPaymentsRepository extends Repository
             ->order('RAND()');
     }
 
+    /**
+     * @param $userId
+     * @return \Crm\ApplicationModule\Selection
+     */
+    public function getUserActiveRecurrentPayments($userId)
+    {
+        return $this->getTable()
+            ->where([
+                'state' => RecurrentPaymentsRepository::STATE_ACTIVE,
+                'user_id' => $userId,
+            ])
+            ->where('status IS NULL')
+            ->where('retries >= 0')
+            ->order('charge_at DESC');
+    }
+
+    /**
+     * @param $userId
+     * @return \Crm\ApplicationModule\Selection
+     */
     public function userRecurrentPayments($userId)
     {
         return $this->getTable()->where(['user_id' => $userId])->order('id DESC, charge_at DESC');
