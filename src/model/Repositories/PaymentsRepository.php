@@ -100,8 +100,7 @@ class PaymentsRepository extends Repository
         $additionalType = null,
         $variableSymbol = null,
         IRow $address = null,
-        $recurrentCharge = false,
-        $invoiceable = true
+        $recurrentCharge = false
     ) {
         $data = [
             'user_id' => $user->id,
@@ -120,7 +119,6 @@ class PaymentsRepository extends Repository
             'additional_amount' => $additionalAmount == null ? 0 : $additionalAmount,
             'address_id' => $address ? $address->id : null,
             'recurrent_charge' => $recurrentCharge,
-            'invoiceable' => $invoiceable,
         ];
 
         // TODO: Additional type/amount fields are only informative and should be replaced with single/recurrent flag
@@ -178,7 +176,6 @@ class PaymentsRepository extends Repository
             'created_at' => new DateTime(),
             'modified_at' => new DateTime(),
             'variable_symbol' => $payment->variable_symbol,
-            'invoiceable' => $payment->invoiceable,
             'ip' => '',
             'user_agent' => '',
             'referer' => '',

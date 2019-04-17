@@ -284,7 +284,6 @@ class PaymentFormFactory
         $subscriptionEndAt = null;
         $sendNotification = $values['send_notification'];
 
-        unset($values['display_order']);
         unset($values['subscription_types']);
         unset($values['send_notification']);
 

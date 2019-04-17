@@ -5,7 +5,6 @@ services:
 
 	- Crm\PaymentsModule\Repository\PaymentGatewaysRepository
 	- Crm\PaymentsModule\Repository\PaymentsRepository
-	- Crm\PaymentsModule\Repository\PaymentGiftCouponsRepository
 	- Crm\PaymentsModule\Repository\PaymentLogsRepository
 	- Crm\PaymentsModule\Repository\PaymentMetaRepository
 	- Crm\PaymentsModule\Forms\PaymentFormFactory
@@ -24,9 +23,10 @@ services:
 	- Crm\PaymentsModule\MailConfirmation\MailProcessor
 	- Crm\PaymentsModule\Components\ChangePaymentStatusFactoryInterface
 	- Crm\PaymentsModule\Components\DuplicateRecurrentPaymentsControlFactoryInterface
-	- Crm\PaymentsModule\Components\GiftCouponsFactoryInterface
 	- Crm\PaymentsModule\Components\LastPaymentsControlFactoryInterface
 	- Crm\PaymentsModule\Components\TotalUserPayments
+	- Crm\PaymentsModule\Components\PaymentItemsListWidget
+	- Crm\PaymentsModule\Components\DeviceUserListingWidget
 	- Crm\PaymentsModule\Commands\RecurrentPaymentsCardCheck
 	- Crm\PaymentsModule\Commands\RecurrentPaymentsChargeCommand
 	- Crm\PaymentsModule\Commands\CsobMailConfirmationCommand
@@ -83,7 +83,6 @@ services:
 	- Crm\PaymentsModule\Components\SubscriptionsWithActiveUnchargedRecurrentEndingWithinPeriodWidget
 	- Crm\PaymentsModule\Components\SubscriptionsWithoutExtensionEndingWithinPeriodWidget
 	- Crm\PaymentsModule\Components\SubscriptionTypeReports
-	- Crm\PaymentsModule\DataProvider\FilterGiftedSubscriptionsDataProvider
 	- Crm\PaymentsModule\DataProvider\PaymentFromVariableSymbolDataProvider
 	- Crm\PaymentsModule\DataProvider\SubscriptionsWithActiveUnchargedRecurrentEndingWithinPeriodDataProvider
 	- Crm\PaymentsModule\DataProvider\SubscriptionsWithoutExtensionEndingWithinPeriodDataProvider

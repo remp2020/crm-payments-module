@@ -1,2 +1,5 @@
 <span class="badge">{$totalFreeSubscribers}</span>
-<a n:tag-if="isset($totalFreeSubscribersLink)" href="{$totalFreeSubscribersLink}">{_"payments.admin.actual_free_subscribers_stat_widget.title"}</a> <i class="fa fa-question-circle" data-toggle="tooltip" data-original-title="{_"payments.admin.actual_free_subscribers_stat_widget.help"}"></i>
+<a n:tag-if="isset($totalFreeSubscribersLink)" href="{$totalFreeSubscribersLink}">
+    {_"payments.admin.component.actual_free_subscribers_stat_widget.title"}
+</a>
+<i class="fa fa-question-circle" data-toggle="tooltip" data-original-title="{_"payments.admin.component.actual_free_subscribers_stat_widget.help"}"></i>

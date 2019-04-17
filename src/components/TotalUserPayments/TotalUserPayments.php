@@ -35,13 +35,13 @@ class TotalUserPayments extends BaseWidget
         return 'usertotalspent';
     }
 
-    public function render($id)
+    public function render($userId)
     {
-        $totalSum = $this->paymentsRepository->totalUserAmountSum($id);
+        $totalSum = $this->paymentsRepository->totalUserAmountSum($userId);
         $this->template->totalSum = $totalSum;
 
         if ($totalSum > 0) {
-            $meta = $this->userMetaRepository->userMeta($id);
+            $meta = $this->userMetaRepository->userMeta($userId);
             $this->template->meta = $meta;
 
             $average = $this->userMetaRepository->getTable()->select('AVG(value) AS average')->where(['key' => 'avg_month_payment'])->fetch();

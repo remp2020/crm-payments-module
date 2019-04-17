@@ -2,6 +2,7 @@
 
 namespace Crm\PaymentsModule\Components;
 
+use Crm\ApplicationModule\Components\SimpleWidgetFactoryInterface;
 use Crm\ApplicationModule\Widget\BaseWidget;
 use Crm\ApplicationModule\Widget\WidgetManager;
 use Crm\PaymentsModule\MailConfirmation\ParsedMailLogsRepository;
@@ -14,13 +15,10 @@ class UserPaymentsListing extends BaseWidget
 {
     private $templateName = 'user_payments_listing.latte';
 
-    /** @var PaymentsRepository */
     private $paymentsRepository;
 
-    /** @var RecurrentPaymentsRepository */
     private $recurrentPaymentsRepository;
 
-    /** @var ParsedMailLogsRepository  */
     private $parsedMailLogsRepository;
 
     public function __construct(
@@ -109,7 +107,8 @@ class UserPaymentsListing extends BaseWidget
         $control = $factory->create();
         return $control;
     }
-    protected function createComponentGiftCoupons(GiftCouponsFactoryInterface $factory)
+
+    protected function createComponentSimpleWidget(SimpleWidgetFactoryInterface $factory)
     {
         $control = $factory->create();
         return $control;

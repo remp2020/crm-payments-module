@@ -27,7 +27,6 @@ use Crm\PaymentsModule\Commands\RepairRecurrentUpgradesCommand;
 use Crm\PaymentsModule\Commands\StopRecurrentPaymentsExpiresCommand;
 use Crm\PaymentsModule\Commands\TatraBankaMailConfirmationCommand;
 use Crm\PaymentsModule\Commands\UpdateRecurrentPaymentsExpiresCommand;
-use Crm\PaymentsModule\DataProvider\FilterGiftedSubscriptionsDataProvider;
 use Crm\PaymentsModule\DataProvider\PaymentFromVariableSymbolDataProvider;
 use Crm\PaymentsModule\DataProvider\SubscriptionsWithActiveUnchargedRecurrentEndingWithinPeriodDataProvider;
 use Crm\PaymentsModule\DataProvider\SubscriptionsWithoutExtensionEndingWithinPeriodDataProvider;
@@ -93,9 +92,6 @@ class PaymentsModule extends CrmModule
         $mainMenu->addChild($menuItem);
 
         $menuItem = new MenuItem('Podporovatel a Bonus', ':Payments:PaymentsAdmin:SupporterPayments', 'fa fa-sync-alt', 800);
-        $mainMenu->addChild($menuItem);
-
-        $menuItem = new MenuItem('Uctovnicke Exporty', ':Payments:PaymentsAdmin:Accountant', 'fa fa-money-bill-alt', 900);
         $mainMenu->addChild($menuItem);
 
         $menuContainer->attachMenuItem($mainMenu);
@@ -194,6 +190,14 @@ class PaymentsModule extends CrmModule
             $this->getInstance(\Crm\PaymentsModule\Components\SubscriptionTypeReports::class),
             500
         );
+        $widgetManager->registerWidget(
+            'payments.admin.payment_item_listing',
+            $this->getInstance(\Crm\PaymentsModule\Components\PaymentItemsListWidget::class)
+        );
+        $widgetManager->registerWidget(
+            'payments.admin.payment_source_listing',
+            $this->getInstance(\Crm\PaymentsModule\Components\DeviceUserListingWidget::class)
+        );
     }
 
     public function registerCommands(CommandsContainerInterface $commandsContainer)
@@ -290,10 +294,6 @@ class PaymentsModule extends CrmModule
         $dataProviderManager->registerDataProvider(
             'subscriptions.dataprovider.payment_from_variable_symbol',
             $this->getInstance(PaymentFromVariableSymbolDataProvider::class)
-        );
-        $dataProviderManager->registerDataProvider(
-            'subscriptions.dataprovider.filter_gifted_subscriptions',
-            $this->getInstance(FilterGiftedSubscriptionsDataProvider::class)
         );
     }
 
