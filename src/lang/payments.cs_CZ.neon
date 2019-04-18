@@ -84,3 +84,10 @@ frontend:
 		recipient_message: Zpráva pro příjemce
 		delay_info: Připsání platby na účet může trvat 1 až 2 pracovní dny. Předplatné se aktivuje až po připsání platby na náš účet.
 		thank_you: Děkujeme
+	select_card:
+		title: 'Vyberte kartu k dokončení platby'
+		lead: 'Pamatujeme si Vámi použité karty, takže ich číslo nemusíte zadávat znovu.'
+		subtitle: 'List of saved cards'
+		card_with_expiration: 'Card with expiration'
+		use_card: 'Use card'
+		use_new_card: 'Enter a new card'
