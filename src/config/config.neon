@@ -15,6 +15,7 @@ services:
 	- Crm\PaymentsModule\RecurrentPaymentsResolver
 	- Crm\PaymentsModule\Forms\RecurrentPaymentFormFactory
 	- Crm\PaymentsModule\PaymentProcessor
+	- Crm\PaymentsModule\RecurrentPaymentsProcessor
 	- Crm\PaymentsModule\Builder\ParsedMailLogsBuilder
 	- Crm\PaymentsModule\Repository\RecurrentPaymentsRepository
 	- Crm\PaymentsModule\MailConfirmation\ParsedMailLogsRepository
