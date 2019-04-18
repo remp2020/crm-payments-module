@@ -152,4 +152,8 @@ class PaymentsRecurrentAdminPresenter extends AdminPresenter
     {
         return $factory->create();
     }
+
+    public function renderDuplicates()
+    {
+    }
 }
