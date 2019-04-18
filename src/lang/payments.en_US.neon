@@ -26,6 +26,9 @@ admin:
 			less: less
 			than_average: than average
 
+		device_user_listing_widget:
+			device: Device
+
 	donation: Donation
 
 	arpu:
@@ -92,3 +95,7 @@ frontend:
 		card_with_expiration: 'Karta s expirací'
 		use_card: 'Použít kartu'
 		use_new_card: 'Zadat novou kartu'
+	proforma_invoice:
+		title: Proforma invoice payment
+		form_title: 'Please fill up your invoice details to complete the order'
+		thank_you: 'Thank you for the order, the invoice will be sent to your email within 3 working days.'

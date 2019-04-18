@@ -26,6 +26,9 @@ admin:
 			less: menej
 			than_average: ako priemer
 
+		device_user_listing_widget:
+			device: Zariadenie
+
 	donation: Dar k predplatnému
 
 	arpu:
@@ -92,3 +95,7 @@ frontend:
 		card_with_expiration: 'Karta s expiráciou'
 		use_card: 'Použiť kartu'
 		use_new_card: 'Zadať novú kartu'
+	proforma_invoice:
+		title: Platba predfaktúrou
+		form_title: 'Pre dokončenie objednávky prosím vyplňte fakturačné údaje'
+		thank_you: 'Ďakujeme za vašu objednávku, predfaktúru Vám zašleme do 3 pracovných dní e-mailom.'
