@@ -52,10 +52,6 @@ class PaymentGatewaysAdminPresenter extends AdminPresenter
         $this->template->type = $paymentGateway;
     }
 
-    public function renderNew()
-    {
-    }
-
     public function createComponentPaymentGatewayForm()
     {
         $id = null;

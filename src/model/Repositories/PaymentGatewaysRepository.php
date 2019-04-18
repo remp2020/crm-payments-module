@@ -32,6 +32,14 @@ class PaymentGatewaysRepository extends Repository
             ->order('sorting');
     }
 
+    public function find($id)
+    {
+        return $this->getTable()
+            ->where(['id' => $id])
+            ->where('code IN (?)', $this->registeredGateways)
+            ->fetch();
+    }
+
     public function findByCode($code)
     {
         return $this->getTable()

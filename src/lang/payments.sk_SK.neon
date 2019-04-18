@@ -165,6 +165,36 @@ admin:
 			general: Všeobecné
 			arpu: ARPU
 
+	payment_gateways:
+		back_to_list: Späť na platobné brány
+		edit: Upraviť
+		code: Identifikátor
+		created_at: Vytvorená
+		modified_at: Upravená
+		visible: Viditeľná
+		is_recurrent: Rekurentná
+		sorting: Poradie
+		actions: Akcie
+		export: Exportovať
+
+form:
+	payment_gateway:
+		name:
+			label: Meno
+			required: Meno musí byť zadané
+			placeholder: napríklad Tatrapay
+		code:
+			label: Identifikátor
+			placeholder: Napríklad tatrapay
+		visible:
+			label: Viditeľná
+		is_recurrent:
+			label: Rekurentná
+		sorting:
+			label: Poradie
+		save:
+			label: Ulož
+
 gateway:
 	recurrent: automaticky obnovované
 

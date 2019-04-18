@@ -4,7 +4,6 @@ namespace Crm\PaymentsModule;
 use Crm\PaymentsModule\Gateways\PaymentInterface;
 use Nette\DI\Container;
 
-// TODO: [payments_module] refactor - registration of payment gateways should be in modules (see remp/crm#649)
 class GatewayFactory
 {
     protected $container;
