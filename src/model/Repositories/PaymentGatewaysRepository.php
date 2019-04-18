@@ -3,36 +3,42 @@
 namespace Crm\PaymentsModule\Repository;
 
 use Crm\ApplicationModule\Repository;
+use Crm\PaymentsModule\GatewayFactory;
 use DateTime;
+use Nette\Caching\IStorage;
+use Nette\Database\Context;
 use Nette\Database\Table\IRow;
 use Nette\Database\Table\Selection;
 
 class PaymentGatewaysRepository extends Repository
 {
-    const TYPE_COMFORT_PAY = 'comfortpay';
-    const TYPE_PAYPAL = 'paypal';
-    const TYPE_PAYPAL_RECURRENT = 'paypalrecurrent';
-
     protected $tableName = 'payment_gateways';
 
-    public function getAllActive()
+    private $registeredGateways = [];
+
+    public function __construct(
+        Context $database,
+        GatewayFactory $gatewayFactory,
+        IStorage $cacheStorage = null)
     {
-        return $this->getTable()->where(['active' => true])->order('sorting');
+        parent::__construct($database, $cacheStorage);
+        $this->registeredGateways = $gatewayFactory->getRegisteredCodes();
+    }
+
+    public function all()
+    {
+        return $this->getTable()
+            ->where('code IN (?)', $this->registeredGateways)
+            ->order('sorting');
     }
 
     public function findByCode($code)
     {
-        return $this->getTable()->where(['code' => $code])->limit(1)->fetch();
-    }
-
-    public function allActiveRecurrent()
-    {
-        return $this->getAllActive()->where('is_recurrent', true);
-    }
-
-    public function allRecurrent()
-    {
-        return $this->getTable()->where(['is_recurrent' => true]);
+        return $this->getTable()
+            ->where(['code' => $code])
+            ->where('code IN (?)', $this->registeredGateways)
+            ->limit(1)
+            ->fetch();
     }
 
     /**
@@ -45,13 +51,7 @@ class PaymentGatewaysRepository extends Repository
 
     public function getAllActiveShop()
     {
-        return $this->getAllActive()->where('shop', true);
-    }
-
-
-    public function all()
-    {
-        return $this->getTable()->order('sorting');
+        return $this->all()->where('shop', true);
     }
 
     public function add(

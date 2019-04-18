@@ -11,7 +11,7 @@ use Omnipay\ComfortPay\Gateway;
 use Omnipay\Omnipay;
 use Tracy\Debugger;
 
-class Comfortpay extends GatewayAbstract implements PaymentInterface, RecurrentPaymentInterface
+class Comfortpay extends GatewayAbstract implements RecurrentPaymentInterface
 {
     /** @var Gateway */
     protected $gateway;

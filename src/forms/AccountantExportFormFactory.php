@@ -33,7 +33,7 @@ class AccountantExportFormFactory
         $form = new Form;
         $form->setRenderer(new BootstrapRenderer());
 
-        $paymentGateways = $this->paymentGatewaysRepository->getAllActive()->fetchPairs('id', 'name');
+        $paymentGateways = $this->paymentGatewaysRepository->all()->fetchPairs('id', 'name');
         $form->addSelect('payment_gateway', 'Platobna brana', $paymentGateways)
             ->setPrompt('--');
 

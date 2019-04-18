@@ -3,6 +3,11 @@ services:
 		setup:
 			- addModule(Crm\PaymentsModule\PaymentsModule())
 
+	gatewayFactory:
+		class: Crm\PaymentsModule\GatewayFactory
+		setup:
+			- registerGateway('bank_transfer', Crm\PaymentsModule\Gateways\BankTransfer)
+
 	- Crm\PaymentsModule\Repository\PaymentGatewaysRepository
 	- Crm\PaymentsModule\Repository\PaymentsRepository
 	- Crm\PaymentsModule\Repository\PaymentLogsRepository
@@ -10,7 +15,6 @@ services:
 	- Crm\PaymentsModule\Forms\PaymentFormFactory
 	- Crm\PaymentsModule\Forms\PaymentGatewayFormFactory
 	- Crm\PaymentsModule\Forms\AccountantExportFormFactory
-	- Crm\PaymentsModule\GatewayFactory
 	- Crm\PaymentsModule\PaymentsHistogramFactory
 	- Crm\PaymentsModule\RecurrentPaymentsResolver
 	- Crm\PaymentsModule\Forms\RecurrentPaymentFormFactory

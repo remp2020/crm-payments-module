@@ -23,9 +23,7 @@
         <tr>
           <th>#ID / poradie</th>
           <th>Meno</th>
-          <th>Obrazok</th>
           <th>Aktívne</th>
-          <th>Viditeľné</th>
           <th>Actions</th>
         </tr>
       </thead>
@@ -38,9 +36,6 @@
                 {$type->name}
               </a>
               <small>{$type->code}</small>
-              {if $type->default}
-                <span class="label label-success">Default</span>
-              {/if}
               {if $type->is_recurrent}
                 <span class="label label-primary">Recurrent</span>
               {/if}
@@ -50,33 +45,11 @@
               </span>
             </td>
             <td>
-              {if $type->image}
-                <img src="{$type->image}" title="{$type->code}" width="80"><br>
-                <code>{$type->image}</code>
-              {else}
-                <span class="label label-default">bez obrázku</span>
-              {/if}
-            </td>
-            <td>
             	{if $type->active}
             		<span class="label label-success">aktívne</span>
             	{else}
             		<span class="label label-default">neaktívne</span>
             	{/if}
-            </td>
-            <td>
-                Objednávkový proces
-            	{if $type->visible}
-                	<span class="label label-success">viditeľné</span>
-                {else}
-                	<span class="label label-default">skryté</span>
-                {/if}
-                <br />Shop
-                {if $type->shop}
-                    <span class="label label-success">viditeľné</span>
-                {else}
-                    <span class="label label-default">skryté</span>
-                {/if}
             </td>
             <td style="white-space: nowrap">
               <p class="text-nowrap">

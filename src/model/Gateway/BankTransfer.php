@@ -2,7 +2,7 @@
 
 namespace Crm\PaymentsModule\Gateways;
 
-class BankTransfer extends GatewayAbstract implements PaymentInterface
+class BankTransfer extends GatewayAbstract
 {
     public function isSuccessful()
     {

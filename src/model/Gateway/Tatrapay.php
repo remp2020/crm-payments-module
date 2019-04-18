@@ -6,7 +6,7 @@ use Nette\Utils\Strings;
 use Omnipay\Omnipay;
 use Omnipay\TatraPay\Gateway;
 
-class Tatrapay extends GatewayAbstract implements PaymentInterface
+class Tatrapay extends GatewayAbstract
 {
     /** @var Gateway */
     protected $gateway;

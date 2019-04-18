@@ -51,7 +51,7 @@ class PaymentsPopulator extends AbstractPopulator
             }
 
             $payment = $payments->insert($data);
-            if ($payment->payment_gateway->code == PaymentGatewaysRepository::TYPE_COMFORT_PAY) {
+            if ($payment->payment_gateway->is_recurrent) {
                 $recurrentPaymentData = [
                     'cid' => $this->faker->randomNumber(10),
                     'created_at' => $this->faker->dateTimeBetween('-1 years'),

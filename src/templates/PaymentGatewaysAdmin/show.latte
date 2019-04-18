@@ -24,29 +24,11 @@
             <li class="list-group-item"><b>Vytvorený:</b> {$type->created_at|userDate}</li>
             <li class="list-group-item"><b>Modifikovaný:</b> {$type->modified_at|userDate}</li>
             <li class="list-group-item">
-                <b>Obrázok:</b>
-                {if $type->image}
-                    <img src="{$type->image}" title="{$type->code}"><br>
-                    <code>{$type->image}</code>
-                {else}
-                    <span class="label label-default">bez obrázku</span>
-                {/if}
-            </li>
-            <li class="list-group-item"><b>Popis:</b> {$type->description}</li>
-            <li class="list-group-item">
                 <b>Aktívny:</b>
                 {if $type->active}
                     <span class="label label-success">aktívne</span>
                 {else}
                     <span class="label label-default">neaktívne</span>
-                {/if}
-            </li>
-            <li class="list-group-item">
-                <b>Viditelny:</b>
-                {if $type->visible}
-                    <span class="label label-success">viditeľné</span>
-                {else}
-                    <span class="label label-default">skryté</span>
                 {/if}
             </li>
             <li class="list-group-item">
@@ -63,15 +45,6 @@
                     <span class="label label-primary">Je recurrentná</span>
                 {else}
                     <span class="label label-default">Nie je recurrentná</span>
-                {/if}
-            </li>
-
-            <li class="list-group-item">
-                <b>Default:</b>
-                {if $type->default}
-                    <span class="label label-success">default</span>
-                {else}
-                    <span class="label label-default">nie</span>
                 {/if}
             </li>
             <li class="list-group-item"><b>Poradie:</b> {$type->sorting}</li>

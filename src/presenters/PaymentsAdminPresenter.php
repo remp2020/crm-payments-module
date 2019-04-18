@@ -118,7 +118,7 @@ class PaymentsAdminPresenter extends AdminPresenter
         $form->addText('text', 'VS:')
             ->setAttribute('autofocus');
 
-        $paymentGateways = $this->paymentGatewaysRepository->getAllActive()->fetchPairs('id', 'name');
+        $paymentGateways = $this->paymentGatewaysRepository->all()->fetchPairs('id', 'name');
         $form->addSelect('payment_gateway', 'Platobná brána', $paymentGateways)->setPrompt('--');
 
         $statuses = $this->paymentsRepository->getStatusPairs();
