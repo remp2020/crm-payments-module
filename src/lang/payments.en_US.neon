@@ -82,6 +82,62 @@ admin:
 			less: less
 			than_average: than average
 
+		user_payments_listing:
+			header: Payments
+			today: Today
+			no_payments:
+				title: "No entry"
+				message: "This subscriber doesn't have payments."
+			add_manual_payment: Add payment manually
+			caption:
+				id: ID
+				variable_symbol: Variable symbol
+				amount: Amount
+				payment_gateway: Payment gateway
+				payment_items: Items
+				status: Status
+				created: Created
+				source: Source of payment
+				actions: Actions
+				cid: CID
+				received: Received
+				edited: Edited
+				next_charge: Next charge
+				subscription_type: Subscription type
+				card_expiration: Card expiration
+				created_payment_id: ID of created payment
+				recurrent_state: Status of recurrent payment
+				payment: Payment
+				message: Message
+			referrer: Referrer
+			edit: Edit
+			n_a: "N/A"
+			payment:
+				address: Address
+				paid: Paid
+				active_from_to: "Will be active from <strong>%active_from%</strong> to <strong>%active_to%</strong>"
+				active_from_confirmation_to: "Will be active from <strong>payment confirmation</strong> to <strong>%active_to%</strong>"
+				active_from: "Will be active from <strong>%active_from%</strong>"
+				badge_donation: donation
+				badge_upgrade: upgrade
+			recurrent_profile:
+				title: Recurring payments
+				next_subscription: next will be
+				stop_recurrent_profile: Stop recurrent profile
+				stop_recurrent_profile_confirm: Confirm recurrent profile cancellation
+				user_stop: Stopped by user
+				admin_stop: Stopped by admin
+				system_stop: Unable to charge. Stopped.
+				charged: Automatically renewed.
+				charge_failed: Unable to charge. Next try in 6 hours.
+				tb_failed: ERROR in TB.
+			parsed_mail_logs:
+				title: "Processed/confirmed payments"
+				changed_to_paid: Status changed to paid
+				already_paid: Payment paid
+				different_amount: Different amount
+				without_vs: Without variable symbol
+
 		device_user_listing_widget:
 			device: Device
 

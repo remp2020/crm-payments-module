@@ -1,20 +1,20 @@
 {if $totalPayments == 0}
   <div class="bs-callout bs-callout-info">
-    <h4>Žiaden záznam</h4>
-    <p class="lead">Tento používateľ nemá zaznamenané žiadne platby.</p>
+    <h4>{_"payments.admin.component.user_payments_listing.no_payments.title"}</h4>
+    <p class="lead">{_"payments.admin.component.user_payments_listing.no_payments.message"}</p>
   </div>
 {else}
   <table class="table table-striped table-hover">
     <thead>
-      <th>Id</th>
-      <th>Variabilný symbol</th>
-      <th>Suma</th>
-      <th>Platobná brána</th>
-      <th>Položky</th>
-      <th>Stav</th>
-      <th>Vytvorené</th>
-      <th>Zdroje platby</th>
-      <th>Akcie</th>
+      <th>{_"payments.admin.component.user_payments_listing.caption.id"}</th>
+      <th>{_"payments.admin.component.user_payments_listing.caption.variable_symbol"}</th>
+      <th>{_"payments.admin.component.user_payments_listing.caption.amount"}</th>
+      <th>{_"payments.admin.component.user_payments_listing.caption.payment_gateway"}</th>
+      <th>{_"payments.admin.component.user_payments_listing.caption.payment_items"}</th>
+      <th>{_"payments.admin.component.user_payments_listing.caption.status"}</th>
+      <th>{_"payments.admin.component.user_payments_listing.caption.created"}</th>
+      <th>{_"payments.admin.component.user_payments_listing.caption.source"}</th>
+      <th>{_"payments.admin.component.user_payments_listing.caption.actions"}</th>
     </thead>
     <tbody>
       <tr n:foreach="$payments as $payment">
@@ -22,15 +22,20 @@
 
         <td>
           {$payment->variable_symbol}
-          <i n:if="$payment->note" class="fa fa-info-circle text-danger fa-wh" data-toggle="tooltip" data-placement="top" title="{$payment->note|breaklines}"></i>
-          <span n:if="$payment->upgrade_type" class="label label-info">Upgrade {$payment->upgrade_type}</span>
+          <i n:if="$payment->note" class="fa fa-info-circle text-danger fa-wh"
+                                   data-toggle="tooltip"
+                                   data-placement="top"
+                                   title="{$payment->note|breaklines}"></i>
+          <span n:if="$payment->upgrade_type" class="label label-info">
+            {_"payments.admin.component.user_payments_listing.payment.badge_upgrade"} {$payment->upgrade_type}
+          </span>
         </td>
 
         <td>
           {$payment->amount|price}
           <span n:if="$payment->additional_type" class="label label-primary">
-            {$payment->additional_amount|price} donation
-            {if $payment->additional_type == 'recurrent'} recurrent{/if}
+            {$payment->additional_amount|price} {_"payments.admin.component.user_payments_listing.payment.badge_donation"}
+            {if $payment->additional_type == 'recurrent'} {$payment->additional_type}{/if}
           </span>
         </td>
 
@@ -45,7 +50,7 @@
             {/foreach}
 
             {if $payment->address_id}
-              Adresa: <a href="{plink :Users:AddressAdmin:edit $payment->address_id}">#{$payment->address_id}</a>
+              {_"payments.admin.component.user_payments_listing.payment.address"}: <a href="{plink :Users:AddressAdmin:edit $payment->address_id}">#{$payment->address_id}</a>
             {/if}
           </div>
         </td>
@@ -82,16 +87,29 @@
           <small class="text-muted">{$payment->created_at|userDate}</small>
           {if $payment->paid_at}
             <br>
-            <small> Zaplatené {$payment->paid_at|userDate}</small>
+            <small>{_"payments.admin.component.user_payments_listing.payment.paid"} {$payment->paid_at|userDate}</small>
           {/if}
           {if $payment->subscription_start_at && $payment->subscription_end_at}
             {if $payment->subscription_start_at < new \DateTime()}
-              <p><small>Bude platiť od <strong>potvrdenia platby</strong> do <strong>{$payment->subscription_end_at|userDate}</strong></small></p>
+              <p><small>
+                  {_"payments.admin.component.user_payments_listing.payment.active_from_confirmation_to", [
+                      'active_to' => ($payment->subscription_end_at|userDate),
+                  ]|noescape}
+                </small></p>
             {else}
-              <p><small>Bude platiť od <strong>{$payment->subscription_start_at|userDate}</strong> do <strong>{$payment->subscription_end_at|userDate}</strong></small></p>
+              <p><small>
+                  {_"payments.admin.component.user_payments_listing.payment.active_from_to", [
+                      'active_from' => ($payment->subscription_start_at|userDate),
+                      'active_to' => ($payment->subscription_end_at|userDate),
+                  ]|noescape}
+                </small></p>
             {/if}
           {elseif $payment->subscription_start_at}
-            <p><small>Začne platiť od <strong>{$payment->subscription_start_at|userDate}</strong></small></p>
+            <p><small>
+                {_"payments.admin.component.user_payments_listing.payment.active_from", [
+                      'active_from' => ($payment->subscription_start_at|userDate),
+                  ]|noescape}
+              </small></p>
           {/if}
           <br>
         </td>
@@ -100,12 +118,17 @@
           <ul class="list-group" style="font-size: 0.9em;">
             {control simpleWidget 'payments.admin.payment_source_listing', $payment}
 
-            <li n:if="$payment->referer" class="list-group-item"><strong>Referer: </strong> <a href="{$payment->referer|checkurl}">{$payment->referer|substr:0, 64}...</a></li>
+            <li n:if="$payment->referer" class="list-group-item">
+              <strong>{_"payments.admin.component.user_payments_listing.referrer"}: </strong>
+              <a href="{$payment->referer|checkurl}">{$payment->referer|substr:0, 64}...</a>
+            </li>
           </ul>
         </td>
 
         <td style="white-space: nowrap">
-          <a href="{plink :Payments:PaymentsAdmin:Edit $payment->id, $payment->user_id}" class="btn btn-primary btn-sm"><i class="fa fa-edit"></i> Uprav</a>
+          <a href="{plink :Payments:PaymentsAdmin:Edit $payment->id, $payment->user_id}" class="btn btn-primary btn-sm">
+            <i class="fa fa-edit"></i> {_"payments.admin.component.user_payments_listing.edit"}
+          </a>
           {control listingWidget 'admin.payments.listing.action', $payment}
         </td>
       </tr>
@@ -117,24 +140,26 @@
   {/foreach}
 {/if}
 
-<a href="{plink :Payments:PaymentsAdmin:New $userId}" class="btn btn-default"><i class="fa fa-magic"></i> Pridaj platbu manuálne</a>
+<a href="{plink :Payments:PaymentsAdmin:New $userId}" class="btn btn-default">
+  <i class="fa fa-magic"></i> {_"payments.admin.component.user_payments_listing.add_manual_payment"}
+</a>
 
 {if $totalRecurrentPayments > 0}
-  <h3>Recurrentné platby</h3>
+  <h3>{_"payments.admin.component.user_payments_listing.recurrent_profile.title"}</h3>
   <hr>
   <table class="table table-striped table-hover">
     <thead>
-      <th>ID</th>
-      <th>CID</th>
-      <th>Vytvorená</th>
-      <th>Upravená</th>
-      <th>Zaplatenie prebehne</th>
-      <th>Typ predplatného</th>
-      <th>Karta expiruje</th>
-      <th>Id vytvorenej platby</th>
-      <th>Status</th>
-      <th>Stav</th>
-      <th>Akcie</th>
+      <th>{_"payments.admin.component.user_payments_listing.caption.id"}</th>
+      <th>{_"payments.admin.component.user_payments_listing.caption.cid"}</th>
+      <th>{_"payments.admin.component.user_payments_listing.caption.created"}</th>
+      <th>{_"payments.admin.component.user_payments_listing.caption.edited"}</th>
+      <th>{_"payments.admin.component.user_payments_listing.caption.next_charge"}</th>
+      <th>{_"payments.admin.component.user_payments_listing.caption.subscription_type"}</th>
+      <th>{_"payments.admin.component.user_payments_listing.caption.card_expiration"}</th>
+      <th>{_"payments.admin.component.user_payments_listing.caption.created_payment_id"}</th>
+      <th>{_"payments.admin.component.user_payments_listing.caption.status"}</th>
+      <th>{_"payments.admin.component.user_payments_listing.caption.recurrent_state"}</th>
+      <th>{_"payments.admin.component.user_payments_listing.caption.actions"}</th>
     </thead>
     <tbody>
       <tr n:foreach="$recurrentPayments as $recurrentPayment">
@@ -158,32 +183,42 @@
           {/if}
           {if $nextSubscriptionType && $recurrentPayment->subscription_type_id != $nextSubscriptionType->id}
             <br>
-            nasledujúce bude <a href="{plink :Subscriptions:SubscriptionTypesAdmin:Show $nextSubscriptionType->id}">{$nextSubscriptionType->name}</a>
+          {_"payments.admin.component.user_payments_listing.recurrent_profile.next_subscription"} <a href="{plink :Subscriptions:SubscriptionTypesAdmin:Show $nextSubscriptionType->id}">{$nextSubscriptionType->name}</a>
           {/if}
 
         </td>
-        <td><small class="text text-muted">{if $recurrentPayment->expires_at}{$recurrentPayment->expires_at|userDate}{else}N/A{/if}</small></td>
+        <td><small class="text text-muted">
+            {if $recurrentPayment->expires_at}{$recurrentPayment->expires_at|userDate}
+            {else}{_"payments.admin.component.user_payments_listing.n_a"}
+            {/if}
+          </small></td>
         <td><small>#{$recurrentPayment->parent_payment_id}</small></td>
         <td>{$recurrentPayment->status|recurrentStatus|noescape}</td>
         <td>
           {if $recurrentPayment->state == \Crm\PaymentsModule\Repository\RecurrentPaymentsRepository::STATE_ACTIVE && $recurrentPayment->status == NULL}
-            <a class="btn btn-primary" href="{link StopRecurrentPayment! $recurrentPayment->id}" onclick="return confirm('Naozaj?')"><i class="fa fa-ban"></i> Zastaviť opakovanú platbu</a>
+            <a class="btn btn-primary"
+               href="{link StopRecurrentPayment! $recurrentPayment->id}"
+               onclick="return confirm({_"payments.admin.component.user_payments_listing.recurrent_profile.stop_recurrent_profile_confirm"})">
+              <i class="fa fa-ban"></i> {_"payments.admin.component.user_payments_listing.recurrent_profile.stop_recurrent_profile"}
+            </a>
           {elseif $recurrentPayment->state == \Crm\PaymentsModule\Repository\RecurrentPaymentsRepository::STATE_USER_STOP}
-            <span class="label label-info">Zastavené používateľom.</span>
+            <span class="label label-info">{_"payments.admin.component.user_payments_listing.recurrent_profile.user_stop"}</span>
           {elseif $recurrentPayment->state == \Crm\PaymentsModule\Repository\RecurrentPaymentsRepository::STATE_ADMIN_STOP}
-            <span class="label label-info">Zastavené na žiadosť.</span>
+            <span class="label label-info">{_"payments.admin.component.user_payments_listing.recurrent_profile.admin_stop"}</span>
           {elseif $recurrentPayment->state == \Crm\PaymentsModule\Repository\RecurrentPaymentsRepository::STATE_SYSTEM_STOP}
-            <span class="label label-danger">Neúspešné opakovanie. Zastavena.</span>
+            <span class="label label-danger">{_"payments.admin.component.user_payments_listing.recurrent_profile.system_stop"}</span>
           {elseif $recurrentPayment->state == \Crm\PaymentsModule\Repository\RecurrentPaymentsRepository::STATE_CHARGED}
-            <span class="label label-success">Automaticky predĺžená.</span>
+            <span class="label label-success">{_"payments.admin.component.user_payments_listing.recurrent_profile.charged"}</span>
           {elseif $recurrentPayment->state == \Crm\PaymentsModule\Repository\RecurrentPaymentsRepository::STATE_CHARGE_FAILED}
-            <span class="label label-warning">Neúspešné opakovanie. Opakovanie o 6h.</span>
+            <span class="label label-warning">{_"payments.admin.component.user_payments_listing.recurrent_profile.charge_failed"}</span>
           {elseif $recurrentPayment->state == \Crm\PaymentsModule\Repository\RecurrentPaymentsRepository::STATE_TB_FAILED}
-            <span class="label label-danger">CHYBA V TB.</span>
+            <span class="label label-danger">{_"payments.admin.component.user_payments_listing.recurrent_profile.tb_failed"}</span>
           {/if}
         </td>
         <td>
-          <a href="{plink :Payments:PaymentsRecurrentAdmin:Edit $recurrentPayment->id}" class="btn btn-sm btn-primary"><i class="fa fa-edit"></i> Uprav</a>
+          <a href="{plink :Payments:PaymentsRecurrentAdmin:Edit $recurrentPayment->id}" class="btn btn-sm btn-primary">
+            <i class="fa fa-edit"></i> {_"payments.admin.component.user_payments_listing.edit"}
+          </a>
         </td>
       </tr>
     </tbody>
@@ -192,16 +227,16 @@
 
 {if $parsedEmails->count('*') > 0}
   <hr>
-  <h3>Spracované/potvrdene platby</h3>
+  <h3>{_"payments.admin.component.user_payments_listing.parsed_mail_logs.title"}</h3>
   <table class="table table-striped table-hover">
     <thead>
-      <th>Vytvorené</th>
-      <th>Dorucene</th>
-      <th>Variabilný symbol</th>
-      <th>Suma</th>
-      <th>Platba</th>
-      <th>Stav</th>
-      <th>Správa</th>
+      <th>{_"payments.admin.component.user_payments_listing.caption.created"}</th>
+      <th>{_"payments.admin.component.user_payments_listing.caption.received"}</th>
+      <th>{_"payments.admin.component.user_payments_listing.caption.variable_symbol"}</th>
+      <th>{_"payments.admin.component.user_payments_listing.caption.amount"}</th>
+      <th>{_"payments.admin.component.user_payments_listing.caption.payment"}</th>
+      <th>{_"payments.admin.component.user_payments_listing.caption.status"}</th>
+      <th>{_"payments.admin.component.user_payments_listing.caption.message"}</th>
     </thead>
     <tbody>
       <tr n:foreach="$parsedEmails as $log">
@@ -211,20 +246,22 @@
         <td><b>{$log->amount|price}</b></td>
         <td>
            {if $log->payment_id}
-             <a href="{plink :Payments:PaymentsAdmin:default text => $log->variable_symbol}">Platba #{$log->payment_id}</a>
+             <a href="{plink :Payments:PaymentsAdmin:default text => $log->variable_symbol}">
+               {_"payments.admin.component.user_payments_listing.caption.payment"} #{$log->payment_id}
+             </a>
            {else}
-             N/A
+             {_"payments.admin.component.user_payments_listing.n_a"}
            {/if}
         </td>
         <td>
           {if $log->state == \Crm\PaymentsModule\MailConfirmation\ParsedMailLogsRepository::STATE_CHANGED_TO_PAID}
-            <span class="label label-primary">{$log->state}</span>
+            <span class="label label-primary">{_"payments.admin.component.user_payments_listing.parsed_mail_logs.changed_to_paid"}</span>
           {elseif $log->state == \Crm\PaymentsModule\MailConfirmation\ParsedMailLogsRepository::STATE_ALREADY_PAID}
-            <span class="label label-primary">{$log->state}</span>
+            <span class="label label-primary">{_"payments.admin.component.user_payments_listing.parsed_mail_logs.already_paid"}</span>
           {elseif $log->state == \Crm\PaymentsModule\MailConfirmation\ParsedMailLogsRepository::STATE_DIFFERENT_AMOUNT}
-            <span class="label label-danger">{$log->state}</span>
+            <span class="label label-danger">{_"payments.admin.component.user_payments_listing.parsed_mail_logs.different_amount"}</span>
           {elseif $log->state == \Crm\PaymentsModule\MailConfirmation\ParsedMailLogsRepository::STATE_WITHOUT_VS}
-            <span class="label label-warning">{$log->state}</span>
+            <span class="label label-warning">{_"payments.admin.component.user_payments_listing.parsed_mail_logs.without_vs"}</span>
           {else}
             <span class="label label-default">{$log->state}</span>
           {/if}

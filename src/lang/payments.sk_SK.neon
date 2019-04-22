@@ -82,6 +82,62 @@ admin:
 			less: menej
 			than_average: ako priemer
 
+		user_payments_listing:
+			header: Platby
+			today: Dnes
+			no_payments:
+				title: Žiaden záznam
+				message: "Tento používateľ nemá zaznamenané žiadne platby."
+			add_manual_payment: Pridaj platbu manuálne
+			caption:
+				id: ID
+				variable_symbol: Variabilný symbol
+				amount: Suma
+				payment_gateway: Platobná brána
+				payment_items: Položky
+				status: Stav
+				created: Vytvorené
+				source: Zdroje platby
+				actions: Akcie
+				cid: CID
+				received: Doručené
+				edited: Upravená
+				next_charge: Zaplatenie prebehne
+				subscription_type: Typ predplatného
+				card_expiration: Karta expiruje
+				created_payment_id: ID vytvorenej platby
+				recurrent_state: Stav opakovanej platby
+				payment: Platba
+				message: Správa
+			referrer: Referer
+			edit: Uprav
+			n_a: "N/A"
+			payment:
+				address: Adresa
+				paid: Zaplatené
+				active_from_to: "Bude platiť od <strong>%active_from%</strong> do <strong>%active_to%</strong>"
+				active_from_confirmation_to: "Bude platiť od <strong>potvrdenia platby</strong> do <strong>%active_to%</strong>"
+				active_from: "Bude platiť od <strong>%active_from%</strong>"
+				badge_donation: dar
+				badge_upgrade: upgrade
+			recurrent_profile:
+				title: Recurrentné platby
+				next_subscription: nasledujúce bude
+				stop_recurrent_profile: Zastaviť opakovanú platbu
+				stop_recurrent_profile_confirm: Potvrďte zastavenie rekurentného profilu
+				user_stop: Zastavené používateľom.
+				admin_stop: Zastavené na žiadosť.
+				system_stop: Neúspešné opakovanie. Zastavena.
+				charged: Automaticky predĺžená.
+				charge_failed: Neúspešné opakovanie. Opakovanie o 6h.
+				tb_failed: CHYBA V TB.
+			parsed_mail_logs:
+				title: "Spracované/potvrdené platby"
+				changed_to_paid: Stav zmenený na zaplatené
+				already_paid: Platba potvrdená
+				different_amount: Iná čiastka
+				without_vs: Bez variabilného symbolu
+
 		device_user_listing_widget:
 			device: Zariadenie
 
