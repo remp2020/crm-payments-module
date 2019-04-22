@@ -16,6 +16,19 @@ admin:
 			title: Subscribers with paid subscriptions
 			help: "Number of subscribers with active subscription which has type of subscription other than 'free'. Every user is counted only once even though subscriber has more subscriptions."
 
+		change_payment_status:
+			title: Change status of payment
+			variable_symbol: Variable symbol
+			created: Created
+			status: Status
+			change_to: Change to
+			cancel: Cancel
+			change_without_notification: Change without sending notification
+			change_with_notification: Change and send notification
+			messages:
+				status_changed_successfully: Status of payment was successfully changed
+				status_not_changed: Status of payment was not changed
+
 		subscribers_with_payment_widget:
 			last_day: Last 24 hours
 			last_days: Last %count% days

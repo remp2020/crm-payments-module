@@ -3,19 +3,32 @@
     <div class="modal-content">
       <div class="modal-header">
         <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-        <h4 class="modal-title">Zmena stavu platby #{$payment->id}</h4>
+        <h4 class="modal-title">{_"payments.admin.component.change_payment_status.title"} #{$payment->id}</h4>
       </div>
       <div class="modal-body">
         <p>
-        	Variabilný symbol: <code>{$payment->variable_symbol}</code> <i n:if="$payment->note" class="fa fa-info-circle text-danger fa-wh" data-toggle="tooltip" data-placement="top" title="{$payment->note|breaklines}"></i><br>
-        	Vytvorená: {$payment->created_at|userDate}<br>
-        	Stav: <b>{$payment->status}</b> zmeniť na <b>PAID</b><br>
+          {_"payments.admin.component.change_payment_status.variable_symbol"}: <code>{$payment->variable_symbol}</code>
+          <i n:if="$payment->note" class="fa fa-info-circle text-danger fa-wh"
+                                   data-toggle="tooltip"
+                                   data-placement="top"
+                                   title="{$payment->note|breaklines}"></i>
+          <br>
+          {_"payments.admin.component.change_payment_status.created"}: {$payment->created_at|userDate}
+          <br>
+          {_"payments.admin.component.change_payment_status.status"}: <b>{$payment->status|upper}</b> {_"payments.admin.component.change_payment_status.change_to"} <b>PAID</b>
+          <br>
         </p>
       </div>
       <div class="modal-footer">
-        <a href="#" type="button" class="" data-dismiss="modal">Zruš</a>&nbsp;&nbsp;&nbsp;
-        <a href="{link ChangeStatusToPaidWithoutEmail! $payment->id}" type="button" class="btn btn-default">Zmeň a nepošli notifikáciu</a>
-        <a href="{link ChangeStatusToPaidWithEmail! $payment->id}" type="button" class="btn btn-primary">Zmeň a pošli notifikáciu</a>
+        <a href="#" type="button" class="" data-dismiss="modal" style="margin-right: 1em;">
+          {_"payments.admin.component.change_payment_status.cancel"}
+        </a>
+        <a href="{link ChangeStatusToPaidWithoutEmail! $payment->id}" type="button" class="btn btn-default">
+          {_"payments.admin.component.change_payment_status.change_without_notification"}
+        </a>
+        <a href="{link ChangeStatusToPaidWithEmail! $payment->id}" type="button" class="btn btn-primary">
+          {_"payments.admin.component.change_payment_status.change_with_notification"}
+        </a>
       </div>
     </div>
   </div>

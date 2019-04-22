@@ -16,6 +16,19 @@ admin:
 			title: Predplatitelia s plateným predplatným
 			help: "Počet predplatiteľov s aktívnym predplatným, ktorého typ je iný ako 'free'. Jeden používateľ je jeden krát aj keď ma viac predplatných."
 
+		change_payment_status:
+			title: Zmena stavu platby
+			variable_symbol: Variabilný symbol
+			created: Vytvorená
+			status: Stav
+			change_to: zmeniť na
+			cancel: Zruš
+			change_without_notification: Zmeň a nepošli notifikáciu
+			change_with_notification: Zmeň a pošli notifikáciu
+			messages:
+				status_changed_successfully: Stav platby bol zmenený
+				status_not_changed: Stav platby nebol zmenený
+
 		subscribers_with_payment_widget:
 			last_day: Posledných 24 hodín
 			last_days: Posledných %count% dní
