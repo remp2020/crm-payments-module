@@ -6,11 +6,15 @@ admin:
 	component:
 		actual_free_subscribers_stat_widget:
 			title: Subscribers without payment
-			help: Subscription without payment. One user is one when I have multiple subscriptions.
+			help: Number of subscribers with active subscription without payment. Every user is counted once even though subscriber has multiple subscriptions.
+
+		actual_paid_subscribers_stat_widget:
+			title: Subscribers with payment
+			help: Number of subscribers with active subscription with payment. Every user is counted once even though subscriber has multiple subscriptions.
 
 		actual_nonfree_subscribers_stat_widget:
 			title: Subscribers with paid subscriptions
-			help: "All subscribers with active subscriptions which have type of subscription other than 'free'. Every user is counted only one time even though he has more subscriptions."
+			help: "Number of subscribers with active subscription which has type of subscription other than 'free'. Every user is counted only once even though subscriber has more subscriptions."
 
 		subscribers_with_payment_widget:
 			last_day: Last 24 hours

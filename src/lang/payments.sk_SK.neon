@@ -6,11 +6,15 @@ admin:
 	component:
 		actual_free_subscribers_stat_widget:
 			title: Predplatitelia bez platby
-			help: Predplatné bez platby. Jeden používateľ je jeden krát aj keď ma viac predplatných.
+			help: Počet predplatiteľov s aktívnym predplatným bez platby. Jeden používateľ je jeden krát aj keď ma viac predplatných.
+
+		actual_paid_subscribers_stat_widget:
+			title: Predplatitelia s platbou
+			help: Počet predplatiteľov s aktívnym predplatným s platbou. Jeden používateľ je jeden krát aj keď má viac predplatných.
 
 		actual_nonfree_subscribers_stat_widget:
 			title: Predplatitelia s plateným predplatným
-			help: "Zarátavajú sa všetci predplatitelia s aktívnym predplatným, ktorí majú typ predplatného iný ako free. Jeden používateľ je jeden krát aj keď ma viac predplatných."
+			help: "Počet predplatiteľov s aktívnym predplatným, ktorého typ je iný ako 'free'. Jeden používateľ je jeden krát aj keď ma viac predplatných."
 
 		subscribers_with_payment_widget:
 			last_day: Posledných 24 hodín

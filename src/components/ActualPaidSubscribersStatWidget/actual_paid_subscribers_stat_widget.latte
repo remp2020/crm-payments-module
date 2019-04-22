@@ -1,2 +1,7 @@
 <span class="badge">{$totalPaidSubscribers}</span>
-<a n:tag-if="isset($totalPaidSubscribersLink)" href="{$totalPaidSubscribersLink}">Predplatitelia s platbou</a> <i class="fa fa-question-circle" data-toggle="tooltip" data-original-title="Zaratavaju sa iba predplatne s platbou. Jeden používateť je jeden krát aj keď ma viac predplatných."></i>
+<a n:tag-if="isset($totalPaidSubscribersLink)" href="{$totalPaidSubscribersLink}">
+    {_"payments.admin.component.actual_paid_subscribers_stat_widget.title"}
+</a>
+<i class="fa fa-question-circle"
+   data-toggle="tooltip"
+   data-original-title="{_"payments.admin.component.actual_paid_subscribers_stat_widget.help"}"></i>
