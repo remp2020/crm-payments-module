@@ -46,6 +46,22 @@ admin:
 			messages:
 				recurrent_profile_stopped: Rekurentný profil bol zastavený
 
+		last_payments:
+			title: Posledné platby
+			variable_symbol: Variabilný symbol
+			subscription: Predplatné
+			amount: Suma
+			payment_gateway: Platobná brána
+			subscription_type: Typ predplatného
+			status: Stav
+			created: Vytvorené
+			referrer: Referer
+			actions: Akcie
+			without_subscription: Bez predplatneho
+			edit: Uprav
+			badge_donation: dar
+			badge_recurrent: recurrent
+
 		subscribers_with_payment_widget:
 			last_day: Posledných 24 hodín
 			last_days: Posledných %count% dní

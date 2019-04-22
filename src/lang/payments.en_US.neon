@@ -46,6 +46,22 @@ admin:
 			messages:
 				recurrent_profile_stopped: Recurrent profile was stopped
 
+		last_payments:
+			title: Last payments
+			variable_symbol: Variable symbol
+			subscription: Subscription
+			amount: Amount
+			payment_gateway: Payment gateway
+			subscription_type: Subscription type
+			status: Status
+			created: Created
+			referrer: Referrer
+			actions: Actions
+			without_subscription: Without subscription
+			edit: Edit
+			badge_donation: donation
+			badge_recurrent: recurrent
+
 		subscribers_with_payment_widget:
 			last_day: Last 24 hours
 			last_days: Last %count% days
