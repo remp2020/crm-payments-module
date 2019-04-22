@@ -70,6 +70,9 @@ admin:
 			last_days: Last %count% days
 			description: Difference in the number of subscribers with payment for the given period.
 
+		subscription_type_reports:
+			title: Source of subscribers
+
 		total_user_payments:
 			spent: Spent in total
 			for: for
