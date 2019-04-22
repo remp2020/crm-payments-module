@@ -29,6 +29,9 @@ admin:
 				status_changed_successfully: Status of payment was successfully changed
 				status_not_changed: Status of payment was not changed
 
+		device_user_listing_widget:
+			device: Device
+
 		duplicate_recurrent_payments:
 			none_found: No duplicate recurrent payment profiles found
 			id: ID
@@ -137,9 +140,6 @@ admin:
 				already_paid: Payment paid
 				different_amount: Different amount
 				without_vs: Without variable symbol
-
-		device_user_listing_widget:
-			device: Device
 
 	donation: Donation
 

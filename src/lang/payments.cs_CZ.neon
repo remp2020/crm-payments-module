@@ -28,6 +28,9 @@ admin:
 				status_changed_successfully: Stav platby byl změněn
 				status_not_changed: Stav platby nebyl změněn
 
+		device_user_listing_widget:
+			device: Zařízení
+
 		duplicate_recurrent_payments:
 			none_found: Nebyly nalezeny žádné duplicitní recurentné platby
 			id: ID
@@ -136,9 +139,6 @@ admin:
 				already_paid: Platba potvrzena
 				different_amount: Jiná částka
 				without_vs: Bez variabilního symbolu
-
-		device_user_listing_widget:
-			device: Zařízení
 
 	donation: Dar k předplatnému
 
