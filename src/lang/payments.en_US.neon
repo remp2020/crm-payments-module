@@ -29,6 +29,23 @@ admin:
 				status_changed_successfully: Status of payment was successfully changed
 				status_not_changed: Status of payment was not changed
 
+		duplicate_recurrent_payments:
+			none_found: No duplicate recurrent payment profiles found
+			id: ID
+			cid: CID
+			created: Created
+			edited: Edited
+			next_charge: Next charge
+			subscription_type: Subscription type
+			card_expiration: Card expiration
+			status: Status
+			actions: Actions
+			next_subscription: next will be
+			stop_recurrent_profile: Stop recurrent profile
+			stop_recurrent_profile_confirm: Confirm recurrent profile cancellation
+			messages:
+				recurrent_profile_stopped: Recurrent profile was stopped
+
 		subscribers_with_payment_widget:
 			last_day: Last 24 hours
 			last_days: Last %count% days

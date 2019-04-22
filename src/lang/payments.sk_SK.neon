@@ -29,6 +29,23 @@ admin:
 				status_changed_successfully: Stav platby bol zmenený
 				status_not_changed: Stav platby nebol zmenený
 
+		duplicate_recurrent_payments:
+			none_found: Nenašli sa žiadne duplicitné recurentné platby
+			id: ID
+			cid: CID
+			created: Vytvorená
+			edited: Upravená
+			next_charge: Zaplatenie prebehne
+			subscription_type: Typ predplatného
+			card_expiration: Karta expiruje
+			status: Status
+			actions: Akcie
+			next_subscription: nasledujúce bude
+			stop_recurrent_profile: Zastaviť opakovanú platbu
+			stop_recurrent_profile_confirm: Potvrďte zastavenie rekurentného profilu
+			messages:
+				recurrent_profile_stopped: Rekurentný profil bol zastavený
+
 		subscribers_with_payment_widget:
 			last_day: Posledných 24 hodín
 			last_days: Posledných %count% dní
@@ -59,6 +76,11 @@ admin:
 		recurrent:
 			title: ARPU - suma všetkých rekurentných platieb / počet
 			tooltip: 'Zobrazuje sumu všetkých rekurentne vytvorených platieb v danom období delene počet platieb - ARPU'
+
+	recurrent:
+		duplicates:
+			title: Duplicitné recurrentné platby
+
 	stats:
 		title: Štatistiky platieb
 		menu:
