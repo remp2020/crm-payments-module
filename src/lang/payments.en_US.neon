@@ -62,6 +62,9 @@ admin:
 			badge_donation: donation
 			badge_recurrent: recurrent
 
+		parsed_mails_failed_notification:
+			title: Incorrect amount received to bank account
+
 		subscribers_with_payment_widget:
 			last_day: Last 24 hours
 			last_days: Last %count% days

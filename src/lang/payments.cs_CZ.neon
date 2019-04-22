@@ -61,6 +61,9 @@ admin:
 			badge_donation: dar
 			badge_recurrent: recurrent
 
+		parsed_mails_failed_notification:
+			title: Zlá částka přijata na účet
+
 		subscribers_with_payment_widget:
 			last_day: Posledních 24 hodin
 			last_days: Posledních %count% dní
