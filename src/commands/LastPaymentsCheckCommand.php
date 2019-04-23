@@ -80,6 +80,9 @@ class LastPaymentsCheckCommand extends Command
                 if ($payment->status == PaymentsRepository::STATUS_FORM) {
                     $form++;
                 }
+                if ($payment->status == PaymentsRepository::STATUS_FAIL) {
+                    $error++;
+                }
             }
 
             if ($form == $checkCount) {
