@@ -110,9 +110,9 @@ class LastPaymentsCheckCommand extends Command
         $nonRecurrentAndMidnight = false;
         if (!$gateway->is_recurrent) {
             $now = new DateTime();
-            $morning = DateTime::from(strtotime('today 8am'));
+            $morning = DateTime::from('today 8am');
             // +15 minutes allows cron to run around midnight
-            $quarterPastMidnight = DateTime::from(strtotime('today 00:15'));
+            $quarterPastMidnight = DateTime::from('today 00:15');
             if ($now <= $morning && $now >= $quarterPastMidnight) {
                 $nonRecurrentAndMidnight = true;
             }
@@ -126,7 +126,7 @@ class LastPaymentsCheckCommand extends Command
         $paymentCounts = $this->paymentsRepository->all('', $gateway)
             ->select('COUNT(*) AS count, recurrent_charge')
             ->where('status = ?', PaymentsRepository::STATUS_PAID)
-            ->where('paid_at > ?', DateTime::from(strtotime("now - {$hours} hours")))
+            ->where('paid_at > ?', DateTime::from("now - {$hours} hours"))
             ->group('recurrent_charge')
             ->order('recurrent_charge DESC')
             ->fetchPairs('recurrent_charge', 'count');
