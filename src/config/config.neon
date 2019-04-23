@@ -51,7 +51,6 @@ services:
 	- Crm\PaymentsModule\Gateways\BankTransfer
 	- Crm\PaymentsModule\Gateways\Csob
 	- Crm\PaymentsModule\Gateways\CsobOneClick
-	- Crm\PaymentsModule\Gateways\ProformaInvoice
 	- Crm\PaymentsModule\Hermes\CreateRecurrentPaymentHandler
 	- Crm\PaymentsModule\Segment\PaymentCriteria
 	- Crm\PaymentsModule\Segment\PaymentCountsCriteria
