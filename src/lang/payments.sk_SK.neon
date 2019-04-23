@@ -166,8 +166,11 @@ admin:
 			arpu: ARPU
 
 	payment_gateways:
+		title: Platobné brány
 		back_to_list: Späť na platobné brány
-		edit: Upraviť
+		back_to_detail: Späť na platobnú bránu
+		edit: Úprava platobnej brány
+		name: Meno
 		code: Identifikátor
 		created_at: Vytvorená
 		modified_at: Upravená
@@ -175,7 +178,7 @@ admin:
 		is_recurrent: Rekurentná
 		sorting: Poradie
 		actions: Akcie
-		export: Exportovať
+		updated: Platobná brána bola upravená
 
 form:
 	payment_gateway:

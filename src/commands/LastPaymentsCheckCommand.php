@@ -62,7 +62,7 @@ class LastPaymentsCheckCommand extends Command
         $emails = $input->getOption('notify');
         $exclude = $input->getOption('exclude');
 
-        foreach ($this->paymentGatewaysRepository->all() as $gateway) {
+        foreach ($this->paymentGatewaysRepository->getAllVisible() as $gateway) {
             if (in_array($gateway->code, $exclude)) {
                 continue;
             }

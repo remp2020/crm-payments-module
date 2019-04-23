@@ -60,13 +60,8 @@ class PaymentGatewaysAdminPresenter extends AdminPresenter
         }
 
         $form = $this->factory->create($id);
-
-        $this->factory->onSave = function ($form, $paymentGateway) {
-            $this->flashMessage('Platobná brána bol vytvorený.');
-            $this->redirect('PaymentGatewaysAdmin:Show', $paymentGateway->id);
-        };
         $this->factory->onUpdate = function ($form, $paymentGateway) {
-            $this->flashMessage('Platobná brána bol aktualizovný.');
+            $this->flashMessage($this->translator->translate('payments.admin.payment_gateways.updated'));
             $this->redirect('PaymentGatewaysAdmin:Show', $paymentGateway->id);
         };
         return $form;
@@ -143,12 +138,5 @@ class PaymentGatewaysAdminPresenter extends AdminPresenter
             ->addGraphDataItem($graphDataItem2);
 
         return $control;
-    }
-
-    public function renderExport()
-    {
-        $this->getHttpResponse()->addHeader('Content-Type', 'application/csv');
-        $this->getHttpResponse()->addHeader('Content-Disposition', 'attachment; filename=export.csv');
-        $this->template->types = $this->filteredGateways();
     }
 }

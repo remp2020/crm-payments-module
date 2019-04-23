@@ -31,11 +31,12 @@ class PaymentGatewayFormFactory
      */
     public function create($paymentGatewayId)
     {
-        $defaults = [];
-        if (isset($paymentGatewayId)) {
-            $paymentGateway = $this->paymentGatewaysRepository->find($paymentGatewayId);
-            $defaults = $paymentGateway->toArray();
+        $paymentGateway = $this->paymentGatewaysRepository->find($paymentGatewayId);
+        if (!isset($paymentGatewayId)) {
+            throw new \Exception('invalid paymentGatewayId provided: ' . $paymentGateway);
         }
+
+        $defaults = $paymentGateway->toArray();
 
         $form = new Form;
         $form->setTranslator($this->translator);
@@ -76,28 +77,11 @@ class PaymentGatewayFormFactory
 
     public function formSucceeded($form, $values)
     {
-        if (isset($values['payment_gateway_id'])) {
-            $paymentGatewayId = $values['payment_gateway_id'];
-            unset($values['payment_gateway_id']);
+        $paymentGatewayId = $values['payment_gateway_id'];
+        unset($values['payment_gateway_id']);
 
-            $paymentGateway = $this->paymentGatewaysRepository->find($paymentGatewayId);
-            $this->paymentGatewaysRepository->update($paymentGateway, $values);
-            $this->onUpdate->__invoke($form, $paymentGateway);
-        } else {
-            $paymentGateway = $this->paymentGatewaysRepository->add(
-                $values['name'],
-                $values['code'],
-                $values['sorting'],
-                $values['active'],
-                $values['visible'],
-                $values['shop'],
-                $values['description'],
-                $values['image'],
-                $values['default'],
-                $values['is_recurrent']
-            );
-
-            $this->onSave->__invoke($form, $paymentGateway);
-        }
+        $paymentGateway = $this->paymentGatewaysRepository->find($paymentGatewayId);
+        $this->paymentGatewaysRepository->update($paymentGateway, $values);
+        $this->onUpdate->__invoke($form, $paymentGateway);
     }
 }

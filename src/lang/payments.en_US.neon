@@ -161,8 +161,11 @@ admin:
 			arpu: ARPU
 
 	payment_gateways:
+		title: Payment gateways
 		back_to_list: Back to gateway list
-		edit: Edit
+		back_to_detail: Back to gateway
+		edit: Edit gateway
+		name: Name
 		code: Code
 		created_at: Created at
 		modified_at: Modified at
@@ -170,7 +173,7 @@ admin:
 		is_recurrent: Recurrent
 		sorting: Sorting
 		actions: Actions
-		export: Export
+		updated: Gateway was updated
 
 form:
 	payment_gateway:

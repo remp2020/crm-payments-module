@@ -13,6 +13,8 @@ use Tracy\Debugger;
 
 class Comfortpay extends GatewayAbstract implements RecurrentPaymentInterface
 {
+    const GATEWAY_CODE = 'comfortpay';
+
     /** @var Gateway */
     protected $gateway;
 

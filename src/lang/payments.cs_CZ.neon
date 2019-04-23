@@ -160,8 +160,11 @@ admin:
 			arpu: ARPU
 
 	payment_gateways:
+		title: Platební brány
 		back_to_list: Zpět na platební brány
-		edit: Upravit
+		back_to_detail: Zpět na platební bránu
+		edit: Úprava platební brány
+		name: Jméno
 		code: Identifikátor
 		created_at: Vytvořená
 		modified_at: Upravená
@@ -169,7 +172,6 @@ admin:
 		is_recurrent: Rekurentní
 		sorting: Pořadí
 		actions: Akce
-		export: Exportovat
 
 form:
 	payment_gateway:
@@ -179,7 +181,7 @@ form:
 			placeholder: například ČSOB
 		code:
 			label: Identifikátor
-			placeholder: například tatrapay
+			placeholder: například csob
 		visible:
 			label: Viditeľná
 		is_recurrent:
