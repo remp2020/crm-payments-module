@@ -8,6 +8,7 @@ use Crm\PaymentsModule\Repository\PaymentGatewaysRepository;
 use Crm\PaymentsModule\Repository\PaymentsRepository;
 use Crm\UsersModule\Events\NotificationEvent;
 use League\Event\Emitter;
+use Nette\Utils\DateTime;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
@@ -15,6 +16,8 @@ use Symfony\Component\Console\Output\OutputInterface;
 
 class LastPaymentsCheckCommand extends Command
 {
+    const CHECK_LAST_HOURS = 2;
+
     private $paymentGatewaysRepository;
 
     private $paymentsRepository;
@@ -78,6 +81,14 @@ class LastPaymentsCheckCommand extends Command
 
             $this->output->writeln("Checking gateway <info>{$gateway->name}</info>");
 
+            // check for PAID payment in last two hours -----------------------
+            $error = $this->checkLastHours($gateway, self::CHECK_LAST_HOURS);
+            if ($error !== null) {
+                $this->sendNotification($gateway, $error);
+            }
+
+            // check if last payments are not all failed ----------------------
+            $this->output->writeln("Checking last 10 payments");
             $lastPayments = $this->paymentsRepository->all('', $gateway)->order('created_at DESC')->limit($checkCount);
             $form = 0;
             $paid = 0;
@@ -98,9 +109,46 @@ class LastPaymentsCheckCommand extends Command
                 $this->sendNotification($gateway, 'form');
             } elseif ($error == $checkCount) {
                 $this->sendNotification($gateway, 'error');
-            } else {
-                $this->output->writeln('OK');
             }
+
+            $this->output->writeln("Done gateway <info>{$gateway->name}</info>\n");
+        }
+    }
+
+    /**
+     * @param ActiveRow $gateway
+     * @param int $hours - How many hours to check.
+     * @return string|null - Returns NULL if everything is OK; error message if there is error
+     */
+    private function checkLastHours(ActiveRow $gateway, int $hours): ?string
+    {
+        $this->output->writeln("Checking payments for last {$hours} hours");
+
+        // for non-recurrent gateways check payments only between 8am and midnight
+        $nonRecurrentAndMidnight = false;
+        if (!$gateway->is_recurrent) {
+            $now = new DateTime();
+            $morning = DateTime::from(strtotime('today 8am'));
+            // +15 minutes allows cron to run around midnight
+            $quarterPastMidnight = DateTime::from(strtotime('today 00:15'));
+            if ($now <= $morning && $now >= $quarterPastMidnight) {
+                $nonRecurrentAndMidnight = true;
+            }
+        }
+
+        if ($nonRecurrentAndMidnight) {
+            $this->output->writeln(' * <comment>Skipping night</comment> for non recurrent gateway');
+            return null;
+        } else {
+            $count = $this->paymentsRepository->all('', $gateway)
+                ->where('status = ?', PaymentsRepository::STATUS_PAID)
+                ->where('paid_at > ?', DateTime::from(strtotime("now - {$hours} hours")))
+                ->count();
+            if ($count > 0) {
+                return null;
+            }
+
+            return "no PAID payments in last {$hours} hours";
         }
     }
 
