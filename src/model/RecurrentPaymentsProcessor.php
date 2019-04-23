@@ -30,7 +30,7 @@ class RecurrentPaymentsProcessor
         $this->applicationConfig = $applicationConfig;
     }
 
-    public function startRecurrentUsingCid($payment, $cid, RecurrentPaymentInterface $gateway): bool
+    public function chargeRecurrentUsingCid($payment, $cid, RecurrentPaymentInterface $gateway): bool
     {
         try {
             $gateway->charge($payment, $cid);
