@@ -159,6 +159,36 @@ admin:
 			general: Obecné
 			arpu: ARPU
 
+	payment_gateways:
+		back_to_list: Zpět na platební brány
+		edit: Upravit
+		code: Identifikátor
+		created_at: Vytvořená
+		modified_at: Upravená
+		visible: Viditelná
+		is_recurrent: Rekurentní
+		sorting: Pořadí
+		actions: Akce
+		export: Exportovat
+
+form:
+	payment_gateway:
+		name:
+			label: Jméno
+			required: Jméno musí být zadáno
+			placeholder: například ČSOB
+		code:
+			label: Identifikátor
+			placeholder: například tatrapay
+		visible:
+			label: Viditeľná
+		is_recurrent:
+			label: Rekurentní
+		sorting:
+			label: Pořadí
+		save:
+			label: Ulož
+
 gateway:
 	recurrent: automatické obnovování
 

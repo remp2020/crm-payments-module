@@ -160,6 +160,36 @@ admin:
 			general: General
 			arpu: ARPU
 
+	payment_gateways:
+		back_to_list: Back to gateway list
+		edit: Edit
+		code: Code
+		created_at: Created at
+		modified_at: Modified at
+		visible: Visible
+		is_recurrent: Recurrent
+		sorting: Sorting
+		actions: Actions
+		export: Export
+
+form:
+	payment_gateway:
+		name:
+			label: Name
+			required: Gateway name is required
+			placeholder: e.g. Paypal
+		code:
+			label: Code
+			placeholder: e.g. paypal
+		visible:
+			label: Visible
+		is_recurrent:
+			label: Recurrent
+		sorting:
+			label: Sorting
+		save:
+			label: Save
+
 gateway:
 	recurrent: recurrent payment
 
