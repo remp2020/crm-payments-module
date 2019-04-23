@@ -120,7 +120,7 @@ class PaymentGatewaysAdminPresenter extends AdminPresenter
             ->setWhere("AND status IN (" . $paymentStatusCompleted . ") AND payment_gateway_id=" . intval($this->params['id']))
             ->setValueField('COUNT(*)')
             ->setStart('-1 months'))
-            ->setName('Completed payments');
+            ->setName($this->translator->translate('payments.admin.payment_gateways.graph.completed_payments'));
 
         $graphDataItem2 = new GraphDataItem();
         $graphDataItem2->setCriteria((new Criteria())
@@ -129,11 +129,11 @@ class PaymentGatewaysAdminPresenter extends AdminPresenter
             ->setWhere("AND status NOT IN (" . $paymentStatusCompleted . ") AND payment_gateway_id=" . intval($this->params['id']))
             ->setValueField('COUNT(*)')
             ->setStart('-1 months'))
-            ->setName('Uncompleted payments');
+            ->setName($this->translator->translate('payments.admin.payment_gateways.graph.uncompleted_payments'));
 
         $control = $factory->create()
-            ->setGraphTitle('Gateway payments')
-            ->setGraphHelp('Payments with actual gateways')
+            ->setGraphTitle($this->translator->translate('payments.admin.payment_gateways.graph.title'))
+            ->setGraphHelp($this->translator->translate('payments.admin.payment_gateways.graph.help'))
             ->addGraphDataItem($graphDataItem1)
             ->addGraphDataItem($graphDataItem2);
 

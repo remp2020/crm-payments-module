@@ -196,6 +196,11 @@ admin:
 		sorting: Sorting
 		actions: Actions
 		updated: Gateway was updated
+		graph:
+			title: Gateway payments
+			help: Payments with actual gateways
+			completed_payments: Completed payments
+			uncompleted_payments: Uncompleted payments
 
 form:
 	payment_gateway:

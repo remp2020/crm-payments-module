@@ -201,6 +201,11 @@ admin:
 		sorting: Poradie
 		actions: Akcie
 		updated: Platobná brána bola upravená
+		graph:
+			title: Platby brány
+			help: Platby zaplatené cez túto platobnú bránu
+			completed_payments: Dokončené platby
+			uncompleted_payments: Nedokončené platby
 
 form:
 	payment_gateway:
