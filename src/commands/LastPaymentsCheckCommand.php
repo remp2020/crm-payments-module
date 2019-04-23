@@ -123,26 +123,21 @@ class LastPaymentsCheckCommand extends Command
             return null;
         }
 
-        $paymentCounts = $this->paymentsRepository->all('', $gateway)
-            ->select('COUNT(*) AS count, recurrent_charge')
+        $paidGatewayPayments = $this->paymentsRepository->all('', $gateway)
             ->where('status = ?', PaymentsRepository::STATUS_PAID)
-            ->where('paid_at > ?', DateTime::from("now - {$hours} hours"))
-            ->group('recurrent_charge')
-            ->order('recurrent_charge DESC')
-            ->fetchPairs('recurrent_charge', 'count');
+            ->where('paid_at > ?', DateTime::from("now - {$hours} hours"));
 
-        if (count($paymentCounts) === 0) {
+        if ((clone $paidGatewayPayments)->count() === 0) {
             return "no PAID payment in last {$hours} hours for gateway: {$gateway->name}";
         }
 
         // recurrent charges check
-        if ($gateway->is_recurrent) {
-            if (!isset($paymentCounts[1]) || $paymentCounts[1] == 0) {
-                return "no PAID payment in last {$hours} hours for gateway: {$gateway->name} (automatic charges)";
-            }
+        if ($gateway->is_recurrent && (clone $paidGatewayPayments)->where('recurrent_charge = 1')->count() === 0) {
+            return "no PAID payment in last {$hours} hours for gateway: {$gateway->name} (automatic charges)";
         }
+
         // manual payments check
-        if (!isset($paymentCounts[0]) || $paymentCounts[0] == 0) {
+        if ((clone $paidGatewayPayments)->where('recurrent_charge = 0')->count() === 0) {
             return "no PAID payment in last {$hours} hours for gateway: {$gateway->name} (manual payments)";
         }
 
