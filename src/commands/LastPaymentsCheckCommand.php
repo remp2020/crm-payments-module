@@ -2,6 +2,7 @@
 
 namespace Crm\PaymentsModule\Commands;
 
+use Crm\ApplicationModule\ActiveRow;
 use Crm\ApplicationModule\DataRow;
 use Crm\PaymentsModule\Repository\PaymentGatewaysRepository;
 use Crm\PaymentsModule\Repository\PaymentsRepository;
@@ -18,9 +19,15 @@ class LastPaymentsCheckCommand extends Command
 
     private $paymentsRepository;
 
+    /** @var array */
+    private $emails = [];
+
     private $emitter;
 
     private $emailTempate = 'problems_with_payments_notification';
+
+    /** @var OutputInterface */
+    private $output;
 
     public function __construct(
         PaymentGatewaysRepository $paymentGatewaysRepository,
@@ -53,21 +60,23 @@ class LastPaymentsCheckCommand extends Command
 
     protected function execute(InputInterface $input, OutputInterface $output)
     {
-        $output->writeln('');
-        $output->writeln('<info>***** CHECK LAST PAYMENTS *****</info>');
-        $output->writeln('');
+        $this->output = $output;
+        $this->output->writeln('');
+        $this->output->writeln('<info>***** CHECK LAST PAYMENTS *****</info>');
+        $this->output->writeln('');
 
         $checkCount = 10;
 
-        $emails = $input->getOption('notify');
+        $this->emails = $input->getOption('notify');
         $exclude = $input->getOption('exclude');
 
+        /** @var ActiveRow $gateway */
         foreach ($this->paymentGatewaysRepository->getAllActive() as $gateway) {
             if (in_array($gateway->code, $exclude)) {
                 continue;
             }
 
-            $output->writeln("Checking gateway <info>{$gateway->name}</info>");
+            $this->output->writeln("Checking gateway <info>{$gateway->name}</info>");
 
             $lastPayments = $this->paymentsRepository->all('', $gateway)->order('created_at DESC')->limit($checkCount);
             $form = 0;
@@ -86,30 +95,31 @@ class LastPaymentsCheckCommand extends Command
             }
 
             if ($form == $checkCount) {
-                $output->writeln('<error>Notification</error> form');
-                foreach ($emails as $email) {
-                    $userRow = new DataRow([
-                        'email' => $email,
-                    ]);
-                    $this->emitter->emit(new NotificationEvent($userRow, $this->emailTempate, [
-                        'gateway' => $gateway,
-                        'error' => 'form',
-                    ]));
-                }
+                $this->sendNotification($gateway, 'form');
             } elseif ($error == $checkCount) {
-                $output->writeln('<error>Notification</error> error');
-                foreach ($emails as $email) {
-                    $userRow = new DataRow([
-                        'email' => $email,
-                    ]);
-                    $this->emitter->emit(new NotificationEvent($userRow, $this->emailTempate, [
-                        'gateway' => $gateway,
-                        'error' => 'error',
-                    ]));
-                }
+                $this->sendNotification($gateway, 'error');
             } else {
-                $output->writeln('OK');
+                $this->output->writeln('OK');
             }
+        }
+    }
+
+
+    /**
+     * @param ActiveRow $gateway
+     * @param string $error
+     */
+    private function sendNotification(ActiveRow $gateway, string $error)
+    {
+        $this->output->writeln(" * Sending <error>notification</error> <info>{$error}</info>");
+        foreach ($this->emails as $email) {
+            $userRow = new DataRow([
+                'email' => $email,
+            ]);
+            $this->emitter->emit(new NotificationEvent($userRow, $this->emailTempate, [
+                'gateway' => $gateway,
+                'error' => $error,
+            ]));
         }
     }
 }
