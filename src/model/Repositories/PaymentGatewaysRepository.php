@@ -54,12 +54,12 @@ class PaymentGatewaysRepository extends Repository
      */
     public function getAllVisible()
     {
-        return $this->getTable()->where(['active' => true, 'visible' => true])->order('sorting');
+        return $this->all()->where(['visible' => true]);
     }
 
     public function getAllActiveShop()
     {
-        return $this->all()->where('shop', true);
+        return $this->all()->where(['shop' => true]);
     }
 
     public function add(
