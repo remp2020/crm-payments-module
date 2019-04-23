@@ -140,6 +140,28 @@ admin:
 				different_amount: Jiná částka
 				without_vs: Bez variabilního symbolu
 
+		admin_filter_form:
+			variable_symbol:
+				label: Variabilní symbol
+			payment_gateway:
+				label: Platební brána
+			status:
+				label: Stav platby
+			donation:
+				label: Dar
+				with_donation: S darem
+				without_donation: Bez daru
+			recurrent_charge:
+				label: Automatické obnovení
+				all: Všechny
+				recurrent: Pouze automaticky obnoveny
+				manual: Pouze ruční platby
+			subscription_type:
+				label: Typ předplatného
+			filter:
+				label: Filtruj
+				cancel: Zruš filtr
+
 	donation: Dar k předplatnému
 
 	arpu:
