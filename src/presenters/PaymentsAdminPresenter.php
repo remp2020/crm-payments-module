@@ -143,7 +143,8 @@ class PaymentsAdminPresenter extends AdminPresenter
             $donations
         )->setPrompt('--');
 
-        $form->addSelect('recurrent_charge',
+        $form->addSelect(
+            'recurrent_charge',
             'payments.admin.component.admin_filter_form.recurrent_charge.label',
             [
                 'all' => $this->translator->translate('payments.admin.component.admin_filter_form.recurrent_charge.all'),
