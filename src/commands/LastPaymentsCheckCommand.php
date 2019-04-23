@@ -121,17 +121,32 @@ class LastPaymentsCheckCommand extends Command
         if ($nonRecurrentAndMidnight) {
             $this->output->writeln(' * <comment>Skipping night</comment> for non recurrent gateway');
             return null;
-        } else {
-            $count = $this->paymentsRepository->all('', $gateway)
-                ->where('status = ?', PaymentsRepository::STATUS_PAID)
-                ->where('paid_at > ?', DateTime::from(strtotime("now - {$hours} hours")))
-                ->count();
-            if ($count > 0) {
-                return null;
-            }
-
-            return "no PAID payments in last {$hours} hours";
         }
+
+        $paymentCounts = $this->paymentsRepository->all('', $gateway)
+            ->select('COUNT(*) AS count, recurrent_charge')
+            ->where('status = ?', PaymentsRepository::STATUS_PAID)
+            ->where('paid_at > ?', DateTime::from(strtotime("now - {$hours} hours")))
+            ->group('recurrent_charge')
+            ->order('recurrent_charge DESC')
+            ->fetchPairs('recurrent_charge', 'count');
+
+        if (count($paymentCounts) === 0) {
+            return "no PAID payment in last {$hours} hours for gateway: {$gateway->name}";
+        }
+
+        // recurrent charges check
+        if ($gateway->is_recurrent) {
+            if (!isset($paymentCounts[1]) || $paymentCounts[1] == 0) {
+                return "no PAID payment in last {$hours} hours for gateway: {$gateway->name} (automatic charges)";
+            }
+        }
+        // manual payments check
+        if (!isset($paymentCounts[0]) || $paymentCounts[0] == 0) {
+            return "no PAID payment in last {$hours} hours for gateway: {$gateway->name} (manual payments)";
+        }
+
+        return null;
     }
 
 
