@@ -1,12 +1,10 @@
-{block #title}Platobné brány{/block}
-
 {block #content}
 
  <div class="row">
 
   <div class="col-md-12">
     <h1>
-        {_payments.admin.payment_gateways.title}
+        <span n:block="title">{_payments.admin.payment_gateways.title}</span>
       <small>
         / {_system.total} {$totalPaymentGateways}
       </small>
