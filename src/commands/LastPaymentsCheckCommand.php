@@ -18,6 +18,8 @@ class LastPaymentsCheckCommand extends Command
 {
     const CHECK_LAST_HOURS = 2;
 
+    const CHECK_LAST_PAYMENTS = 10;
+
     private $paymentGatewaysRepository;
 
     private $paymentsRepository;
@@ -68,8 +70,6 @@ class LastPaymentsCheckCommand extends Command
         $this->output->writeln('<info>***** CHECK LAST PAYMENTS *****</info>');
         $this->output->writeln('');
 
-        $checkCount = 10;
-
         $this->emails = $input->getOption('notify');
         $exclude = $input->getOption('exclude');
 
@@ -88,27 +88,9 @@ class LastPaymentsCheckCommand extends Command
             }
 
             // check if last payments are not all failed ----------------------
-            $this->output->writeln("Checking last 10 payments");
-            $lastPayments = $this->paymentsRepository->all('', $gateway)->order('created_at DESC')->limit($checkCount);
-            $form = 0;
-            $paid = 0;
-            $error = 0;
-            foreach ($lastPayments as $payment) {
-                if ($payment->status == PaymentsRepository::STATUS_PAID) {
-                    $paid++;
-                }
-                if ($payment->status == PaymentsRepository::STATUS_FORM) {
-                    $form++;
-                }
-                if ($payment->status == PaymentsRepository::STATUS_FAIL) {
-                    $error++;
-                }
-            }
-
-            if ($form == $checkCount) {
-                $this->sendNotification($gateway, 'form');
-            } elseif ($error == $checkCount) {
-                $this->sendNotification($gateway, 'error');
+            $error = $this->checkLastPayments($gateway, self::CHECK_LAST_PAYMENTS);
+            if ($error !== null) {
+                $this->sendNotification($gateway, $error);
             }
 
             $this->output->writeln("Done gateway <info>{$gateway->name}</info>\n");
@@ -150,6 +132,40 @@ class LastPaymentsCheckCommand extends Command
 
             return "no PAID payments in last {$hours} hours";
         }
+    }
+
+
+    /**
+     * @param ActiveRow $gateway
+     * @param int $checkCount
+     * @return string|null - Returns NULL if everything is OK; error message if there is error
+     */
+    private function checkLastPayments(ActiveRow $gateway, int $checkCount): ?string
+    {
+        $this->output->writeln("Checking last {$checkCount} payments");
+        $lastPayments = $this->paymentsRepository->all('', $gateway)->order('created_at DESC')->limit($checkCount);
+        $form = 0;
+        $paid = 0;
+        $error = 0;
+        foreach ($lastPayments as $payment) {
+            if ($payment->status == PaymentsRepository::STATUS_PAID) {
+                $paid++;
+            }
+            if ($payment->status == PaymentsRepository::STATUS_FORM) {
+                $form++;
+            }
+            if ($payment->status == PaymentsRepository::STATUS_FAIL) {
+                $error++;
+            }
+        }
+
+        if ($form == $checkCount) {
+            return 'form';
+        } elseif ($error == $checkCount) {
+            return 'error';
+        }
+
+        return null;
     }
 
 
