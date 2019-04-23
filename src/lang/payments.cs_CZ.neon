@@ -194,6 +194,7 @@ admin:
 		is_recurrent: Rekurentní
 		sorting: Pořadí
 		actions: Akce
+		updated: Platební brána byla upravena
 
 form:
 	payment_gateway:
