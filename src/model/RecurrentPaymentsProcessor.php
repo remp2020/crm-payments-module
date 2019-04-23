@@ -55,7 +55,7 @@ class RecurrentPaymentsProcessor
             return false;
         }
 
-        $this->paymentsRepository->updateStatus($payment, PaymentsRepository::STATUS_PAID);
+        $this->paymentsRepository->updateStatus($payment, PaymentsRepository::STATUS_PAID, true);
 
         // Refresh model to load subscription details
         $payment = $this->paymentsRepository->find($payment->id);
