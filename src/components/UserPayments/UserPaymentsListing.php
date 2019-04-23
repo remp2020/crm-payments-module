@@ -9,6 +9,7 @@ use Crm\PaymentsModule\MailConfirmation\ParsedMailLogsRepository;
 use Crm\PaymentsModule\Repository\PaymentsRepository;
 use Crm\PaymentsModule\Repository\RecurrentPaymentsRepository;
 use Nette\Application\BadRequestException;
+use Nette\Localization\ITranslator;
 use Nette\Utils\DateTime;
 
 class UserPaymentsListing extends BaseWidget
@@ -21,8 +22,11 @@ class UserPaymentsListing extends BaseWidget
 
     private $parsedMailLogsRepository;
 
+    private $translator;
+
     public function __construct(
         WidgetManager $widgetManager,
+        ITranslator $translator,
         PaymentsRepository $paymentsRepository,
         RecurrentPaymentsRepository $recurrentPaymentsRepository,
         ParsedMailLogsRepository $parsedMailLogsRepository
@@ -31,11 +35,12 @@ class UserPaymentsListing extends BaseWidget
         $this->paymentsRepository = $paymentsRepository;
         $this->recurrentPaymentsRepository = $recurrentPaymentsRepository;
         $this->parsedMailLogsRepository = $parsedMailLogsRepository;
+        $this->translator = $translator;
     }
 
     public function header($id = '')
     {
-        $header = 'Platby';
+        $header = $this->translator->translate('payments.admin.component.user_payments_listing.header');
         if ($id) {
             $header .= ' <small>(' . $this->totalCount($id) . ')</small>';
         }
@@ -44,7 +49,7 @@ class UserPaymentsListing extends BaseWidget
             'paid_at > ?' => DateTime::from(strtotime('today 00:00')),
         ])->count('*');
         if ($todayPayments) {
-            $header .= ' <span class="label label-warning">Dnes</span>';
+            $header .= ' <span class="label label-warning">' . $this->translator->translate('payments.admin.component.user_payments_listing.today') .'</span>';
         }
         return $header;
     }

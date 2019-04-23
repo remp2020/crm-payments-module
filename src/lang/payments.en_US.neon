@@ -6,16 +6,75 @@ admin:
 	component:
 		actual_free_subscribers_stat_widget:
 			title: Subscribers without payment
-			help: Subscription without payment. One user is one when I have multiple subscriptions.
+			help: Number of subscribers with active subscription without payment. Every user is counted once even though subscriber has multiple subscriptions.
+
+		actual_paid_subscribers_stat_widget:
+			title: Subscribers with payment
+			help: Number of subscribers with active subscription with payment. Every user is counted once even though subscriber has multiple subscriptions.
 
 		actual_nonfree_subscribers_stat_widget:
 			title: Subscribers with paid subscriptions
-			help: "All subscribers with active subscriptions which have type of subscription other than 'free'. Every user is counted only one time even though he has more subscriptions."
+			help: "Number of subscribers with active subscription which has type of subscription other than 'free'. Every user is counted only once even though subscriber has more subscriptions."
+
+		change_payment_status:
+			title: Change status of payment
+			variable_symbol: Variable symbol
+			created: Created
+			status: Status
+			change_to: Change to
+			cancel: Cancel
+			change_without_notification: Change without sending notification
+			change_with_notification: Change and send notification
+			messages:
+				status_changed_successfully: Status of payment was successfully changed
+				status_not_changed: Status of payment was not changed
+
+		device_user_listing_widget:
+			device: Device
+
+		duplicate_recurrent_payments:
+			none_found: No duplicate recurrent payment profiles found
+			id: ID
+			cid: CID
+			created: Created
+			edited: Edited
+			next_charge: Next charge
+			subscription_type: Subscription type
+			card_expiration: Card expiration
+			status: Status
+			actions: Actions
+			next_subscription: next will be
+			stop_recurrent_profile: Stop recurrent profile
+			stop_recurrent_profile_confirm: Confirm recurrent profile cancellation
+			messages:
+				recurrent_profile_stopped: Recurrent profile was stopped
+
+		last_payments:
+			title: Last payments
+			variable_symbol: Variable symbol
+			subscription: Subscription
+			amount: Amount
+			payment_gateway: Payment gateway
+			subscription_type: Subscription type
+			status: Status
+			created: Created
+			referrer: Referrer
+			actions: Actions
+			without_subscription: Without subscription
+			edit: Edit
+			badge_donation: donation
+			badge_recurrent: recurrent
+
+		parsed_mails_failed_notification:
+			title: Incorrect amount received to bank account
 
 		subscribers_with_payment_widget:
 			last_day: Last 24 hours
 			last_days: Last %count% days
 			description: Difference in the number of subscribers with payment for the given period.
+
+		subscription_type_reports:
+			title: Source of subscribers
 
 		total_user_payments:
 			spent: Spent in total
@@ -26,8 +85,61 @@ admin:
 			less: less
 			than_average: than average
 
-		device_user_listing_widget:
-			device: Device
+		user_payments_listing:
+			header: Payments
+			today: Today
+			no_payments:
+				title: "No entry"
+				message: "This subscriber doesn't have payments."
+			add_manual_payment: Add payment manually
+			caption:
+				id: ID
+				variable_symbol: Variable symbol
+				amount: Amount
+				payment_gateway: Payment gateway
+				payment_items: Items
+				status: Status
+				created: Created
+				source: Source of payment
+				actions: Actions
+				cid: CID
+				received: Received
+				edited: Edited
+				next_charge: Next charge
+				subscription_type: Subscription type
+				card_expiration: Card expiration
+				created_payment_id: ID of created payment
+				recurrent_state: Status of recurrent payment
+				payment: Payment
+				message: Message
+			referrer: Referrer
+			edit: Edit
+			n_a: "N/A"
+			payment:
+				address: Address
+				paid: Paid
+				active_from_to: "Will be active from <strong>%active_from%</strong> to <strong>%active_to%</strong>"
+				active_from_confirmation_to: "Will be active from <strong>payment confirmation</strong> to <strong>%active_to%</strong>"
+				active_from: "Will be active from <strong>%active_from%</strong>"
+				badge_donation: donation
+				badge_upgrade: upgrade
+			recurrent_profile:
+				title: Recurring payments
+				next_subscription: next will be
+				stop_recurrent_profile: Stop recurrent profile
+				stop_recurrent_profile_confirm: Confirm recurrent profile cancellation
+				user_stop: Stopped by user
+				admin_stop: Stopped by admin
+				system_stop: Unable to charge. Stopped.
+				charged: Automatically renewed.
+				charge_failed: Unable to charge. Next try in 6 hours.
+				tb_failed: ERROR in TB.
+			parsed_mail_logs:
+				title: "Processed/confirmed payments"
+				changed_to_paid: Status changed to paid
+				already_paid: Payment paid
+				different_amount: Different amount
+				without_vs: Without variable symbol
 
 	donation: Donation
 

@@ -5,6 +5,7 @@ namespace Crm\PaymentsModule\Components;
 use Crm\ApplicationModule\Widget\BaseWidget;
 use Crm\ApplicationModule\Widget\WidgetManager;
 use Crm\PaymentsModule\Repository\PaymentsRepository;
+use Nette\Localization\ITranslator;
 
 class ChangePaymentStatus extends BaseWidget
 {
@@ -13,12 +14,17 @@ class ChangePaymentStatus extends BaseWidget
     /** @var PaymentsRepository */
     private $paymentsRepository;
 
+    /** @var ITranslator */
+    private $translator;
+
     public function __construct(
         WidgetManager $widgetManager,
-        PaymentsRepository $paymentsRepository
+        PaymentsRepository $paymentsRepository,
+        ITranslator $translator
     ) {
         parent::__construct($widgetManager);
         $this->paymentsRepository = $paymentsRepository;
+        $this->translator = $translator;
     }
 
     public function header($id = '')
@@ -55,10 +61,10 @@ class ChangePaymentStatus extends BaseWidget
         if ($payment->status != PaymentsRepository::STATUS_PAID) {
             $this->paymentsRepository->updateStatus($payment, PaymentsRepository::STATUS_PAID, $sendEmail);
 
-            $this->presenter->flashMessage('Stav platby bol zmenený');
+            $this->presenter->flashMessage($this->translator->translate('payments.admin.component.change_payment_status.messages.status_changed_successfully'));
             $this->presenter->redirect(':Users:UsersAdmin:Show', $payment->user_id);
         } else {
-            $this->presenter->flashMessage('Stav platby nebol zmenený');
+            $this->presenter->flashMessage($this->translator->translate('payments.admin.component.change_payment_status.messages.status_not_changed'));
             $this->presenter->redirect(':Users:UsersAdmin:Show', $payment->user_id);
         }
 

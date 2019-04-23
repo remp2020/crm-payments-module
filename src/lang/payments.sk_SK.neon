@@ -6,16 +6,75 @@ admin:
 	component:
 		actual_free_subscribers_stat_widget:
 			title: Predplatitelia bez platby
-			help: Predplatné bez platby. Jeden používateľ je jeden krát aj keď ma viac predplatných.
+			help: Počet predplatiteľov s aktívnym predplatným bez platby. Jeden používateľ je jeden krát aj keď ma viac predplatných.
+
+		actual_paid_subscribers_stat_widget:
+			title: Predplatitelia s platbou
+			help: Počet predplatiteľov s aktívnym predplatným s platbou. Jeden používateľ je jeden krát aj keď má viac predplatných.
 
 		actual_nonfree_subscribers_stat_widget:
 			title: Predplatitelia s plateným predplatným
-			help: "Zarátavajú sa všetci predplatitelia s aktívnym predplatným, ktorí majú typ predplatného iný ako free. Jeden používateľ je jeden krát aj keď ma viac predplatných."
+			help: "Počet predplatiteľov s aktívnym predplatným, ktorého typ je iný ako 'free'. Jeden používateľ je jeden krát aj keď ma viac predplatných."
+
+		change_payment_status:
+			title: Zmena stavu platby
+			variable_symbol: Variabilný symbol
+			created: Vytvorená
+			status: Stav
+			change_to: zmeniť na
+			cancel: Zruš
+			change_without_notification: Zmeň a nepošli notifikáciu
+			change_with_notification: Zmeň a pošli notifikáciu
+			messages:
+				status_changed_successfully: Stav platby bol zmenený
+				status_not_changed: Stav platby nebol zmenený
+
+		device_user_listing_widget:
+			device: Zariadenie
+
+		duplicate_recurrent_payments:
+			none_found: Nenašli sa žiadne duplicitné recurentné platby
+			id: ID
+			cid: CID
+			created: Vytvorená
+			edited: Upravená
+			next_charge: Zaplatenie prebehne
+			subscription_type: Typ predplatného
+			card_expiration: Karta expiruje
+			status: Status
+			actions: Akcie
+			next_subscription: nasledujúce bude
+			stop_recurrent_profile: Zastaviť opakovanú platbu
+			stop_recurrent_profile_confirm: Potvrďte zastavenie rekurentného profilu
+			messages:
+				recurrent_profile_stopped: Rekurentný profil bol zastavený
+
+		last_payments:
+			title: Posledné platby
+			variable_symbol: Variabilný symbol
+			subscription: Predplatné
+			amount: Suma
+			payment_gateway: Platobná brána
+			subscription_type: Typ predplatného
+			status: Stav
+			created: Vytvorené
+			referrer: Referer
+			actions: Akcie
+			without_subscription: Bez predplatneho
+			edit: Uprav
+			badge_donation: dar
+			badge_recurrent: recurrent
+
+		parsed_mails_failed_notification:
+			title: Zlá suma prijatá na účet
 
 		subscribers_with_payment_widget:
 			last_day: Posledných 24 hodín
 			last_days: Posledných %count% dní
 			description: Rozdiel v počte predplatiteľov s platbou za dané obdobie.
+
+		subscription_type_reports:
+			title: Zdroj predplatiteľov
 
 		total_user_payments:
 			spent: Celkovo minul
@@ -26,8 +85,61 @@ admin:
 			less: menej
 			than_average: ako priemer
 
-		device_user_listing_widget:
-			device: Zariadenie
+		user_payments_listing:
+			header: Platby
+			today: Dnes
+			no_payments:
+				title: Žiaden záznam
+				message: "Tento používateľ nemá zaznamenané žiadne platby."
+			add_manual_payment: Pridaj platbu manuálne
+			caption:
+				id: ID
+				variable_symbol: Variabilný symbol
+				amount: Suma
+				payment_gateway: Platobná brána
+				payment_items: Položky
+				status: Stav
+				created: Vytvorené
+				source: Zdroje platby
+				actions: Akcie
+				cid: CID
+				received: Doručené
+				edited: Upravená
+				next_charge: Zaplatenie prebehne
+				subscription_type: Typ predplatného
+				card_expiration: Karta expiruje
+				created_payment_id: ID vytvorenej platby
+				recurrent_state: Stav opakovanej platby
+				payment: Platba
+				message: Správa
+			referrer: Referer
+			edit: Uprav
+			n_a: "N/A"
+			payment:
+				address: Adresa
+				paid: Zaplatené
+				active_from_to: "Bude platiť od <strong>%active_from%</strong> do <strong>%active_to%</strong>"
+				active_from_confirmation_to: "Bude platiť od <strong>potvrdenia platby</strong> do <strong>%active_to%</strong>"
+				active_from: "Bude platiť od <strong>%active_from%</strong>"
+				badge_donation: dar
+				badge_upgrade: upgrade
+			recurrent_profile:
+				title: Recurrentné platby
+				next_subscription: nasledujúce bude
+				stop_recurrent_profile: Zastaviť opakovanú platbu
+				stop_recurrent_profile_confirm: Potvrďte zastavenie rekurentného profilu
+				user_stop: Zastavené používateľom.
+				admin_stop: Zastavené na žiadosť.
+				system_stop: Neúspešné opakovanie. Zastavena.
+				charged: Automaticky predĺžená.
+				charge_failed: Neúspešné opakovanie. Opakovanie o 6h.
+				tb_failed: CHYBA V TB.
+			parsed_mail_logs:
+				title: "Spracované/potvrdené platby"
+				changed_to_paid: Stav zmenený na zaplatené
+				already_paid: Platba potvrdená
+				different_amount: Iná čiastka
+				without_vs: Bez variabilného symbolu
 
 	donation: Dar k predplatnému
 
@@ -42,6 +154,11 @@ admin:
 		recurrent:
 			title: ARPU - suma všetkých rekurentných platieb / počet
 			tooltip: 'Zobrazuje sumu všetkých rekurentne vytvorených platieb v danom období delene počet platieb - ARPU'
+
+	recurrent:
+		duplicates:
+			title: Duplicitné recurrentné platby
+
 	stats:
 		title: Štatistiky platieb
 		menu:

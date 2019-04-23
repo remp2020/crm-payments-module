@@ -9,6 +9,8 @@ use Crm\SegmentModule\Repository\SegmentsRepository;
 
 class ActualFreeSubscribersStatWidget extends BaseWidget
 {
+    const SEGMENT_CODE = 'active-subscription-without-payment';
+
     private $templateName = 'actual_free_subscribers_stat_widget.latte';
 
     private $paymentsRepository;
@@ -32,10 +34,10 @@ class ActualFreeSubscribersStatWidget extends BaseWidget
 
     public function render()
     {
-        if ($this->segmentsRepository->exists('active-subscription-without-payment')) {
+        if ($this->segmentsRepository->exists(self::SEGMENT_CODE)) {
             $this->template->totalFreeSubscribersLink = $this->presenter->link(
                 ':Segment:StoredSegments:show',
-                $this->segmentsRepository->findByCode('active-subscription-without-payment')->id
+                $this->segmentsRepository->findByCode(self::SEGMENT_CODE)->id
             );
         }
 

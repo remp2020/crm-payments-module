@@ -1,19 +1,19 @@
 {if count($recurrentPayments) == 0}
-    <p>Nenašli sa žiadne duplicitné recurentné platby</p>
+    <p>{_payments.admin.component.duplicate_recurrent_payments.none_found}</p>
 {else}
     {snippet mailQueuelisting}
 
         <table class="table table-striped table-hover">
             <thead>
-            <th>ID</th>
-            <th>CID</th>
-            <th>Vytvorená</th>
-            <th>Upravená</th>
-            <th>Zaplatenie prebehne</th>
-            <th>Typ predplatného</th>
-            <th>Karta expiruje</th>
-            <th>Status</th>
-            <th>Akcie</th>
+                <th>{_payments.admin.component.duplicate_recurrent_payments.id}</th>
+                <th>{_payments.admin.component.duplicate_recurrent_payments.cid}</th>
+                <th>{_payments.admin.component.duplicate_recurrent_payments.created}</th>
+                <th>{_payments.admin.component.duplicate_recurrent_payments.edited}</th>
+                <th>{_payments.admin.component.duplicate_recurrent_payments.next_charge}</th>
+                <th>{_payments.admin.component.duplicate_recurrent_payments.subscription_type}</th>
+                <th>{_payments.admin.component.duplicate_recurrent_payments.card_expiration}</th>
+                <th>{_payments.admin.component.duplicate_recurrent_payments.status}</th>
+                <th>{_payments.admin.component.duplicate_recurrent_payments.actions}</th>
             </thead>
             <tbody>
             {foreach $recurrentPayments as $recurrentPayment}
@@ -38,13 +38,13 @@
                                 <a href="{plink :Subscriptions:SubscriptionTypesAdmin:Show $payment->subscription_type_id}">{$payment->subscription_type->name}</a>
                                 {if $payment->next_subscription_type_id}
                                     <br>
-                                    nasledujúce bude <a href="{plink :Subscriptions:SubscriptionTypesAdmin:Show $payment->next_subscription_type_id}">{$payment->next_subscription_type->name}</a>
+                                {_payments.admin.component.duplicate_recurrent_payments.next_subscription} <a href="{plink :Subscriptions:SubscriptionTypesAdmin:Show $payment->next_subscription_type_id}">{$payment->next_subscription_type->name}</a>
                                 {/if}
                             </td>
                             <td><small class="text text-muted">{if $payment->expires_at}{$payment->expires_at|userDate}{else}N/A{/if}</small></td>
                             <td>{$payment->status}</td>
                             <td>
-                                <a class="btn btn-primary" href="{link StopRecurrentPayment! $payment->id}" onclick="return confirm('Naozaj?')"><i class="fa fa-close"></i> Zastaviť opakovanú platbu</a>
+                                <a class="btn btn-primary" href="{link StopRecurrentPayment! $payment->id}" onclick="return confirm('{_payments.admin.component.duplicate_recurrent_payments.stop_recurrent_profile_confirm}')"><i class="fa fa-close"></i> {_payments.admin.component.duplicate_recurrent_payments.stop_recurrent_profile}</a>
                             </td>
                         </tr>
                     {/if}
