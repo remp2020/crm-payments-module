@@ -19,8 +19,8 @@ class PaymentGatewaysRepository extends Repository
     public function __construct(
         Context $database,
         GatewayFactory $gatewayFactory,
-        IStorage $cacheStorage = null)
-    {
+        IStorage $cacheStorage = null
+    ) {
         parent::__construct($database, $cacheStorage);
         $this->registeredGateways = $gatewayFactory->getRegisteredCodes();
     }
