@@ -147,6 +147,7 @@ class LastPaymentsCheckCommand extends Command
         $form = 0;
         $paid = 0;
         $error = 0;
+        $timeout = 0;
         foreach ($lastPayments as $payment) {
             if ($payment->status == PaymentsRepository::STATUS_PAID) {
                 $paid++;
@@ -157,12 +158,17 @@ class LastPaymentsCheckCommand extends Command
             if ($payment->status == PaymentsRepository::STATUS_FAIL) {
                 $error++;
             }
+            if ($payment->status == PaymentsRepository::STATUS_TIMEOUT) {
+                $timeout++;
+            }
         }
 
         if ($form == $checkCount) {
             return 'form';
         } elseif ($error == $checkCount) {
             return 'error';
+        } elseif ($timeout == $checkCount) {
+            return 'timeout';
         }
 
         return null;
