@@ -44,14 +44,7 @@
               <code>{$type->code}</code>
             </td>
             <td>
-                Objednávkový proces
-            	{if $type->visible}
-                	<span class="label label-success">{_system.yes}</span>
-                {else}
-                	<span class="label label-default">{_system.no}</span>
-                {/if}
-                <br />Shop
-                {if $type->shop}
+                {if $type->visible}
                     <span class="label label-success">{_system.yes}</span>
                 {else}
                     <span class="label label-default">{_system.no}</span>
