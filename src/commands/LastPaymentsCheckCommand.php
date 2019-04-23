@@ -184,6 +184,8 @@ class LastPaymentsCheckCommand extends Command
             return 'error';
         } elseif ($timeout == $checkCount) {
             return 'timeout';
+        } elseif ($paid == 0) {
+            return "none of last {$checkCount} payments has status PAID";
         }
 
         return null;
