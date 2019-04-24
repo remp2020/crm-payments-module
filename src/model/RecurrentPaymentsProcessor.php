@@ -7,6 +7,7 @@ use Crm\PaymentsModule\Gateways\RecurrentPaymentInterface;
 use Crm\PaymentsModule\Repository\PaymentLogsRepository;
 use Crm\PaymentsModule\Repository\PaymentsRepository;
 use Crm\PaymentsModule\Repository\RecurrentPaymentsRepository;
+use Nette\Database\Table\ActiveRow;
 
 class RecurrentPaymentsProcessor
 {
@@ -30,7 +31,7 @@ class RecurrentPaymentsProcessor
         $this->applicationConfig = $applicationConfig;
     }
 
-    public function chargeRecurrentUsingCid($payment, $cid, RecurrentPaymentInterface $gateway): bool
+    public function chargeRecurrentUsingCid(ActiveRow $payment, string $cid, RecurrentPaymentInterface $gateway): bool
     {
         try {
             $gateway->charge($payment, $cid);
