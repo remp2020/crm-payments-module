@@ -236,7 +236,7 @@ frontend:
 		variable_symbol: Variabilný symbol
 		price: Cena
 		is_recurrent: Opakovaná platba
-		invoices: Faktúry
+		receipts: Doklady
 		stop_recurrent: Zastaviť opakovanie
 		restart_recurrent: Znovu zapnúť
 		user_stopped: Zastavené Vami

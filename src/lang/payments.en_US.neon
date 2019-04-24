@@ -231,7 +231,7 @@ frontend:
 		variable_symbol: Transaction ID
 		price: Price
 		is_recurrent: Recurrent payment
-		invoices: Invoices
+		receipts: Receipts
 		stop_recurrent: Stop recurrent paymemt
 		restart_recurrent: Restart recurrent payment
 		user_stopped: Stopped by you

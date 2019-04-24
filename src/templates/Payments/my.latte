@@ -21,7 +21,7 @@
                 <th>{_payments.frontend.my.variable_symbol}</th>
                 <th>{_payments.frontend.my.price}</th>
                 <th>{_payments.frontend.my.is_recurrent}</th>
-                <th>{_payments.frontend.my.invoices}</th>
+                <th>{_payments.frontend.my.downloads}</th>
             </tr>
             </thead>
             <tbody>
@@ -62,7 +62,7 @@
                         {/foreach}
                     </td>
                     <td>
-                        {control listingWidget 'frontend.payments.listing.action', $payment}
+                        {control listingWidget 'frontend.payments.listing.receipts', $payment}
                     </td>
                 </tr>
             {/foreach}
