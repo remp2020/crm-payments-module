@@ -141,6 +141,28 @@ admin:
 				different_amount: Different amount
 				without_vs: Without variable symbol
 
+		admin_filter_form:
+			variable_symbol:
+				label: Transaction ID
+			payment_gateway:
+				label: Gateway
+			status:
+				label: Status
+			donation:
+				label: Donation
+				with_donation: With donation
+				without_donation: Without donation
+			recurrent_charge:
+				label: Recurrent charge
+				all: All
+				recurrent: Charged automatically
+				manual: Manual
+			subscription_type:
+				label: Subscription type
+			filter:
+				label: Filter
+				cancel: Cancel filter
+
 	donation: Donation
 
 	arpu:
@@ -160,6 +182,44 @@ admin:
 			general: General
 			arpu: ARPU
 
+	payment_gateways:
+		title: Payment gateways
+		back_to_list: Back to gateway list
+		back_to_detail: Back to gateway
+		edit: Edit gateway
+		name: Name
+		code: Code
+		created_at: Created at
+		modified_at: Modified at
+		visible: Visible
+		is_recurrent: Recurrent
+		sorting: Sorting
+		actions: Actions
+		updated: Gateway was updated
+		graph:
+			title: Gateway payments
+			help: Payments with actual gateways
+			completed_payments: Completed payments
+			uncompleted_payments: Uncompleted payments
+
+form:
+	payment_gateway:
+		name:
+			label: Name
+			required: Gateway name is required
+			placeholder: e.g. Paypal
+		code:
+			label: Code
+			placeholder: e.g. paypal
+		visible:
+			label: Visible
+		is_recurrent:
+			label: Recurrent
+		sorting:
+			label: Sorting
+		save:
+			label: Save
+
 gateway:
 	recurrent: recurrent payment
 
@@ -171,7 +231,7 @@ frontend:
 		variable_symbol: Transaction ID
 		price: Price
 		is_recurrent: Recurrent payment
-		invoices: Invoices
+		receipts: Receipts
 		stop_recurrent: Stop recurrent paymemt
 		restart_recurrent: Restart recurrent payment
 		user_stopped: Stopped by you

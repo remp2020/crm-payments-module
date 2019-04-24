@@ -10,7 +10,7 @@ use Nette\Localization\ITranslator;
 use Omnipay\Omnipay;
 use Omnipay\PayPal\ExpressGateway;
 
-class Paypal extends GatewayAbstract implements PaymentInterface
+class Paypal extends GatewayAbstract
 {
     /** @var ExpressGateway */
     protected $gateway;

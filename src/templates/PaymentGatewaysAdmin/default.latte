@@ -1,17 +1,13 @@
-{block #title}Platobné brány{/block}
-
 {block #content}
 
  <div class="row">
 
   <div class="col-md-12">
     <h1>
-      Platobné brány
+        <span n:block="title">{_payments.admin.payment_gateways.title}</span>
       <small>
-        / celkovo {$totalPaymentGateways}
+        / {_system.total} {$totalPaymentGateways}
       </small>
-      <a href="{link PaymentGatewaysAdmin:new}" class="btn btn-success btn-lg pull-right"><i class="fa fa-user"></i>  Nová brána</a>
-      <a href="{link PaymentGatewaysAdmin:export}" style="margin-right:10px" target="_blank"class="btn btn-default btn-lg pull-right"><i class="fa fa-external-link"></i>  Export</a>
     </h1>
     <hr>
   </div>
@@ -21,12 +17,11 @@
     <table class="table table-striped table-hover table-bordered">
       <thead>
         <tr>
-          <th>#ID / poradie</th>
-          <th>Meno</th>
-          <th>Obrazok</th>
-          <th>Aktívne</th>
-          <th>Viditeľné</th>
-          <th>Actions</th>
+          <th>ID</th>
+          <th>{_payments.admin.payment_gateways.name}</th>
+          <th>{_payments.admin.payment_gateways.code}</th>
+          <th>{_payments.admin.payment_gateways.visible}</th>
+          <th>{_payments.admin.payment_gateways.actions}</th>
         </tr>
       </thead>
       <tbody>
@@ -37,12 +32,8 @@
               <a href="{link PaymentGatewaysAdmin:Show $type->id}">
                 {$type->name}
               </a>
-              <small>{$type->code}</small>
-              {if $type->default}
-                <span class="label label-success">Default</span>
-              {/if}
               {if $type->is_recurrent}
-                <span class="label label-primary">Recurrent</span>
+                <span class="label label-primary">{_payments.admin.payment_gateways.is_recurrent}</span>
               {/if}
 
               <span class="pull-right">
@@ -50,32 +41,13 @@
               </span>
             </td>
             <td>
-              {if $type->image}
-                <img src="{$type->image}" title="{$type->code}" width="80"><br>
-                <code>{$type->image}</code>
-              {else}
-                <span class="label label-default">bez obrázku</span>
-              {/if}
+              <code>{$type->code}</code>
             </td>
             <td>
-            	{if $type->active}
-            		<span class="label label-success">aktívne</span>
-            	{else}
-            		<span class="label label-default">neaktívne</span>
-            	{/if}
-            </td>
-            <td>
-                Objednávkový proces
-            	{if $type->visible}
-                	<span class="label label-success">viditeľné</span>
+                {if $type->visible}
+                    <span class="label label-success">{_system.yes}</span>
                 {else}
-                	<span class="label label-default">skryté</span>
-                {/if}
-                <br />Shop
-                {if $type->shop}
-                    <span class="label label-success">viditeľné</span>
-                {else}
-                    <span class="label label-default">skryté</span>
+                    <span class="label label-default">{_system.no}</span>
                 {/if}
             </td>
             <td style="white-space: nowrap">

@@ -141,6 +141,28 @@ admin:
 				different_amount: Iná čiastka
 				without_vs: Bez variabilného symbolu
 
+		admin_filter_form:
+			variable_symbol:
+				label: Variabilný symbol
+			payment_gateway:
+				label: Platobná brána
+			status:
+				label: Stav platby
+			donation:
+				label: Dar
+				with_donation: S darom
+				without_donation: Bez daru
+			recurrent_charge:
+				label: Automatické obnovenie
+				all: Všetky
+				recurrent: Iba automaticky obnovené
+				manual: Iba manuálne
+			subscription_type:
+				label: Typ predplatného
+			filter:
+				label: Filtruj
+				cancel: Zruš filter
+
 	donation: Dar k predplatnému
 
 	arpu:
@@ -165,6 +187,44 @@ admin:
 			general: Všeobecné
 			arpu: ARPU
 
+	payment_gateways:
+		title: Platobné brány
+		back_to_list: Späť na platobné brány
+		back_to_detail: Späť na platobnú bránu
+		edit: Úprava platobnej brány
+		name: Meno
+		code: Identifikátor
+		created_at: Vytvorená
+		modified_at: Upravená
+		visible: Viditeľná
+		is_recurrent: Rekurentná
+		sorting: Poradie
+		actions: Akcie
+		updated: Platobná brána bola upravená
+		graph:
+			title: Platby brány
+			help: Platby zaplatené cez túto platobnú bránu
+			completed_payments: Dokončené platby
+			uncompleted_payments: Nedokončené platby
+
+form:
+	payment_gateway:
+		name:
+			label: Meno
+			required: Meno musí byť zadané
+			placeholder: napríklad Tatrapay
+		code:
+			label: Identifikátor
+			placeholder: Napríklad tatrapay
+		visible:
+			label: Viditeľná
+		is_recurrent:
+			label: Rekurentná
+		sorting:
+			label: Poradie
+		save:
+			label: Ulož
+
 gateway:
 	recurrent: automaticky obnovované
 
@@ -176,7 +236,7 @@ frontend:
 		variable_symbol: Variabilný symbol
 		price: Cena
 		is_recurrent: Opakovaná platba
-		invoices: Faktúry
+		receipts: Doklady
 		stop_recurrent: Zastaviť opakovanie
 		restart_recurrent: Znovu zapnúť
 		user_stopped: Zastavené Vami

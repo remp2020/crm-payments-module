@@ -4,13 +4,13 @@
 
 <div class="row">
     <div class="col-md-12">
-        <a href="{link PaymentGatewaysAdmin:}"><i class="fa fa-angle-left"></i> späť na zoznam</a>
+        <a href="{link PaymentGatewaysAdmin:}"><i class="fa fa-angle-left"></i> {_payments.admin.payment_gateways.back_to_list}</a>
 
         <div class="page-header">
             <h1>
                 <small>[{$type->id}]</small>
                 {$type->name}
-                <a href="{link PaymentGatewaysAdmin:Edit $type->id}" class="btn btn-primary btn-lg pull-right"><i class="fa fa-edit"></i>  Upraviť type predplatného</a>
+                <a href="{link PaymentGatewaysAdmin:Edit $type->id}" class="btn btn-primary btn-lg pull-right"><i class="fa fa-edit"></i>  {_payments.admin.payment_gateways.edit}</a>
             </h1>
         </div>
     </div>
@@ -20,61 +20,34 @@
     <div class="col-md-12">
         <p>
         <ul class="list-group">
-            <li class="list-group-item"><b>Interné označenie:</b> <code>{$type->code}</code></li>
-            <li class="list-group-item"><b>Vytvorený:</b> {$type->created_at|userDate}</li>
-            <li class="list-group-item"><b>Modifikovaný:</b> {$type->modified_at|userDate}</li>
+            <li class="list-group-item"><b>{_payments.admin.payment_gateways.code}:</b> <code>{$type->code}</code></li>
+            <li class="list-group-item"><b>{_payments.admin.payment_gateways.created_at}:</b> {$type->created_at|userDate}</li>
+            <li class="list-group-item"><b>{_payments.admin.payment_gateways.modified_at}:</b> {$type->modified_at|userDate}</li>
             <li class="list-group-item">
-                <b>Obrázok:</b>
-                {if $type->image}
-                    <img src="{$type->image}" title="{$type->code}"><br>
-                    <code>{$type->image}</code>
-                {else}
-                    <span class="label label-default">bez obrázku</span>
-                {/if}
-            </li>
-            <li class="list-group-item"><b>Popis:</b> {$type->description}</li>
-            <li class="list-group-item">
-                <b>Aktívny:</b>
-                {if $type->active}
-                    <span class="label label-success">aktívne</span>
-                {else}
-                    <span class="label label-default">neaktívne</span>
-                {/if}
-            </li>
-            <li class="list-group-item">
-                <b>Viditelny:</b>
+                <b>{_payments.admin.payment_gateways.visible}:</b>
                 {if $type->visible}
-                    <span class="label label-success">viditeľné</span>
+                    <span class="label label-success">{_system.yes}</span>
                 {else}
-                    <span class="label label-default">skryté</span>
+                    <span class="label label-default">{_system.no}</span>
                 {/if}
             </li>
             <li class="list-group-item">
-                <b>Viditelny v Shope:</b>
+                <b>{_payments.admin.payment_gateways.visible_in_shop}:</b>
                 {if $type->shop}
-                    <span class="label label-success">viditeľné</span>
+                    <span class="label label-success">{_system.yes}</span>
                 {else}
-                    <span class="label label-default">skryté</span>
+                    <span class="label label-default">{_system.no}</span>
                 {/if}
             </li>
             <li class="list-group-item">
-                <b>Recurrentá:</b>
+                <b>{_payments.admin.payment_gateways.is_recurrent}:</b>
                 {if $type->is_recurrent}
-                    <span class="label label-primary">Je recurrentná</span>
+                    <span class="label label-primary">{_system.yes}</span>
                 {else}
-                    <span class="label label-default">Nie je recurrentná</span>
+                    <span class="label label-default">{_system.no}</span>
                 {/if}
             </li>
-
-            <li class="list-group-item">
-                <b>Default:</b>
-                {if $type->default}
-                    <span class="label label-success">default</span>
-                {else}
-                    <span class="label label-default">nie</span>
-                {/if}
-            </li>
-            <li class="list-group-item"><b>Poradie:</b> {$type->sorting}</li>
+            <li class="list-group-item"><b>{_payments.admin.payment_gateways.sorting}:</b> {$type->sorting}</li>
         </ul>
 
         </p>

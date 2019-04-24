@@ -17,7 +17,7 @@ use Omnipay\Omnipay;
 use OndraKoupil\Csob\Exception;
 use Tracy\Debugger;
 
-class CsobOneClick extends GatewayAbstract implements PaymentInterface, RecurrentPaymentInterface
+class CsobOneClick extends GatewayAbstract implements RecurrentPaymentInterface
 {
     const SERVER_FAILURE_CODES = [
         120, // Merchant blocked (merchant is not authorised to accept payments)

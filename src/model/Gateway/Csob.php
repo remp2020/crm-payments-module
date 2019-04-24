@@ -10,7 +10,7 @@ use Nette\Localization\ITranslator;
 use Omnipay\Csob\Gateway;
 use Omnipay\Omnipay;
 
-class Csob extends GatewayAbstract implements PaymentInterface
+class Csob extends GatewayAbstract
 {
     /** @var \Omnipay\Csob\Gateway */
     protected $gateway;

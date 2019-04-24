@@ -14,6 +14,7 @@ use Crm\UsersModule\Repository\UserActionsLogRepository;
 use League\Event\Emitter;
 use Nette\Localization\ITranslator;
 use Nette\Security\User;
+use Nette\Utils\ArrayHash;
 use Nette\Utils\DateTime;
 use Tomaj\Hermes\Dispatcher;
 
@@ -101,18 +102,27 @@ class Expander
         $this->action = $action;
     }
 
-    public function addPaymentGateway($code)
+    public function addPaymentGateway($code, $description)
     {
-        $this->gateways[] = $code;
+        $this->gateways[$code] = $description;
     }
 
     public function paymentGateways()
     {
-        return $this->paymentGatewaysRepository->getAllVisible()
+        $gateways = $this->paymentGatewaysRepository->getAllVisible()
             ->where([
-                'code' => $this->gateways,
+                'code' => array_keys($this->gateways),
             ])
             ->fetchAll();
+
+        $wrapper = [];
+        foreach ($gateways as $gateway) {
+            $wrapper[] = [
+                'gateway' => $gateway,
+                'description' => $this->gateways[$gateway->code]
+            ];
+        }
+        return ArrayHash::from($wrapper);
     }
 
     /**

@@ -11,7 +11,7 @@ use Nette\Http\Response;
 use Nette\Localization\ITranslator;
 use Nette\Utils\Strings;
 
-abstract class GatewayAbstract
+abstract class GatewayAbstract implements PaymentInterface
 {
     protected $cancelErrorCodes = [];
 
