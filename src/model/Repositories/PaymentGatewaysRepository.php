@@ -57,12 +57,6 @@ class PaymentGatewaysRepository extends Repository
         return $this->all()->where(['visible' => true]);
     }
 
-    public function getAllVisibleWithTag($tag)
-    {
-        return $this->getAllVisible()
-            ->where('code IN (?)', $this->gatewayFactory->getTaggedCodes($tag));
-    }
-
     public function add(
         $name,
         $code,
