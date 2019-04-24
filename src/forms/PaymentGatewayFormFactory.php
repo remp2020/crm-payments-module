@@ -4,20 +4,25 @@ namespace Crm\PaymentsModule\Forms;
 
 use Crm\PaymentsModule\Repository\PaymentGatewaysRepository;
 use Nette\Application\UI\Form;
+use Nette\Localization\ITranslator;
 use Tomaj\Form\Renderer\BootstrapRenderer;
 
 class PaymentGatewayFormFactory
 {
-    /** @var PaymentGatewaysRepository */
     protected $paymentGatewaysRepository;
+
+    protected $translator;
 
     public $onSave;
 
     public $onUpdate;
 
-    public function __construct(PaymentGatewaysRepository $paymentGatewaysRepository)
-    {
+    public function __construct(
+        PaymentGatewaysRepository $paymentGatewaysRepository,
+        ITranslator $translator
+    ) {
         $this->paymentGatewaysRepository = $paymentGatewaysRepository;
+        $this->translator = $translator;
     }
 
     /**
@@ -26,38 +31,38 @@ class PaymentGatewayFormFactory
      */
     public function create($paymentGatewayId)
     {
-        $defaults = [];
-        if (isset($paymentGatewayId)) {
-            $paymentGateway = $this->paymentGatewaysRepository->find($paymentGatewayId);
-            $defaults = $paymentGateway->toArray();
+        $paymentGateway = $this->paymentGatewaysRepository->find($paymentGatewayId);
+        if (!isset($paymentGatewayId)) {
+            throw new \Exception('invalid paymentGatewayId provided: ' . $paymentGateway);
         }
 
-        $form = new Form;
+        $defaults = $paymentGateway->toArray();
 
+        $form = new Form;
+        $form->setTranslator($this->translator);
         $form->setRenderer(new BootstrapRenderer());
         $form->addProtection();
 
-        $form->addText('name', 'Meno')
-            ->setRequired('Meno musí byť zadané')
-            ->setAttribute('placeholder', 'napríklad Tatrapay');
+        $form->addText('name', 'payments.form.payment_gateway.name.label')
+            ->setRequired('payments.form.payment_gateway.name.required')
+            ->setAttribute('placeholder', 'payments.form.payment_gateway.name.placeholder');
 
-        $form->addText('code', 'Identifikátor')
-            ->setAttribute('placeholder', 'Napríklad tatrapay');
+        $form->addText('code', 'payments.form.payment_gateway.code.label')
+            ->setAttribute('placeholder', 'payments.form.payment_gateway.code.placeholder')
+            ->setDisabled();
 
-        $form->addTextArea('description', 'Popis');
-
-        $form->addCheckbox('active', 'Aktívny');
-        $form->addCheckbox('visible', 'Viditeľný v objednávkovom procese');
+        $form->addCheckbox('visible', 'payments.form.payment_gateway.visible.label');
         $form->addCheckbox('shop', 'Viditeľný v obchode');
 
-        $form->addCheckbox('is_recurrent', 'Recurrená');
+        $form->addCheckbox('is_recurrent', 'payments.form.payment_gateway.is_recurrent.label')
+            ->setDisabled();
 
-        $form->addtext('sorting', 'Poradie');
+        $form->addtext('sorting', 'payments.form.payment_gateway.sorting.label');
 
-        $form->addSubmit('send', 'Ulož')
+        $form->addSubmit('send', 'payments.form.payment_gateway.save.label')
             ->getControlPrototype()
             ->setName('button')
-            ->setHtml('<i class="fa fa-save"></i> Ulož');
+            ->setHtml('<i class="fa fa-save"></i> ' . $this->translator->translate('payments.form.payment_gateway.save.label'));
 
         if ($paymentGatewayId) {
             $form->addHidden('payment_gateway_id', $paymentGatewayId);
@@ -72,28 +77,11 @@ class PaymentGatewayFormFactory
 
     public function formSucceeded($form, $values)
     {
-        if (isset($values['payment_gateway_id'])) {
-            $paymentGatewayId = $values['payment_gateway_id'];
-            unset($values['payment_gateway_id']);
+        $paymentGatewayId = $values['payment_gateway_id'];
+        unset($values['payment_gateway_id']);
 
-            $paymentGateway = $this->paymentGatewaysRepository->find($paymentGatewayId);
-            $this->paymentGatewaysRepository->update($paymentGateway, $values);
-            $this->onUpdate->__invoke($form, $paymentGateway);
-        } else {
-            $paymentGateway = $this->paymentGatewaysRepository->add(
-                $values['name'],
-                $values['code'],
-                $values['sorting'],
-                $values['active'],
-                $values['visible'],
-                $values['shop'],
-                $values['description'],
-                $values['image'],
-                $values['default'],
-                $values['is_recurrent']
-            );
-
-            $this->onSave->__invoke($form, $paymentGateway);
-        }
+        $paymentGateway = $this->paymentGatewaysRepository->find($paymentGatewayId);
+        $this->paymentGatewaysRepository->update($paymentGateway, $values);
+        $this->onUpdate->__invoke($form, $paymentGateway);
     }
 }

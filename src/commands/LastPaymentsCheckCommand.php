@@ -74,7 +74,7 @@ class LastPaymentsCheckCommand extends Command
         $exclude = $input->getOption('exclude');
 
         /** @var ActiveRow $gateway */
-        foreach ($this->paymentGatewaysRepository->getAllActive() as $gateway) {
+        foreach ($this->paymentGatewaysRepository->getAllVisible() as $gateway) {
             if (in_array($gateway->code, $exclude)) {
                 continue;
             }

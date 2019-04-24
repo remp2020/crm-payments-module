@@ -1,15 +1,14 @@
-{block #title}Uprav {$type->name}{/block}
+{block #title}{_payments.admin.payment_gateways.edit} {$type->name}{/block}
 
 {block #content}
 
 <div class="row">
   <div class="col-md-12">
-  <a href="{link PaymentGatewaysAdmin:Show $user->id}"><i class="fa fa-angle-left"></i> späť na záznam</a>
+  <a href="{link PaymentGatewaysAdmin:Show $type->id}"><i class="fa fa-angle-left"></i> {_payments.admin.payment_gateways.back_to_detail}</a>
     <div class="page-header">
       <h1>
-        Úprava typu platby:
-        <small>[{$type->id}]</small>
-      	{$type->name}
+        {_payments.admin.payment_gateways.edit}:
+        <small>[{$type->id}] {$type->name}</small>
       </h1>
     </div>
   </div>

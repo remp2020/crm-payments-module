@@ -140,6 +140,28 @@ admin:
 				different_amount: Jiná částka
 				without_vs: Bez variabilního symbolu
 
+		admin_filter_form:
+			variable_symbol:
+				label: Variabilní symbol
+			payment_gateway:
+				label: Platební brána
+			status:
+				label: Stav platby
+			donation:
+				label: Dar
+				with_donation: S darem
+				without_donation: Bez daru
+			recurrent_charge:
+				label: Automatické obnovení
+				all: Všechny
+				recurrent: Pouze automaticky obnoveny
+				manual: Pouze ruční platby
+			subscription_type:
+				label: Typ předplatného
+			filter:
+				label: Filtruj
+				cancel: Zruš filtr
+
 	donation: Dar k předplatnému
 
 	arpu:
@@ -159,6 +181,44 @@ admin:
 			general: Obecné
 			arpu: ARPU
 
+	payment_gateways:
+		title: Platební brány
+		back_to_list: Zpět na platební brány
+		back_to_detail: Zpět na platební bránu
+		edit: Úprava platební brány
+		name: Jméno
+		code: Identifikátor
+		created_at: Vytvořená
+		modified_at: Upravená
+		visible: Viditelná
+		is_recurrent: Rekurentní
+		sorting: Pořadí
+		actions: Akce
+		updated: Platební brána byla upravena
+		graph:
+			title: Platby brány
+			help: Platby zaplaceny přes tuto platební bránu
+			completed_payments: Dokončené platby
+			uncompleted_payments: Nedokončené platby
+
+form:
+	payment_gateway:
+		name:
+			label: Jméno
+			required: Jméno musí být zadáno
+			placeholder: například ČSOB
+		code:
+			label: Identifikátor
+			placeholder: například csob
+		visible:
+			label: Viditeľná
+		is_recurrent:
+			label: Rekurentní
+		sorting:
+			label: Pořadí
+		save:
+			label: Ulož
+
 gateway:
 	recurrent: automatické obnovování
 
@@ -170,7 +230,7 @@ frontend:
 		variable_symbol: Variabilní symbol
 		price: Cena
 		is_recurrent: Opakovaná platba
-		invoices: Faktury
+		receipts: Doklady
 		stop_recurrent: Zastavit opakování
 		restart_recurrent: Znovu zapnout
 		user_stopped: Vámi zastavené
@@ -199,7 +259,3 @@ frontend:
 		recipient_message: Zpráva pro příjemce
 		delay_info: Připsání platby na účet může trvat 1 až 2 pracovní dny. Předplatné se aktivuje až po připsání platby na náš účet.
 		thank_you: Děkujeme
-	proforma_invoice:
-		title: Platba předfakturou
-		form_title: 'Pro dokončení objednávky prosím vyplňte fakturační údaje'
-		thank_you: 'Děkujeme za vaši objednávku, předfakturu Vám zašleme do 3 pracovních dnů e-mailem.'

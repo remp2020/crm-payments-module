@@ -115,29 +115,50 @@ class PaymentsAdminPresenter extends AdminPresenter
     {
         $form = new Form;
         $form->setRenderer(new BootstrapInlineRenderer());
-        $form->addText('text', 'VS:')
+        $form->setTranslator($this->translator);
+        $form->addText('text', 'payments.admin.component.admin_filter_form.variable_symbol.label')
             ->setAttribute('autofocus');
 
-        $paymentGateways = $this->paymentGatewaysRepository->getAllActive()->fetchPairs('id', 'name');
-        $form->addSelect('payment_gateway', 'Platobná brána', $paymentGateways)->setPrompt('--');
+        $paymentGateways = $this->paymentGatewaysRepository->all()->fetchPairs('id', 'name');
+        $form->addSelect(
+            'payment_gateway',
+            'payments.admin.component.admin_filter_form.payment_gateway.label',
+            $paymentGateways
+        )->setPrompt('--');
 
         $statuses = $this->paymentsRepository->getStatusPairs();
-        $form->addSelect('status', 'Stav platby', $statuses)->setPrompt('--');
+        $form->addSelect(
+            'status',
+            'payments.admin.component.admin_filter_form.status.label',
+            $statuses
+        )->setPrompt('--');
 
         $donations = [
-            true => 'S darom',
-            false => 'Bez daru',
+            true => $this->translator->translate('payments.admin.component.admin_filter_form.with_donation'),
+            false => $this->translator->translate('payments.admin.component.admin_filter_form.without_donation'),
         ];
-        $form->addSelect('donation', 'Dar', $donations)->setPrompt('--');
+        $form->addSelect(
+            'donation',
+            'payments.admin.component.admin_filter_form.donation.label',
+            $donations
+        )->setPrompt('--');
 
-        $form->addSelect('recurrent_charge', 'Automatické obnovenie', [
-            'all' => 'Všetky',
-            'recurrent' => 'Iba automaticky obnovené',
-            'manual' => 'Iba manuálne',
-         ]);
+        $form->addSelect(
+            'recurrent_charge',
+            'payments.admin.component.admin_filter_form.recurrent_charge.label',
+            [
+                'all' => $this->translator->translate('payments.admin.component.admin_filter_form.recurrent_charge.all'),
+                'recurrent' => $this->translator->translate('payments.admin.component.admin_filter_form.recurrent_charge.recurrent'),
+                'manual' => $this->translator->translate('payments.admin.component.admin_filter_form.recurrent_charge.manual'),
+            ]
+        );
 
         $subscriptionTypes = $this->subscriptionTypesRepository->getAllActive()->fetchPairs('id', 'name');
-        $form->addSelect('subscription_type', 'Typ predplatného', $subscriptionTypes)->setPrompt('--');
+        $form->addSelect(
+            'subscription_type',
+            'payments.admin.component.admin_filter_form.subscription_type.label',
+            $subscriptionTypes
+        )->setPrompt('--');
 
         /** @var AdminFilterFormDataProviderInterface[] $providers */
         $providers = $this->dataProviderManager->getProviders('payments.dataprovider.list_filter_form', AdminFilterFormDataProviderInterface::class);
@@ -145,12 +166,13 @@ class PaymentsAdminPresenter extends AdminPresenter
             $form = $provider->provide(['form' => $form, 'request' => $this->request]);
         }
 
-        $form->addSubmit('send', 'Filter')
+        $form->addSubmit('send', 'payments.admin.component.admin_filter_form.filter.label')
             ->getControlPrototype()
             ->setName('button')
-            ->setHtml('<i class="fa fa-filter"></i> Filter');
+            ->setHtml('<i class="fa fa-filter"></i> ' . $this->translator->translate('payments.admin.component.admin_filter_form.filter.label'));
         $presenter = $this;
-        $form->addSubmit('cancel', 'Zruš filter')->onClick[] = function () use ($presenter) {
+
+        $form->addSubmit('cancel', 'payments.admin.component.admin_filter_form.filter.cancel')->onClick[] = function () use ($presenter) {
             $presenter->redirect('PaymentsAdmin:Default', ['text' => '']);
         };
 
