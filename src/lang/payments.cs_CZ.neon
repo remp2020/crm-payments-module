@@ -259,7 +259,3 @@ frontend:
 		recipient_message: Zpráva pro příjemce
 		delay_info: Připsání platby na účet může trvat 1 až 2 pracovní dny. Předplatné se aktivuje až po připsání platby na náš účet.
 		thank_you: Děkujeme
-	proforma_invoice:
-		title: Platba předfakturou
-		form_title: 'Pro dokončení objednávky prosím vyplňte fakturační údaje'
-		thank_you: 'Děkujeme za vaši objednávku, předfakturu Vám zašleme do 3 pracovních dnů e-mailem.'
