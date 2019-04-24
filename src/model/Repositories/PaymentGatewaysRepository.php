@@ -14,7 +14,7 @@ class PaymentGatewaysRepository extends Repository
 {
     protected $tableName = 'payment_gateways';
 
-    private $registeredGateways = [];
+    private $gatewayFactory;
 
     public function __construct(
         Context $database,
@@ -22,13 +22,13 @@ class PaymentGatewaysRepository extends Repository
         IStorage $cacheStorage = null
     ) {
         parent::__construct($database, $cacheStorage);
-        $this->registeredGateways = $gatewayFactory->getRegisteredCodes();
+        $this->gatewayFactory = $gatewayFactory;
     }
 
     public function all()
     {
         return $this->getTable()
-            ->where('code IN (?)', $this->registeredGateways)
+            ->where('code IN (?)', $this->gatewayFactory->getRegisteredCodes())
             ->order('sorting');
     }
 
@@ -36,7 +36,7 @@ class PaymentGatewaysRepository extends Repository
     {
         return $this->getTable()
             ->where(['id' => $id])
-            ->where('code IN (?)', $this->registeredGateways)
+            ->where('code IN (?)', $this->gatewayFactory->getRegisteredCodes())
             ->fetch();
     }
 
@@ -44,7 +44,7 @@ class PaymentGatewaysRepository extends Repository
     {
         return $this->getTable()
             ->where(['code' => $code])
-            ->where('code IN (?)', $this->registeredGateways)
+            ->where('code IN (?)', $this->gatewayFactory->getRegisteredCodes())
             ->limit(1)
             ->fetch();
     }
@@ -57,9 +57,10 @@ class PaymentGatewaysRepository extends Repository
         return $this->all()->where(['visible' => true]);
     }
 
-    public function getAllActiveShop()
+    public function getAllVisibleWithTag($tag)
     {
-        return $this->all()->where(['shop' => true]);
+        return $this->getAllVisible()
+            ->where('code IN (?)', $this->gatewayFactory->getTaggedCodes($tag));
     }
 
     public function add(
@@ -67,7 +68,6 @@ class PaymentGatewaysRepository extends Repository
         $code,
         $sorting = 10,
         $visible = true,
-        $shop = false,
         $isRecurrent = false
     ) {
         return $this->insert([
@@ -75,7 +75,6 @@ class PaymentGatewaysRepository extends Repository
             'code' => $code,
             'sorting' => $sorting,
             'visible' => $visible,
-            'shop' => $shop,
             'is_recurrent' => $isRecurrent,
             'created_at' => new DateTime(),
             'modified_at' => new DateTime(),

@@ -52,7 +52,6 @@ class PaymentGatewayFormFactory
             ->setDisabled();
 
         $form->addCheckbox('visible', 'payments.form.payment_gateway.visible.label');
-        $form->addCheckbox('shop', 'Viditeľný v obchode');
 
         $form->addCheckbox('is_recurrent', 'payments.form.payment_gateway.is_recurrent.label')
             ->setDisabled();
