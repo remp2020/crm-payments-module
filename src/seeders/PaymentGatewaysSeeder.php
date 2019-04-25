@@ -22,8 +22,7 @@ class PaymentGatewaysSeeder implements ISeeder
                 'Paypal',
                 'paypal',
                 10,
-                true,
-                false
+                true
             );
             $output->writeln('  <comment>* payment gateway <info>paypal</info> created</comment>');
         } else {
@@ -36,7 +35,6 @@ class PaymentGatewaysSeeder implements ISeeder
                 'paypal_reference',
                 15,
                 true,
-                false,
                 true
             );
             $output->writeln('  <comment>* payment gateway <info>paypal</info> created</comment>');
@@ -50,7 +48,6 @@ class PaymentGatewaysSeeder implements ISeeder
                 'CardPay',
                 'cardpay',
                 20,
-                true,
                 true
             );
             $output->writeln('  <comment>* payment gateway <info>cardpay</info> created</comment>');
@@ -64,7 +61,6 @@ class PaymentGatewaysSeeder implements ISeeder
                 'comfortpay',
                 21,
                 true,
-                false,
                 true
             );
             $output->writeln('  <comment>* payment gateway <info>comfortpay</info> created</comment>');
@@ -77,8 +73,7 @@ class PaymentGatewaysSeeder implements ISeeder
                 'TatraPay',
                 'tatrapay',
                 30,
-                true,
-                false
+                true
             );
             $output->writeln('  <comment>* payment gateway <info>tatrapay</info> created</comment>');
         } else {
@@ -90,7 +85,6 @@ class PaymentGatewaysSeeder implements ISeeder
                 'Bankový prevod',
                 'bank_transfer',
                 40,
-                true,
                 true
             );
             $output->writeln('  <comment>* payment gateway <info>bank_transfer</info> created</comment>');
@@ -103,7 +97,6 @@ class PaymentGatewaysSeeder implements ISeeder
                 'ČSOB',
                 'csob',
                 22,
-                true,
                 true
             );
             $output->writeln('  <comment>* payment gateway <info>csob</info> created</comment>');
@@ -116,7 +109,6 @@ class PaymentGatewaysSeeder implements ISeeder
                 'ČSOB One Click',
                 'csob_one_click',
                 23,
-                true,
                 true,
                 true
             );

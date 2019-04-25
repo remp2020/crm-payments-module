@@ -32,14 +32,6 @@
                 {/if}
             </li>
             <li class="list-group-item">
-                <b>{_payments.admin.payment_gateways.visible_in_shop}:</b>
-                {if $type->shop}
-                    <span class="label label-success">{_system.yes}</span>
-                {else}
-                    <span class="label label-default">{_system.no}</span>
-                {/if}
-            </li>
-            <li class="list-group-item">
                 <b>{_payments.admin.payment_gateways.is_recurrent}:</b>
                 {if $type->is_recurrent}
                     <span class="label label-primary">{_system.yes}</span>
