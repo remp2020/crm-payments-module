@@ -399,3 +399,14 @@ frontend:
 		recipient_message: Message for recipient
 		delay_info: Payment settlement can take up to 2 business days. Subscription will be started after the payment is settled on our account.
 		thank_you: Thank you
+	select_card:
+		title: 'Select card to complete the payment'
+		lead: 'We remember your cards, so you do nott have to enter their number again.'
+		subtitle: 'Seznam uložených karet'
+		card_with_expiration: 'Karta s expirací'
+		use_card: 'Použít kartu'
+		use_new_card: 'Zadat novou kartu'
+	proforma_invoice:
+		title: Proforma invoice payment
+		form_title: 'Please fill up your invoice details to complete the order'
+		thank_you: 'Thank you for the order, the invoice will be sent to your email within 3 working days.'

@@ -404,3 +404,14 @@ frontend:
 		recipient_message: Správa pre prijímateľa
 		delay_info: Pripísanie platby na účet môže trvať 1 až 2 pracovné dni. Predplatné sa aktivuje až po pripísaní platby na náš účet.
 		thank_you: Ďakujeme
+	select_card:
+		title: 'Vyberte kartu na dokončenie platby'
+		lead: 'Pamätáme si Vami použité karty, takže ich číslo nemusíte zadávať znova.'
+		subtitle: 'Zoznam uložených kariet'
+		card_with_expiration: 'Karta s expiráciou'
+		use_card: 'Použiť kartu'
+		use_new_card: 'Zadať novú kartu'
+	proforma_invoice:
+		title: Platba predfaktúrou
+		form_title: 'Pre dokončenie objednávky prosím vyplňte fakturačné údaje'
+		thank_you: 'Ďakujeme za vašu objednávku, predfaktúru Vám zašleme do 3 pracovných dní e-mailom.'
