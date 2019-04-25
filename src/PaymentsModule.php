@@ -62,16 +62,16 @@ class PaymentsModule extends CrmModule
 
     public function registerAdminMenuItems(MenuContainerInterface $menuContainer)
     {
-        $mainMenu = new MenuItem('Platby', '#payments', 'fa fa-university', 200);
+        $mainMenu = new MenuItem($this->translator->translate('payments.menu.admin_payments'), '#payments', 'fa fa-university', 200);
 
-        $menuItem = new MenuItem('Platby', ':Payments:PaymentsAdmin:', 'fa fa-university', 200);
+        $menuItem = new MenuItem($this->translator->translate('payments.menu.admin_payments'), ':Payments:PaymentsAdmin:', 'fa fa-university', 200);
         $mainMenu->addChild($menuItem);
 
-        $menuItem = new MenuItem('Platobné brány', ':Payments:PaymentGatewaysAdmin:', 'fa fa-money-bill-alt', 300);
+        $menuItem = new MenuItem($this->translator->translate('payments.menu.gateways'), ':Payments:PaymentGatewaysAdmin:', 'fa fa-money-bill-alt', 300);
         $mainMenu->addChild($menuItem);
 
         $menuItem = new MenuItem(
-            'Spracované platobné emaily',
+            $this->translator->translate('payments.menu.parsed_mails'),
             ':Payments:ParsedMails:',
             'fa fa-clipboard-check',
             600,
@@ -80,16 +80,13 @@ class PaymentsModule extends CrmModule
 
         $mainMenu->addChild($menuItem);
 
-        $menuItem = new MenuItem('Recurrentné Platby', ':Payments:PaymentsRecurrentAdmin:', 'fa fa-sync-alt', 650);
+        $menuItem = new MenuItem($this->translator->translate('payments.menu.recurrent_payments'), ':Payments:PaymentsRecurrentAdmin:', 'fa fa-sync-alt', 650);
         $mainMenu->addChild($menuItem);
 
-        $menuItem = new MenuItem('Dvojité Recurrentné Platby', ':Payments:PaymentsRecurrentAdmin:duplicates', 'fa fa-exclamation-triangle', 660);
+        $menuItem = new MenuItem($this->translator->translate('payments.menu.duplicate_recurrent_payments'), ':Payments:PaymentsRecurrentAdmin:duplicates', 'fa fa-exclamation-triangle', 660);
         $mainMenu->addChild($menuItem);
 
-        $menuItem = new MenuItem('Upgrady', ':Payments:UpgradesAdmin:', 'fa fa-arrow-alt-circle-up', 700);
-        $mainMenu->addChild($menuItem);
-
-        $menuItem = new MenuItem('Podporovatel a Bonus', ':Payments:PaymentsAdmin:SupporterPayments', 'fa fa-sync-alt', 800);
+        $menuItem = new MenuItem($this->translator->translate('payments.menu.upgrades'), ':Payments:UpgradesAdmin:', 'fa fa-arrow-alt-circle-up', 700);
         $mainMenu->addChild($menuItem);
 
         $menuContainer->attachMenuItem($mainMenu);

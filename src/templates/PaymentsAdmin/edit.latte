@@ -1,13 +1,13 @@
-{block #title}Uprava platby {$payment->variable_symbol}{/block}
+{block #title}{_payments.admin.payments.edit} {$payment->variable_symbol}{/block}
 
 {block #content}
 
 <div class="row">
   <div class="col-md-12">
-  <a href="{link :Users:UsersAdmin:Show $user->id}"><i class="fa fa-angle-left"></i> späť na záznam</a>
+  <a href="{link :Users:UsersAdmin:Show $user->id}"><i class="fa fa-angle-left"></i> {_payments.admin.payments.back_to_user}</a>
     <div class="page-header">
       <h1>
-        Úprava platby:
+        {_payments.admin.payments.edit}:
         <small>[{$payment->id}]</small>
       	{$payment->variable_symbol}
       </h1>
@@ -39,7 +39,7 @@
             }).done(function(response) {
                 $('#frm-paymentForm-variable_symbol').val(response.variable_symbol);
             }).fail(function() {
-                alert("Nepodarilo sa ziskat variabilny symbol");
+                alert({_payments.admin.payments.variable_symbol_error});
             });
             return false;
         });

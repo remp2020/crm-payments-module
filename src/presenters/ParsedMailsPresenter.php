@@ -39,11 +39,12 @@ class ParsedMailsPresenter extends AdminPresenter
     {
         $form = new Form();
         $form->setRenderer(new BootstrapInlineRenderer());
-        $form->addText('vs', 'VS:')
+        $form->setTranslator($this->translator);
+
+        $form->addText('vs', 'payments.admin.parsed_mails.variable_symbol.label')
             ->setAttribute('autofocus');
 
         $states = [
-            '' => '--',
             ParsedMailLogsRepository::STATE_WITHOUT_VS => ParsedMailLogsRepository::STATE_WITHOUT_VS,
             ParsedMailLogsRepository::STATE_ALREADY_PAID => ParsedMailLogsRepository::STATE_ALREADY_PAID,
             ParsedMailLogsRepository::STATE_CHANGED_TO_PAID => ParsedMailLogsRepository::STATE_CHANGED_TO_PAID,
@@ -51,21 +52,22 @@ class ParsedMailsPresenter extends AdminPresenter
             ParsedMailLogsRepository::STATE_DIFFERENT_AMOUNT => ParsedMailLogsRepository::STATE_DIFFERENT_AMOUNT,
             ParsedMailLogsRepository::STATE_AUTO_NEW_PAYMENT => ParsedMailLogsRepository::STATE_AUTO_NEW_PAYMENT,
         ];
-        $form->addselect('state', 'Stavy', $states);
+        $form->addselect('state', 'payments.admin.parsed_mails.state.label', $states)
+            ->setPrompt('--');
 
-        $form->addSubmit('send', 'Filter')
+        $form->addSubmit('send', 'payments.admin.parsed_mails.filter')
             ->getControlPrototype()
             ->setName('button')
-            ->setHtml('<i class="fa fa-filter"></i> Filter');
-        $presenter = $this;
-        $form->addSubmit('cancel', 'Zruš filter')->onClick[] = function () {
+            ->setHtml('<i class="fa fa-filter"></i> ' . $this->translator->translate('payments.admin.parsed_mails.filter'));
+
+        $form->addSubmit('cancel', 'payments.admin.parsed_mails.cancel')->onClick[] = function () {
             $this->redirect('default', ['state' => '', 'vs' => '']);
         };
 
         $form->onSuccess[] = [$this, 'adminFilterSubmited'];
         $form->setDefaults([
-            'state' => isset($_GET['state']) ? $_GET['state'] : '',
-            'vs' => isset($_GET['vs']) ? $_GET['vs'] : '',
+            'state' => $this->state,
+            'vs' => $this->vs,
         ]);
         return $form;
     }

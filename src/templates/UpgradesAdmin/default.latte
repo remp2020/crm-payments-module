@@ -48,16 +48,18 @@
     {if $filteredCount > 0}
       <table class="table table-striped table-hover table-bordered">
         <thead>
-          <th>{_payments.admin.upgrades.type}</th>
-          <th>{_payments.admin.upgrades.time_of_upgrade}</th>
-		  <th>{_payments.admin.upgrades.variable_symbol}</th>
-		  <th>{_payments.admin.upgrades.user}</th>
-		  <th>{_payments.admin.upgrades.amount}</th>
-		  <th>{_payments.admin.upgrades.gateway}</th>
-		  <th>{_payments.admin.upgrades.subscription_type}</th>
-		  <th>{_payments.admin.upgrades.status}</th>
-		  <th>{_payments.admin.upgrades.created_at}</th>
-		  <th>{_payments.admin.upgrades.actions}</th>
+          <tr>
+              <th>{_payments.admin.upgrades.type}</th>
+              <th>{_payments.admin.upgrades.time_of_upgrade}</th>
+              <th>{_payments.admin.upgrades.variable_symbol}</th>
+              <th>{_payments.admin.upgrades.user}</th>
+              <th>{_payments.admin.upgrades.amount}</th>
+              <th>{_payments.admin.upgrades.gateway}</th>
+              <th>{_payments.admin.upgrades.subscription_type}</th>
+              <th>{_payments.admin.upgrades.status}</th>
+              <th>{_payments.admin.upgrades.created_at}</th>
+              <th>{_payments.admin.upgrades.actions}</th>
+          </tr>
 	    </thead>
         <tbody>
           {foreach $payments as $payment}

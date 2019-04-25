@@ -1,4 +1,4 @@
-{block #title}Nová platba{/block}
+{block #title}{_payments.admin.payments.new}{/block}
 
 {block #content}
 
@@ -7,7 +7,7 @@
     <a href="{link :Users:UsersAdmin:Show $user->id}"><i class="fa fa-angle-left"></i> späť na používateľa</a>
     <div class="page-header">
       <h1>
-        Nová platba pre <small>{$user->email}</small>
+          {_payments.admin.payments.new_for_user} <small>{$user->email}</small>
       </h1>
     </div>
   </div>
@@ -38,7 +38,7 @@
             }).done(function(response) {
                 $('#frm-paymentForm-variable_symbol').val(response.variable_symbol);
             }).fail(function() {
-                alert("Nepodarilo sa ziskat variabilny symbol");
+                alert({_payments.admin.payment.variable_symbol_error});
             });
             return false;
         });

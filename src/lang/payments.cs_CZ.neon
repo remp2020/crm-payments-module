@@ -1,6 +1,13 @@
 menu:
 	stats: Platby
 	payments: Moje platby
+	admin_payments: Platby
+	gateways: Platební brány
+	parsed_mails: Zpracované platební e-maily
+	recurrent_payments: Rekurentní platby
+	duplicate_recurrent_payments: Duplicitní rekurentné platby
+	upgrades: Upgrady
+
 admin:
 	component:
 		actual_free_subscribers_stat_widget:
@@ -127,11 +134,12 @@ admin:
 				next_subscription: následující bude
 				stop_recurrent_profile: Zastavit opakovanou platbu
 				stop_recurrent_profile_confirm: Potvrďte zastavení rekurentního profilu
-				user_stop: Zastaveno uživatelem.
-				admin_stop: Zastaveno na žádost.
-				system_stop: Neúspěšné opakování. Zastavena.
-				charged: Automaticky prodloužena.
-				charge_failed: Neúspěšné opakování. Opakování o 6h.
+				active: Proběhne opakování
+				user_stop: Zastaveno uživatelem
+				admin_stop: Zastaveno na žádost
+				system_stop: "Neúspěšné opakování, zastavena"
+				charged: Automaticky prodloužena
+				charge_failed: "Neúspěšné opakování, opakování o 6h."
 				tb_failed: CHYBA V TB.
 			parsed_mail_logs:
 				title: "Zpracované/potvrzené platby"
@@ -162,6 +170,30 @@ admin:
 				label: Filtruj
 				cancel: Zruš filtr
 
+		recurrent_payment_form:
+			charge_at:
+				label: Datum stažení peněz
+				required: Datum stažení peněz je povinný
+				placeholder: například 4.3.2017 15:30
+			retries:
+				label: Počet opakování pro neúspěšném stažení peněz
+				required: Počet opakování je povinný
+				placeholder: například 4
+			next_subscription_type_id:
+				label: Následující předplatné při stažení
+				description: "Vybrat pouze v případě že následující předplatné má být jiné než aktuální (%actual%)"
+			custom_amount:
+				label: Suma při příštím stažení
+				description: "Částka byla původně vypočtena k upgradu. Při změně následujícího předplatného bude odstraněna, aby se použila cena ze zvoleného předplatného."
+			state:
+				label: Stav
+				prompt: Stav rekurentního profilu
+				required: Stav profilu musí být zvolen
+				placeholder: například active
+			note:
+				label: Poznámka
+			save: Ulož
+
 	donation: Dar k předplatnému
 
 	arpu:
@@ -185,7 +217,8 @@ admin:
 		title: Platební brány
 		back_to_list: Zpět na platební brány
 		back_to_detail: Zpět na platební bránu
-		edit: Úprava platební brány
+		show: Zobrazit platební bránu
+		edit: Upravit platební bránu
 		name: Jméno
 		code: Identifikátor
 		created_at: Vytvořená
@@ -200,6 +233,8 @@ admin:
 			help: Platby zaplaceny přes tuto platební bránu
 			completed_payments: Dokončené platby
 			uncompleted_payments: Nedokončené platby
+		small_graph:
+			title: Platby podle brány
 
 	upgrades:
 		all_upgrades: Všechny upgrady
@@ -220,10 +255,10 @@ admin:
 		actions: Akce
 		edit: Uprav
 		no_records: "Nebyly nalezeny žádné záznamy, které by odpovídaly filtru"
-		recurrent_free: "Rekurentný bez platby"
-		recurrent: "Rekurentný s doplatkem"
+		recurrent_free: "Rekurentní bez platby"
+		recurrent: "Rekurentní s doplatkem"
 		short: "Zkrácení předplatného"
-		paid_extend: "Nerekurentný s platbou"
+		paid_extend: "Nerekurentní s platbou"
 
 	payments_recurrent:
 		title: Rekurentní platby
@@ -239,6 +274,7 @@ admin:
 		edit: Úprava rekurentního profilu
 		for_payment: ke platbě
 		back_to_user_detail: Zpět na uživatele
+		duplicates: Duplicitní rekurentní platby
 
 		admin_filter_form:
 			status:
@@ -252,6 +288,59 @@ admin:
 
 		updated: Rekurentní profil byl upraven
 
+	dashboard:
+		recurrent_charge:
+			label: Automatické obnovení *
+			all: Všechny
+			recurrent: Pouze automaticky obnoveny
+			manual: Pouze ručné
+		arpu: ARPU - Průměrný výnos na uživatele
+
+	parsed_mails:
+		title: Zpracované platební emaily
+		variable_symbol:
+			label: Variabilní symbol
+		state:
+			label: Stav
+		filter: Filtruj
+		cancel: Zruš filtr
+		created_at: Vytvořeno
+		delivered_at: Doručeno
+		amount: Částka
+		payment: Platba
+		message: Zpráva
+		no_records: "Nebyly nalezeny žádné záznamy, které by odpovídaly filtru"
+
+	payments:
+		updated: Platba byla upravena
+		created: Platba byla vytvořena
+		send_notification: Pošli notifikaci emailem
+		close: Zavřít
+		title: Platby
+		variable_symbol: Variabilní symbol
+		user: Uživatel
+		amount: Částka
+		gateway: Platební brána
+		items: Položky
+		status: Stav
+		created_at: Vytvořeno
+		actions: Akce
+		recurrent_charge: Automaticky obnoveno
+		donation: dar
+		donation_recurrent: opakovaný
+		paid_at: Zaplaceno
+		source: Zdroj
+		no_records: "Nebyly nalezeny žádné záznamy, které by odpovídaly filtru"
+		edit: Upravit platbu
+		back_to_user: Zpět na uživatele
+		variable_symbol_error: Nepodařilo se získat variabilní symbol
+		new: Nová platba
+		new_for_user: Nová platba pro
+		item: položka
+		item_name: Název
+		price_with_vat: Cena s DPH
+		vat_rate: Sazba DPH
+
 form:
 	payment_gateway:
 		name:
@@ -262,7 +351,7 @@ form:
 			label: Identifikátor
 			placeholder: například csob
 		visible:
-			label: Viditeľná
+			label: Viditelná
 		is_recurrent:
 			label: Rekurentní
 		sorting:

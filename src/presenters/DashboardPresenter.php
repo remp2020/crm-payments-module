@@ -45,10 +45,11 @@ class DashboardPresenter extends AdminPresenter
     public function createComponentDateFilterForm(DateFilterFormFactory $dateFilterFormFactory)
     {
         $form = $dateFilterFormFactory->create($this->dateFrom, $this->dateTo);
-        $form[DateFilterFormFactory::OPTIONAL]->addSelect('recurrent_charge', 'Automatické obnovenie *', [
-            'all' => 'Všetky',
-            'recurrent' => 'Iba automaticky obnovené',
-            'manual' => 'Iba manuálne',
+        $form->setTranslator($this->translator);
+        $form[DateFilterFormFactory::OPTIONAL]->addSelect('recurrent_charge', 'payments.admin.dashboard.recurrent_charge.label', [
+            'all' => $this->translator->translate('payments.admin.dashboard.recurrent_charge.all'),
+            'recurrent' => $this->translator->translate('payments.admin.dashboard.recurrent_charge.recurrent'),
+            'manual' => $this->translator->translate('payments.admin.dashboard.recurrent_charge.manual'),
         ]);
         $form[DateFilterFormFactory::OPTIONAL]->setDefaults(['recurrent_charge' => $this->recurrentCharge]);
 

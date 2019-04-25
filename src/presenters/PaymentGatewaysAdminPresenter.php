@@ -100,7 +100,7 @@ class PaymentGatewaysAdminPresenter extends AdminPresenter
                 $data = array_pop($data);
             }
 
-            $control->setGraphTitle('Payments by Gateway')
+            $control->setGraphTitle($this->translator->translate('payments.admin.payment_gateways.small_graph.title'))
                 ->addSerie($data);
             return $control;
         });

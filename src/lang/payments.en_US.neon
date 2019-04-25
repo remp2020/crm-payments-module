@@ -1,6 +1,12 @@
 menu:
 	stats: Payments
 	payments: Payments
+	admin_payments: Payments
+	gateways: Payment gateways
+	parsed_mails: Parsed payment emails
+	recurrent_payments: Recurrent payments
+	duplicate_recurrent_payments: Duplicate recurrent payments
+	upgrades: Upgrades
 
 admin:
 	component:
@@ -128,11 +134,12 @@ admin:
 				next_subscription: next will be
 				stop_recurrent_profile: Stop recurrent profile
 				stop_recurrent_profile_confirm: Confirm recurrent profile cancellation
+				active: Will be charged
 				user_stop: Stopped by user
 				admin_stop: Stopped by admin
-				system_stop: Unable to charge. Stopped.
-				charged: Automatically renewed.
-				charge_failed: Unable to charge. Next try in 6 hours.
+				system_stop: "Unable to charge, stopped"
+				charged: Automatically renewed
+				charge_failed: "Unable to charge, next attempt in 6 hours"
 				tb_failed: ERROR in TB.
 			parsed_mail_logs:
 				title: "Processed/confirmed payments"
@@ -163,6 +170,30 @@ admin:
 				label: Filter
 				cancel: Cancel filter
 
+		recurrent_payment_form:
+			charge_at:
+				label: Date of next charge
+				required: Date of next charge is required
+				placeholder: e.g. 4.3.2017 15:30
+			retries:
+				label: Number of allowed retries after failed charge attempt
+				required: Number of allowed retries is required
+				placeholder: e.g. 4
+			next_subscription_type_id:
+				label: Subscription type used for charge
+				description: "Select only when the next subscription type should be different than actual (%actual%)"
+			custom_amount:
+				label: Amount to be charged
+				description: "Amount originally calculated during upgrade. If next subscription type is changed, this amount will be removed and standard price of next subscription type is used."
+			state:
+				label: Status
+				prompt: Select recurrent payment status
+				required: Recurrent payment status has to be selected
+				placeholder: e.g. active
+			note:
+				label: Note
+			save: Save
+
 	donation: Donation
 
 	arpu:
@@ -186,6 +217,7 @@ admin:
 		title: Payment gateways
 		back_to_list: Back to gateway list
 		back_to_detail: Back to gateway
+		show: Show gateway
 		edit: Edit gateway
 		name: Name
 		code: Code
@@ -201,6 +233,8 @@ admin:
 			help: Payments with actual gateways
 			completed_payments: Completed payments
 			uncompleted_payments: Uncompleted payments
+		small_graph:
+			title: Gateway payments
 
 	upgrades:
 		all_upgrades: All upgrades
@@ -240,6 +274,7 @@ admin:
 		edit: Edit recurrent payment
 		for_payment: for payment
 		back_to_user_detail: Back to user detail
+		duplicates: Duplicitné rekurentné platby
 
 		admin_filter_form:
 			status:
@@ -252,6 +287,59 @@ admin:
 			cancel: Cancel filter
 
 		updated: Recurrent profile was updated
+
+	dashboard:
+		recurrent_charge:
+			label: Recurrent charge *
+			all: All
+			recurrent: Only charged automatically
+			manual: Only manual
+		arpu: "ARPU - Average revenue per user"
+
+	parsed_mails:
+		title: Processed payment emails
+		variable_symbol:
+			label: Variable symbol
+		state:
+			label: Status
+		filter: Filter
+		cancel: Cancel filter
+		created_at: Created at
+		delivered_at: Delivered at
+		amount: Amount
+		payment: Payment
+		message: Message
+		no_records: No records match selected filter
+
+	payments:
+		updated: Payment was updated
+		created: Payment was created
+		send_notification: Send notification via email
+		close: Close
+		title: Payments
+		variable_symbol: Variable symbol
+		user: User
+		amount: Amount
+		gateway: Payment gateway
+		items: Items
+		status: Status
+		created_at: Created at
+		actions: Actions
+		recurrent_charge: Recurrent charge
+		donation: donation
+		donation_recurrent: recurrent
+		paid_at: Paid at
+		source: Source
+		no_records: No records match selected filter
+		edit: Edit payment
+		back_to_user: Back to user detail
+		variable_symbol_error: Could not generate variable symbol
+		new: New payment
+		new_for_user: New payment for
+		item: item
+		item_name: Name
+		price_with_vat: Price with VAT
+		vat_rate: VAT rate
 
 form:
 	payment_gateway:

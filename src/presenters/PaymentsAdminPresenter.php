@@ -197,7 +197,7 @@ class PaymentsAdminPresenter extends AdminPresenter
     {
         $payment = $this->paymentsRepository->find($this->params['payment']);
         $this->paymentsRepository->updateStatus($payment, $this->params['status']);
-        $this->flashMessage('Stav platby bol zmenený');
+        $this->flashMessage($this->translator->translate('payments.admin.payments.updated'));
         $this->redirect(':Users:UsersAdmin:Show', $payment->user_id);
     }
 
@@ -227,20 +227,6 @@ class PaymentsAdminPresenter extends AdminPresenter
         $this->template->user = $user;
     }
 
-    public function renderSupporterPayments()
-    {
-        $payments = $this->paymentsRepository->getPaymentsWithNotes();
-
-        $vp = new VisualPaginator();
-        $this->addComponent($vp, 'vp');
-        $paginator = $vp->getPaginator();
-        $paginator->setItemCount($payments->count('*'));
-        $paginator->setItemsPerPage($this->onPage);
-        $this->template->vp = $vp;
-        $this->template->payments = $payments->limit($paginator->getLength(), $paginator->getOffset());
-        $this->template->totalPayments = $this->paymentsRepository->totalCount(true);
-    }
-
     public function createComponentPaymentForm()
     {
         $id = null;
@@ -256,11 +242,11 @@ class PaymentsAdminPresenter extends AdminPresenter
 
         $form = $this->factory->create($id, $user);
         $this->factory->onSave = function ($form, $payment) {
-            $this->flashMessage('Platba bola vytvorená.');
+            $this->flashMessage($this->translator->translate('payments.admin.payments.created'));
             $this->redirect(':Users:UsersAdmin:Show', $payment->user->id);
         };
         $this->factory->onUpdate = function ($form, $payment) {
-            $this->flashMessage('Platba bola aktualizovaná.');
+            $this->flashMessage($this->translator->translate('payments.admin.payments.updated'));
             $this->redirect(':Users:UsersAdmin:Show', $payment->user->id);
         };
         return $form;

@@ -1,6 +1,12 @@
 menu:
 	stats: Platby
 	payments: Platby
+	admin_payments: Platby
+	gateways: Platobné brány
+	parsed_mails: Spracované platobné e-maily
+	recurrent_payments: Rekurentné platby
+	duplicate_recurrent_payments: Duplicitné rekurentné platby
+	upgrades: Upgrady
 
 admin:
 	component:
@@ -128,11 +134,12 @@ admin:
 				next_subscription: nasledujúce bude
 				stop_recurrent_profile: Zastaviť opakovanú platbu
 				stop_recurrent_profile_confirm: Potvrďte zastavenie rekurentného profilu
-				user_stop: Zastavené používateľom.
-				admin_stop: Zastavené na žiadosť.
-				system_stop: Neúspešné opakovanie. Zastavena.
-				charged: Automaticky predĺžená.
-				charge_failed: Neúspešné opakovanie. Opakovanie o 6h.
+				active: Prebehne opakovanie
+				user_stop: Zastavené používateľom
+				admin_stop: Zastavené na žiadosť
+				system_stop: "Neúspešné opakovanie, zastavená"
+				charged: Automaticky predĺžená
+				charge_failed: "Neúspešné opakovanie, opakovanie o 6h"
 				tb_failed: CHYBA V TB.
 			parsed_mail_logs:
 				title: "Spracované/potvrdené platby"
@@ -163,6 +170,30 @@ admin:
 				label: Filtruj
 				cancel: Zruš filter
 
+		recurrent_payment_form:
+			charge_at:
+				label: Dátum stiahnutia peňazí
+				required: Dátum stiahnutia peňazí je povinný
+				placeholder: napríklad 4.3.2017 15:30
+			retries:
+				label: Počet opakovaní pre neúspešnom stiahnutí peňazí
+				required: Počet opakovaní je povinný
+				placeholder: napríklad 4
+			next_subscription_type_id:
+				label: Nasledujúce predplatné pri stiahnutí
+				description: "Vybrať len v prípade že nasledujúce predplatné má byť iné ako aktuálne (%actual%)"
+			custom_amount:
+				label: Suma pri nasledujúcom stiahnutí
+				description: "Suma bola pôvodne vypočítaná k upgradu. Pri zmene nasledujúceho predplatného bude odstránená, aby sa použila cena zo zvoleného predplatného."
+			state:
+				label: Stav
+				prompt: Stav rekurentného profilu
+				required: Stav profilu musí byť zvolený
+				placeholder: napríklad active
+			note:
+				label: Poznámka
+			save: Ulož
+
 	donation: Dar k predplatnému
 
 	arpu:
@@ -191,7 +222,8 @@ admin:
 		title: Platobné brány
 		back_to_list: Späť na platobné brány
 		back_to_detail: Späť na platobnú bránu
-		edit: Úprava platobnej brány
+		show: Zobraziť platobnú bránu
+		edit: Upraviť platobnú bránu
 		name: Meno
 		code: Identifikátor
 		created_at: Vytvorená
@@ -206,6 +238,8 @@ admin:
 			help: Platby zaplatené cez túto platobnú bránu
 			completed_payments: Dokončené platby
 			uncompleted_payments: Nedokončené platby
+		small_graph:
+			title: Platby podľa brány
 
 	upgrades:
 		all_upgrades: Všetky upgrady
@@ -226,10 +260,10 @@ admin:
 		actions: Akcie
 		edit: Uprav
 		no_records: "Nenašli sa žiadne záznamy, ktoré by zodpovedali filtru"
-		recurrent_free: "Rekurentný bez platby"
-		recurrent: "Rekurentný s doplatkom"
+		recurrent_free: "Rekurentné bez platby"
+		recurrent: "Rekurentné s doplatkom"
 		short: "Skrátenie predplatného"
-		paid_extend: "Nerekurentný s platbou"
+		paid_extend: "Nerekurentné s platbou"
 
 	payments_recurrent:
 		title: Rekurentné platby
@@ -241,10 +275,11 @@ admin:
 		charge_status: Stav pokusu o obnovenie
 		recurrent_status: Stav rekurentnej platby
 		actions: Akcie
-		no_records: Nenašli sa žiadne záznamy ktoré by zodpovedali filtru
+		no_records: "Nenašli sa žiadne záznamy, ktoré by zodpovedali filtru"
 		edit: Úprava rekurentného profilu
 		for_payment: ku platbe
 		back_to_user_detail: Späť na používateľa
+		duplicates: Duplicitné rekurentné platby
 
 		admin_filter_form:
 			status:
@@ -257,6 +292,59 @@ admin:
 			cancel: Zruš filter
 
 		updated: Rekurentný profil bol upravený
+
+	dashboard:
+		recurrent_charge:
+			label: Automatické obnovenie *
+			all: Všetky
+			recurrent: Iba automaticky obnovené
+			manual: Iba manuálne
+		arpu: ARPU - Priemerný výnos na používateľa
+
+	parsed_mails:
+		title: Spracované platobné emaily
+		variable_symbol:
+			label: Variabilný symbol
+		state:
+			label: Stav
+		filter: Filtruj
+		cancel: Zruš filter
+		created_at: Vytvorené
+		delivered_at: Doručené
+		amount: Suma
+		payment: Platba
+		message: Správa
+		no_records: Nenašli sa žiadne záznamy ktoré by zodpovedali filtru
+
+	payments:
+		updated: Platba bola upravená
+		created: Platba bola vytvorená
+		send_notification: Pošli notifikáciu emailom
+		close: Zatvoriť
+		title: Platby
+		variable_symbol: Variabilný symbol
+		user: Používateľ
+		amount: Suma
+		gateway: Platobná brána
+		items: Položky
+		status: Stav
+		created_at: Vytvorené
+		actions: Akcie
+		recurrent_charge: Automaticky obnovené
+		donation: dar
+		donation_recurrent: opakovaný
+		paid_at: Zaplatené
+		source: Zdroj
+		no_records: Nenašli sa žiadne záznamy ktoré by zodpovedali filtru
+		edit: Upraviť platbu
+		back_to_user: Späť na používateľa
+		variable_symbol_error: Nepodarilo sa ziskat variabilny symbol
+		new: Nová platba
+		new_for_user: Nová platba pre
+		item: položka
+		item_name: Názov
+		price_with_vat: Cena s DPH
+		vat_rate: Sadzba DPH
 
 form:
 	payment_gateway:
