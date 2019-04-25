@@ -4,7 +4,6 @@ namespace Crm\PaymentsModule\Repository;
 
 use Crm\ApplicationModule\Repository;
 use Crm\ApplicationModule\Repository\AuditLogRepository;
-use Crm\PaymentsModule\Components\ComfortPayStatus;
 use Nette\Database\Context;
 use Nette\Database\Table\IRow;
 use Nette\Utils\DateTime;
@@ -144,19 +143,14 @@ class RecurrentPaymentsRepository extends Repository
             $where['status'] = $status;
         }
         if ($problem) {
-            $where['state = "' . self::STATE_SYSTEM_STOP . '" OR state = "' . self::STATE_TB_FAILED . '" OR state = ?'] = self::STATE_CHARGE_FAILED;
+            $where['state'] = [self::STATE_SYSTEM_STOP, self::STATE_TB_FAILED, self::STATE_CHARGE_FAILED];
         }
         return $this->getTable()->where($where)->order('charge_at DESC, created_at DESC');
     }
 
     public function getStatusPairs()
     {
-        $status = [];
-        $rows = $this->getTable()->select('status')->group('status')->fetchAll();
-        foreach ($rows as $row) {
-            $status[$row->status] = ComfortPayStatus::getStatusHtml($row->status)['text'];
-        }
-        return $status;
+        return $this->getTable()->select('status')->group('status')->fetchPairs('status', 'status');
     }
 
     public function isStopped(IRow $subscription)

@@ -193,7 +193,7 @@
             {/if}
           </small></td>
         <td><small>#{$recurrentPayment->parent_payment_id}</small></td>
-        <td>{$recurrentPayment->status|recurrentStatus|noescape}</td>
+        <td>{$recurrentPayment->status}</td>
         <td>
           {if $recurrentPayment->state == \Crm\PaymentsModule\Repository\RecurrentPaymentsRepository::STATE_ACTIVE && $recurrentPayment->status == NULL}
             <a class="btn btn-primary"

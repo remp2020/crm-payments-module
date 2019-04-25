@@ -1,14 +1,14 @@
-{block #title}Úprava rekurentného profilu #{$recurrentPayment->id}{/block}
+{block #title}{_payments.admin.payments_recurrent.edit} #{$recurrentPayment->id}{/block}
 
 {block #content}
 
 <div class="row">
     <div class="col-md-12">
-        <a href="{link :Users:UsersAdmin:Show $recurrentPayment->user_id}"><i class="fa fa-angle-left"></i> späť na používateľa</a>
+        <a href="{link :Users:UsersAdmin:Show $recurrentPayment->user_id}"><i class="fa fa-angle-left"></i> {_payments.admin.payments_recurrent.back_to_user_detail}</a>
         <div class="page-header">
             <h1>
-                Úprava rekurentného profilu :
-                <small>[#{$recurrentPayment->id}]</small> ku platbe <small>#{$recurrentPayment->parent_payment->variable_symbol}</small>
+                {_payments.admin.payments_recurrent.edit}:
+                <small>[#{$recurrentPayment->id}]</small> {_payments.admin.payments_recurrent.for_payment} <small>#{$recurrentPayment->parent_payment->variable_symbol}</small>
             </h1>
         </div>
     </div>

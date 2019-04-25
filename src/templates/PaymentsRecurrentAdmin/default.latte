@@ -1,4 +1,4 @@
-{block #title}Recurrentne Platby{/block}
+{block #title}{_payments.admin.payments_recurrent.title}{/block}
 
 {block #content}
 
@@ -8,11 +8,11 @@
 
   <div class="col-md-12">
     <h1>
-      Recurrentné platby
+        {_payments.admin.payments_recurrent.title}
       <small>
-        / celkovo {$totalRecurrentPayments}
+        / {_system.total} {$totalRecurrentPayments}
         {if $totalRecurrentPayments != $filteredCount}
-			, vyfiltrovaných {$filteredCount}
+			, {_system.filtered} {$filteredCount}
         {/if}
       </small>
 
@@ -35,15 +35,17 @@
     {if $filteredCount > 0}
       <table class="table table-striped table-hover table-bordered">
         <thead>
-		  <th>ID</th>
-		  <th>Cas obnovenia</th>
-		  <th>Cas vytvorenia</th>
-		  <th>Typ predplatného</th>
-		  <th>User</th>
-		  <th>Pocet opakovani</th>
-		  <th>Stav</th>
-		  <th>Stav platby</th>
-          <th>Akcie</th>
+            <tr>
+                <th>ID</th>
+                <th>{_payments.admin.payments_recurrent.charge_at}</th>
+                <th>{_payments.admin.payments_recurrent.created_at}</th>
+                <th>{_payments.admin.payments_recurrent.subscription_type}</th>
+                <th>{_payments.admin.payments_recurrent.email}</th>
+                <th>{_payments.admin.payments_recurrent.retries}</th>
+                <th>{_payments.admin.payments_recurrent.charge_status}</th>
+                <th>{_payments.admin.payments_recurrent.recurrent_status}</th>
+                <th>{_payments.admin.payments_recurrent.actions}</th>
+            </tr>
 	    </thead>
         <tbody>
           {foreach $recurrentPayments as $recurrentPayment}
@@ -54,26 +56,30 @@
 		      <td>{$recurrentPayment->subscription_type->name}</td>
 		      <td><a href="{link :Users:UsersAdmin:Show $recurrentPayment->user_id}">{$recurrentPayment->user->email}</a></td>
 		      <td>{$recurrentPayment->retries}</td>
-		      <td>{$recurrentPayment->status|recurrentStatus|noescape}</td>
+		      <td>{$recurrentPayment->status}</td>
               <td>
-                {if $recurrentPayment->state == \Crm\PaymentsModule\Repository\RecurrentPaymentsRepository::STATE_ACTIVE && $recurrentPayment->status == NULL}
-                  <span class="label label-primary">Prebehne Opakovanie</span>
-                {elseif $recurrentPayment->state == \Crm\PaymentsModule\Repository\RecurrentPaymentsRepository::STATE_USER_STOP}
-                  <span class="label label-info">Zastavené používateľom.</span>
-                {elseif $recurrentPayment->state == \Crm\PaymentsModule\Repository\RecurrentPaymentsRepository::STATE_ADMIN_STOP}
-                  <span class="label label-info">Zastavené na žiadosť.</span>
-                {elseif $recurrentPayment->state == \Crm\PaymentsModule\Repository\RecurrentPaymentsRepository::STATE_SYSTEM_STOP}
-                  <span class="label label-danger">Neúspešné opakovanie. Zastavena.</span>
-                {elseif $recurrentPayment->state == \Crm\PaymentsModule\Repository\RecurrentPaymentsRepository::STATE_CHARGED}
-                  <span class="label label-success">Automaticky predĺžená.</span>
-                {elseif $recurrentPayment->state == \Crm\PaymentsModule\Repository\RecurrentPaymentsRepository::STATE_CHARGE_FAILED}
-                  <span class="label label-warning">Neúspešné opakovanie. Opakovanie o 6h.</span>
-                {elseif $recurrentPayment->state == \Crm\PaymentsModule\Repository\RecurrentPaymentsRepository::STATE_TB_FAILED}
-                  <span class="label label-danger">CHYBA V TB.</span>
-              {/if}
+                  {if $recurrentPayment->state == \Crm\PaymentsModule\Repository\RecurrentPaymentsRepository::STATE_ACTIVE && $recurrentPayment->status == NULL}
+                      <a class="btn btn-primary"
+                         href="{link StopRecurrentPayment! $recurrentPayment->id}"
+                         onclick="return confirm({_"payments.admin.component.user_payments_listing.recurrent_profile.stop_recurrent_profile_confirm"})">
+                          <i class="fa fa-ban"></i> {_"payments.admin.component.user_payments_listing.recurrent_profile.stop_recurrent_profile"}
+                      </a>
+                  {elseif $recurrentPayment->state == \Crm\PaymentsModule\Repository\RecurrentPaymentsRepository::STATE_USER_STOP}
+                      <span class="label label-info">{_"payments.admin.component.user_payments_listing.recurrent_profile.user_stop"}</span>
+                  {elseif $recurrentPayment->state == \Crm\PaymentsModule\Repository\RecurrentPaymentsRepository::STATE_ADMIN_STOP}
+                      <span class="label label-info">{_"payments.admin.component.user_payments_listing.recurrent_profile.admin_stop"}</span>
+                  {elseif $recurrentPayment->state == \Crm\PaymentsModule\Repository\RecurrentPaymentsRepository::STATE_SYSTEM_STOP}
+                      <span class="label label-danger">{_"payments.admin.component.user_payments_listing.recurrent_profile.system_stop"}</span>
+                  {elseif $recurrentPayment->state == \Crm\PaymentsModule\Repository\RecurrentPaymentsRepository::STATE_CHARGED}
+                      <span class="label label-success">{_"payments.admin.component.user_payments_listing.recurrent_profile.charged"}</span>
+                  {elseif $recurrentPayment->state == \Crm\PaymentsModule\Repository\RecurrentPaymentsRepository::STATE_CHARGE_FAILED}
+                      <span class="label label-warning">{_"payments.admin.component.user_payments_listing.recurrent_profile.charge_failed"}</span>
+                  {elseif $recurrentPayment->state == \Crm\PaymentsModule\Repository\RecurrentPaymentsRepository::STATE_TB_FAILED}
+                      <span class="label label-danger">{_"payments.admin.component.user_payments_listing.recurrent_profile.tb_failed"}</span>
+                  {/if}
               </td>
               <td>
-                  <a n:href=":Payments:PaymentsRecurrentAdmin:Edit $recurrentPayment->id" class="btn btn-sm btn-primary"><i class="fa fa-edit"></i> Uprav</a>
+                  <a n:href=":Payments:PaymentsRecurrentAdmin:Edit $recurrentPayment->id" class="btn btn-sm btn-primary"><i class="fa fa-edit"></i> {_payments.admin.payments_recurrent.edit}</a>
               </td>
 		    </tr>
 	      {/foreach}

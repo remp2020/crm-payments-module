@@ -207,6 +207,57 @@ admin:
 			completed_payments: Dokončené platby
 			uncompleted_payments: Nedokončené platby
 
+	upgrades:
+		all_upgrades: Všetky upgrady
+		paid_upgrades: Platené upgrady
+		title: Upgrady
+		upgrades_in_time: Platby za upgrade v čase
+		all: Všetky
+		type: Typ
+		time_of_upgrade: Čas upgradu
+		variable_symbol: Variabilný symbol
+		user: Používateľ
+		amount: Suma
+		gateway: Platobná brána
+		subscription_type: Typ predplatného
+		status: Stav
+		paid_at: Zaplatené
+		created_at: Vytvorené
+		actions: Akcie
+		edit: Uprav
+		no_records: "Nenašli sa žiadne záznamy, ktoré by zodpovedali filtru"
+		recurrent_free: "Rekurentný bez platby"
+		recurrent: "Rekurentný s doplatkom"
+		short: "Skrátenie predplatného"
+		paid_extend: "Nerekurentný s platbou"
+
+	payments_recurrent:
+		title: Rekurentné platby
+		charge_at: Čas obnovenia
+		created_at: Čas vytvorenia
+		subscription_type: Typ predplatného
+		email: E-mail
+		retries: Počet opakovaní
+		charge_status: Stav pokusu o obnovenie
+		recurrent_status: Stav rekurentnej platby
+		actions: Akcie
+		no_records: Nenašli sa žiadne záznamy ktoré by zodpovedali filtru
+		edit: Úprava rekurentného profilu
+		for_payment: ku platbe
+		back_to_user_detail: Späť na používateľa
+
+		admin_filter_form:
+			status:
+				label: Stav platby
+			problem:
+				label: Iba neúspešná platba
+			subscription_type:
+				label: Typ predplatného
+			send: Filtruj
+			cancel: Zruš filter
+
+		updated: Rekurentný profil bol upravený
+
 form:
 	payment_gateway:
 		name:

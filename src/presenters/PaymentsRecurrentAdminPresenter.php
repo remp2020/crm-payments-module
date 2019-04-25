@@ -7,7 +7,6 @@ use Crm\ApplicationModule\Components\VisualPaginator;
 use Crm\ApplicationModule\Graphs\Criteria;
 use Crm\ApplicationModule\Graphs\GraphDataItem;
 use Crm\AdminModule\Presenters\AdminPresenter;
-use Crm\PaymentsModule\Components\ComfortPayStatus;
 use Crm\PaymentsModule\Components\DuplicateRecurrentPaymentsControlFactoryInterface;
 use Crm\PaymentsModule\Forms\RecurrentPaymentFormFactory;
 use Crm\PaymentsModule\Repository\RecurrentPaymentsRepository;
@@ -35,14 +34,6 @@ class PaymentsRecurrentAdminPresenter extends AdminPresenter
     /** @persistent */
     public $problem;
 
-    public function startup()
-    {
-        parent::startup();
-        $this->problem = isset($this->params['problem']) ? $this->params['problem'] : null;
-        $this->subscription_type = isset($this->params['subscription_type']) ? $this->params['subscription_type'] : null;
-        $this->status = isset($this->params['status']) ? $this->params['status'] : null;
-    }
-
     public function renderDefault()
     {
         $recurrentPayments = $this->recurrentPaymentsRepository->all(
@@ -61,40 +52,37 @@ class PaymentsRecurrentAdminPresenter extends AdminPresenter
             $paginator->getOffset()
         );
         $this->template->totalRecurrentPayments = $this->recurrentPaymentsRepository->totalCount();
-
-        $this->template->addFilter('recurrentStatus', function ($status) {
-            $data = ComfortPayStatus::getStatusHtml($status);
-            return '<span class="label label-' . $data['label'] . '">' . $data['text'] . '</span>';
-        });
     }
 
     public function createComponentAdminFilterForm()
     {
         $form = new Form;
         $form->setRenderer(new BootstrapInlineRenderer());
+        $form->setTranslator($this->translator);
+
         $statuses = $this->recurrentPaymentsRepository->getStatusPairs();
-        $statuses[0] = '--';
-        $form->addSelect('status', 'Stav platby', $statuses);
-        $form->addCheckbox('problem', 'Iba Neuspesna platba');
+        $form->addSelect('status', 'payments.admin.payments_recurrent.admin_filter_form.status.label', $statuses)
+            ->setPrompt('--');
+        $form->addCheckbox('problem', 'payments.admin.payments_recurrent.admin_filter_form.problem.label');
 
         $subscriptionTypes = $this->subscriptionTypesRepository->getAllActive()->fetchPairs('id', 'name');
-        $subscriptionTypes[0] = '--';
-        $form->addselect('subscription_type', 'Typ predplatného', $subscriptionTypes);
+        $form->addselect('subscription_type', 'payments.admin.payments_recurrent.admin_filter_form.subscription_type.label', $subscriptionTypes)
+            ->setPrompt('--');
 
-        $form->addSubmit('send', 'Filter')
+        $form->addSubmit('send', 'payments.admin.payments_recurrent.admin_filter_form.send')
             ->getControlPrototype()
             ->setName('button')
-            ->setHtml('<i class="fa fa-filter"></i> Filter');
+            ->setHtml('<i class="fa fa-filter"></i> ' . $this->translator->translate('payments.admin.payments_recurrent.admin_filter_form.send'));
         $presenter = $this;
-        $form->addSubmit('cancel', 'Zruš filter')->onClick[] = function () use ($presenter) {
+        $form->addSubmit('cancel', 'payments.admin.payments_recurrent.admin_filter_form.cancel')->onClick[] = function () use ($presenter) {
             $presenter->redirect('default', ['text' => '']);
         };
 
         $form->onSuccess[] = [$this, 'adminFilterSubmited'];
         $form->setDefaults([
-            'subscription_type' => isset($_GET['subscription_type']) ? $_GET['subscription_type'] : 0,
-            'status' => isset($_GET['status']) ? $_GET['status'] : 0,
-            'problem' => isset($_GET['problem']) ? $_GET['problem'] : 0
+            'subscription_type' => $this->subscription_type,
+            'status' => $this->status,
+            'problem' => $this->problem,
         ]);
         return $form;
     }
@@ -142,7 +130,7 @@ class PaymentsRecurrentAdminPresenter extends AdminPresenter
     {
         $form = $this->recurrentPaymentFormFactory->create($this->params['id']);
         $this->recurrentPaymentFormFactory->onUpdate = function ($form, $recurrentPayment) {
-            $this->flashMessage('Rekurentný profil bol upravený');
+            $this->flashMessage($this->translator->translate('payments.admin.payments_recurrent.updated'));
             $this->redirect(':Users:UsersAdmin:Show', $recurrentPayment->user_id);
         };
         return $form;

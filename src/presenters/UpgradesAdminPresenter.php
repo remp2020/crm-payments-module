@@ -60,7 +60,7 @@ class UpgradesAdminPresenter extends AdminPresenter
             ->setWhere($upgradeTypeWhere)
             ->setValueField('COUNT(*)')
             ->setStart('-1 month'))
-            ->setName('All Upgrades');
+            ->setName($this->translator->translate('payments.admin.upgrades.all_upgrades'));
 
         $graphDataItem2->setCriteria((new Criteria())
             ->setTableName('payments')
@@ -68,11 +68,11 @@ class UpgradesAdminPresenter extends AdminPresenter
             ->setWhere($upgradeTypeWhere . ' AND payments.status = \'paid\'')
             ->setValueField('COUNT(*)')
             ->setStart('-1 month'))
-            ->setName('Paid Upgrades');
+            ->setName($this->translator->translate('payments.admin.upgrades.paid_upgrades'));
 
         $control = $factory->create()
-            ->setGraphTitle('Upgrades')
-            ->setGraphHelp('Upgrade payments in time')
+            ->setGraphTitle($this->translator->translate('payments.admin.upgrades.title'))
+            ->setGraphHelp($this->translator->translate('payments.admin.upgrades.upgrades_in_time'))
             ->addGraphDataItem($graphDataItem1)
             ->addGraphDataItem($graphDataItem2);
 

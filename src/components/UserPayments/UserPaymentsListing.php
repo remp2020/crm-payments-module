@@ -61,11 +61,6 @@ class UserPaymentsListing extends BaseWidget
 
     public function render($id)
     {
-        $this->template->addFilter('recurrentStatus', function ($status) {
-            $data = ComfortPayStatus::getStatusHtml($status);
-            return '<span class="label label-' . $data['label'] . '">' . $data['text'] . '</span>';
-        });
-
         $this->template->userId = $id;
 
         $payments = $this->paymentsRepository->userPayments($id);
