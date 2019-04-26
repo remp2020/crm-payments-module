@@ -161,6 +161,16 @@ CREATE TABLE IF NOT EXISTS `parsed_mail_logs` (
   KEY `state` (`state`),
   CONSTRAINT `parsed_mail_logs_ibfk_1` FOREIGN KEY (`payment_id`) REFERENCES `payments` (`id`) ON UPDATE NO ACTION
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+
+CREATE TABLE IF NOT EXISTS `variable_symbols` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `created_at` datetime NOT NULL,
+  `variable_symbol` varchar(255) NOT NULL,
+  PRIMARY KEY (`id`),
+  UNIQUE KEY `variable_symbol` (`variable_symbol`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
 SQL;
         $this->execute($sql);
     }
