@@ -106,19 +106,18 @@ class LastPaymentsCheckCommand extends Command
     {
         $this->output->writeln("Checking payments for last {$hours} hours");
 
-        // for non-recurrent gateways check payments only between 8am and midnight
-        $nonRecurrentAndMidnight = false;
-        if (!$gateway->is_recurrent) {
-            $now = new DateTime();
-            $morning = DateTime::from('today 8am');
-            // +15 minutes allows cron to run around midnight
-            $quarterPastMidnight = DateTime::from('today 00:15');
-            if ($now <= $morning && $now >= $quarterPastMidnight) {
-                $nonRecurrentAndMidnight = true;
-            }
+        // define night (when less manual payments occur as time between midnight and 8am
+        $isNight = false;
+        $now = new DateTime();
+        $morning = DateTime::from('today 8am');
+        // +15 minutes allows cron to run around midnight
+        $quarterPastMidnight = DateTime::from('today 00:15');
+        if ($now <= $morning && $now >= $quarterPastMidnight) {
+            $isNight = true;
         }
 
-        if ($nonRecurrentAndMidnight) {
+        // do not check non-recurrent gateways at night
+        if (!$gateway->is_recurrent && $isNight) {
             $this->output->writeln(' * <comment>Skipping night</comment> for non recurrent gateway');
             return null;
         }
@@ -127,6 +126,7 @@ class LastPaymentsCheckCommand extends Command
             ->where('status = ?', PaymentsRepository::STATUS_PAID)
             ->where('paid_at > ?', DateTime::from("now - {$hours} hours"));
 
+        // all payments check (whole day)
         if ((clone $paidGatewayPayments)->count() === 0) {
             return "no PAID payment in last {$hours} hours for gateway: {$gateway->name}";
         }
@@ -134,6 +134,12 @@ class LastPaymentsCheckCommand extends Command
         // recurrent charges check
         if ($gateway->is_recurrent && (clone $paidGatewayPayments)->where('recurrent_charge = 1')->count() === 0) {
             return "no PAID payment in last {$hours} hours for gateway: {$gateway->name} (automatic charges)";
+        }
+
+        // skip manual payments at night
+        if ($isNight) {
+            $this->output->writeln(' * <comment>Skipping night</comment> for manual payments');
+            return null;
         }
 
         // manual payments check
