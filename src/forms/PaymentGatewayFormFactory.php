@@ -32,8 +32,8 @@ class PaymentGatewayFormFactory
     public function create($paymentGatewayId)
     {
         $paymentGateway = $this->paymentGatewaysRepository->find($paymentGatewayId);
-        if (!isset($paymentGatewayId)) {
-            throw new \Exception('invalid paymentGatewayId provided: ' . $paymentGateway);
+        if (!$paymentGateway) {
+            throw new \Exception('invalid paymentGatewayId provided: ' . $paymentGatewayId);
         }
 
         $defaults = $paymentGateway->toArray();
