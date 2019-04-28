@@ -364,6 +364,17 @@ form:
 		save:
 			label: Ulož
 
+	accountant_export:
+		payment_gateway:
+			label: Platobná brána
+		status:
+			label: Stav platby
+		subscription_type:
+			label: Typ predplatného
+		month:
+			label: Mesiac
+		export: Export
+
 gateway:
 	recurrent: automaticky obnovované
 

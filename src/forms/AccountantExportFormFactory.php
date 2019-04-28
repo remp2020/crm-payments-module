@@ -7,12 +7,15 @@ use Crm\PaymentsModule\Repository\PaymentsRepository;
 use Crm\SubscriptionsModule\Repository\SubscriptionTypesRepository;
 use Nette\Application\UI\Form;
 use Nette\Database\Table\ActiveRow;
+use Nette\Localization\ITranslator;
 use Nette\Utils\DateTime;
 use Tomaj\Form\Renderer\BootstrapRenderer;
 
 class AccountantExportFormFactory
 {
     private $paymentGatewaysRepository;
+
+    private $translator;
 
     private $paymentsRepository;
 
@@ -21,24 +24,36 @@ class AccountantExportFormFactory
     public function __construct(
         PaymentGatewaysRepository $paymentGatewaysRepository,
         PaymentsRepository $paymentsRepository,
-        SubscriptionTypesRepository $subscriptionTypesRepository
+        SubscriptionTypesRepository $subscriptionTypesRepository,
+        ITranslator $translator
     ) {
         $this->paymentGatewaysRepository = $paymentGatewaysRepository;
         $this->paymentsRepository = $paymentsRepository;
         $this->subscriptionTypesRepository = $subscriptionTypesRepository;
+        $this->translator = $translator;
     }
 
     public function create(...$filteredFields)
     {
+
         $form = new Form;
+        $form->setTranslator($this->translator);
         $form->setRenderer(new BootstrapRenderer());
 
         $paymentGateways = $this->paymentGatewaysRepository->all()->fetchPairs('id', 'name');
-        $form->addSelect('payment_gateway', 'Platobna brana', $paymentGateways)
+        $form->addSelect(
+            'payment_gateway',
+            'payments.form.accountant_export.payment_gateway.label',
+            $paymentGateways
+        )
             ->setPrompt('--');
 
         $statuses = $this->paymentsRepository->getStatusPairs();
-        $form->addSelect('status', 'Stav platby', $statuses)
+        $form->addSelect(
+            'status',
+            'payments.form.accountant_export.status.label',
+            $statuses
+        )
             ->setPrompt('--');
 
         $subscriptionTypes = $this->subscriptionTypesRepository->getAllActive()->fetchAll();
@@ -49,7 +64,11 @@ class AccountantExportFormFactory
             $subscriptionTypesArray[$subscriptionType->id] = $subscriptionType->length . ' - ' . $subscriptionType->price . ' - ' . $subscriptionType->name;
         }
 
-        $form->addSelect('subscription_type', 'Typ predpatneho', $subscriptionTypesArray)
+        $form->addSelect(
+            'subscription_type',
+            'payments.form.accountant_export.subscription_type.label',
+            $subscriptionTypesArray
+        )
             ->setPrompt('--');
 
         $last = new \DateTime();
@@ -62,7 +81,11 @@ class AccountantExportFormFactory
             $last->modify('+1 month');
         }
 
-        $form->addSelect('month', 'Mesiac', $dates);
+        $form->addSelect(
+            'month',
+            'payments.form.accountant_export.month.label',
+            $dates
+        );
 
         $form->setDefaults([
             'status' => PaymentsRepository::STATUS_PAID,
@@ -77,8 +100,8 @@ class AccountantExportFormFactory
             }
         }
 
-        $export = $form->addSubmit('send', 'Export');
-        $export->getControlPrototype()->setName('button')->setHtml('<i class="fa fa-external-link"></i> Export');
+        $export = $form->addSubmit('send', 'payments.form.accountant_export.export');
+        $export->getControlPrototype()->setName('button')->setHtml('<i class="fa fa-external-link"></i>&nbsp;' . $this->translator->translate('payments.form.accountant_export.export'));
 
         return $form;
     }

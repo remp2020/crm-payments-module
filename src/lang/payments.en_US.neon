@@ -359,6 +359,17 @@ form:
 		save:
 			label: Save
 
+	accountant_export:
+		payment_gateway:
+			label: Payment gateway
+		status:
+			label: Payment status
+		subscription_type:
+			label: Subscription type
+		month:
+			label: Month
+		export: Export
+
 gateway:
 	recurrent: recurrent payment
 
