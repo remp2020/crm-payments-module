@@ -2,7 +2,9 @@
   <div class="modal-dialog">
     <div class="modal-content">
       <div class="modal-header">
-        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+        <button type="button" class="close" data-dismiss="modal" aria-label="{_"payments.admin.payments.close"}">
+          <span aria-hidden="true">&times;</span>
+        </button>
         <h4 class="modal-title">{_"payments.admin.component.change_payment_status.title"} #{$payment->id}</h4>
       </div>
       <div class="modal-body">
@@ -15,7 +17,9 @@
           <br>
           {_"payments.admin.component.change_payment_status.created"}: {$payment->created_at|userDate}
           <br>
-          {_"payments.admin.component.change_payment_status.status"}: <b>{$payment->status|upper}</b> {_"payments.admin.component.change_payment_status.change_to"} <b>PAID</b>
+          {_"payments.admin.component.change_payment_status.status"}: <b>{$payment->status|upper}</b>
+          {_"payments.admin.component.change_payment_status.change_to"}
+          <b>{\Crm\PaymentsModule\Repository\PaymentsRepository::STATUS_PAID|upper}</b>
           <br>
         </p>
       </div>
