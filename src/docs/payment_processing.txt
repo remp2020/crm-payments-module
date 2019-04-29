@@ -1,0 +1,35 @@
+title Payment processing
+
+participant PaymentFrontend
+note over PaymentFrontend: e.g. remp/crm-salesfunnel-module
+
+participant PaymentModule
+participant PaymentCompleteRedirectManager
+participant Gateway
+participant Gateway (external)
+
+==Initialization==
+
+PaymentFrontend->PaymentCompleteRedirectManager: Register redirection options
+PaymentFrontend<--PaymentCompleteRedirectManager:
+
+==Payment==
+
+PaymentFrontend->PaymentModule: Create new payment
+PaymentFrontend<--PaymentModule:
+
+PaymentFrontend->Gateway: Get gateway redirect URL
+PaymentFrontend<--Gateway:
+
+PaymentFrontend-->Gateway (external): redirect to gateway
+ref over Gateway (external): Actual payment processing
+
+PaymentModule<--Gateway (external): redirect
+
+PaymentModule->Gateway: Process payment result
+PaymentModule<--Gateway:
+
+PaymentModule->PaymentCompleteRedirectManager: Get redirection options
+PaymentModule<--PaymentCompleteRedirectManager:
+
+PaymentFrontend<--PaymentModule: redirect to success page
