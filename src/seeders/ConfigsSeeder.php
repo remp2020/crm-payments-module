@@ -54,7 +54,7 @@ class ConfigsSeeder implements ISeeder
             $category,
             'tatrapay_sharedsecret',
             'Tatrapay sharedsecret',
-            '***REMOVED***',
+            '',
             $sorting++
         );
 
@@ -64,7 +64,7 @@ class ConfigsSeeder implements ISeeder
             $category,
             'cardpay_sharedsecret',
             'Cardpay sharedsecret',
-            '***REMOVED***',
+            '',
             $sorting++
         );
 
@@ -75,7 +75,7 @@ class ConfigsSeeder implements ISeeder
             $category,
             'comfortpay_terminalid',
             'Comfortpay terminalid',
-            '***REMOVED***',
+            '',
             $sorting++
         );
         $this->addPaymentConfig(
@@ -83,7 +83,7 @@ class ConfigsSeeder implements ISeeder
             $category,
             'comfortpay_sharedsecret',
             'Comfortpay sharedsecret',
-            '***REMOVED***',
+            '',
             $sorting++
         );
         $this->addPaymentConfig(
@@ -129,7 +129,7 @@ class ConfigsSeeder implements ISeeder
             $category,
             'paypal_username',
             'Paypal username',
-            'paypal_api1.projektn.sk',
+            '',
             $sorting++
         );
         $this->addPaymentConfig(
@@ -137,7 +137,7 @@ class ConfigsSeeder implements ISeeder
             $category,
             'paypal_password',
             'Paypal password',
-            '***REMOVED***',
+            '',
             $sorting++
         );
         $this->addPaymentConfig(
@@ -145,10 +145,10 @@ class ConfigsSeeder implements ISeeder
             $category,
             'paypal_signature',
             'Paypal signature',
-            '***REMOVED***',
+            '',
             $sorting++
         );
-        $this->addPaymentConfig($output, $category, 'paypal_merchant', 'Paypal merchant', '***REMOVED***', $sorting);
+        $this->addPaymentConfig($output, $category, 'paypal_merchant', 'Paypal merchant', '', $sorting);
 
         $this->addPaymentConfig(
             $output,
@@ -220,58 +220,6 @@ class ConfigsSeeder implements ISeeder
             'PT15M, PT6H, PT6H, PT6H, PT6H',
             $sorting++,
             'Definicia intervalov (https://en.wikipedia.org/wiki/ISO_8601#Durations) oddelenych ciarkou.'
-        );
-
-        // csob
-
-        $this->addPaymentConfig(
-            $output,
-            $category,
-            'csob_merchant_id',
-            'CSOB merchant ID',
-            'M1MIPS4264',
-            $sorting++,
-            null
-        );
-
-        $this->addPaymentConfig(
-            $output,
-            $category,
-            'csob_shop_name',
-            'CSOB Shop name',
-            'CRM (devel)',
-            $sorting++,
-            null
-        );
-
-        $this->addPaymentConfig(
-            $output,
-            $category,
-            'csob_bank_public_key_file_path',
-            'CSOB public key path',
-            '/var/www/html/csob_bank.pub',
-            $sorting++,
-            null
-        );
-
-        $this->addPaymentConfig(
-            $output,
-            $category,
-            'csob_private_key_file_path',
-            'CSOB private key path',
-            '/var/www/html/rsa_M1MIPS4264.key',
-            $sorting++,
-            null
-        );
-
-        $this->addPaymentConfig(
-            $output,
-            $category,
-            'csob_mode',
-            'CSOB mode',
-            'test',
-            $sorting++,
-            null
         );
     }
 
