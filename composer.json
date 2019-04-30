@@ -6,10 +6,15 @@
   "license": "MIT",
   "require": {
     "php": "^7.2",
+    "ext-soap": "*",
+    "php-http/curl-client": "^1.7",
     "remp/crm-application-module": "~0.2 >=0.2.7",
     "remp/crm-subscriptions-module": "~0.2 >=0.2.7",
     "tomaj/bank-mails-parser": "^2.0.0",
-    "tomaj/imap-mail-downloader": "^1.2.0"
+    "tomaj/imap-mail-downloader": "^1.2.0",
+    "rootpd/omnipay-csob": "^3.0",
+    "rootpd/omnipay-paypal-reference": "^3.0",
+    "tomaj/omnipay-tatra": "^3.0"
   },
   "minimum-stability": "dev",
   "autoload": {
