@@ -185,9 +185,6 @@ class CsobOneClick extends GatewayAbstract implements RecurrentPaymentInterface
                 'exception' => get_class($exception),
                 'message' => $exception->getMessage(),
             ];
-            if (isset($request)) {
-                $log['request'] = $request;
-            }
             Debugger::log(Json::encode($log));
 
             // CSOB library doesn't return any response here and throws Exception on any kind of error.

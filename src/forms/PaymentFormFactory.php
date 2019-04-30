@@ -84,7 +84,7 @@ class PaymentFormFactory
         ];
         $payment = null;
 
-        if (isset($paymentId)) {
+        if ($paymentId) {
             $payment = $this->paymentsRepository->find($paymentId);
             $defaults = $payment->toArray();
             $items = [];

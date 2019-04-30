@@ -115,9 +115,6 @@ class PaypalReference extends GatewayAbstract implements RecurrentPaymentInterfa
                 'exception' => get_class($exception),
                 'message' => $exception->getMessage(),
             ];
-            if (isset($request)) {
-                $log['request'] = $request;
-            }
             Debugger::log(Json::encode($log));
             throw new GatewayFail($exception->getMessage(), $exception->getCode());
         }
