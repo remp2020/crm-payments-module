@@ -27,9 +27,15 @@ class LastPaymentsCheckCommand extends Command
     /** @var array */
     private $emails = [];
 
+    /** @var array */
+    private $overrides = [];
+
     private $emitter;
 
     private $emailTempate = 'problems_with_payments_notification';
+
+    /** @var InputInterface */
+    private $input;
 
     /** @var OutputInterface */
     private $output;
@@ -60,11 +66,39 @@ class LastPaymentsCheckCommand extends Command
                 InputOption::VALUE_OPTIONAL | InputOption::VALUE_IS_ARRAY,
                 "Codes of gateways to exclude from checking"
             )
+            ->addOption(
+                'override',
+                null,
+                InputOption::VALUE_OPTIONAL | InputOption::VALUE_IS_ARRAY,
+                <<<EOH
+Overrides options for one gateway. Format:
+`--override={GATEWAY-CODE},{COUNT-TO-CHECK},{HOURS-TO-CHECK}`.
+EOH
+            )
+            ->setHelp(<<<EOH
+This command checks all payment gateways (except excluded by <comment>`--exclude`</comment> option) for errors.
+
+Notification will be sent if users are unable to finish payment process. Either:
+  - last <info>{COUNT-TO-CHECK}</info> payments are unsuccessful (in error or form state); and / or
+  - no valid payment was done in last <info>{HOURS-TO-CHECK}</info> hours.
+
+In case you need to setup on gateway with different settings, you can use <comment>`--override`</comment>.
+
+Format: <comment>`--override={GATEWAY-CODE},{COUNT-TO-CHECK},{HOURS-TO-CHECK}`</comment> where:
+  - <info>{GATEWAY-CODE}</info>   - eg.: bank_transfer, paypal, paypal_reference, ...
+  - <info>{COUNT-TO-CHECK}</info> - sends notification if last <info>{COUNT-TO-CHECK}</info> payments are not valid.
+  - <info>{HOURS-TO-CHECK}</info> - sends notification if no valid payments are present in <info>{HOURS-TO-CHECK}</info> hours.
+EOH
+)
+            ->addUsage('--notify=email@example.com')
+            ->addUsage('--notify=email@example.com --exclude=bank_transfer')
+            ->addUsage('--notify=email@example.com --override=paypal,10,2')
             ->setDescription('Check last payments if there is some errors');
     }
 
     protected function execute(InputInterface $input, OutputInterface $output)
     {
+        $this->input = $input;
         $this->output = $output;
         $this->output->writeln('');
         $this->output->writeln('<info>***** CHECK LAST PAYMENTS *****</info>');
@@ -72,6 +106,8 @@ class LastPaymentsCheckCommand extends Command
 
         $this->emails = $input->getOption('notify');
         $exclude = $input->getOption('exclude');
+
+        $this->processOverrideOption();
 
         /** @var ActiveRow $gateway */
         foreach ($this->paymentGatewaysRepository->getAllVisible() as $gateway) {
@@ -81,14 +117,21 @@ class LastPaymentsCheckCommand extends Command
 
             $this->output->writeln("Checking gateway <info>{$gateway->name}</info>");
 
-            // check for PAID payment in last two hours -----------------------
-            $error = $this->checkLastHours($gateway, self::CHECK_LAST_HOURS);
+            $checkCount = self::CHECK_LAST_PAYMENTS;
+            $checkHours = self::CHECK_LAST_HOURS;
+            if (isset($this->overrides[$gateway->code])) {
+                $checkCount = $this->overrides[$gateway->code]['count'];
+                $checkHours = $this->overrides[$gateway->code]['hours'];
+            }
+
+            // check for PAID payment in last hours -----------------------
+            $error = $this->checkLastHours($gateway, $checkHours);
             if ($error !== null) {
                 $this->sendNotification($gateway, $error);
             }
 
             // check if last payments are not all failed ----------------------
-            $error = $this->checkLastPayments($gateway, self::CHECK_LAST_PAYMENTS);
+            $error = $this->checkLastPayments($gateway, $checkCount);
             if ($error !== null) {
                 $this->sendNotification($gateway, $error);
             }
@@ -99,10 +142,10 @@ class LastPaymentsCheckCommand extends Command
 
     /**
      * @param ActiveRow $gateway
-     * @param int $hours - How many hours to check.
+     * @param int $hours - How many hours to check. Defaults to self::CHECK_LAST_HOURS.
      * @return string|null - Returns NULL if everything is OK; error message if there is error
      */
-    private function checkLastHours(ActiveRow $gateway, int $hours): ?string
+    private function checkLastHours(ActiveRow $gateway, int $hours = self::CHECK_LAST_HOURS): ?string
     {
         $this->output->writeln("Checking payments for last {$hours} hours");
 
@@ -153,10 +196,10 @@ class LastPaymentsCheckCommand extends Command
 
     /**
      * @param ActiveRow $gateway
-     * @param int $checkCount
+     * @param int $checkCount - How many previous payments to check? Defaults to self::CHECK_LAST_PAYMENTS.
      * @return string|null - Returns NULL if everything is OK; error message if there is error
      */
-    private function checkLastPayments(ActiveRow $gateway, int $checkCount): ?string
+    private function checkLastPayments(ActiveRow $gateway, int $checkCount = self::CHECK_LAST_PAYMENTS): ?string
     {
         $this->output->writeln("Checking last {$checkCount} payments");
         $lastPayments = $this->paymentsRepository->all('', $gateway)->order('created_at DESC')->limit($checkCount);
@@ -209,5 +252,53 @@ class LastPaymentsCheckCommand extends Command
                 'error' => $error,
             ]));
         }
+    }
+
+
+    /**
+     * Processes override option array and sets $overrides private field.
+     *
+     * Single override is processed from format
+     *
+     *    `gateway-code,count-to-check,hours-to-check`
+     *
+     * to multi array:
+     *
+     *    $overrides[$gatewayCode] => [
+     *       'count' => $countToCheck,
+     *       'hours' => $hoursToCheck,
+     *    ];
+     *
+     * Result is set to private field $overrides.
+     *
+     * @throws \Exception
+     */
+    private function processOverrideOption()
+    {
+        $overrides = [];
+
+        foreach ($this->input->getOption('override') as $override) {
+            $o = explode(',', $override);
+
+            if (empty($o[0])) {
+                throw new \Exception("Override's 1nd parameter cannot be empty. Provide payment gateway to override.");
+            }
+
+            $count = filter_var($o[1], FILTER_VALIDATE_INT);
+            if ($count === false || $count <= 0) {
+                throw new \Exception("Override's 2nd parameter (count) must be integer bigger than 0. Got {$o[1]}. See help for details.");
+            }
+            $hours = filter_var($o[2], FILTER_VALIDATE_INT);
+            if ($hours === false || $hours <= 0) {
+                throw new \Exception("Override's 3rd parameter (hours) must be integer bigger than 0. Got {$o[2]}. See help for details.");
+            }
+
+            $overrides[$o[0]] = [
+                'count' => $count,
+                'hours' => $hours,
+            ];
+        }
+
+        $this->overrides = $overrides;
     }
 }
