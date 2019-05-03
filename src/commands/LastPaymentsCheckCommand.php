@@ -24,12 +24,6 @@ class LastPaymentsCheckCommand extends Command
 
     private $paymentsRepository;
 
-    /** @var array */
-    private $emails = [];
-
-    /** @var array */
-    private $overrides = [];
-
     private $emitter;
 
     private $emailTempate = 'problems_with_payments_notification';
@@ -39,6 +33,21 @@ class LastPaymentsCheckCommand extends Command
 
     /** @var OutputInterface */
     private $output;
+
+    /** @var array */
+    private $emails = [];
+
+    /** @var array */
+    private $overrides = [];
+
+    /** @var string */
+    private $startOfDay;
+
+    /** @var string */
+    private $endOfDay;
+
+    /** @var bool */
+    private $isNight = false;
 
     public function __construct(
         PaymentGatewaysRepository $paymentGatewaysRepository,
@@ -59,6 +68,20 @@ class LastPaymentsCheckCommand extends Command
                 null,
                 InputOption::VALUE_REQUIRED | InputOption::VALUE_IS_ARRAY,
                 "E-mail addresses of people to notify about the issue."
+            )
+            ->addOption(
+                'day-start',
+                null,
+                InputOption::VALUE_OPTIONAL,
+                "Select start of day (manual payments are not checked through night)",
+                "today 08:00"
+            )
+            ->addOption(
+                'day-end',
+                null,
+                InputOption::VALUE_OPTIONAL,
+                "Select end of day (manual payments are not checked through night)",
+                "today 23:00"
             )
             ->addOption(
                 'exclude',
@@ -93,6 +116,7 @@ EOH
             ->addUsage('--notify=email@example.com')
             ->addUsage('--notify=email@example.com --exclude=bank_transfer')
             ->addUsage('--notify=email@example.com --override=paypal,10,2')
+            ->addUsage('--notify=email@example.com --day-start=7AM --day-end="22:00"')
             ->setDescription('Check last payments if there is some errors');
     }
 
@@ -108,6 +132,13 @@ EOH
         $exclude = $input->getOption('exclude');
 
         $this->processOverrideOption();
+        $this->processDayOptions();
+
+        // define night (based on day-start and day-end; everything between is night)
+        $now = new DateTime();
+        if ($now > $this->endOfDay || $now < $this->startOfDay) {
+            $this->isNight = true;
+        }
 
         /** @var ActiveRow $gateway */
         foreach ($this->paymentGatewaysRepository->getAllVisible() as $gateway) {
@@ -149,18 +180,8 @@ EOH
     {
         $this->output->writeln("Checking payments for last {$hours} hours");
 
-        // define night (when less manual payments occur as time between midnight and 8am
-        $isNight = false;
-        $now = new DateTime();
-        $morning = DateTime::from('today 8am');
-        // +15 minutes allows cron to run around midnight
-        $quarterPastMidnight = DateTime::from('today 00:15');
-        if ($now <= $morning && $now >= $quarterPastMidnight) {
-            $isNight = true;
-        }
-
         // do not check non-recurrent gateways at night
-        if (!$gateway->is_recurrent && $isNight) {
+        if (!$gateway->is_recurrent && $this->isNight) {
             $this->output->writeln(' * <comment>Skipping night</comment> for non recurrent gateway');
             return null;
         }
@@ -180,7 +201,7 @@ EOH
         }
 
         // skip manual payments at night
-        if ($isNight) {
+        if ($this->isNight) {
             $this->output->writeln(' * <comment>Skipping night</comment> for manual payments');
             return null;
         }
@@ -300,5 +321,24 @@ EOH
         }
 
         $this->overrides = $overrides;
+    }
+
+
+    /**
+     * Processes options `day-start` and `day-end` and stores them in private fields $startOfDay and $endOfDay.
+     *
+     * @throws \Exception If day-start is bigger than day-end (day should start before it ends, right?)
+     */
+    private function processDayOptions()
+    {
+        $dayStart = DateTime::from($this->input->getOption('day-start'));
+        $dayEnd = DateTime::from($this->input->getOption('day-end'));
+
+        if ($dayStart >= $dayEnd) {
+            throw new \Exception("Day's start (got {$dayStart}) must be before day's end ({$dayEnd}).");
+        }
+
+        $this->startOfDay = $dayStart;
+        $this->endOfDay = $dayEnd;
     }
 }
