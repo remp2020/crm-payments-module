@@ -14,6 +14,12 @@ use Crm\SubscriptionsModule\Report\ReportTable;
 use Crm\SubscriptionsModule\Repository\SubscriptionTypesRepository;
 use Kdyby\Translation\Translator;
 
+/**
+ * Table widget showing different report stats for specific subscription type.
+ * Used in subscription type detail.
+ *
+ * @package Crm\PaymentsModule\Components
+ */
 class SubscriptionTypeReports extends BaseWidget
 {
     private $templateName = 'subscription_type_reports.latte';

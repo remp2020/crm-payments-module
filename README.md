@@ -304,3 +304,202 @@ Response:
     "variable_symbol": "2735309229"
 }
 ```
+
+## Components
+
+**ActualFreeSubscribersStatWidget**
+
+Simple admin dashboard widget showing free subscribers count.
+
+![alt text](docs/_static/free_subscribers.png "Actual free subscribers stat widget")
+
+[Source code](https://github.com/remp2020/crm-payments-module/blob/1fee1560e7c9a83fe25ddc579c6af0f4264897df/src/components/ActualFreeSubscribersStatWidget/ActualFreeSubscribersStatWidget.php#L1)
+
+[How to use](https://github.com/remp2020/crm-payments-module/blob/1fee1560e7c9a83fe25ddc579c6af0f4264897df/src/PaymentsModule.php#L136)
+
+**ActualPaidSubscribersStatWidget**
+
+Simple admin dashboard widget showing paid subscribers count.
+
+![alt text](docs/_static/paid_subscribers.png "Actual paid subscribers stat widget")
+
+[Source code](https://github.com/remp2020/crm-payments-module/blob/1fee1560e7c9a83fe25ddc579c6af0f4264897df/src/components/ActualPaidSubscribersStatWidget/ActualPaidSubscribersStatWidget.php#L1)
+
+[How to use](https://github.com/remp2020/crm-payments-module/blob/1fee1560e7c9a83fe25ddc579c6af0f4264897df/src/PaymentsModule.php#L131)
+
+**ChangePaymentStatus**
+
+Admin listing/detail change payment status modal component.
+
+![alt text](docs/_static/change_payment_status.png "Change payment status modal")
+
+[Source code](https://github.com/remp2020/crm-payments-module/blob/1fee1560e7c9a83fe25ddc579c6af0f4264897df/src/components/ChangePaymentStatus/ChangePaymentStatus.php#L1)
+
+[How to use](https://github.com/remp2020/crm-payments-module/blob/1fee1560e7c9a83fe25ddc579c6af0f4264897df/src/components/UserPayments/UserPaymentsListing.php#L106)
+
+**DeviceUserListingWidget**
+
+Admin user listing device component.
+
+![alt text](docs/_static/device.png "DeviceUserListingWidget")
+
+[Source code](https://github.com/remp2020/crm-payments-module/blob/1fee1560e7c9a83fe25ddc579c6af0f4264897df/src/components/DeviceUserListingWidget/DeviceUserListingWidget.php#L1)
+
+[How to use](https://github.com/remp2020/crm-payments-module/blob/1fee1560e7c9a83fe25ddc579c6af0f4264897df/src/PaymentsModule.php#L194)
+
+**DonationPaymentItemListWidget**
+
+![alt text](docs/_static/payment_item.png "DonationPaymentItemListWidget")
+
+[Source code](https://github.com/remp2020/crm-payments-module/blob/1fee1560e7c9a83fe25ddc579c6af0f4264897df/src/components/DonationPaymentItemListWidget/PaymentItemsListWidget.php#L1)
+
+[How to use](https://github.com/remp2020/crm-payments-module/blob/1fee1560e7c9a83fe25ddc579c6af0f4264897df/src/PaymentsModule.php#L190)
+
+**DupliciteRecurrentPayments**
+
+Admin listing of duplicit recurrent payments.
+
+![alt text](docs/_static/duplicit_recurrent_payment.png "DupliciteRecurrentPayments")
+
+[Source code](https://github.com/remp2020/crm-payments-module/blob/1fee1560e7c9a83fe25ddc579c6af0f4264897df/src/components/DupliciteRecurrentPayments/DuplicateRecurrentPayments.php#L1)
+
+[How to use](https://github.com/remp2020/crm-payments-module/blob/1fee1560e7c9a83fe25ddc579c6af0f4264897df/src/presenters/PaymentsRecurrentAdminPresenter.php#L139)
+
+**LastPayments**
+
+Admin listing of last payments in payment gateway detail. 
+
+![alt text](docs/_static/gateway_payments.png "LastPayments")
+
+[Source code](https://github.com/remp2020/crm-payments-module/blob/1fee1560e7c9a83fe25ddc579c6af0f4264897df/src/components/LastPayments/LastPayments.php#L1)
+
+[How to use](https://github.com/remp2020/crm-payments-module/blob/1fee1560e7c9a83fe25ddc579c6af0f4264897df/src/presenters/PaymentGatewaysAdminPresenter.php#L70)
+
+**MonthAmountStatWidget**
+
+Admin dashboard simple stat widget showing payments amount for last month.
+
+![alt text](docs/_static/amount_money.png "MonthAmountStatWidget")
+
+[Source code](https://github.com/remp2020/crm-payments-module/blob/1fee1560e7c9a83fe25ddc579c6af0f4264897df/src/components/MonthAmountStatWidget/MonthAmountStatWidget.php#L1)
+
+[How to use](https://github.com/remp2020/crm-payments-module/blob/1fee1560e7c9a83fe25ddc579c6af0f4264897df/src/PaymentsModule.php#L146)
+
+**MonthToDateAmountStatWidget**
+
+Admin dashboard simple stat widget showing payments amount for last month.
+
+![alt text](docs/_static/amount_money.png "MonthToDateAmountStatWidget")
+
+[Source code](https://github.com/remp2020/crm-payments-module/blob/1fee1560e7c9a83fe25ddc579c6af0f4264897df/src/components/MonthToDateAmountStatWidget/MonthToDateAmountStatWidget.php#L1)
+
+[How to use](https://github.com/remp2020/crm-payments-module/blob/1fee1560e7c9a83fe25ddc579c6af0f4264897df/src/PaymentsModule.php#L151)
+
+**MyNextRecurrentPayment**
+
+![alt text](docs/_static/my_recurrent_payment.png "MyNextRecurrentPayment")
+
+[Source code](https://github.com/remp2020/crm-payments-module/blob/1fee1560e7c9a83fe25ddc579c6af0f4264897df/src/components/MyNextRecurrentPayment/MyNextRecurrentPayment.php#L1)
+
+[How to use](https://github.com/remp2020/crm-payments-module/blob/1fee1560e7c9a83fe25ddc579c6af0f4264897df/src/PaymentsModule.php#L198)
+
+**ParsedMails**
+
+Payments admin widget showing payments with wrong amount.
+
+![alt text](docs/_static/incorrect_amount.png "ParsedMails")
+
+[Source code](https://github.com/remp2020/crm-payments-module/blob/1fee1560e7c9a83fe25ddc579c6af0f4264897df/src/components/ParsedMails/ParsedMailsFailedNotification.php#L1)
+
+[How to use](https://github.com/remp2020/crm-payments-module/blob/1fee1560e7c9a83fe25ddc579c6af0f4264897df/src/PaymentsModule.php#L121)
+
+**PaymentItemsListWidget**
+
+Admin listing of payment items in payment detail.
+
+![alt text](docs/_static/payment_items.png "PaymentItemsListWidget")
+
+[Source code](https://github.com/remp2020/crm-payments-module/blob/1fee1560e7c9a83fe25ddc579c6af0f4264897df/src/components/PaymentItemsListWidget/PaymentItemsListWidget.php#L1)
+
+[How to use](https://github.com/remp2020/crm-payments-module/blob/1fee1560e7c9a83fe25ddc579c6af0f4264897df/src/PaymentsModule.php#L186)
+
+**SubscribersWithPaymentWidget**
+
+Admin dashboard single stat widget.
+
+![alt text](docs/_static/subscribers_with_payment.png "SubscribersWithPaymentWidget")
+
+[Source code](https://github.com/remp2020/crm-payments-module/blob/1fee1560e7c9a83fe25ddc579c6af0f4264897df/src/components/SubscribersWithPaymentWidget/SubscribersWithPaymentWidget.php#L1)
+
+[How to use](https://github.com/remp2020/crm-payments-module/blob/1fee1560e7c9a83fe25ddc579c6af0f4264897df/src/PaymentsModule.php#L166)
+
+**SubscriptionsWithActiveUnchargedRecurrentEndingWithinPeriodWidget**
+
+Admin listing widget.
+
+![alt text](docs/_static/subscription_active_uncharged.png "SubscriptionsWithActiveUnchargedRecurrentEndingWithinPeriodWidget")
+
+[Source code](https://github.com/remp2020/crm-payments-module/blob/1fee1560e7c9a83fe25ddc579c6af0f4264897df/src/components/SubscriptionsWithActiveUnchargedRecurrentEndingWithinPeriodWidget/SubscriptionsWithActiveUnchargedRecurrentEndingWithinPeriodWidget.php#L1)
+
+[How to use](https://github.com/remp2020/crm-payments-module/blob/1fee1560e7c9a83fe25ddc579c6af0f4264897df/src/PaymentsModule.php#L156)
+
+**SubscriptionsWithoutExtensionEndingWithinPeriodWidget**
+
+Admin dashboard stats widget.
+
+![alt text](docs/_static/subscription_active_uncharged.png "SubscriptionsWithoutExtensionEndingWithinPeriodWidget")
+
+[Source code](https://github.com/remp2020/crm-payments-module/blob/1fee1560e7c9a83fe25ddc579c6af0f4264897df/src/components/SubscriptionsWithoutExtensionEndingWithinPeriodWidget/SubscriptionsWithoutExtensionEndingWithinPeriodWidget.php#L1)
+
+[How to use](https://github.com/remp2020/crm-payments-module/blob/1fee1560e7c9a83fe25ddc579c6af0f4264897df/src/PaymentsModule.php#L161)
+
+**SubscriptionTypeReports**
+
+Admin subscription type detail stats widget.
+
+![alt text](docs/_static/subscription_type_stats.png "SubscriptionTypeReports")
+
+[Source code](https://github.com/remp2020/crm-payments-module/blob/1fee1560e7c9a83fe25ddc579c6af0f4264897df/src/components/SubscriptionTypeReportsWidget/SubscriptionTypeReports.php#L1)
+
+[How to use](https://github.com/remp2020/crm-payments-module/blob/1fee1560e7c9a83fe25ddc579c6af0f4264897df/src/PaymentsModule.php#L181)
+
+**TodayAmountStatWidget**
+
+Admin dashboard simple single stat widget.
+
+![alt text](docs/_static/today_amount.png "TodayAmountStatWidget")
+
+[Source code](https://github.com/remp2020/crm-payments-module/blob/1fee1560e7c9a83fe25ddc579c6af0f4264897df/src/components/TodayAmountStatWidget/TodayAmountStatWidget.php#L1)
+
+[How to use](https://github.com/remp2020/crm-payments-module/blob/1fee1560e7c9a83fe25ddc579c6af0f4264897df/src/PaymentsModule.php#L141)
+
+**TotalAmountStatWidget**
+
+Admin dashboard simple single stat widget.
+
+![alt text](docs/_static/total_payments.png "TotalAmountStatWidget")
+
+[Source code](https://github.com/remp2020/crm-payments-module/blob/1fee1560e7c9a83fe25ddc579c6af0f4264897df/src/components/TotalAmountStatWidget/TotalAmountStatWidget.php#L1)
+
+[How to use](https://github.com/remp2020/crm-payments-module/blob/1fee1560e7c9a83fe25ddc579c6af0f4264897df/src/PaymentsModule.php#L126)
+
+**TotalUserPayments**
+
+Admin user detail stat widget.
+
+![alt text](docs/_static/user_spent.png "TotalUserPayments")
+
+[Source code](https://github.com/remp2020/crm-payments-module/blob/1fee1560e7c9a83fe25ddc579c6af0f4264897df/src/components/TotalUserPayments/TotalUserPayments.php#L1)
+
+[How to use](https://github.com/remp2020/crm-payments-module/blob/1fee1560e7c9a83fe25ddc579c6af0f4264897df/src/PaymentsModule.php#L116)
+
+**UserPayments**
+
+Admin user detail listing widget.
+
+![alt text](docs/_static/user_payments_listing.png "UserPayments")
+
+[Source code](https://github.com/remp2020/crm-payments-module/blob/1fee1560e7c9a83fe25ddc579c6af0f4264897df/src/components/UserPayments/UserPaymentsListing.php#L1)
+
+[How to use](https://github.com/remp2020/crm-payments-module/blob/1fee1560e7c9a83fe25ddc579c6af0f4264897df/src/PaymentsModule.php#L111)
+

@@ -7,6 +7,11 @@ use Crm\ApplicationModule\Widget\WidgetManager;
 use Crm\PaymentsModule\Repository\PaymentsRepository;
 use Nette\Utils\DateTime;
 
+/**
+ * Single stat widget showing sum amount of payments in last month to date (today - 1 month).
+ *
+ * @package Crm\PaymentsModule\Components
+ */
 class MonthToDateAmountStatWidget extends BaseWidget
 {
     private $templateName = 'month_to_date_amount_stat_widget.latte';

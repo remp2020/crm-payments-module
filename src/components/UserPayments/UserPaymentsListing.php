@@ -12,6 +12,11 @@ use Nette\Application\BadRequestException;
 use Nette\Localization\ITranslator;
 use Nette\Utils\DateTime;
 
+/**
+ * Listing widget used in user detail shoing users payments.
+ *
+ * @package Crm\PaymentsModule\Components
+ */
 class UserPaymentsListing extends BaseWidget
 {
     private $templateName = 'user_payments_listing.latte';

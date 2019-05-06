@@ -6,6 +6,11 @@ use Crm\ApplicationModule\Widget\BaseWidget;
 use Crm\ApplicationModule\Widget\WidgetManager;
 use Crm\PaymentsModule\Repository\PaymentsRepository;
 
+/**
+ * Simple single stat widget showing total amount of payments.
+ *
+ * @package Crm\PaymentsModule\Components
+ */
 class TotalAmountStatWidget extends BaseWidget
 {
     private $templateName = 'total_amount_stat_widget.latte';

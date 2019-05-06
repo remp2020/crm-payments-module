@@ -6,6 +6,12 @@ use Crm\ApplicationModule\Widget\BaseWidget;
 use Crm\ApplicationModule\Widget\WidgetManager;
 use Crm\PaymentsModule\Repository\PaymentsRepository;
 
+/**
+ * Bootstrap listing of last payments for specific for payment gateway.
+ * Used in payment gateway detail.
+ *
+ * @package Crm\PaymentsModule\Components
+ */
 class LastPayments extends BaseWidget
 {
     private $view = 'last_payments';

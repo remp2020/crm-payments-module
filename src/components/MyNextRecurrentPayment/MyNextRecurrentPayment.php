@@ -7,6 +7,11 @@ use Crm\ApplicationModule\Widget\WidgetManager;
 use Crm\PaymentsModule\RecurrentPaymentsResolver;
 use Crm\PaymentsModule\Repository\RecurrentPaymentsRepository;
 
+/**
+ * Simple bootstrap well widget showing next recurrent payment charge date and amount.
+ *
+ * @package Crm\PaymentsModule\Components
+ */
 class MyNextRecurrentPayment extends BaseWidget
 {
     private $templateName = 'my_next_recurrent_payment.latte';

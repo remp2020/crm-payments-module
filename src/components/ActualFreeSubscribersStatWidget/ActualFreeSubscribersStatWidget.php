@@ -7,6 +7,11 @@ use Crm\ApplicationModule\Widget\WidgetManager;
 use Crm\PaymentsModule\Repository\PaymentsRepository;
 use Crm\SegmentModule\Repository\SegmentsRepository;
 
+/**
+ * Simple widget showing single stat of free subscribers.
+ *
+ * @package Crm\PaymentsModule\Components
+ */
 class ActualFreeSubscribersStatWidget extends BaseWidget
 {
     const SEGMENT_CODE = 'active-subscription-without-payment';

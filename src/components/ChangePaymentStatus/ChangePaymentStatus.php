@@ -7,6 +7,11 @@ use Crm\ApplicationModule\Widget\WidgetManager;
 use Crm\PaymentsModule\Repository\PaymentsRepository;
 use Nette\Localization\ITranslator;
 
+/**
+ * Simple bootstrap modal for changing status + sending info email.
+ *
+ * @package Crm\PaymentsModule\Components
+ */
 class ChangePaymentStatus extends BaseWidget
 {
     private $templateName = 'change_payment_status.latte';

@@ -7,6 +7,11 @@ use Crm\ApplicationModule\Widget\WidgetManager;
 use Crm\PaymentsModule\Repository\PaymentsRepository;
 use Nette\Utils\DateTime;
 
+/**
+ * Simple single stat widget showing todays amount of payments.
+ *
+ * @package Crm\PaymentsModule\Components
+ */
 class TodayAmountStatWidget extends BaseWidget
 {
     private $templateName = 'today_amount_stat_widget.latte';

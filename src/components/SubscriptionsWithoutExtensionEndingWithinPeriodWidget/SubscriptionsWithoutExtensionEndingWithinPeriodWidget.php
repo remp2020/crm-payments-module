@@ -9,6 +9,12 @@ use Crm\SubscriptionsModule\Components\IWidgetLegend;
 use Nette\Localization\ITranslator;
 use Nette\Utils\DateTime;
 
+/**
+ * Dashboard widget showing line of stats of users with ending subscription
+ * for different time intervals.
+ *
+ * @package Crm\PaymentsModule\Components
+ */
 class SubscriptionsWithoutExtensionEndingWithinPeriodWidget extends BaseWidget implements IWidgetLegend
 {
     private $templateName = 'subscriptions_without_extension_ending_within_period.latte';

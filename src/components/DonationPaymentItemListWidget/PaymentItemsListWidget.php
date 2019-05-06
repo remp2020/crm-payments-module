@@ -6,6 +6,12 @@ use Crm\ApplicationModule\Widget\BaseWidget;
 use Crm\PaymentsModule\PaymentItem\DonationPaymentItem;
 use Nette\Database\Table\ActiveRow;
 
+/**
+ * Simple list item used in payments listing.
+ * Shows donation as payment item.
+ *
+ * @package Crm\PaymentsModule\Components
+ */
 class DonationPaymentItemsListWidget extends BaseWidget
 {
     private $templateName = 'donation_payment_items_list_widget.latte';

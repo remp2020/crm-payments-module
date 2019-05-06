@@ -8,6 +8,12 @@ use Crm\PaymentsModule\Repository\RecurrentPaymentsRepository;
 use Nette\Application\BadRequestException;
 use Nette\Localization\ITranslator;
 
+/**
+ * Bootstrap data listing.
+ * Lists user accounts with 2 and more running recurrent subscriptions.
+ *
+ * @package Crm\PaymentsModule\Components
+ */
 class DuplicateRecurrentPayments extends BaseWidget
 {
     private $templateName = 'duplicate_recurrent_payments.latte';

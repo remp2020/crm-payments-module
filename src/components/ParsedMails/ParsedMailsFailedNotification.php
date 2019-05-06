@@ -6,6 +6,11 @@ use Crm\ApplicationModule\Widget\BaseWidget;
 use Crm\ApplicationModule\Widget\WidgetManager;
 use Crm\PaymentsModule\MailConfirmation\ParsedMailLogsRepository;
 
+/**
+ * Widget with listing of users with wrong payment amount.
+ *
+ * @package Crm\PaymentsModule\Components
+ */
 class ParsedMailsFailedNotification extends BaseWidget
 {
     private $templateName = 'parsed_mails_failed_notification.latte';

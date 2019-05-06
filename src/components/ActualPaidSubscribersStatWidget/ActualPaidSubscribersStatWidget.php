@@ -7,6 +7,11 @@ use Crm\ApplicationModule\Widget\WidgetManager;
 use Crm\PaymentsModule\Repository\PaymentsRepository;
 use Crm\SegmentModule\Repository\SegmentsRepository;
 
+/**
+ * Simple widget showing single stat of subscribers with payment.
+ *
+ * @package Crm\PaymentsModule\Components
+ */
 class ActualPaidSubscribersStatWidget extends BaseWidget
 {
     const SEGMENT_CODE = 'active-subscription-with-payment';

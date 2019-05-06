@@ -8,6 +8,12 @@ use Crm\ApplicationModule\Widget\BaseWidget;
 use Crm\ApplicationModule\Widget\WidgetManager;
 use Crm\SegmentModule\Repository\SegmentsValuesRepository;
 
+/**
+ * Simple single stat widget used in dashboard.
+ * Showing subscribers with payment number and change from last month.
+ *
+ * @package Crm\PaymentsModule\Components
+ */
 class SubscribersWithPaymentWidget extends BaseWidget
 {
     private $templateName = 'subscribers_with_payment_widget.latte';

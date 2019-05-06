@@ -5,6 +5,12 @@ namespace Crm\PaymentsModule\Components;
 use Crm\ApplicationModule\Widget\BaseWidget;
 use Nette\Database\Table\ActiveRow;
 
+/**
+ * Simple list item with name of the users device.
+ * Used in users listing.
+ *
+ * @package Crm\PaymentsModule\Components
+ */
 class DeviceUserListingWidget extends BaseWidget
 {
     private $templateName = 'device_user_listing_widget.latte';

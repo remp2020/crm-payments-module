@@ -6,6 +6,12 @@ use Crm\ApplicationModule\Widget\BaseWidget;
 use Crm\SubscriptionsModule\PaymentItem\SubscriptionTypePaymentItem;
 use Nette\Database\Table\ActiveRow;
 
+/**
+ * Widget used in payments listing.
+ * Showing list of payment items.
+ *
+ * @package Crm\PaymentsModule\Components
+ */
 class PaymentItemsListWidget extends BaseWidget
 {
     private $templateName = 'payment_items_list_widget.latte';

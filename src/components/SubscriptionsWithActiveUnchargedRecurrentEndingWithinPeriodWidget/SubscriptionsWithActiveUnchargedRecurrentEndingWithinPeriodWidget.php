@@ -9,6 +9,12 @@ use Crm\SubscriptionsModule\Components\IWidgetLegend;
 use Nette\Localization\ITranslator;
 use Nette\Utils\DateTime;
 
+/**
+ * Dashboard widget showing line of stats of users with active uncharged recurrent
+ * for different time intervals.
+ *
+ * @package Crm\PaymentsModule\Components
+ */
 class SubscriptionsWithActiveUnchargedRecurrentEndingWithinPeriodWidget extends BaseWidget implements IWidgetLegend
 {
     private $templateName = 'subscriptions_with_active_uncharged_recurrent_ending_within_period.latte';
