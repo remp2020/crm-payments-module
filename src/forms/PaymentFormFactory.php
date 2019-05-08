@@ -108,31 +108,36 @@ class PaymentFormFactory
 
         $form->setRenderer(new BootstrapRenderer());
         $form->addProtection();
+        $form->setTranslator($this->translator);
         $form->onSuccess[] = [$this, 'formSucceeded'];
 
         $form->addGroup('');
 
-        $variableSymbol = $form->addText('variable_symbol', 'Variabilný symbol')
-            ->setRequired('Musí byť zadaný variabilný symbol')
-            ->setAttribute('placeholder', 'napríklad 87239102385');
+        $variableSymbol = $form->addText('variable_symbol', 'payments.form.payment.variable_symbol.label')
+            ->setRequired('payments.form.payment.variable_symbol.required')
+            ->setAttribute('placeholder', 'payments.form.payment.variable_symbol.placeholder');
 
         if (!$paymentId) {
-            $variableSymbol->setOption('description', Html::el('a', ['href' => '/api/v1/payments/variable-symbol', 'class' => 'variable_symbol_generate'])->setHtml('Vygeneruj'));
+            $variableSymbol->setOption(
+                'description',
+                Html::el('a', ['href' => '/api/v1/payments/variable-symbol', 'class' => 'variable_symbol_generate'])
+                    ->setHtml($this->translator->translate('payments.form.payment.variable_symbol.generate'))
+            );
         }
 
-        $form->addText('amount', 'Suma')
-            ->setRequired('Musí byť zadaná suma')
+        $form->addText('amount', 'payments.form.payment.amount.label')
+            ->setRequired('payments.form.payment.amount.required')
             ->setAttribute('readonly', 'readonly')
-            ->addRule(Form::MIN, 'Suma platby musí byť nenulová, pravdepodobne nebola vybraná žiadna položka platby.', 0.01)
+            ->addRule(Form::MIN, 'payments.form.payment.amount.nonzero', 0.01)
             ->setOption(
                 'description',
                 Html::el('span', ['class' => 'help-block'])
-                    ->setHtml('Pozor: Suma je predvyplnena podla ceny vybraneho typu predplatneho. Ak chcete zadat inu sumu, zaskrnite <strong>vlastnu cenu poloziek</strong> a suma sa automaticky prepocita podla ceny jednotlivych poloziek.')
+                    ->setHtml($this->translator->translate('payments.form.payment.amount.description'))
             );
 
         // subscription types and items
 
-        $form->addGroup('Položky platby');
+        $form->addGroup('payments.form.payment.items');
 
         $subscriptionTypes = SubscriptionType::getItems($this->subscriptionTypesRepository->getAllActive());
         $subscriptionTypePairs = SubscriptionType::getPairs($this->subscriptionTypesRepository->getAllActive());
@@ -141,13 +146,13 @@ class PaymentFormFactory
 
         $subscriptionType = $form->addSelect(
             'subscription_type_id',
-            'Predplatné:',
+            'payments.form.payment.subscription_type_id.label',
             $subscriptionTypePairs
-        )->setPrompt("Typ predplatného");
+        )->setPrompt("payments.form.payment.subscription_type_id.prompt");
         $subscriptionType->getControlPrototype()->addAttributes(['class' => 'select2']);
 
         if (!$payment) {
-            $form->addCheckbox('custom_payment_items', 'Vlastna cena poloziek')->setOption('id', 'custom_payment_items');
+            $form->addCheckbox('custom_payment_items', 'payments.form.payment.custom_payment_items.label')->setOption('id', 'custom_payment_items');
         }
 
         $form->addHidden('payment_items');
@@ -161,53 +166,56 @@ class PaymentFormFactory
         if ($payment) {
             $subscriptionType->setAttribute('readonly', 'readonly');
         } else {
-            $form->addText('additional_amount', 'Darovaná suma')
-                ->setAttribute('placeholder', 'napríklad 14.52');
+            $form->addText('additional_amount', 'payments.form.payment.additional_amount.label')
+                ->setAttribute('placeholder', 'payments.form.payment.additional_amount.placeholder');
 
-            $form->addSelect('additional_type', 'Darovaná suma - typ', ['single' => 'Jednorázova', 'recurrent' => 'Opakovaná'])
-                ->setOption('description', 'Ak je vyplnená darovaná suma je potrebné vybrať aj tento typ')
+            $form->addSelect('additional_type', 'payments.form.payment.additional_type.label', [
+                'single' => $this->translator->translate('payments.form.payment.additional_type.single'),
+                'recurrent' => $this->translator->translate('payments.form.payment.additional_type.recurrent')
+            ])
+                ->setOption('description', 'payments.form.payment.additional_type.description')
                 ->setDisabled(['recurrent']);
         }
 
-        $form->addGroup('Ostatne nastavenia platby');
+        $form->addGroup('payments.form.payment.general_settings');
 
-        $form->addSelect('payment_gateway_id', 'Platba:', $this->paymentGatewaysRepository->all()->fetchPairs('id', 'name'));
+        $form->addSelect('payment_gateway_id', 'payments.form.payment.payment_gateway_id.label', $this->paymentGatewaysRepository->all()->fetchPairs('id', 'name'));
 
-        $status = $form->addSelect('status', 'Stav', $this->paymentsRepository->getStatusPairs());
+        $status = $form->addSelect('status', 'payments.form.payment.status.label', $this->paymentsRepository->getStatusPairs());
 
-        $paidAt = $form->addText('paid_at', 'Čas zaplatenia')
-            ->setAttribute('placeholder', 'napríklad 14.2.2016 14:21');
+        $paidAt = $form->addText('paid_at', 'payments.form.payment.paid_at.label')
+            ->setAttribute('placeholder', 'payments.form.payment.paid_at.placeholder');
         $paidAt->setOption('id', 'paid-at');
         $paidAt->addConditionOn($status, Form::EQUAL, PaymentsRepository::STATUS_PAID)
-            ->setRequired('Položka je povinná.');
+            ->setRequired('payments.form.payment.paid_at.required');
 
-        $paidAt = $form->addCheckbox('send_notification', 'Odoslať notifikáciu');
+        $paidAt = $form->addCheckbox('send_notification', 'payments.form.payment.send_notification.label');
         $paidAt->setOption('id', 'send-notification');
 
         $status->addCondition(Form::EQUAL, PaymentsRepository::STATUS_PAID)->toggle('paid-at');
         $status->addCondition(Form::EQUAL, PaymentsRepository::STATUS_PAID)->toggle('send-notification');
 
-        $manualSubscription = $form->addSelect('manual_subscription', 'Začiatok / Koniec predplatného', [
-            self::MANUAL_SUBSCRIPTION_START => 'Ručne - nastaviť začiatok predplatného',
-            self::MANUAL_SUBSCRIPTION_START_END => 'Ručne - nastaviť začiatok aj koniec predplatného',
-        ])->setPrompt('Automaticky - podľa dátumu zaplatenia a dĺžky typu predplatného');
+        $manualSubscription = $form->addSelect('manual_subscription', 'payments.form.payment.manual_subscription.label', [
+            self::MANUAL_SUBSCRIPTION_START => $this->translator->translate('payments.form.payment.manual_subscription.start'),
+            self::MANUAL_SUBSCRIPTION_START_END => $this->translator->translate('payments.form.payment.manual_subscription.start_end'),
+        ])->setPrompt('payments.form.payment.manual_subscription.prompt');
 
         $manualSubscription->addCondition(Form::EQUAL, self::MANUAL_SUBSCRIPTION_START)->toggle('subscription-start-at');
         $manualSubscription->addCondition(Form::EQUAL, self::MANUAL_SUBSCRIPTION_START_END)->toggle('subscription-start-at');
         $manualSubscription->addCondition(Form::EQUAL, self::MANUAL_SUBSCRIPTION_START_END)->toggle('subscription-end-at');
 
-        $subscriptionStartAt = $form->addText('subscription_start_at', 'Začiatok predplatného')
-            ->setAttribute('placeholder', 'napríklad 14.2.2016')
+        $subscriptionStartAt = $form->addText('subscription_start_at', 'payments.form.payment.subscription_start_at.label')
+            ->setAttribute('placeholder', 'payments.form.payment.subscription_start_at.placeholder')
             ->setAttribute('class', 'flatpickr')
             ->setOption('id', 'subscription-start-at')
-            ->setOption('description', 'Potrebné vyplniť len v prípade, že potrebujeme posunúť začiatok predplatného na konkrétny dátum v budúcnosti. V prípade, že platba bude potvrdená neskôr ako zadaný dátum, predplatné začne v čase potvrdenia platby.')
+            ->setOption('description', 'payments.form.payment.subscription_start_at.description')
             ->setRequired(false)
             ->addRule(function (TextInput $field, $user) {
                 if (DateTime::from($field->getValue()) < new DateTime('today midnight')) {
                     return false;
                 }
                 return true;
-            }, 'Dátum začiatku predplatného nesmie byť v minulosti', $user);
+            }, 'payments.form.payment.subscription_start_at.not_past', $user);
 
         $subscriptionStartAt
             ->addConditionOn($manualSubscription, Form::EQUAL, self::MANUAL_SUBSCRIPTION_START)
@@ -216,18 +224,18 @@ class PaymentFormFactory
             ->addConditionOn($manualSubscription, Form::EQUAL, self::MANUAL_SUBSCRIPTION_START_END)
             ->setRequired(true);
 
-        $subscriptionEndAt = $form->addText('subscription_end_at', 'Koniec predplatného')
-            ->setAttribute('placeholder', 'napríklad 14.2.2016')
+        $subscriptionEndAt = $form->addText('subscription_end_at', 'payments.form.payment.subscription_end_at.label')
+            ->setAttribute('placeholder', 'payments.form.payment.subscription_end_at.placeholder')
             ->setAttribute('class', 'flatpickr')
             ->setOption('id', 'subscription-end-at')
-            ->setOption('description', 'Potrebné vyplniť len v prípade, že potrebujeme určit koniec predplatného na konkrétny dátum v budúcnosti.')
+            ->setOption('description', 'payments.form.payment.subscription_end_at.description')
             ->setRequired(false)
             ->addRule(function (TextInput $field, $user) {
                 if (DateTime::from($field->getValue()) < new DateTime()) {
                     return false;
                 }
                 return true;
-            }, 'Dátum konca predplatného musí byť v budúcnosti.', $user);
+            }, 'payments.form.payment.subscription_end_at.not_past', $user);
 
         $subscriptionEndAt
             ->addConditionOn($manualSubscription, Form::EQUAL, self::MANUAL_SUBSCRIPTION_START_END)
@@ -246,24 +254,24 @@ class PaymentFormFactory
                 ->setDisabled();
         }
 
-        $form->addTextArea('note', 'Poznámka')
-            ->setAttribute('placeholder', 'Vlastná poznámka k platbe')
+        $form->addTextArea('note', 'payments.form.payment.note.label')
+            ->setAttribute('placeholder', 'payments.form.payment.note.placeholder')
             ->getControlPrototype()->addAttributes(['class' => 'autosize']);
 
-        $form->addText('referer', 'Referrer')
-            ->setAttribute('placeholder', 'URL odkial prišla platba');
+        $form->addText('referer', 'payments.form.payment.referer.label')
+            ->setAttribute('placeholder', 'payments.form.payment.referer.placeholder');
 
         $addresses = $this->addressesRepository->addressesSelect($user, 'print');
         if (count($addresses) > 0) {
-            $form->addSelect('address_id', "Adresa", $addresses)->setPrompt('--');
+            $form->addSelect('address_id', "payments.form.payment.address_id.label", $addresses)->setPrompt('--');
         }
 
         $form->addHidden('user_id', $user->id);
 
-        $form->addSubmit('send', 'Ulož')
+        $form->addSubmit('send', 'payments.form.payment.send')
             ->getControlPrototype()
             ->setName('button')
-            ->setHtml('<i class="fa fa-save"></i> Ulož');
+            ->setHtml('<i class="fa fa-save"></i> ' . $this->translator->translate('payments.form.payment.send'));
 
         if ($payment) {
             $form->addHidden('payment_id', $payment->id);

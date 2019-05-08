@@ -27,6 +27,42 @@ Add following commands to your scheduler (e.g. *crontab*) and change the path to
 04 04 * * * /usr/bin/php /var/www/html/bin/command.php payments:calculate_averages
 ```
 
+### Scheduled commands
+
+For payment module to work correctly, please add execution of following commands to your scheduler. Example displays
+crontab usage for execution (alter paths to your deploy paths):
+
+```
+# calculate payment related averages; expensive calculations that should be done nightly
+04 04 * * * php /var/www/html/bin/command.php payments:calculate_averages
+
+# recurrent payment charges; using flock to allow only single instance running at once
+*/15 * * * * flock /tmp/payments_charge.lock /usr/bin/php /var/www/html/bin/command.php payments:charge
+
+### OPTIONAL 
+
+# failcheck to prevent payments not working without anyone noticing (see command options) 
+*/10 * * * * php /var/www/html/bin/command.php payments:last_payments_check --notify=admin@example.com
+
+# try to acquire debit card expiration dates for cards that don't have it
+*/10 * * * * php /var/www/html/bin/command.php payments:update_recurrent_payments_expires
+
+# stop recurrent payments with expired cards
+7 2 1 * * php /var/www/html/bin/command.php payments:stop_expired_recurrent_payments
+
+# if you use Cardpay/Comfortpay gateways and bank sends you email notifications, you can confirm payments based
+# on those emails
+*/3 * * * * php /var/www/html/bin/command.php payments:tatra_banka_mail_confirmation
+```
+
+### Service commands
+
+Module might provide service commands to be run in the deployed environment. Mostly to handle internal changes
+and to prevent direct manipulation with the database. You can display required and optional arguments by using
+`--help` switch when running the command.
+
+Payments module doesn't provide service commands.
+
 ## Payment gateways
 
 Module has a default set of supported payment gateways developed and used by us:

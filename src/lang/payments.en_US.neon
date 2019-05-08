@@ -370,6 +370,67 @@ form:
 			label: Month
 		export: Export
 
+	payment:
+		variable_symbol:
+			label: Variable symbol
+			required: Variable symbol is required
+			placeholder: e.g. 87239102385
+			generate: Generate
+		amount:
+			label: Amount
+			required: Amount is required
+			nonzero: "Amount has to be greater than zero, there was probably no payment item selected."
+			description: "Note: Amount is calculated based on selected subscription type. If you want to use different amount, select <strong>custom item amounts</strong> and the payment amount will be recalculated based on prices of the items."
+		items: Payment items
+		subscription_type_id:
+			label: Subscription type
+			prompt: Subscription type
+		custom_payment_items:
+			label: Custom item amounts
+		additional_amount:
+			label: Donated amount
+			placeholder: e.g. 14.52
+		additional_type:
+			label: Type of donation
+			single: Single
+			recurrent: Recurrent
+			description: "If the type of donation is entered, the type has to be selected too"
+		general_settings: General payment settings
+		payment_gateway_id:
+			label: Payment gateway
+		status:
+			label: Status
+		paid_at:
+			label: Paid at
+			placeholder: e.g. 14.2.2016 14:21
+			required: Paid at is required
+		send_notification:
+			label: Send notification
+		manual_subscription:
+			label: Beginning / End of subscription
+			start: Manual - set beginning of subscription explicitly
+			start_end: Manual - set beginning and end of subscription explicitly
+			prompt: Automatic - based on purchase date and length of subscription type
+		subscription_start_at:
+			label: Beginning of subscription
+			placeholder: e.g. 14.2.2016
+			description: "Necessary to fill only when you need to start subscription in the future. If the payment is confirmed later than the selected date, subscription will have start time of the confirmation."
+			not_past: End of subscription has to be in the future
+		subscription_end_at:
+			label: End of subscription
+			placeholder: e.g. 14.2.2016
+			description: "Necessary to fill only when you need to set end of subscription to specific date in the future explictly."
+			not_past: End of subscription has to be in the future
+		note:
+			label: Note
+			placeholder: Custom payment note
+		referer:
+			label: Referer
+			placeholder: URL the payment originated at
+		address_id:
+			label: Address
+		send: Save
+
 gateway:
 	recurrent: recurrent payment
 

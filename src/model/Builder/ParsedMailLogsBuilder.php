@@ -12,11 +12,11 @@ class ParsedMailLogsBuilder extends Builder
     public function isValid()
     {
         if (!$this->get('delivered_at')) {
-            $this->addError('Nebolo zadany cas poslania');
+            $this->addError('missing required parameter: delivered_at');
             return false;
         }
         if (!$this->exists('state')) {
-            $this->addError('Nebola zadany stav');
+            $this->addError('missing required parameter: state');
         }
 
         if (count($this->getErrors()) > 0) {

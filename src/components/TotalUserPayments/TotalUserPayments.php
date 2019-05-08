@@ -25,11 +25,6 @@ class TotalUserPayments extends BaseWidget
         $this->userMetaRepository = $userMetaRepository;
     }
 
-    public function header($id = '')
-    {
-        return 'Celkovo minul';
-    }
-
     public function identifier()
     {
         return 'usertotalspent';

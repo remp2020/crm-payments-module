@@ -24,11 +24,6 @@ class ParsedMailsFailedNotification extends BaseWidget
         $this->parsedMailLogsRepository = $parsedMailLogsRepository;
     }
 
-    public function header($id = '')
-    {
-        return 'Zla suma';
-    }
-
     public function identifier()
     {
         return 'parsedmailsfailed';

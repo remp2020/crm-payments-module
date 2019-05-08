@@ -375,6 +375,67 @@ form:
 			label: Mesiac
 		export: Export
 
+	payment:
+		variable_symbol:
+			label: Variabilný symbol
+			required: Musí byť zadaný variabilný symbol
+			placeholder: napríklad 87239102385
+			generate: Vygeneruj
+		amount:
+			label: Suma
+			required: Musí byť zadaná suma
+			nonzero: "Suma platby musí byť nenulová, pravdepodobne nebola vybraná žiadna položka platby."
+			description: "Pozor: Suma je predvyplnená podľa ceny vybraného typu predplatného. Ak chcete zadať inú sumu, zaškrtnite <strong>vlastnú cenu položiek</strong> a suma sa automaticky prepočíta podľa ceny jednotlivých položiek."
+		items: Položky platby
+		subscription_type_id:
+			label: Predplatné
+			prompt: Typ predplatného
+		custom_payment_items:
+			label: Vlastná cena položiek
+		additional_amount:
+			label: Darovaná suma
+			placeholder: napríklad 14.52
+		additional_type:
+			label: Darovaná suma - typ
+			single: Jednorázova
+			recurrent: Opakovaná
+			description: Ak je vyplnená darovaná suma je potrebné vybrať aj tento typ
+		general_settings: Ostatné nastavenia platby
+		payment_gateway_id:
+			label: Platobná brána
+		status:
+			label: Stav
+		paid_at:
+			label: Čas zaplatenia
+			placeholder: napríklad 14.2.2016 14:21
+			required: Položka je povinná.
+		send_notification:
+			label: Odoslať notifikáciu
+		manual_subscription:
+			label: Začiatok / Koniec predplatného
+			start: Ručne - nastaviť začiatok predplatného
+			start_end: Ručne - nastaviť začiatok aj koniec predplatného
+			prompt: Automaticky - podľa dátumu zaplatenia a dĺžky typu predplatného
+		subscription_start_at:
+			label: Začiatok predplatného
+			placeholder: napríklad 14.2.2016
+			description: "Potrebné vyplniť len v prípade, že potrebujeme posunúť začiatok predplatného na konkrétny dátum v budúcnosti. V prípade, že platba bude potvrdená neskôr ako zadaný dátum, predplatné začne v čase potvrdenia platby."
+			not_past: Dátum začiatku predplatného nesmie byť v minulosti
+		subscription_end_at:
+			label: Koniec predplatného
+			placeholder: napríklad 14.2.2016
+			description: "Potrebné vyplniť len v prípade, že potrebujeme určit koniec predplatného na konkrétny dátum v budúcnosti."
+			not_past: Dátum konca predplatného musí byť v budúcnosti.
+		note:
+			label: Poznámka
+			placeholder: Vlastná poznámka k platbe
+		referer:
+			label: Referer
+			placeholder: URL odkial prišla platba
+		address_id:
+			label: Adresa
+		send: Ulož
+
 gateway:
 	recurrent: automaticky obnovované
 
