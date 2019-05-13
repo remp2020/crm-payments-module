@@ -15,7 +15,7 @@ class GatewayFactory
         $this->container = $container;
     }
 
-    public function registerGateway($code, $gatewayClass)
+    public function registerGateway($code, $gatewayClass = null)
     {
         if (isset($this->gateways[$code])) {
             throw new \Exception('trying to register gateway with code that is already used: ' . $code);
@@ -34,6 +34,9 @@ class GatewayFactory
             throw new UnknownPaymentMethodCode("Payment code: {$code}");
         }
         $gateway = $this->container->getByType($this->gateways[$code]);
+        if (!$gateway) {
+            throw new \Exception("gateway doesn't have any registered implementation; add implementation or use only on backend: " . get_class($gateway));
+        }
         if (!$gateway instanceof PaymentInterface) {
             throw new \Exception("accessed gateway doesn't implement PaymentInterface: " . get_class($gateway));
         }
