@@ -261,7 +261,7 @@ class PaymentFormFactory
         $form->addText('referer', 'payments.form.payment.referer.label')
             ->setAttribute('placeholder', 'payments.form.payment.referer.placeholder');
 
-        $addresses = $this->addressesRepository->addressesSelect($user, 'print');
+        $addresses = $this->addressesRepository->addressesSelect($user, false);
         if (count($addresses) > 0) {
             $form->addSelect('address_id', "payments.form.payment.address_id.label", $addresses)->setPrompt('--');
         }
