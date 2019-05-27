@@ -164,7 +164,7 @@ class DashboardPresenter extends AdminPresenter
         $graphDataItem = new GraphDataItem();
         $graphDataItem->setCriteria((new Criteria())
             ->setTableName('payments')
-            ->setWhere("AND payments.status = 'paid' AND payments.payment_gateway_id = 3 AND payments.id IN (SELECT recurrent_payments.payment_id FROM recurrent_payments WHERE state='charged')")
+            ->setWhere("AND payments.status = 'paid' AND payments.recurrent_charge = 0 AND payments.payment_gateway_id IN (SELECT id FROM payment_gateways WHERE is_recurrent = 1)")
             ->setGroupBy('payment_gateways.name')
             ->setJoin('LEFT JOIN payment_gateways ON payment_gateways.id = payments.payment_gateway_id')
             ->setSeries('payment_gateways.name')
@@ -172,14 +172,14 @@ class DashboardPresenter extends AdminPresenter
             ->setValueField('count(*)')
             ->setStart($this->dateFrom)
             ->setEnd($this->dateTo));
-        $graphDataItem->setName($this->translator->translate('dashboard.payments.recurrent.new'));
+        $graphDataItem->setName($this->translator->translate('dashboard.payments.recurrent.new') . ' ');
         $items[] = $graphDataItem;
 
         // TODO: duplicate graph data item, originally PAYMENTS_RECURRENT_CHARGED
         $graphDataItem = new GraphDataItem();
         $graphDataItem->setCriteria((new Criteria())
             ->setTableName('payments')
-            ->setWhere("AND payments.status = 'paid' AND payments.payment_gateway_id = 3 AND payments.id IN (SELECT recurrent_payments.payment_id FROM recurrent_payments WHERE state='charged')")
+            ->setWhere("AND payments.status = 'paid' AND payments.recurrent_charge = 1 AND payments.payment_gateway_id IN (SELECT id FROM payment_gateways WHERE is_recurrent = 1)")
             ->setGroupBy('payment_gateways.name')
             ->setJoin('LEFT JOIN payment_gateways ON payment_gateways.id = payments.payment_gateway_id')
             ->setSeries('payment_gateways.name')
@@ -187,7 +187,7 @@ class DashboardPresenter extends AdminPresenter
             ->setValueField('count(*)')
             ->setStart($this->dateFrom)
             ->setEnd($this->dateTo));
-        $graphDataItem->setName($this->translator->translate('dashboard.payments.recurrent.renewed'));
+        $graphDataItem->setName($this->translator->translate('dashboard.payments.recurrent.renewed') . ' ');
         $items[] = $graphDataItem;
 
         $control = $factory->create();
