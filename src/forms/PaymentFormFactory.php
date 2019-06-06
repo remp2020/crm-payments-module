@@ -179,7 +179,11 @@ class PaymentFormFactory
 
         $form->addGroup('payments.form.payment.general_settings');
 
-        $form->addSelect('payment_gateway_id', 'payments.form.payment.payment_gateway_id.label', $this->paymentGatewaysRepository->all()->fetchPairs('id', 'name'));
+        $paymentGateways = $this->paymentGatewaysRepository->all()->fetchPairs('id', 'name');
+        if ($payment) {
+            $paymentGateways[$payment->payment_gateway_id] = $payment->payment_gateway->name;
+        }
+        $form->addSelect('payment_gateway_id', 'payments.form.payment.payment_gateway_id.label', $paymentGateways);
 
         $status = $form->addSelect('status', 'payments.form.payment.status.label', $this->paymentsRepository->getStatusPairs());
 
