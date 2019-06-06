@@ -134,8 +134,8 @@ class PaymentsAdminPresenter extends AdminPresenter
         )->setPrompt('--');
 
         $donations = [
-            true => $this->translator->translate('payments.admin.component.admin_filter_form.with_donation'),
-            false => $this->translator->translate('payments.admin.component.admin_filter_form.without_donation'),
+            true => $this->translator->translate('payments.admin.component.admin_filter_form.donation.with_donation'),
+            false => $this->translator->translate('payments.admin.component.admin_filter_form.donation.without_donation'),
         ];
         $form->addSelect(
             'donation',
