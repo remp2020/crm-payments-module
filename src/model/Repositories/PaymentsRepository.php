@@ -205,6 +205,16 @@ class PaymentsRepository extends Repository
         return $items;
     }
 
+    /**
+     * @param ActiveRow $payment
+     * @param string $paymentItemType
+     * @return array|IRow[]
+     */
+    public function getPaymentItemsByType(ActiveRow $payment, string $paymentItemType): array
+    {
+        return $this->paymentItemsRepository->getByType($payment, $paymentItemType);
+    }
+
     public function update(IRow &$row, $data, PaymentItemContainer $paymentItemContainer = null)
     {
         if ($paymentItemContainer) {

@@ -63,4 +63,14 @@ class PaymentItemsRepository extends Repository
         }
         return $q->delete();
     }
+
+    /**
+     * @param IRow $payment
+     * @param string $paymentItemType
+     * @return array|IRow[]
+     */
+    public function getByType(IRow $payment, string $paymentItemType): array
+    {
+        return $payment->related('payment_items')->where('type = ?', $paymentItemType)->fetchAll();
+    }
 }

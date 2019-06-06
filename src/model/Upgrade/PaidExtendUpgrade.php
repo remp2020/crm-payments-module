@@ -134,7 +134,12 @@ class PaidExtendUpgrade extends Upgrader
 
         // zistime kolko penazi usetril
         $subscriptionDays = $actualUserSubscription->start_time->diff($actualUserSubscription->end_time)->days;
-        $dayPrice = $payment->amount / $subscriptionDays;
+
+        $totalSubscriptionAmount = 0;
+        foreach ($this->paymentsRepository->getPaymentItemsByType($payment, SubscriptionTypePaymentItem::TYPE) as $paymentItem) {
+            $totalSubscriptionAmount += SubscriptionTypePaymentItem::fromPaymentItem($paymentItem)->totalPrice();
+        }
+        $dayPrice = $totalSubscriptionAmount / $subscriptionDays;
         $saveFromActual = (new DateTime())->diff($actualUserSubscription->end_time)->days * $dayPrice;
         $saveFromActual = round($saveFromActual, 2);
 
