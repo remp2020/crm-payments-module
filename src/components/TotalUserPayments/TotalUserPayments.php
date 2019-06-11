@@ -7,6 +7,12 @@ use Crm\ApplicationModule\Widget\WidgetManager;
 use Crm\PaymentsModule\Repository\PaymentsRepository;
 use Crm\UsersModule\Repository\UserMetaRepository;
 
+/**
+ * Display total amount spent by one user.
+ *
+ * This widget works correctly only if user's meta data are filled with calculated amounts.
+ * See CalculateAveragesCommand - `payments:calculate_averages`. This command should be executed regularly (eg cron).
+ */
 class TotalUserPayments extends BaseWidget
 {
     private $templateName = 'total_user_payments.latte';

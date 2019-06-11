@@ -8,6 +8,11 @@ use Nette\Database\Context;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 
+/**
+ * Calculates average and total amounts of money spent and stores it in user's meta data.
+ *
+ * These meta data are mainly used by admin widget TotalUserPayments.
+ */
 class CalculateAveragesCommand extends \Symfony\Component\Console\Command\Command
 {
     private $database;
