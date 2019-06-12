@@ -55,6 +55,7 @@ services:
 	- Crm\PaymentsModule\Gateways\CsobOneClick
 	- Crm\PaymentsModule\Gateways\GoPay
 	- Crm\PaymentsModule\Gateways\GoPayRecurrent
+	- Crm\PaymentsModule\Api\GoPayNotificationHandler
 	- Crm\PaymentsModule\Hermes\CreateRecurrentPaymentHandler
 	- Crm\PaymentsModule\Segment\PaymentCriteria
 	- Crm\PaymentsModule\Segment\PaymentCountsCriteria
