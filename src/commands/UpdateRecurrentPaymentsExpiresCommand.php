@@ -3,6 +3,7 @@
 namespace Crm\PaymentsModule\Commands;
 
 use Crm\PaymentsModule\GatewayFactory;
+use Crm\PaymentsModule\Gateways\RecurrentPaymentInterface;
 use Crm\PaymentsModule\Repository\RecurrentPaymentsRepository;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;
@@ -57,6 +58,9 @@ class UpdateRecurrentPaymentsExpiresCommand extends Command
 
         foreach ($gateways as $code => $recurrentPayments) {
             $gateway = $this->gatewayFactory->getGateway($code);
+            if (!$gateway instanceof RecurrentPaymentInterface) {
+                $output->writeln("<error>Error: gateway {$code} does not implement RecurrentPaymentInterface</error>");
+            }
 
             try {
                 $result = $gateway->checkExpire(array_keys($recurrentPayments));

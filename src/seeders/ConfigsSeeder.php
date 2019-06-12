@@ -221,6 +221,80 @@ class ConfigsSeeder implements ISeeder
             $sorting++,
             'Definicia intervalov (https://en.wikipedia.org/wiki/ISO_8601#Durations) oddelenych ciarkou.'
         );
+
+        // gopay
+
+        $this->addPaymentConfig(
+            $output,
+            $category,
+            'gopay_go_id',
+            'GoPay Go ID',
+            '',
+            $sorting++,
+            null
+        );
+        
+        $this->addPaymentConfig(
+            $output,
+            $category,
+            'gopay_client_id',
+            'GoPay Client ID',
+            '',
+            $sorting++,
+            null
+        );
+
+        $this->addPaymentConfig(
+            $output,
+            $category,
+            'gopay_client_secret',
+            'GoPay Client secret',
+            '',
+            $sorting++,
+            null
+        );
+
+        $this->addPaymentConfig(
+            $output,
+            $category,
+            'gopay_mode',
+            'GoPay Test Mode',
+            'true',
+            $sorting++,
+            null
+        );
+
+        $this->addPaymentConfig(
+            $output,
+            $category,
+            'gopay_recurrence_date_to',
+            'GoPay Recurrent profile date to',
+            '2030-12-30',
+            $sorting++,
+            null
+        );
+
+        $name = 'gopay_eet_enabled';
+        $value = 0;
+        $config = $this->configsRepository->loadByName($name);
+        if (!$config) {
+            $this->configBuilder->createNew()
+                ->setName($name)
+                ->setDisplayName('Zapnute EET')
+                ->setDescription('Zapnuty EET reporting z platobnej brany')
+                ->setValue($value)
+                ->setType(ApplicationConfig::TYPE_BOOLEAN)
+                ->setAutoload(false)
+                ->setConfigCategory($category)
+                ->setSorting($sorting++)
+                ->save();
+            $output->writeln("  <comment>* config item <info>$name</info> created</comment>");
+        } elseif ($config->has_default_value && $config->value !== $value) {
+            $this->configsRepository->update($config, ['value' => $value, 'has_default_value' => true]);
+            $output->writeln("  <comment>* config item <info>$name</info> updated</comment>");
+        } else {
+            $output->writeln("  * config item <info>$name</info> exists");
+        }
     }
 
     private function addPaymentConfig(OutputInterface $output, $category, $name, $displayName, $value, $sorting, $description = null)

@@ -2,8 +2,6 @@
 
 namespace Crm\PaymentsModule\Gateways;
 
-use Nette\Database\IRow;
-
 interface RecurrentPaymentInterface
 {
     /**
@@ -15,7 +13,7 @@ interface RecurrentPaymentInterface
     /**
      * Returns array [$cid => (DateTime)$expiration]
      *
-     * @param IRow[] $recurrentPayments
+     * @param string[] $recurrentPayments
      * @return array
      */
     public function checkExpire($recurrentPayments);

@@ -3,6 +3,7 @@
 namespace Crm\PaymentsModule\Repository;
 
 use Crm\ApplicationModule\Repository;
+use Nette\Database\IRow;
 use Nette\Database\Table\ActiveRow;
 use Nette\Database\Table\Selection;
 
@@ -20,15 +21,13 @@ class PaymentMetaRepository extends Repository
     public function add(ActiveRow $payment, $key, $value, $override = true)
     {
         if ($override && $this->exists($payment, $key)) {
-            $result = $this->getTable()->where([
+            $this->getTable()->where([
                 'payment_id' => $payment->id,
                 'key' => $key,
             ])->update([
                 'value' => $value,
             ]);
-            if ($result) {
-                return $this->values($payment, $key)->fetch();
-            }
+            return $this->values($payment, $key)->fetch();
         }
         return $this->insert([
             'payment_id' => $payment->id,
@@ -74,5 +73,13 @@ class PaymentMetaRepository extends Repository
             'payment_id' => $payment->id,
             'key' => $key,
         ])->delete();
+    }
+
+    public function findByMeta(string $key, string $value)
+    {
+        return $this->getTable()->where([
+            'key' => $key,
+            'value' => $value
+        ])->fetch();
     }
 }

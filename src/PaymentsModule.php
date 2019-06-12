@@ -35,6 +35,8 @@ use Crm\PaymentsModule\Seeders\PaymentGatewaysSeeder;
 use Crm\PaymentsModule\Seeders\SegmentsSeeder;
 use Kdyby\Translation\Translator;
 use League\Event\Emitter;
+use Nette\Application\Routers\Route;
+use Nette\Application\Routers\RouteList;
 use Nette\DI\Container;
 use Symfony\Component\Console\Output\OutputInterface;
 use Tomaj\Hermes\Dispatcher;
@@ -221,6 +223,14 @@ class PaymentsModule extends CrmModule
                 \Crm\ApiModule\Authorization\AdminLoggedAuthorization::class
             )
         );
+
+        $apiRoutersContainer->attachRouter(
+            new ApiRoute(
+                new ApiIdentifier('1', 'payments', 'gopay-notification'),
+                \Crm\PaymentsModule\Api\GoPayNotificationHandler::class,
+                \Crm\ApiModule\Authorization\NoAuthorization::class
+            )
+        );
     }
 
     public function registerCleanupFunction(CallbackManagerInterface $cleanUpManager)
@@ -342,5 +352,14 @@ class PaymentsModule extends CrmModule
 
             $this->parsedMailLogsRepository->formPaymentsWithWrongAmount(true);
         }
+    }
+
+    public function registerRoutes(RouteList $router)
+    {
+        // register sales funnel route - this is wrong
+        // we need to move all return url to payment module from sales funnel
+        // this is done because of ?id parameter in get which was redirecting in nette internal mechanism without this route
+        $router[] = new Route('sales-funnel/sales-funnel/return-payment-gopayrecurrent?id=<id>', 'SalesFunnel:SalesFunnel:returnPaymentGoPayRecurrent');
+        $router[] = new Route('sales-funnel/sales-funnel/return-payment-gopay?id=<id>', 'SalesFunnel:SalesFunnel:returnPaymentGoPay');
     }
 }
