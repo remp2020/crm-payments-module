@@ -87,6 +87,11 @@ class MailProcessor
                 ->save();
         }
 
+        // we will not approve payment when amount in email (real payment) is lower than payment (in db)
+        if ($payment->amount > $this->mailContent->getAmount()) {
+            return true;
+        }
+
         $olderPaymentThan = (clone $transactionDate)->sub(new DateInterval('P5D'));
 
         $createdNewPayment = false;
