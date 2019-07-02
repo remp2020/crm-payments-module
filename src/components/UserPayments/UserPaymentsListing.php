@@ -73,7 +73,8 @@ class UserPaymentsListing extends BaseWidget
         $this->template->totalPayments = $this->totalCount($id);
         $this->template->parsedEmails = $this->parsedMailLogsRepository->findByVariableSymbols($variableSymbols);
 
-        $recurrentPayments = $this->recurrentPaymentsRepository->userRecurrentPayments($id);
+        $recurrentPayments = $this->recurrentPaymentsRepository->userRecurrentPayments($id)
+            ->order('id DESC, charge_at DESC');
         $this->template->recurrentPayments = $recurrentPayments;
         $this->template->totalRecurrentPayments = $recurrentPayments->count('*');
 
