@@ -10,7 +10,7 @@ use Nette\Database\Table\ActiveRow;
 
 class RecurrentPaymentsResolver
 {
-    private $paymentsRepository;
+    protected $paymentsRepository;
 
     private $recurrentPaymentsRepository;
 
