@@ -199,6 +199,10 @@ class PaymentsModule extends CrmModule
             'payments.admin.payment_source_listing',
             $this->getInstance(\Crm\PaymentsModule\Components\DeviceUserListingWidget::class)
         );
+        $widgetManager->registerWidget(
+            'payments.frontend.payments_my.top',
+            $this->getInstance(\Crm\PaymentsModule\Components\MyNextRecurrentPayment::class)
+        );
     }
 
     public function registerCommands(CommandsContainerInterface $commandsContainer)
