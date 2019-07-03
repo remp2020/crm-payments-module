@@ -1,3 +1,3 @@
 <p n:if="$recurrentPayment" class="text-muted well text-center">
-  {_payments.frontend.my.next_recurrent_payment, ['charge_amount' => $resolver->resolveChargeAmount($recurrentPayment), 'charge_date' => call_user_func($this->filters->userdate, $recurrentPayment->charge_at, true)]|noescape}
+  {_payments.frontend.my.next_recurrent_payment, ['charge_amount' => ($resolver->resolveChargeAmount($recurrentPayment)|price), 'charge_date' => call_user_func($this->filters->userdate, $recurrentPayment->charge_at, true)]|noescape}
 </p>
