@@ -200,6 +200,7 @@ class PaymentsRepository extends Repository
                 'amount' => $paymentItem->amount,
                 'vat' => $paymentItem->vat,
                 'count' => $paymentItem->count,
+                'type' => $paymentItem->type,
             ];
         }
         return $items;

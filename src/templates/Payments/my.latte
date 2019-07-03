@@ -5,9 +5,7 @@
 </div>
 
 <div class="row">
-    <p n:if="$recurrentPayment" class="text-muted well text-center">
-        {_payments.frontend.my.next_recurrent_payment, ['charge_amount' => $resolver->resolveChargeAmount($recurrentPayment), 'charge_date' => call_user_func($this->filters->userdate, $recurrentPayment->charge_at, true)]|noescape}
-    </p>
+    {control simpleWidget 'payments.frontend.payments_my.top'}
 
     <div class="col-md-12">
 

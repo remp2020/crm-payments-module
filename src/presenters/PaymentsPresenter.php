@@ -31,13 +31,6 @@ class PaymentsPresenter extends FrontendPresenter
     {
         $this->onlyLoggedIn();
 
-        $this->template->recurrentPayment = $this->recurrentPaymentsRepository
-            ->userRecurrentPayments($this->getUser()->getId())
-            ->where('state = "active"')
-            ->order('charge_at ASC, id DESC')
-            ->limit(1)->fetch();
-
-        $this->template->resolver = $this->recurrentPaymentsResolver;
         $this->template->payments = $this->paymentsRepository->userPaymentsWithRecurrent($this->getUser()->getId());
     }
 

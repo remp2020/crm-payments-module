@@ -2,20 +2,26 @@
 
 namespace Crm\PaymentsModule;
 
+use Crm\PaymentsModule\PaymentItem\DonationPaymentItem;
+use Crm\PaymentsModule\Repository\PaymentsRepository;
 use Crm\PaymentsModule\Repository\RecurrentPaymentsRepository;
 use Crm\SubscriptionsModule\Repository\SubscriptionTypesRepository;
 use Nette\Database\Table\ActiveRow;
 
 class RecurrentPaymentsResolver
 {
+    protected $paymentsRepository;
+
     private $recurrentPaymentsRepository;
 
     private $subscriptionTypesRepository;
 
     public function __construct(
+        PaymentsRepository $paymentsRepository,
         RecurrentPaymentsRepository $recurrentPaymentsRepository,
         SubscriptionTypesRepository $subscriptionTypesRepository
     ) {
+        $this->paymentsRepository = $paymentsRepository;
         $this->recurrentPaymentsRepository = $recurrentPaymentsRepository;
         $this->subscriptionTypesRepository = $subscriptionTypesRepository;
     }
@@ -58,6 +64,15 @@ class RecurrentPaymentsResolver
         $amount = $subscriptionType->price;
         if ($recurrentPayment->custom_amount != null) {
             $amount = $recurrentPayment->custom_amount;
+        } elseif ($amount != $recurrentPayment->parent_payment->amount) {
+            // original payment could contain recurring donations
+            foreach ($this->paymentsRepository->getPaymentItems($recurrentPayment->parent_payment) as $paymentItem) {
+                if ($paymentItem['type'] === DonationPaymentItem::TYPE
+                        && $recurrentPayment->parent_payment->additional_type == 'recurrent'
+                    ) {
+                    $amount += $paymentItem['amount'] * $paymentItem['count'];
+                }
+            }
         }
         return $amount;
     }
