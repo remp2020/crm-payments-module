@@ -136,7 +136,9 @@ or the former and [`Crm\PaymentsModule\Gateways\RecurrentPaymentInterface`](./ex
 When implementing a gateway, we recommend extending [`Crm\PaymentsModule\Gateways\GatewayAbstract`](./extensions/payments-module/src/model/Gateway/GatewayAbstract.php)
 to avoid implementing parts which are always similar and would cause code duplication.
 
-Once you have your implementation ready, you need to register it into the application's configuration:
+Once you have your implementation ready, you need to seed it into the database from within seeder in your own module
+(see [PaymentGatewaysSeeder](extensions/payments-module/src/seeders/PaymentGatewaysSeeder.php) as an example)
+and register it into the application's configuration:
 
 ```neon
 services:
