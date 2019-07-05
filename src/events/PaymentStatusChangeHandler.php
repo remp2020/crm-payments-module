@@ -117,8 +117,7 @@ class PaymentStatusChangeHandler extends AbstractListener
         $this->paymentsRepository->update($payment, ['subscription_id' => $subscription]);
 
         if ($subscription->end_time <= new DateTime()) {
-            $this->subscriptionsRepository->update($subscription, ['internal_status' => SubscriptionsRepository::INTERNAL_STATUS_AFTER_END]);
-            $this->emitter->emit(new SubscriptionEndsEvent($subscription));
+            $this->subscriptionsRepository->setExpired($subscription);
         } elseif ($subscription->start_time <= new DateTime()) {
             $this->subscriptionsRepository->update($subscription, ['internal_status' => SubscriptionsRepository::INTERNAL_STATUS_ACTIVE]);
             $this->emitter->emit(new SubscriptionStartsEvent($subscription));
@@ -141,14 +140,13 @@ class PaymentStatusChangeHandler extends AbstractListener
 
         $originalEndTime = $actualSubscription->end_time;
 
-        $this->subscriptionsRepository->update($actualSubscription, [
-            'end_time' => $changeTime,
-            'internal_status' => SubscriptionsRepository::INTERNAL_STATUS_AFTER_END,
-            'note' => '[upgrade] povodne koncilo ' . $actualSubscription->end_time,
-        ]);
-        $actualUserSubscription = $this->subscriptionsRepository->find(($actualSubscription->id));
-        $this->emitter->emit(new SubscriptionEndsEvent($actualUserSubscription));
+        $this->subscriptionsRepository->setExpired(
+            $actualSubscription,
+            $changeTime,
+            '[upgrade] povodne koncilo ' . $actualSubscription->end_time
+        );
 
+        $actualUserSubscription = $this->subscriptionsRepository->find(($actualSubscription->id));
         $newSubscription = $this->subscriptionsRepository->add(
             $payment->subscription_type,
             $payment->payment_gateway->is_recurrent,

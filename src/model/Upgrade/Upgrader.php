@@ -133,12 +133,12 @@ abstract class Upgrader
         }
 
         // zastavime aktualnu subscription
-        $subscriptionsRepository->update($actualUserSubscription, [
-            'end_time' => $changeTime,
-            'internal_status' => SubscriptionsRepository::INTERNAL_STATUS_AFTER_END,
-            'note' => '[upgrade] Original end_time ' . $actualUserSubscription->end_time,
-            'modified_at' => new DateTime(),
-        ]);
+        $subscriptionsRepository->setExpired(
+            $actualUserSubscription,
+            $changeTime,
+            '[upgrade] Original end_time ' . $actualUserSubscription->end_time
+        );
+
         $actualUserSubscription = $subscriptionsRepository->find(($actualUserSubscription->id));
 
         // spravime novu subscription do konca aktualnej
@@ -157,7 +157,6 @@ abstract class Upgrader
             'internal_status' => SubscriptionsRepository::INTERNAL_STATUS_ACTIVE,
         ]);
 
-        $emitter->emit(new SubscriptionEndsEvent($actualUserSubscription));
         $emitter->emit(new SubscriptionStartsEvent($newSubscription));
 
         return $newSubscription;
