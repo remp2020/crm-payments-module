@@ -116,12 +116,6 @@ class PaymentStatusChangeHandler extends AbstractListener
         );
         $this->paymentsRepository->update($payment, ['subscription_id' => $subscription]);
 
-        // ? mozno by bolo dobre presunut do SubscriptionsRepository->add
-        $this->emitter->emit(new NewSubscriptionEvent($subscription, $event->getSendEmail()));
-        $this->hermesEmitter->emit(new HermesMessage('new-subscription', [
-            'subscription_id' => $subscription->id,
-        ]));
-
         if ($subscription->end_time <= new DateTime()) {
             $this->subscriptionsRepository->update($subscription, ['internal_status' => SubscriptionsRepository::INTERNAL_STATUS_AFTER_END]);
             $this->emitter->emit(new SubscriptionEndsEvent($subscription));

@@ -150,14 +150,14 @@ abstract class Upgrader
             $changeTime,
             $endTime,
             "Upgrade z {$actualUserSubscription->subscription_type->name} na {$toSubscriptionType->name}",
-            $actualUserSubscription->address
+            $actualUserSubscription->address,
+            false
         );
         $subscriptionsRepository->update($newSubscription, [
             'internal_status' => SubscriptionsRepository::INTERNAL_STATUS_ACTIVE,
         ]);
 
         $emitter->emit(new SubscriptionEndsEvent($actualUserSubscription));
-        $emitter->emit(new NewSubscriptionEvent($newSubscription, false));
         $emitter->emit(new SubscriptionStartsEvent($newSubscription));
 
         return $newSubscription;
