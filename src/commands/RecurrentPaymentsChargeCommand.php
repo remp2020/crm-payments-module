@@ -213,14 +213,7 @@ class RecurrentPaymentsChargeCommand extends Command
                     --$retries
                 );
 
-                $this->recurrentPaymentsRepository->update($recurrentPayment, [
-                    'payment_id' => $payment->id,
-                    'state' => RecurrentPaymentsRepository::STATE_CHARGED,
-                    'status' => $gateway->getResultCode(),
-                    'approval' => $gateway->getResultMessage(),
-                ]);
-
-                $this->emitter->emit(new RecurrentPaymentRenewedEvent($recurrentPayment));
+                $this->recurrentPaymentsRepository->setCharged($recurrentPayment, $gateway->getResultCode(), $gateway->getResultMessage());
             } catch (RecurrentPaymentFailTry $exception) {
                 $charges = explode(', ', $this->applicationConfig->get('recurrent_payment_charges'));
                 $charges = array_reverse((array)$charges);

@@ -4,6 +4,8 @@ namespace Crm\PaymentsModule\Repository;
 
 use Crm\ApplicationModule\Repository;
 use Crm\ApplicationModule\Repository\AuditLogRepository;
+use Crm\PaymentsModule\Events\RecurrentPaymentRenewedEvent;
+use League\Event\Emitter;
 use Nette\Database\Context;
 use Nette\Database\Table\IRow;
 use Nette\Utils\DateTime;
@@ -20,10 +22,13 @@ class RecurrentPaymentsRepository extends Repository
     const STATE_SYSTEM_STOP = 'system_stop';
     const STATE_TB_FAILED = 'tb_failed';
 
-    public function __construct(Context $database, AuditLogRepository $auditLogRepository)
+    private $emitter;
+
+    public function __construct(Context $database, AuditLogRepository $auditLogRepository, Emitter $emitter)
     {
         parent::__construct($database);
         $this->auditLogRepository = $auditLogRepository;
+        $this->emitter = $emitter;
     }
 
     public function add($cid, $payment, $chargeAt, $customAmount, $retries)
@@ -47,6 +52,18 @@ class RecurrentPaymentsRepository extends Repository
     {
         $data['updated_at'] = new DateTime();
         return parent::update($row, $data);
+    }
+
+    public function setCharged(IRow $recurrentPayment, $status, $approval)
+    {
+        $this->update($recurrentPayment, [
+            'payment_id' => $recurrentPayment->id,
+            'state' => self::STATE_CHARGED,
+            'status' => $status,
+            'approval' => $approval,
+        ]);
+
+        $this->emitter->emit(new RecurrentPaymentRenewedEvent($recurrentPayment));
     }
 
     public function getChargeablePayments()

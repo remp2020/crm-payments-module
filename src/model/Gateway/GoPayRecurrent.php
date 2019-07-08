@@ -62,13 +62,7 @@ class GoPayRecurrent extends BaseGoPay implements RecurrentPaymentInterface
             if ((boolean)$payment->payment_gateway->is_recurrent) {
                 $recurrentPayment = $this->recurrentPaymentsRepository->recurrent($payment);
                 if ($recurrentPayment) {
-                    $this->recurrentPaymentsRepository->update($recurrentPayment, [
-                        'payment_id' => $payment->id,
-                        'state' => RecurrentPaymentsRepository::STATE_CHARGED,
-                        'status' => 'OK',
-                        'approval' => 'OK',
-                    ]);
-                    $this->eventEmitter->emit(new RecurrentPaymentRenewedEvent($recurrentPayment));
+                    $this->recurrentPaymentsRepository->setCharged($recurrentPayment, 'OK', 'OK');
                 } else {
                     $this->emitter->emit(new HermesMessage('create-recurrent-payment', [
                         'id' => $payment->id,
