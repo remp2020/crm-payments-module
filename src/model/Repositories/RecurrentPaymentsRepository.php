@@ -2,6 +2,7 @@
 
 namespace Crm\PaymentsModule\Repository;
 
+use Crm\ApplicationModule\Hermes\HermesMessage;
 use Crm\ApplicationModule\Repository;
 use Crm\ApplicationModule\Repository\AuditLogRepository;
 use Crm\PaymentsModule\Events\RecurrentPaymentRenewedEvent;
@@ -24,11 +25,19 @@ class RecurrentPaymentsRepository extends Repository
 
     private $emitter;
 
-    public function __construct(Context $database, AuditLogRepository $auditLogRepository, Emitter $emitter)
+    private $hermesEmitter;
+
+    public function __construct(
+        Context $database,
+        AuditLogRepository $auditLogRepository,
+        Emitter $emitter,
+        \Tomaj\Hermes\Emitter $hermesEmitter
+    )
     {
         parent::__construct($database);
         $this->auditLogRepository = $auditLogRepository;
         $this->emitter = $emitter;
+        $this->hermesEmitter = $hermesEmitter;
     }
 
     public function add($cid, $payment, $chargeAt, $customAmount, $retries)
@@ -64,6 +73,9 @@ class RecurrentPaymentsRepository extends Repository
         ]);
 
         $this->emitter->emit(new RecurrentPaymentRenewedEvent($recurrentPayment));
+        $this->hermesEmitter->emit(new HermesMessage('recurrent-payment-renewed', [
+            'recurrent_payment_id' => $recurrentPayment->id,
+        ]));
     }
 
     public function getChargeablePayments()
