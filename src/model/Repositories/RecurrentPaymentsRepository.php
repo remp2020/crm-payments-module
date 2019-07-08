@@ -32,8 +32,7 @@ class RecurrentPaymentsRepository extends Repository
         AuditLogRepository $auditLogRepository,
         Emitter $emitter,
         \Tomaj\Hermes\Emitter $hermesEmitter
-    )
-    {
+    ) {
         parent::__construct($database);
         $this->auditLogRepository = $auditLogRepository;
         $this->emitter = $emitter;
