@@ -213,7 +213,7 @@ class RecurrentPaymentsChargeCommand extends Command
                     --$retries
                 );
 
-                $this->recurrentPaymentsRepository->setCharged($recurrentPayment, $gateway->getResultCode(), $gateway->getResultMessage());
+                $this->recurrentPaymentsRepository->setCharged($recurrentPayment, $payment, $gateway->getResultCode(), $gateway->getResultMessage());
             } catch (RecurrentPaymentFailTry $exception) {
                 $charges = explode(', ', $this->applicationConfig->get('recurrent_payment_charges'));
                 $charges = array_reverse((array)$charges);

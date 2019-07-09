@@ -62,7 +62,7 @@ class RecurrentPaymentsRepository extends Repository
         return parent::update($row, $data);
     }
 
-    public function setCharged(IRow $recurrentPayment, $status, $approval)
+    public function setCharged(IRow $recurrentPayment, $payment, $status, $approval)
     {
         $this->update($recurrentPayment, [
             'payment_id' => $recurrentPayment->id,
