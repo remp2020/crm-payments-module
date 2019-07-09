@@ -65,7 +65,7 @@ class RecurrentPaymentsRepository extends Repository
     public function setCharged(IRow $recurrentPayment, $payment, $status, $approval)
     {
         $this->update($recurrentPayment, [
-            'payment_id' => $recurrentPayment->id,
+            'payment_id' => $payment->id,
             'state' => self::STATE_CHARGED,
             'status' => $status,
             'approval' => $approval,
