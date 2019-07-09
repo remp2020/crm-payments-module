@@ -64,6 +64,11 @@ class RecurrentPaymentsRepository extends Repository
 
     public function setCharged(IRow $recurrentPayment, $payment, $status, $approval)
     {
+        $fireEvent = true;
+        if ($recurrentPayment->state === self::STATE_CHARGED) {
+            $fireEvent = false;
+        }
+
         $this->update($recurrentPayment, [
             'payment_id' => $payment->id,
             'state' => self::STATE_CHARGED,
@@ -71,10 +76,12 @@ class RecurrentPaymentsRepository extends Repository
             'approval' => $approval,
         ]);
 
-        $this->emitter->emit(new RecurrentPaymentRenewedEvent($recurrentPayment));
-        $this->hermesEmitter->emit(new HermesMessage('recurrent-payment-renewed', [
-            'recurrent_payment_id' => $recurrentPayment->id,
-        ]));
+        if ($fireEvent) {
+            $this->emitter->emit(new RecurrentPaymentRenewedEvent($recurrentPayment));
+            $this->hermesEmitter->emit(new HermesMessage('recurrent-payment-renewed', [
+                'recurrent_payment_id' => $recurrentPayment->id,
+            ]));
+        }
     }
 
     public function getChargeablePayments()
