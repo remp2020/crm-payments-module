@@ -39,22 +39,20 @@ class CsobMailDownloader
         $criteria->setUnseen(true);
         $downloader->fetch($criteria, function (Email $email) use ($callback) {
             $csobMailParser = new CsobMailParser();
-            $mailContent = null;
 
             // csob changed encoding for some emails and ImapDownloader doesn't provide the header
             // this is a dummy check to verify what encoding was used to encode the content of email
-            if (base64_encode(base64_decode($email->getBody())) === $email->getBody()) {
-                $mailContent = $csobMailParser->parse(base64_decode($email->getBody()));
-            }
-            if (quoted_printable_encode(quoted_printable_decode($email->getBody())) === $email->getBody()) {
-                $mailContent = $csobMailParser->parse(quoted_printable_decode($email->getBody()));
+            $mailContent = $csobMailParser->parse(base64_decode($email->getBody()));
+            if (!empty($mailContent)) {
+                return $callback($mailContent);
             }
 
-            if (!$mailContent) {
-                return false;
+            $mailContent = $csobMailParser->parse(quoted_printable_decode($email->getBody()));
+            if (!empty($mailContent)) {
+                return $callback($mailContent);
             }
 
-            return $callback($mailContent);
+            return false;
         });
     }
 }

@@ -92,7 +92,7 @@ class MailProcessor
             return true;
         }
 
-        $olderPaymentThan = (clone $transactionDate)->sub(new DateInterval('P5D'));
+        $olderPaymentThan = (clone $transactionDate)->sub(new DateInterval('P10D'));
 
         $createdNewPayment = false;
 
