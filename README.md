@@ -91,7 +91,7 @@ to extend it with widgets.
 After the payment, user is directed back to the CRM. Each gateway provides its own URL where user is directed for
 payment completion processing.
 
-If the payment is successful, payments module uses [`PaymentCompleteRedirectManager`](extensions/salesfunnel-module/src/model/SuccessPageResolver/PaymentCompleteRedirectManager.php)
+If the payment is successful, payments module uses [`PaymentCompleteRedirectManager`](extensions/payments-module/src/model/SuccessPageResolver/PaymentCompleteRedirectManager.php)
 to determine what kind of success page the user should see. If `crm-salesfunnel-module` is used, user is directed
 to the success page registered by the module.
 
@@ -167,7 +167,7 @@ The implementation of redirect resolver can look like this:
 
 namespace Crm\FooModule\Model;
 
-use Crm\SalesFunnelModule\Model\PaymentCompleteRedirectResolver;
+use Crm\PaymentsModule\Model\PaymentCompleteRedirectResolver;
 use Nette\Database\Table\ActiveRow;
 
 class FooPaymentCompleteRedirectResolver implements PaymentCompleteRedirectResolver
