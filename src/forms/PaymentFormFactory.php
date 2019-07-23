@@ -419,8 +419,7 @@ class PaymentFormFactory
                 $values['subscription_end_at'] = $subscriptionEndAt;
             }
 
-            if ((isset($values['custom_payment_items']) && $values['custom_payment_items'])
-                || ($payment && $payment->status === 'form')) {
+            if ($payment && $payment->status === 'form') {
                 $this->paymentsRepository->update($payment, $values, $paymentItemContainer);
             } else {
                 $this->paymentsRepository->update($payment, $values);
