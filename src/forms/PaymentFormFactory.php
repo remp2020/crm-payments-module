@@ -9,6 +9,7 @@ use Crm\PaymentsModule\PaymentItem\DonationPaymentItem;
 use Crm\PaymentsModule\PaymentItem\PaymentItemContainer;
 use Crm\PaymentsModule\Repository\PaymentGatewaysRepository;
 use Crm\PaymentsModule\Repository\PaymentsRepository;
+use Crm\ProductsModule\PaymentItem\ProductPaymentItem;
 use Crm\SubscriptionsModule\PaymentItem\SubscriptionTypePaymentItem;
 use Crm\SubscriptionsModule\Repository\SubscriptionTypesRepository;
 use Crm\SubscriptionsModule\Subscription\SubscriptionType;
@@ -418,7 +419,11 @@ class PaymentFormFactory
                 $values['subscription_end_at'] = $subscriptionEndAt;
             }
 
-            $this->paymentsRepository->update($payment, $values, $paymentItemContainer);
+            if ($payment && $payment->status === 'form') {
+                $this->paymentsRepository->update($payment, $values, $paymentItemContainer);
+            } else {
+                $this->paymentsRepository->update($payment, $values);
+            }
 
             if ($currentStatus !== $values['status']) {
                 $this->paymentsRepository->updateStatus($payment, $values['status'], $sendNotification);
