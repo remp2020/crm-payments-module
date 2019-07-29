@@ -80,6 +80,9 @@ services:
 	paymentCompleteRedirect:
 	 	class: Crm\PaymentsModule\Model\PaymentCompleteRedirectManager
 
+	paymentInvoiceProvider:
+		class: Crm\PaymentsModule\DataProvider\PaymentInvoiceProviderManager
+
 	# widgets
 	- Crm\PaymentsModule\Components\UserPaymentsListing
 	- Crm\PaymentsModule\Components\ParsedMailsFailedNotification
