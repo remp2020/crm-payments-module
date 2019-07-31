@@ -143,6 +143,8 @@ and register it into the application's configuration:
 ```neon
 services:
 	# ...
+	- Crm\FooModule\Gateways\Foo
+	# ...
 	gatewayFactory:
 		setup:
 			- registerGateway(foo, Crm\FooModule\Gateways\Foo)
