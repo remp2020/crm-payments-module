@@ -59,6 +59,12 @@ class PaymentsAdminPresenter extends AdminPresenter
     /** @persistent */
     public $recurrent_charge = 'all';
 
+    /** @persistent */
+    public $products = [];
+
+    /** @persistent */
+    public $sales_funnel = [];
+
     public function startup()
     {
         parent::startup();
