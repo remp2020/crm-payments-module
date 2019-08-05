@@ -475,3 +475,81 @@ frontend:
 		title: Platba predfaktúrou
 		form_title: 'Pre dokončenie objednávky prosím vyplňte fakturačné údaje'
 		thank_you: 'Ďakujeme za vašu objednávku, predfaktúru Vám zašleme do 3 pracovných dní e-mailom.'
+
+config:
+	category: Platby
+	donation_vat_rate:
+		name: DPH pre dary
+	tatrapay_sharedsecret:
+		name: Tatrapay sharedsecret
+	cardpay_sharedsecret:
+		name: Cardpay sharedsecret
+	comfortpay_terminalid:
+		name: Comfortpay terminalid
+	comfortpay_sharedsecret:
+		name: Comfortpay sharedsecret
+	comfortpay_local_cert_path:
+		name: Cesta ku Comfortpay lokálnemu certifikátu
+		description: "Cesta k certifikátu (napr. /data/web/example/cert.pem)"
+	comfortpay_local_passphrase_path:
+		name: Lokálna cesta ku Comfortpay passphrase
+		description: "Cert pass cesta (napr. /data/web/example/pass)"
+	comfortpay_tem:
+		name: Comfortpay tem
+		description: "Comfortpay odosielané info o registracii kariet (napr. Y)"
+	comfortpay_rem:
+		name: Comfortpay rem
+		description: Comfortpay
+	paypal_mode:
+		name: Paypal mode
+		description: 'Prepínač pre "test" (sandbox) mód alebo "live" (production) mód'
+	paypal_username:
+		name: Paypal username
+	paypal_password:
+		name: Paypal password
+	paypal_signature:
+		name: Paypal signature
+	paypal_merchant:
+		name: Paypal merchant
+	csob_merchant_id:
+		name: ČSOB Merchant ID
+		description: 'Merchant ID poskytnuté bankou alebo vygenerované cez https://iplatebnibrana.csob.cz/keygen/ (pre vývojárske účely)'
+	csob_shop_name:
+		name: ČSOB obchodné meno
+		description: "Obchodné meno zobrazené v popise platby (ak je automaticky vygenerované)"
+	csob_bank_public_key_file_path:
+		name: ČSOB Verejný kľúč banky pre verifikovanie odpovedí z banky
+		description: "Cesta k verejnému kľúču banky dostupná na https://github.com/csob/paymentgateway/tree/master/keys (rozdielne kľúče pre sandbox a production)"
+	csob_private_key_file_path:
+		name: ČSOB Súkromný kľúč pre merchanta
+		description: "Cesta ku súkromnému kľúču poskytnutého bankou alebo vygenerovaného na https://iplatebnibrana.csob.cz/keygen/ (pre vývojárske účely)"
+	csob_mode:
+		name: ČSOB gateway mode
+		description: 'Prepínač pre "test" (sandbox) mód alebo "live" (production) mód'
+	recurrent_payment_gateway_fail_delay:
+		name: Pauza po neúspešnom spojení
+		description: "Definícia intervalu (https://en.wikipedia.org/wiki/ISO_8601#Durations) po chybe v komunikácii. (napr. PT1H)"
+	recurrent_payment_charges:
+		name: Opakovanie rekurentnych platieb
+		description: "Definicia intervalov (https://en.wikipedia.org/wiki/ISO_8601#Durations) oddelenych ciarkou. (napr. PT15M, PT6H, PT6H, PT6H, PT6H)"
+	gopay_go_id:
+		name: GoPay Go ID
+	gopay_client_id:
+		name: GoPay Client ID
+	gopay_client_secret:
+		name: GoPay Client secret
+	gopay_mode:
+		name: GoPay Test Mode
+	gopay_recurrence_date_to:
+		name: GoPay rekurentný profil dátum do
+	gopay_eet_enabled:
+		name: Zapnuté EET
+		description: Zapnutý EET reporting z platobnej brany
+	tatrapay_mid:
+		name: Tatrapay mid
+	cardpay_mid:
+		name: Cardpay mid
+	comfortpay_mid:
+		name: Comfortpay mid
+	comfortpay_ws:
+		name: Comforpay ws

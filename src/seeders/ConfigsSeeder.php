@@ -17,6 +17,8 @@ class ConfigsSeeder implements ISeeder
 
     private $configBuilder;
 
+    private $category;
+
     public function __construct(
         ConfigCategoriesRepository $configCategoriesRepository,
         ConfigsRepository $configsRepository,
@@ -29,9 +31,10 @@ class ConfigsSeeder implements ISeeder
 
     public function seed(OutputInterface $output)
     {
-        $category = $this->configCategoriesRepository->loadByName('Platby');
+        $categoryName = 'payments.config.category';
+        $this->category = $category = $this->configCategoriesRepository->loadByName($categoryName);
         if (!$category) {
-            $category = $this->configCategoriesRepository->add('Platby', 'fa fa-credit-card', 300);
+            $this->category = $category = $this->configCategoriesRepository->add($categoryName, 'fa fa-credit-card', 300);
             $output->writeln('  <comment>* config category <info>Platby</info> created</comment>');
         } else {
             $output->writeln('  * config category <info>Platby</info> exists');
@@ -41,40 +44,40 @@ class ConfigsSeeder implements ISeeder
             $output,
             $category,
             'donation_vat_rate',
-            'Donation vat rate',
+            'payments.config.donation_vat_rate.name',
             null,
             800
         );
 
         $sorting = 1000;
 
-        $this->addPaymentConfig($output, $category, 'tatrapay_mid', 'Tatrapay mid', 'aoj', $sorting++);
+        $this->addPaymentConfig($output, $category, 'tatrapay_mid', 'payments.config.tatrapay_mid.name', 'aoj', $sorting++);
         $this->addPaymentConfig(
             $output,
             $category,
             'tatrapay_sharedsecret',
-            'Tatrapay sharedsecret',
+            'payments.config.tatrapay_sharedsecret.name',
             '',
             $sorting++
         );
 
-        $this->addPaymentConfig($output, $category, 'cardpay_mid', 'Cardpay mid', '1joa', $sorting++);
+        $this->addPaymentConfig($output, $category, 'cardpay_mid', 'payments.config.cardpay_mid.name', '1joa', $sorting++);
         $this->addPaymentConfig(
             $output,
             $category,
             'cardpay_sharedsecret',
-            'Cardpay sharedsecret',
+            'payments.config.cardpay_sharedsecret.name',
             '',
             $sorting++
         );
 
-        $this->addPaymentConfig($output, $category, 'comfortpay_mid', 'Comforpay mid', '5120', $sorting++);
-        $this->addPaymentConfig($output, $category, 'comfortpay_ws', 'Comforpay ws', '668862', $sorting++);
+        $this->addPaymentConfig($output, $category, 'comfortpay_mid', 'payments.config.comfortpay_mid.name', '5120', $sorting++);
+        $this->addPaymentConfig($output, $category, 'comfortpay_ws', 'payments.config.comfortpay_ws.name', '668862', $sorting++);
         $this->addPaymentConfig(
             $output,
             $category,
             'comfortpay_terminalid',
-            'Comfortpay terminalid',
+            'payments.config.comfortpay_terminalid.name',
             '',
             $sorting++
         );
@@ -82,7 +85,7 @@ class ConfigsSeeder implements ISeeder
             $output,
             $category,
             'comfortpay_sharedsecret',
-            'Comfortpay sharedsecret',
+            'payments.config.comfortpay_sharedsecret.name',
             '',
             $sorting++
         );
@@ -90,45 +93,45 @@ class ConfigsSeeder implements ISeeder
             $output,
             $category,
             'comfortpay_local_cert_path',
-            'Comfortpay local cert path',
+            'payments.config.comfortpay_local_cert_path.name',
             '123',
             $sorting++,
-            'Path to cert'
+            'payments.config.comfortpay_local_passphrase_path.description'
         );
         $this->addPaymentConfig(
             $output,
             $category,
             'comfortpay_local_passphrase_path',
-            'Comfortpay local passphrase path',
+            'payments.config.comfortpay_local_passphrase_path.name',
             '123',
             $sorting++,
-            'Cert pass path'
+            'payments.config.comfortpay_local_passphrase_path.description'
         );
         $this->addPaymentConfig(
             $output,
             $category,
             'comfortpay_tem',
-            'Comfortpay tem',
+            'payments.config.comfortpay_tem.name',
             'info@info.sk',
             $sorting++,
-            'Comfortpay seding info about registering cards'
+            'payments.config.comfortpay_tem.description'
         );
         $this->addPaymentConfig(
             $output,
             $category,
             'comfortpay_rem',
-            'Comfortpay rem',
+            'payments.config.comfortpay_rem.name',
             'info@info.sk',
             $sorting++,
-            'Comfortpay'
+            'payments.config.comfortpay_rem.description'
         );
 
-        $this->addPaymentConfig($output, $category, 'paypal_mode', 'Paypal mode', 'live', $sorting++);
+        $this->addPaymentConfig($output, $category, 'paypal_mode', 'payments.config.paypal_mode.name', 'live', $sorting++);
         $this->addPaymentConfig(
             $output,
             $category,
             'paypal_username',
-            'Paypal username',
+            'payments.config.paypal_username.name',
             '',
             $sorting++
         );
@@ -136,7 +139,7 @@ class ConfigsSeeder implements ISeeder
             $output,
             $category,
             'paypal_password',
-            'Paypal password',
+            'payments.config.paypal_password.name',
             '',
             $sorting++
         );
@@ -144,60 +147,60 @@ class ConfigsSeeder implements ISeeder
             $output,
             $category,
             'paypal_signature',
-            'Paypal signature',
+            'payments.config.paypal_signature.name',
             '',
             $sorting++
         );
-        $this->addPaymentConfig($output, $category, 'paypal_merchant', 'Paypal merchant', '', $sorting);
+        $this->addPaymentConfig($output, $category, 'paypal_merchant', 'payments.config.paypal_merchant.name', '', $sorting);
 
         $this->addPaymentConfig(
             $output,
             $category,
             'csob_merchant_id',
-            'ČSOB Merchant ID',
+            'payments.config.csob_merchant_id.name',
             '',
             $sorting++,
-            'Merchant ID provided by bank or generated via https://iplatebnibrana.csob.cz/keygen/ (for development purpose)'
+            'payments.config.csob_merchant_id.description'
         );
 
         $this->addPaymentConfig(
             $output,
             $category,
             'csob_shop_name',
-            'ČSOB Shop name',
+            'payments.config.csob_shop_name.name',
             '',
             $sorting++,
-            "Shop name displayed in the payment description (if it's autogenerated)"
+            "payments.config.csob_shop_name.description"
         );
 
         $this->addPaymentConfig(
             $output,
             $category,
             'csob_bank_public_key_file_path',
-            'ČSOB Public key of bank for verification of bank responses',
+            'payments.config.csob_bank_public_key_file_path.name',
             '',
             $sorting++,
-            'Path to public key of bank available at https://github.com/csob/paymentgateway/tree/master/keys (different keys for sandbox and production)'
+            'payments.config.csob_bank_public_key_file_path.description'
         );
 
         $this->addPaymentConfig(
             $output,
             $category,
             'csob_private_key_file_path',
-            'ČSOB Private key of merchant',
+            'payments.config.csob_private_key_file_path.name',
             '',
             $sorting++,
-            'Path to private key provided by bank or generated via https://iplatebnibrana.csob.cz/keygen/ (for development purpose)'
+            'payments.config.csob_private_key_file_path.description'
         );
 
         $this->addPaymentConfig(
             $output,
             $category,
             'csob_mode',
-            'ČSOB gateway mode',
+            'payments.config.csob_mode.name',
             '',
             $sorting++,
-            'Switch for "test" (sandbox) mode or "live" (production) mode'
+            'payments.config.csob_mode.description'
         );
 
         // recurrent payments
@@ -206,20 +209,20 @@ class ConfigsSeeder implements ISeeder
             $output,
             $category,
             'recurrent_payment_gateway_fail_delay',
-            'Pauza po neúspešnom spojení',
+            'payments.config.recurrent_payment_gateway_fail_delay.name',
             'PT1H',
             $sorting++,
-            'Definícia intervalu (https://en.wikipedia.org/wiki/ISO_8601#Durations) po chybe v komunikácii.'
+            'payments.config.recurrent_payment_gateway_fail_delay.description'
         );
 
         $this->addPaymentConfig(
             $output,
             $category,
             'recurrent_payment_charges',
-            'Opakovanie rekurentnych platieb',
+            'payments.config.recurrent_payment_charges.name',
             'PT15M, PT6H, PT6H, PT6H, PT6H',
             $sorting++,
-            'Definicia intervalov (https://en.wikipedia.org/wiki/ISO_8601#Durations) oddelenych ciarkou.'
+            'payments.config.recurrent_payment_charges.description'
         );
 
         // gopay
@@ -228,7 +231,7 @@ class ConfigsSeeder implements ISeeder
             $output,
             $category,
             'gopay_go_id',
-            'GoPay Go ID',
+            'payments.config.gopay_go_id.name',
             '',
             $sorting++,
             null
@@ -238,7 +241,7 @@ class ConfigsSeeder implements ISeeder
             $output,
             $category,
             'gopay_client_id',
-            'GoPay Client ID',
+            'payments.config.gopay_client_id.name',
             '',
             $sorting++,
             null
@@ -248,7 +251,7 @@ class ConfigsSeeder implements ISeeder
             $output,
             $category,
             'gopay_client_secret',
-            'GoPay Client secret',
+            'payments.config.gopay_client_secret.name',
             '',
             $sorting++,
             null
@@ -258,7 +261,7 @@ class ConfigsSeeder implements ISeeder
             $output,
             $category,
             'gopay_mode',
-            'GoPay Test Mode',
+            'payments.config.gopay_mode.name',
             'true',
             $sorting++,
             null
@@ -268,8 +271,48 @@ class ConfigsSeeder implements ISeeder
             $output,
             $category,
             'gopay_recurrence_date_to',
-            'GoPay Recurrent profile date to',
+            'payments.config.gopay_recurrence_date_to.name',
             '2030-12-30',
+            $sorting++,
+            null
+        );
+
+        $this->addPaymentConfig(
+            $output,
+            $category,
+            'tatrapay_mode',
+            'payments.config.tatrapay_mode.name',
+            'live',
+            $sorting++,
+            null
+        );
+
+        $this->addPaymentConfig(
+            $output,
+            $category,
+            'cardpay_mode',
+            'payments.config.cardpay_mode.name',
+            'live',
+            $sorting++,
+            null
+        );
+
+        $this->addPaymentConfig(
+            $output,
+            $category,
+            'comfortpay_mode',
+            'payments.config.comfortpay_mode.name',
+            'live',
+            $sorting++,
+            null
+        );
+
+        $this->addPaymentConfig(
+            $output,
+            $category,
+            'gopay_eet_enabled',
+            'payments.config.gopay_eet_enabled.name',
+            0,
             $sorting++,
             null
         );
@@ -280,8 +323,8 @@ class ConfigsSeeder implements ISeeder
         if (!$config) {
             $this->configBuilder->createNew()
                 ->setName($name)
-                ->setDisplayName('Zapnute EET')
-                ->setDescription('Zapnuty EET reporting z platobnej brany')
+                ->setDisplayName('payments.config.gopay_eet_enabled.name')
+                ->setDescription('payments.config.gopay_eet_enabled.description')
                 ->setValue($value)
                 ->setType(ApplicationConfig::TYPE_BOOLEAN)
                 ->setAutoload(false)
@@ -312,11 +355,20 @@ class ConfigsSeeder implements ISeeder
                 ->setSorting($sorting)
                 ->save();
             $output->writeln("  <comment>* config item <info>$name</info> created</comment>");
-        } elseif ($config->has_default_value && $config->value !== $value) {
-            $this->configsRepository->update($config, ['value' => $value, 'has_default_value' => true]);
-            $output->writeln("  <comment>* config item <info>$name</info> updated</comment>");
         } else {
             $output->writeln("  * config item <info>$name</info> exists");
+
+            if ($config->has_default_value && $config->value !== $value) {
+                $this->configsRepository->update($config, ['value' => $value, 'has_default_value' => true]);
+                $output->writeln("  <comment>* config item <info>$name</info> updated</comment>");
+            }
+
+            if ($config->category->name != $this->category->name) {
+                $this->configsRepository->update($config, [
+                    'config_category_id' => $this->category->id
+                ]);
+                $output->writeln("  <comment>* config item <info>$name</info> updated</comment>");
+            }
         }
     }
 }
