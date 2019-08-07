@@ -28,9 +28,8 @@
                                    data-toggle="tooltip"
                                    data-placement="top"
                                    title="{$payment->note|breaklines}"></i>
-          <span n:if="$payment->upgrade_type" class="label label-info">
-            {_"payments.admin.component.user_payments_listing.payment.badge_upgrade"} {$payment->upgrade_type}
-          </span>
+
+          {control simpleWidget 'admin.payments.user_payments_listing.badge', $payment}
         </td>
 
         <td>

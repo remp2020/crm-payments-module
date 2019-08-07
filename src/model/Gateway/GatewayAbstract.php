@@ -40,7 +40,7 @@ abstract class GatewayAbstract implements PaymentInterface
         $this->translator = $translator;
     }
 
-    public function isSuccessful()
+    public function isSuccessful(): bool
     {
         return (isset($this->response) && ($this->response->isSuccessful() || $this->response->isRedirect()));
     }

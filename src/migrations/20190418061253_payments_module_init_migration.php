@@ -46,7 +46,6 @@ CREATE TABLE IF NOT EXISTS `payments` (
   `user_agent` varchar(255) NOT NULL,
   `subscription_start_at` datetime DEFAULT NULL,
   `subscription_end_at` datetime DEFAULT NULL,
-  `upgrade_type` varchar(255) DEFAULT NULL,
   `address_id` int(11) DEFAULT NULL,
   `recurrent_charge` tinyint(1) NOT NULL DEFAULT '0',
   PRIMARY KEY (`id`),

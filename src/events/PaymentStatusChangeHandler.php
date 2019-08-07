@@ -2,14 +2,10 @@
 
 namespace Crm\PaymentsModule\Events;
 
-use Crm\ApplicationModule\Hermes\HermesMessage;
 use Crm\PaymentsModule\Repository\PaymentsRepository;
-use Crm\SubscriptionsModule\Events\NewSubscriptionEvent;
-use Crm\SubscriptionsModule\Events\SubscriptionEndsEvent;
 use Crm\SubscriptionsModule\Events\SubscriptionStartsEvent;
 use Crm\SubscriptionsModule\Repository\SubscriptionsRepository;
 use Crm\SubscriptionsModule\Repository\SubscriptionTypesRepository;
-use Crm\PaymentsModule\Upgrade\Expander;
 use Crm\UsersModule\Repository\AddressesRepository;
 use DateTime;
 use League\Event\AbstractListener;
@@ -28,48 +24,39 @@ class PaymentStatusChangeHandler extends AbstractListener
 
     private $emitter;
 
-    private $hermesEmitter;
-
     public function __construct(
         SubscriptionsRepository $subscriptionsRepository,
         AddressesRepository $addressesRepository,
         PaymentsRepository $paymentsRepository,
-        Emitter $emitter,
-        \Tomaj\Hermes\Emitter $hermesEmitter
+        Emitter $emitter
     ) {
         $this->subscriptionsRepository = $subscriptionsRepository;
         $this->addressesRepository = $addressesRepository;
         $this->paymentsRepository = $paymentsRepository;
         $this->emitter = $emitter;
-        $this->hermesEmitter = $hermesEmitter;
     }
 
     public function handle(EventInterface $event)
     {
         $payment = $event->getPayment();
+        // hard reload, other handlers could have alter the payment already
+        $payment = $this->paymentsRepository->find($payment->id);
 
         if ($payment->subscription_id) {
-            return false;
+            return;
         }
 
         if (!$payment->subscription_type_id) {
-            return false;
+            return;
         }
 
         if ($payment->subscription_type->type == SubscriptionTypesRepository::TYPE_PRODUCT) {
-            return false;
+            return;
         }
 
         if (in_array($payment->status, [PaymentsRepository::STATUS_PAID, PaymentsRepository::STATUS_PREPAID]) && !$payment->subscription_type->no_subscription) {
-            if (in_array($payment->upgrade_type, [Expander::UPGRADE_PAID_EXTEND, Expander::UPGRADE_SPECIAL, Expander::UPGRADE_RECURRENT])) {
-                $subscription = $this->upgradeSubscriptionFromPayment($payment, $event);
-            } else {
-                $subscription = $this->createSubscriptionFromPayment($payment, $event);
-            }
-            return $subscription;
+            $this->createSubscriptionFromPayment($payment, $event);
         }
-
-        return true;
     }
 
     /**
@@ -126,48 +113,5 @@ class PaymentStatusChangeHandler extends AbstractListener
         }
 
         return $subscription;
-    }
-
-    public function upgradeSubscriptionFromPayment($payment, $event)
-    {
-        $actualSubscription = $this->subscriptionsRepository->actualUserSubscription($payment->user->id);
-        if (!$actualSubscription) {
-            // subscription ended since upgrade was requested, create new subscription
-            return $this->createSubscriptionFromPayment($payment, $event);
-        }
-
-        $changeTime = new DateTime();
-
-        $originalEndTime = $actualSubscription->end_time;
-
-        $this->subscriptionsRepository->setExpired(
-            $actualSubscription,
-            $changeTime,
-            '[upgrade] povodne koncilo ' . $actualSubscription->end_time
-        );
-
-        $actualUserSubscription = $this->subscriptionsRepository->find(($actualSubscription->id));
-        $newSubscription = $this->subscriptionsRepository->add(
-            $payment->subscription_type,
-            $payment->payment_gateway->is_recurrent,
-            $payment->user,
-            SubscriptionsRepository::TYPE_UPGRADE,
-            $changeTime
-        );
-        $this->subscriptionsRepository->update($newSubscription, [
-            'internal_status' => SubscriptionsRepository::INTERNAL_STATUS_ACTIVE,
-            'note' => "Upgrade z {$actualUserSubscription->subscription_type->name} na {$payment->subscription_type->name}",
-        ]);
-        if ($payment->upgrade_type == Expander::UPGRADE_SPECIAL || $payment->upgrade_type == Expander::UPGRADE_RECURRENT) {
-            $this->subscriptionsRepository->update($newSubscription, [
-                'end_time' => $originalEndTime,
-            ]);
-        }
-        $this->paymentsRepository->update($payment, ['subscription_id' => $newSubscription]);
-        $this->subscriptionsRepository->update($actualSubscription, ['next_subscription_id' => $newSubscription->id]);
-
-        $this->emitter->emit(new SubscriptionStartsEvent($newSubscription));
-
-        return $newSubscription;
     }
 }

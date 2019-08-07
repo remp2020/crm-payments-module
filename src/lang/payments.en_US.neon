@@ -6,7 +6,6 @@ menu:
 	parsed_mails: Parsed payment emails
 	recurrent_payments: Recurrent payments
 	duplicate_recurrent_payments: Duplicate recurrent payments
-	upgrades: Upgrades
 
 admin:
 	component:
@@ -235,30 +234,6 @@ admin:
 			uncompleted_payments: Uncompleted payments
 		small_graph:
 			title: Gateway payments
-
-	upgrades:
-		all_upgrades: All upgrades
-		paid_upgrades: Paid upgrades
-		title: Upgrades
-		upgrades_in_time: Upgrades in time
-		all: All
-		type: Type
-		time_of_upgrade: Time of upgrade
-		variable_symbol: Variable symbol
-		user: User
-		amount: Amount
-		gateway: Payment gateway
-		subscription_type: Subscription type
-		status: Status
-		paid_at: Paid at
-		created_at: Created at
-		actions: Actions
-		edit: Edit
-		no_records: "No records match selected filter"
-		recurrent_free: "Recurrent without payment"
-		recurrent: "Recurrent with payment"
-		short: "Subscription shortening"
-		paid_extend: "Non-recurrent with payment"
 
 	payments_recurrent:
 		title: Recurrent payments

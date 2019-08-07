@@ -4,7 +4,7 @@ namespace Crm\PaymentsModule\Gateways;
 
 class BankTransfer extends GatewayAbstract
 {
-    public function isSuccessful()
+    public function isSuccessful(): bool
     {
         return true;
     }

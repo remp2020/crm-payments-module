@@ -88,9 +88,6 @@ class PaymentsModule extends CrmModule
         $menuItem = new MenuItem($this->translator->translate('payments.menu.duplicate_recurrent_payments'), ':Payments:PaymentsRecurrentAdmin:duplicates', 'fa fa-exclamation-triangle', 660);
         $mainMenu->addChild($menuItem);
 
-        $menuItem = new MenuItem($this->translator->translate('payments.menu.upgrades'), ':Payments:UpgradesAdmin:', 'fa fa-arrow-alt-circle-up', 700);
-        $mainMenu->addChild($menuItem);
-
         $menuContainer->attachMenuItem($mainMenu);
 
         // dashboard menu item
@@ -278,7 +275,6 @@ class PaymentsModule extends CrmModule
             'status',
             'created_at',
             'paid_at',
-            'upgrade_type',
             'recurrent_charge',
         ]);
     }

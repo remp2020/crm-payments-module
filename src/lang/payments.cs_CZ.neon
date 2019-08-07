@@ -6,7 +6,6 @@ menu:
 	parsed_mails: Zpracované platební e-maily
 	recurrent_payments: Rekurentní platby
 	duplicate_recurrent_payments: Duplicitní rekurentné platby
-	upgrades: Upgrady
 
 admin:
 	component:
@@ -235,30 +234,6 @@ admin:
 			uncompleted_payments: Nedokončené platby
 		small_graph:
 			title: Platby podle brány
-
-	upgrades:
-		all_upgrades: Všechny upgrady
-		paid_upgrades: Placené upgrady
-		title: Upgrady
-		upgrades_in_time: Platby za upgrade v čase
-		all: Všechny
-		type: Typ
-		time_of_upgrade: Čas upgradu
-		variable_symbol: Variabilní symbol
-		user: Uživatel
-		amount: Suma
-		gateway: Platební brána
-		subscription_type: Typ předplatného
-		status: Stav
-		paid_at: Zaplaceno
-		created_at: Vytvořeno
-		actions: Akce
-		edit: Uprav
-		no_records: "Nebyly nalezeny žádné záznamy, které by odpovídaly filtru"
-		recurrent_free: "Rekurentní bez platby"
-		recurrent: "Rekurentní s doplatkem"
-		short: "Zkrácení předplatného"
-		paid_extend: "Nerekurentní s platbou"
 
 	payments_recurrent:
 		title: Rekurentní platby

@@ -70,9 +70,6 @@ services:
 	- Crm\PaymentsModule\Seeders\SegmentsSeeder
 	- Crm\PaymentsModule\Events\PaymentStatusChangeHandler
 	- Crm\PaymentsModule\Events\SubscriptionPreUpdateHandler
-	expander:
-		class: Crm\PaymentsModule\Upgrade\Expander
-	- Crm\PaymentsModule\Upgrade\UpgradeFactory
 	- Crm\PaymentsModule\Repository\PaymentItemsRepository
 	subscribersWithPaymentWidgetFactory:
 		class: Crm\PaymentsModule\Components\SubscribersWithPaymentWidgetFactory
@@ -99,4 +96,3 @@ services:
 	- Crm\PaymentsModule\DataProvider\PaymentFromVariableSymbolDataProvider
 	- Crm\PaymentsModule\DataProvider\SubscriptionsWithActiveUnchargedRecurrentEndingWithinPeriodDataProvider
 	- Crm\PaymentsModule\DataProvider\SubscriptionsWithoutExtensionEndingWithinPeriodDataProvider
-	- Crm\PaymentsModule\Subscription\ActualPaymentSubscription

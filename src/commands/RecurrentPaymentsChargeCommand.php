@@ -5,7 +5,6 @@ namespace Crm\PaymentsModule\Commands;
 use Crm\ApplicationModule\Config\ApplicationConfig;
 use Crm\PaymentsModule\Events\RecurrentPaymentFailEvent;
 use Crm\PaymentsModule\Events\RecurrentPaymentFailTryEvent;
-use Crm\PaymentsModule\Events\RecurrentPaymentRenewedEvent;
 use Crm\PaymentsModule\GatewayFactory;
 use Crm\PaymentsModule\GatewayFail;
 use Crm\PaymentsModule\PaymentItem\DonationPaymentItem;
@@ -17,7 +16,6 @@ use Crm\PaymentsModule\RecurrentPaymentsResolver;
 use Crm\PaymentsModule\Repository\PaymentLogsRepository;
 use Crm\PaymentsModule\Repository\PaymentsRepository;
 use Crm\PaymentsModule\Repository\RecurrentPaymentsRepository;
-use Crm\PaymentsModule\Upgrade\Expander;
 use Crm\SubscriptionsModule\PaymentItem\SubscriptionTypePaymentItem;
 use League\Event\Emitter;
 use Nette\Localization\ITranslator;
@@ -120,8 +118,7 @@ class RecurrentPaymentsChargeCommand extends Command
 
                 // we want to load previous payment items only if new subscription has same subscription type
                 // and it isn't upgraded recurrent payment
-                if ($subscriptionType->id === $parentPayment->subscription_type_id
-                    && !in_array($parentPayment->upgrade_type, [Expander::UPGRADE_RECURRENT, Expander::UPGRADE_RECURRENT_FREE])) {
+                if ($subscriptionType->id === $parentPayment->subscription_type_id && $subscriptionType->id === $recurrentPayment->subscription_type_id && !$customChargeAmount) {
                     foreach ($this->paymentsRepository->getPaymentItems($parentPayment) as $key => $item) {
                         // TODO: unset donation payment item without relying on the name of payment item
                         // remove donation from items, it will be added by PaymentsRepository->add().
@@ -145,6 +142,7 @@ class RecurrentPaymentsChargeCommand extends Command
                 } elseif (!$customChargeAmount) {
                     // if subscription type changed, load the items from new subscription type
                     $paymentItemContainer->addItems(SubscriptionTypePaymentItem::fromSubscriptionType($subscriptionType));
+                    // TODO: what about other types of payment items? (e.g. student donation?); seems we're losing them here
                 } else {
                     // we're charging custom amount for subscription
                     $items = SubscriptionTypePaymentItem::fromSubscriptionType($subscriptionType);

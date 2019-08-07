@@ -16,4 +16,7 @@ interface PaymentInterface
      * @return bool
      */
     public function complete($payment): ?bool;
+
+
+    public function isSuccessful(): bool;
 }
