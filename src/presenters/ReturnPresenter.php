@@ -7,11 +7,9 @@ use Crm\PaymentsModule\Gateways\GatewayAbstract;
 use Crm\PaymentsModule\Model\PaymentCompleteRedirectManager;
 use Crm\PaymentsModule\Model\PaymentCompleteRedirectResolver;
 use Crm\PaymentsModule\PaymentProcessor;
-use Crm\PaymentsModule\RecurrentPaymentsResolver;
 use Crm\PaymentsModule\Repository\PaymentLogsRepository;
 use Crm\PaymentsModule\Repository\PaymentMetaRepository;
 use Crm\PaymentsModule\Repository\PaymentsRepository;
-use Crm\PaymentsModule\Repository\RecurrentPaymentsRepository;
 use Crm\UsersModule\Auth\Access\AccessToken;
 use Crm\UsersModule\Repository\UserMetaRepository;
 use Crm\UsersModule\Repository\UsersRepository;
@@ -20,12 +18,6 @@ class ReturnPresenter extends FrontendPresenter
 {
     /** @var PaymentsRepository @inject */
     public $paymentsRepository;
-
-    /** @var RecurrentPaymentsRepository @inject */
-    public $recurrentPaymentsRepository;
-
-    /** @var RecurrentPaymentsResolver @inject */
-    public $recurrentPaymentsResolver;
 
     /** @var PaymentLogsRepository @inject */
     public $paymentLogsRepository;

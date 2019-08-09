@@ -35,7 +35,7 @@ class Cardpay extends GatewayAbstract
             'amount' => $payment->amount,
             'vs' => $payment->variable_symbol,
             'currency' => $this->applicationConfig->get('currency'),
-            'rurl' => $this->generateReturnUrl($payment, ['VS' => $payment->variable_symbol]),
+            'rurl' => $this->generateReturnUrl($payment),
             'aredir' => true,
             'name' =>  $name,
         ];
