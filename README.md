@@ -174,20 +174,20 @@ use Nette\Database\Table\ActiveRow;
 
 class FooPaymentCompleteRedirectResolver implements PaymentCompleteRedirectResolver
 {
-    public function wantsToRedirect(ActiveRow $payment, string $status): bool
+    public function wantsToRedirect(?ActiveRow $payment, string $status): bool
     {
-        if ($status === self::PAID) {
+        if ($payment && $status === self::PAID) {
             return $payment->payment_gateway->code === 'foo_gateway';
         }
         return false;
     }
 
-    public function redirectArgs(ActiveRow $payment, string $status): array
+    public function redirectArgs(?ActiveRow $payment, string $status): array
     {
-        if ($status === self::PAID) {
+        if ($payment && $status === self::PAID) {
             return [
                 ':Foo:SalesFunnel:Success',
-                ['VS' => $payment->variable_symbol],
+                ['variableSymbol' => $payment->variable_symbol],
             ];
         }
         throw new \Exception('unhandled status when requesting redirectArgs (did you check wantsToRedirect first?): ' . $status);

@@ -22,7 +22,7 @@ interface PaymentCompleteRedirectResolver
      * @param string $status completion status of payment; use one of the constants provided by PaymentCompleteRedirectResolver
      * @return bool
      */
-    public function wantsToRedirect(ActiveRow $payment, string $status): bool;
+    public function wantsToRedirect(?ActiveRow $payment, string $status): bool;
 
     /**
      * redirectArgs return array of arguments to be used in presenter's ->redirect() method.
@@ -34,5 +34,5 @@ interface PaymentCompleteRedirectResolver
      * * @param string $status completion status of payment; use one of the constants provided by PaymentCompleteRedirectResolver
      * @return array
      */
-    public function redirectArgs(ActiveRow $payment, string $status): array;
+    public function redirectArgs(?ActiveRow $payment, string $status): array;
 }

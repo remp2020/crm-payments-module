@@ -66,7 +66,9 @@ class CsobOneClick extends GatewayAbstract implements RecurrentPaymentInterface
         $this->initialize();
 
         $this->response = $this->gateway->checkout([
-            'returnUrl' => $this->generateReturnUrl($payment) . '?vs=' . $payment->variable_symbol,
+            'returnUrl' => $this->generateReturnUrl($payment, [
+                'VS' => $payment->variable_symbol,
+            ]),
             'transactionId' => $payment->variable_symbol,
             'cart' => $this->getCart($payment),
         ])->send();

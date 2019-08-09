@@ -19,7 +19,12 @@ class BankTransfer extends GatewayAbstract
 
     public function begin($payment)
     {
-        $url = $this->generateReturnUrl($payment) . '?VS=' . $payment->variable_symbol;
+        $url = $this->linkGenerator->link(
+            'Payments:Return:bankTransfer',
+            [
+                'VS' => $payment->variable_symbol,
+            ]
+        );
         $this->httpResponse->redirect($url);
         exit();
     }

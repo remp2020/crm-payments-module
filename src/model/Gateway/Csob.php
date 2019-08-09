@@ -77,7 +77,9 @@ class Csob extends GatewayAbstract
         }
 
         $this->response = $this->gateway->checkout([
-            'returnUrl' => $this->generateReturnUrl($payment) . '?vs=' . $payment->variable_symbol,
+            'returnUrl' => $this->generateReturnUrl($payment, [
+                'VS' => $payment->variable_symbol,
+            ]),
             'transactionId' => $payment->variable_symbol,
             'cart' => $cart,
         ])->send();

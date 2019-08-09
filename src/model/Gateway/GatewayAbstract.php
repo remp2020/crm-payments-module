@@ -79,13 +79,14 @@ abstract class GatewayAbstract implements PaymentInterface
         }
     }
 
-    protected function generateReturnUrl($payment)
+    protected function generateReturnUrl($payment, $params = [])
     {
-        $paymentGateway = $payment->payment_gateway;
-        $code = str_replace('_', '', $paymentGateway->code);
-        $code = Strings::firstUpper($code);
-
-        return $this->linkGenerator->link('SalesFunnel:SalesFunnel:ReturnPayment' . $code);
+        return $this->linkGenerator->link(
+            'Payments:Return:gateway',
+            array_merge([
+                'gatewayCode' => $payment->payment_gateway->code,
+            ], $params)
+        );
     }
 
     protected function checkChargeStatus($payment, $resultCode)

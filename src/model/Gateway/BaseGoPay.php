@@ -159,15 +159,19 @@ abstract class BaseGoPay extends GatewayAbstract implements PaymentInterface
         }
     }
 
-    protected function generateNotificationUrl()
-    {
-        return $this->linkGenerator->link('Api:Api:api', ['version' => 1, 'category' => 'payments', 'apiaction' => 'gopay-notification']);
-    }
-
     protected function preparePaymentData(IRow $payment): array
     {
-        $returnUrl = $this->generateReturnUrl($payment);
-        $notifyUrl = $this->generateNotificationUrl();
+        $returnUrl = $this->linkGenerator->link(
+            'Payments:Return:goPay'
+        );
+        $notifyUrl = $this->linkGenerator->link(
+            'Api:Api:api',
+            [
+                'version' => 1,
+                'category' => 'payments',
+                'apiaction' => 'gopay-notification',
+            ]
+        );
 
         $paymentItems = $payment->related('payment_items');
         $items = $this->prepareItems($paymentItems);

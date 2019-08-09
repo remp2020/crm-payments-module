@@ -46,8 +46,8 @@ class Paypal extends GatewayAbstract
             'amount' => $payment->amount,
             'currency' => $this->applicationConfig->get('currency'),
             'transactionId' => $payment->variable_symbol,
-            'returnUrl' => $this->generateReturnUrl($payment) . '?paypal_success=1&VS=' . $payment->variable_symbol,
-            'cancelUrl' => $this->generateReturnUrl($payment) . '?paypal_success=0&VS=' . $payment->variable_symbol,
+            'returnUrl' => $this->generateReturnUrl($payment, ['paypal_success' => '1', 'VS' => $payment->variable_symbol]),
+            'cancelUrl' => $this->generateReturnUrl($payment, ['paypal_success' => '0', 'VS' => $payment->variable_symbol]),
             'landingPage' => 'Login',
         ])->send();
     }

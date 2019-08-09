@@ -356,10 +356,7 @@ class PaymentsModule extends CrmModule
 
     public function registerRoutes(RouteList $router)
     {
-        // register sales funnel route - this is wrong
-        // we need to move all return url to payment module from sales funnel
-        // this is done because of ?id parameter in get which was redirecting in nette internal mechanism without this route
-        $router[] = new Route('sales-funnel/sales-funnel/return-payment-gopayrecurrent?id=<id>', 'SalesFunnel:SalesFunnel:returnPaymentGoPayRecurrent');
-        $router[] = new Route('sales-funnel/sales-funnel/return-payment-gopay?id=<id>', 'SalesFunnel:SalesFunnel:returnPaymentGoPay');
+        $router[] = new Route('payments/return/go-pay?id=<id>', 'Payments:Return:goPay');
+        $router[] = new Route('payments/return/gateway/<gatewayCode>', 'Payments:Return:gateway');
     }
 }
