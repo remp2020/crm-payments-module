@@ -2,8 +2,6 @@
 
 namespace Crm\PaymentsModule\Gateways;
 
-use Crm\ApplicationModule\Hermes\HermesMessage;
-use Crm\PaymentsModule\Events\RecurrentPaymentRenewedEvent;
 use Crm\PaymentsModule\Repository\PaymentMetaRepository;
 use Crm\PaymentsModule\Repository\PaymentsRepository;
 use Crm\PaymentsModule\Repository\RecurrentPaymentsRepository;
@@ -14,7 +12,7 @@ use Crm\ApplicationModule\Config\ApplicationConfig;
 use Nette\Application\LinkGenerator;
 use Nette\Http\Response;
 use Nette\Localization\ITranslator;
-use Tomaj\Hermes\Emitter;
+use League\Event\Emitter;
 
 abstract class BaseGoPay extends GatewayAbstract implements PaymentInterface
 {
@@ -33,8 +31,6 @@ abstract class BaseGoPay extends GatewayAbstract implements PaymentInterface
 
     protected $recurrentPaymentsRepository;
 
-    protected $emitter;
-
     protected $eventEmitter;
 
     protected $eetEnabled = false;
@@ -47,14 +43,12 @@ abstract class BaseGoPay extends GatewayAbstract implements PaymentInterface
         PaymentMetaRepository $paymentMetaRepository,
         PaymentsRepository $paymentsRepository,
         RecurrentPaymentsRepository $recurrentPaymentsRepository,
-        Emitter $emitter,
-        \League\Event\Emitter $eventEmitter
+        Emitter $eventEmitter
     ) {
         parent::__construct($linkGenerator, $applicationConfig, $httpResponse, $translator);
         $this->paymentMetaRepository = $paymentMetaRepository;
         $this->paymentsRepository = $paymentsRepository;
         $this->recurrentPaymentsRepository = $recurrentPaymentsRepository;
-        $this->emitter = $emitter;
         $this->eventEmitter = $eventEmitter;
     }
 

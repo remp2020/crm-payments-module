@@ -64,10 +64,7 @@ class GoPayRecurrent extends BaseGoPay implements RecurrentPaymentInterface
                 if ($recurrentPayment) {
                     $this->recurrentPaymentsRepository->setCharged($recurrentPayment, $payment, 'OK', 'OK');
                 } else {
-                    $this->emitter->emit(new HermesMessage('create-recurrent-payment', [
-                        'id' => $payment->id,
-                        'token' => $this->getRecurrentToken(),
-                    ]));
+                    $this->recurrentPaymentsRepository->createFromPayment($this->getRecurrentToken(), $payment);
                 }
             }
         }

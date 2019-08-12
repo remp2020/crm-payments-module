@@ -2,6 +2,7 @@
 
 namespace Crm\PaymentsModule\Repository;
 
+use Crm\ApplicationModule\Config\ApplicationConfig;
 use Crm\ApplicationModule\Hermes\HermesMessage;
 use Crm\ApplicationModule\Repository;
 use Crm\ApplicationModule\Repository\AuditLogRepository;
@@ -25,17 +26,21 @@ class RecurrentPaymentsRepository extends Repository
 
     private $emitter;
 
+    private $applicationConfig;
+
     private $hermesEmitter;
 
     public function __construct(
         Context $database,
         AuditLogRepository $auditLogRepository,
         Emitter $emitter,
+        ApplicationConfig $applicationConfig,
         \Tomaj\Hermes\Emitter $hermesEmitter
     ) {
         parent::__construct($database);
         $this->auditLogRepository = $auditLogRepository;
         $this->emitter = $emitter;
+        $this->applicationConfig = $applicationConfig;
         $this->hermesEmitter = $hermesEmitter;
     }
 
@@ -54,6 +59,20 @@ class RecurrentPaymentsRepository extends Repository
             'parent_payment_id' => $payment->id,
             'state' => 'active'
         ]);
+    }
+
+    public function createFromPayment(string $recurrentToken, IRow $payment): IRow
+    {
+        $retries = explode(', ', $this->applicationConfig->get('recurrent_payment_charges'));
+        $retries = count((array)$retries);
+
+        return $this->add(
+            $recurrentToken,
+            $payment,
+            $this->calculateChargeAt($payment),
+            null,
+            --$retries
+        );
     }
 
     public function update(IRow &$row, $data)

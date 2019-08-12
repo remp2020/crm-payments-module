@@ -39,7 +39,6 @@ use Nette\Application\Routers\Route;
 use Nette\Application\Routers\RouteList;
 use Nette\DI\Container;
 use Symfony\Component\Console\Output\OutputInterface;
-use Tomaj\Hermes\Dispatcher;
 
 class PaymentsModule extends CrmModule
 {
@@ -240,14 +239,6 @@ class PaymentsModule extends CrmModule
             $paymentsLogsRepository = $container->getByType('Crm\PaymentsModule\Repository\PaymentLogsRepository');
             $paymentsLogsRepository->removeOldData();
         });
-    }
-
-    public function registerHermesHandlers(Dispatcher $dispatcher)
-    {
-        $dispatcher->registerHandler(
-            'create-recurrent-payment',
-            $this->getInstance(\Crm\PaymentsModule\Hermes\CreateRecurrentPaymentHandler::class)
-        );
     }
 
     public function registerUserData(UserDataRegistrator $dataRegistrator)

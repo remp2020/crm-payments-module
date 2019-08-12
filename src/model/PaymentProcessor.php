@@ -2,13 +2,11 @@
 
 namespace Crm\PaymentsModule;
 
-use Crm\ApplicationModule\Hermes\HermesMessage;
 use Crm\PaymentsModule\Repository\PaymentLogsRepository;
 use Crm\PaymentsModule\Repository\PaymentsRepository;
 use Crm\PaymentsModule\Repository\RecurrentPaymentsRepository;
 use Nette\Http\Request;
 use Nette\Utils\Json;
-use Tomaj\Hermes\Emitter;
 
 class PaymentProcessor
 {
@@ -27,23 +25,18 @@ class PaymentProcessor
     /** @var Request */
     protected $request;
 
-    /** @var  Emitter */
-    protected $emitter;
-
     public function __construct(
         GatewayFactory $gatewayFactory,
         PaymentsRepository $paymentsRepository,
         RecurrentPaymentsRepository $recurrentPaymentsRepository,
         PaymentLogsRepository $paymentLogsRepository,
-        Request $request,
-        Emitter $emitter
+        Request $request
     ) {
         $this->gatewayFactory = $gatewayFactory;
         $this->paymentsRepository = $paymentsRepository;
         $this->recurrentPaymentsRepository = $recurrentPaymentsRepository;
         $this->paymentLogsRepository = $paymentLogsRepository;
         $this->request = $request;
-        $this->emitter = $emitter;
     }
 
     public function begin($payment, $allowRedirect = true)
@@ -86,10 +79,10 @@ class PaymentProcessor
             $payment = $this->paymentsRepository->find($payment->id);
 
             if ((boolean)$payment->payment_gateway->is_recurrent) {
-                $this->emitter->emit(new HermesMessage('create-recurrent-payment', [
-                    'id' => $payment->id,
-                    'token' => $gateway->getRecurrentToken(),
-                ]));
+                $this->recurrentPaymentsRepository->createFromPayment(
+                    $gateway->getRecurrentToken(),
+                    $payment
+                );
             }
         } elseif ($result === false) {
             $this->paymentsRepository->updateStatus($payment, PaymentsRepository::STATUS_FAIL);
