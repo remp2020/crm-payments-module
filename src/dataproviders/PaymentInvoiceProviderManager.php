@@ -2,7 +2,6 @@
 
 namespace Crm\PaymentsModule\DataProvider;
 
-use Crm\ApplicationModule\DataProvider\DataProviderException;
 use Nette\Database\Table\ActiveRow;
 use Tracy\Debugger;
 

@@ -9,7 +9,6 @@ use Crm\PaymentsModule\RecurrentPaymentFailTry;
 use Nette\Application\LinkGenerator;
 use Nette\Http\Response;
 use Nette\Localization\ITranslator;
-use Nette\Utils\Strings;
 
 abstract class GatewayAbstract implements PaymentInterface
 {

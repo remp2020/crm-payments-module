@@ -2,11 +2,8 @@
 
 namespace Crm\PaymentsModule\Gateways;
 
-use Crm\ApplicationModule\Hermes\HermesMessage;
-use Crm\PaymentsModule\Events\RecurrentPaymentRenewedEvent;
 use Crm\PaymentsModule\GatewayFail;
 use Crm\PaymentsModule\Repository\PaymentsRepository;
-use Crm\PaymentsModule\Repository\RecurrentPaymentsRepository;
 use Nette\Database\Table\IRow;
 use Nette\Utils\DateTime;
 use Tracy\Debugger;
