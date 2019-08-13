@@ -80,8 +80,8 @@ class PaymentProcessor
 
             if ((boolean)$payment->payment_gateway->is_recurrent) {
                 $this->recurrentPaymentsRepository->createFromPayment(
-                    $gateway->getRecurrentToken(),
-                    $payment
+                    $payment,
+                    $gateway->getRecurrentToken()
                 );
             }
         } elseif ($result === false) {

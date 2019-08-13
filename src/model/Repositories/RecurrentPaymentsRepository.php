@@ -11,6 +11,7 @@ use League\Event\Emitter;
 use Nette\Database\Context;
 use Nette\Database\Table\IRow;
 use Nette\Utils\DateTime;
+use Tracy\Debugger;
 
 class RecurrentPaymentsRepository extends Repository
 {
@@ -61,8 +62,19 @@ class RecurrentPaymentsRepository extends Repository
         ]);
     }
 
-    public function createFromPayment(string $recurrentToken, IRow $payment): IRow
+    public function createFromPayment(IRow $payment, string $recurrentToken): ?IRow
     {
+        if ($payment->status !== PaymentsRepository::STATUS_PAID) {
+            Debugger::log("Could not create recurrent payment from payment [{$payment->id}], invalid payment status: [{$payment->status}]");
+            return null;
+        }
+
+        // check if recurrent payment already exists and return existing instance
+        $recurrentPayment = $this->recurrent($payment);
+        if ($recurrentPayment !== false) {
+            return $recurrentPayment;
+        }
+
         $retries = explode(', ', $this->applicationConfig->get('recurrent_payment_charges'));
         $retries = count((array)$retries);
 
