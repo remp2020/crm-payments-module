@@ -160,11 +160,12 @@ class PaymentsAdminPresenter extends AdminPresenter
         );
 
         $subscriptionTypes = $this->subscriptionTypesRepository->getAllActive()->fetchPairs('id', 'name');
-        $form->addSelect(
+        $subscriptionType = $form->addSelect(
             'subscription_type',
             'payments.admin.component.admin_filter_form.subscription_type.label',
             $subscriptionTypes
         )->setPrompt('--');
+        $subscriptionType->getControlPrototype()->addAttributes(['class' => 'select2']);
 
         /** @var AdminFilterFormDataProviderInterface[] $providers */
         $providers = $this->dataProviderManager->getProviders('payments.dataprovider.list_filter_form', AdminFilterFormDataProviderInterface::class);
