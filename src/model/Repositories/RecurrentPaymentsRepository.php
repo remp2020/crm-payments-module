@@ -221,17 +221,17 @@ class RecurrentPaymentsRepository extends Repository
         return $this->getTable()->select('status')->group('status')->fetchPairs('status', 'status');
     }
 
-    public function isStopped(IRow $subscription)
+    public function isStoppedBySubscription(IRow $subscription)
     {
         $payment = $this->database->table('payments')->where(['subscription_id' => $subscription->id])->limit(1)->fetch();
         if ($payment) {
             $recurrent = $this->recurrent($payment);
-            return $this->recurrentStopped($recurrent);
+            return $this->isStopped($recurrent);
         }
         return false;
     }
 
-    private function recurrentStopped($recurrent)
+    public function isStopped($recurrent)
     {
         if (!$recurrent) {
             return true;
