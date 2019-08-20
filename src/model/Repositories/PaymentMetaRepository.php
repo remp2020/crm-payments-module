@@ -3,7 +3,6 @@
 namespace Crm\PaymentsModule\Repository;
 
 use Crm\ApplicationModule\Repository;
-use Nette\Database\IRow;
 use Nette\Database\Table\ActiveRow;
 use Nette\Database\Table\Selection;
 

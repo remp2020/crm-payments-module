@@ -3,7 +3,6 @@
 namespace Crm\PaymentsModule\Populator;
 
 use Crm\ApplicationModule\Populator\AbstractPopulator;
-use Crm\PaymentsModule\Repository\PaymentGatewaysRepository;
 use Crm\PaymentsModule\Repository\PaymentsRepository;
 use Crm\PaymentsModule\Repository\RecurrentPaymentsRepository;
 

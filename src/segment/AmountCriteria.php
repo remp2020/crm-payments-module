@@ -4,7 +4,6 @@ namespace Crm\PaymentsModule\Segment;
 
 use Crm\ApplicationModule\Criteria\CriteriaInterface;
 use Crm\SegmentModule\Params\DecimalParam;
-use Crm\SegmentModule\Params\NumberParam;
 use Crm\SegmentModule\Params\ParamsBag;
 
 class AmountCriteria implements CriteriaInterface
