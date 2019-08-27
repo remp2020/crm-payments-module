@@ -148,6 +148,9 @@ class RecurrentPaymentsChargeCommand extends Command
                     $items = SubscriptionTypePaymentItem::fromSubscriptionType($subscriptionType);
                     if (count($items) === 1) {
                         // custom amount is handable only for single-item payments; how would we split the custom amount otherwise?
+                        if ($customChargeAmount) {
+                            $items[0]->forcePrice($customChargeAmount);
+                        }
                         $paymentItemContainer->addItems($items);
                     } else {
                         $msg = 'RecurringPayment_id: ' . $recurrentPayment->id . ' Card_id: ' . $recurrentPayment->cid . ' User_id: ' . $recurrentPayment->user_id . ' Error: Unchargeable custom amount';
