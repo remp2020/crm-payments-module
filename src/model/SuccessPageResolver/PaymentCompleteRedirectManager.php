@@ -31,7 +31,7 @@ class PaymentCompleteRedirectManager
      */
     public function getResolvers()
     {
-        ksort($this->resolvers, SORT_NUMERIC | SORT_DESC);
-        return $this->resolvers;
+        ksort($this->resolvers, SORT_NUMERIC);
+        return array_reverse($this->resolvers);
     }
 }
