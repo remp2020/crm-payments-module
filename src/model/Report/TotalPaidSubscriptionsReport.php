@@ -27,7 +27,7 @@ QUERY;
             'id' => $this->getId(),
             'key' => __CLASS__,
             'data' => $result,
-            'label' => 'pouzili akciu'
+            'label' => $this->translator->translate('payments.admin.report.total_paid_subscriptions.label'),
         ];
     }
 }

@@ -4,14 +4,15 @@ namespace Crm\PaymentsModule\Report;
 
 use Crm\SubscriptionsModule\Report\BaseReport;
 use Crm\SubscriptionsModule\Report\ReportGroup;
+use Kdyby\Translation\Translator;
 
 class PaidNextSubscriptionReport extends BaseReport
 {
     private $paidCount;
 
-    public function __construct($name, $paidCount = 1)
+    public function __construct($name, Translator $translator, $paidCount)
     {
-        parent::__construct($name);
+        parent::__construct($name, $translator);
         $this->paidCount = $paidCount;
     }
 
@@ -47,7 +48,7 @@ QUERY;
             'id' => $this->getId(),
             'key' => __CLASS__,
             'data' => $result,
-            'label' => $this->paidCount == 1 ? "nabehla aspon {$this->paidCount} rekurentna platba" : "nabehli aspon {$this->paidCount} rekurentne platby",
+            'label' => $this->translator->translate('payments.admin.report.paid_next_subscription.label', (int) $this->paidCount),
         ];
     }
 }

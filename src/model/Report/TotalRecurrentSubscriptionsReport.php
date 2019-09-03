@@ -28,7 +28,7 @@ QUERY;
             'id' => $this->getId(),
             'key' => __CLASS__,
             'data' => $result,
-            'label' => 'pouzili akciu recurrentne'
+            'label' => $this->translator->translate('payments.admin.report.total_recurrent_subscriptions.label'),
         ];
     }
 }

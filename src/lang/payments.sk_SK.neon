@@ -321,6 +321,20 @@ admin:
 		price_with_vat: Cena s DPH
 		vat_rate: Sadzba DPH
 
+	report:
+		no_recurrent_charge:
+			label: "ešte nenastal čas prvého predĺženia"
+		paid_next_subscription:
+			label: "{1}nabehla aspoň %count% rekurentná platba|[2,Inf]nabehli aspoň %count% rekurentné platby"
+		recurrent_without_profile:
+			label: "rekurent bez obnovovacieho profilu"
+		stopped_on_first_subscription:
+			label: "zrušili rekurent ešte počas prvého obdobia"
+		total_paid_subscriptions:
+			label: "použili akciu"
+		total_recurrent_subscriptions:
+			label: "použili akciu rekurentne"
+
 form:
 	payment_gateway:
 		name:

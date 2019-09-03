@@ -7,11 +7,6 @@ use Crm\SubscriptionsModule\Report\ReportGroup;
 
 class NoRecurrentChargeReport extends BaseReport
 {
-    public function __construct($name)
-    {
-        parent::__construct($name);
-    }
-
     public function getData(ReportGroup $group, $params)
     {
         //  AND recurrent_payments.status IS NULL
@@ -36,7 +31,7 @@ QUERY;
             'id' => $this->getId(),
             'key' => __CLASS__,
             'data' => $result,
-            'label' => 'ešte nenastal čas prveho predlzenia',
+            'label' => $this->translator->translate('payments.admin.report.no_recurrent_charge.label'),
         ];
     }
 }

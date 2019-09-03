@@ -316,6 +316,20 @@ admin:
 		price_with_vat: Price with VAT
 		vat_rate: VAT rate
 
+	report:
+		no_recurrent_charge:
+			label: "no recurrent charge"
+		paid_next_subscription:
+			label: "at least %count% recurrent payment|[2,Inf]at least %count% recurrent payments"
+		recurrent_without_profile:
+			label: "recurrent without profile"
+		stopped_on_first_subscription:
+			label: "cancelled recurrent during first period"
+		total_paid_subscriptions:
+			label: "total paid"
+		total_recurrent_subscriptions:
+			label: "total paid recurrents"
+
 form:
 	payment_gateway:
 		name:

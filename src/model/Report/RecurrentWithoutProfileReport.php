@@ -29,7 +29,7 @@ QUERY;
             'id' => $this->getId(),
             'key' => __CLASS__,
             'data' => $result,
-            'label' => 'recurrent bez obnovovacieho profilu'
+            'label' => $this->translator->translate('payments.admin.report.recurrent_without_profile.label'),
         ];
     }
 }
