@@ -4,13 +4,13 @@ namespace Crm\PaymentsModule\Report;
 
 use Crm\SubscriptionsModule\Report\BaseReport;
 use Crm\SubscriptionsModule\Report\ReportGroup;
-use Kdyby\Translation\Translator;
+use Nette\Localization\ITranslator;
 
 class PaidNextSubscriptionReport extends BaseReport
 {
     private $paidCount;
 
-    public function __construct($name, Translator $translator, $paidCount)
+    public function __construct($name, ITranslator $translator, $paidCount)
     {
         parent::__construct($name, $translator);
         $this->paidCount = $paidCount;
