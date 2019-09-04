@@ -53,7 +53,6 @@ class SubscriptionTypeReports extends BaseWidget
             ->addReport(new PaidNextSubscriptionReport('', $this->translator, 1), [\Crm\PaymentsModule\Report\TotalRecurrentSubscriptionsReport::class])
             ->addReport(new PaidNextSubscriptionReport('', $this->translator, 2))
             ->addReport(new PaidNextSubscriptionReport('', $this->translator, 3))
-            ->addReport(new RecurrentWithoutProfileReport('', $this->translator), [\Crm\PaymentsModule\Report\TotalRecurrentSubscriptionsReport::class])
         ;
         $this->template->reportTables = [
             $this->translator->translate('payments.admin.component.subscription_type_reports.title') => $reportTable->getData(),

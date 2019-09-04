@@ -318,17 +318,15 @@ admin:
 
 	report:
 		no_recurrent_charge:
-			label: "ještě nenastal čas prvního prodloužení"
+			label: "Ještě nenastal čas prvního prodloužení"
 		paid_next_subscription:
-			label: "{1}najela alespoň %count% rekurentní platba|[2,Inf]najeli alespoň %count% rekurentní platby"
-		recurrent_without_profile:
-			label: "rekurent bez obnovovacího profilu"
+			label: "Byly %count% krát automaticky obnovení"
 		stopped_on_first_subscription:
-			label: "zrušily rekurent ještě během prvního období"
+			label: "Zrušili rekurent ještě během prvního období"
 		total_paid_subscriptions:
-			label: "použili akci"
+			label: "Koupili typ předplatného (všichni)"
 		total_recurrent_subscriptions:
-			label: "použili akci rekurentně"
+			label: "Koupili typ předplatného (rekurentně)"
 
 form:
 	payment_gateway:

@@ -318,17 +318,15 @@ admin:
 
 	report:
 		no_recurrent_charge:
-			label: "no recurrent charge"
+			label: "No recurrent charge yet"
 		paid_next_subscription:
-			label: "at least %count% recurrent payment|[2,Inf]at least %count% recurrent payments"
-		recurrent_without_profile:
-			label: "recurrent without profile"
+			label: "At least %count% recurrent payment"
 		stopped_on_first_subscription:
-			label: "cancelled recurrent during first period"
+			label: "Cancelled recurrent during first period"
 		total_paid_subscriptions:
-			label: "total paid"
+			label: "Purchased subscription type (all)"
 		total_recurrent_subscriptions:
-			label: "total paid recurrents"
+			label: "Purchased subscription type (recurrent)"
 
 form:
 	payment_gateway:
