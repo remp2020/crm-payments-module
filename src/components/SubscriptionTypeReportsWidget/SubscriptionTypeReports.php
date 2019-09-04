@@ -6,7 +6,6 @@ use Crm\ApplicationModule\Widget\BaseWidget;
 use Crm\ApplicationModule\Widget\WidgetManager;
 use Crm\PaymentsModule\Report\NoRecurrentChargeReport;
 use Crm\PaymentsModule\Report\PaidNextSubscriptionReport;
-use Crm\PaymentsModule\Report\RecurrentWithoutProfileReport;
 use Crm\PaymentsModule\Report\StoppedOnFirstSubscriptionReport;
 use Crm\PaymentsModule\Report\TotalPaidSubscriptionsReport;
 use Crm\PaymentsModule\Report\TotalRecurrentSubscriptionsReport;
