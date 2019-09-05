@@ -315,6 +315,7 @@ admin:
 		item_name: Název
 		price_with_vat: Cena s DPH
 		vat_rate: Sazba DPH
+		enter_number_of_products: Zadejte počet kusů
 
 	report:
 		no_recurrent_charge:

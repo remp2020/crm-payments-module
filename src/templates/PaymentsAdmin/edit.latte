@@ -141,7 +141,7 @@
               var productId = values().filter(function (a) {
                   return selected.indexOf(a) === -1;
               });
-              var count = prompt('Zadajte počet kusov', 1);
+              var count = prompt({_payments.admin.payments.enter_number_of_products}, 1);
               var productCountsElem = $('input[name="products[product_counts]"]');
               var productCounts = JSON.parse(productCountsElem.val());
               productCounts[productId] = count;
