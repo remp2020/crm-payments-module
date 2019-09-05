@@ -320,6 +320,7 @@ admin:
 		item_name: Názov
 		price_with_vat: Cena s DPH
 		vat_rate: Sadzba DPH
+		enter_number_of_products: Zadajte počet kusov
 
 form:
 	payment_gateway:

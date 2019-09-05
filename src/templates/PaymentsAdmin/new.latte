@@ -160,7 +160,7 @@
                     return selected.indexOf(a) === -1;
                 });
 				var count = (function ask() {
-                    var n = prompt('Zadajte počet kusov', 1);
+                    var n = prompt({_payments.admin.payments.enter_number_of_products}, 1);
 					return isNaN(n) ? ask() : n;
 				}());
 
