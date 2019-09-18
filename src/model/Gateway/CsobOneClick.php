@@ -4,6 +4,7 @@ namespace Crm\PaymentsModule\Gateways;
 
 use Crm\ApplicationModule\Config\ApplicationConfig;
 use Crm\PaymentsModule\GatewayFail;
+use Crm\PaymentsModule\RecurrentPaymentFailStop;
 use Crm\PaymentsModule\RecurrentPaymentFailTry;
 use Crm\PaymentsModule\Repository\PaymentMetaRepository;
 use Nette\Application\LinkGenerator;
@@ -192,6 +193,9 @@ class CsobOneClick extends GatewayAbstract implements RecurrentPaymentInterface
             // CSOB library doesn't return any response here and throws Exception on any kind of error.
             // We can't rely on the future checks to throw FailTry and we need to do it here manually.
             if (!in_array($this->resultCode, self::SERVER_FAILURE_CODES)) {
+                if ($this->hasStopRecurrentPayment($payment, $this->resultCode)) {
+                    throw new RecurrentPaymentFailStop();
+                }
                 throw new RecurrentPaymentFailTry();
             }
 
