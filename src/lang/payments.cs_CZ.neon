@@ -451,14 +451,12 @@ frontend:
 		error: 'Automatickou platbu není možné obnovit.'
 		error_create_new: 'Automatickou platbu není možné obnovit. Prosím vytvořte novou.'
 	banktransfer:
-		title: Platba převodem
-		lead: Informace pro zakoupení předplatného pomocí bankovního převodu
+		title: Údaje pro vaši platbu bankovním převodem
 		amount: Částka
 		account_number: Číslo účtu
 		variable_symbol: Variabilní symbol
 		recipient_message: Zpráva pro příjemce
 		delay_info: Připsání platby na účet může trvat 1 až 2 pracovní dny. Předplatné se aktivuje až po připsání platby na náš účet.
-		thank_you: Děkujeme
 	select_card:
 		title: 'Vyberte kartu k dokončení platby'
 		lead: 'Pamatujeme si Vámi použité karty, takže ich číslo nemusíte zadávat znovu.'

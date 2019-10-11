@@ -456,14 +456,12 @@ frontend:
 		error: 'Automatickú platbu nie je možné obnoviť.'
 		error_create_new: 'Automatickú platbu nie je možné obnoviť. Prosím vytvorte novú.'
 	banktransfer:
-		title: Platba prevodom
-		lead: Informácie pre zakúpenie predplatného pomocou bankového prevodu
+		title: Údaje pre vašu platbu bankovým prevodom
 		amount: Suma
 		account_number: Číslo účtu
 		variable_symbol: Variabilný symbol
 		recipient_message: Správa pre prijímateľa
 		delay_info: Pripísanie platby na účet môže trvať 1 až 2 pracovné dni. Predplatné sa aktivuje až po pripísaní platby na náš účet.
-		thank_you: Ďakujeme
 	select_card:
 		title: 'Vyberte kartu na dokončenie platby'
 		lead: 'Pamätáme si Vami použité karty, takže ich číslo nemusíte zadávať znova.'
