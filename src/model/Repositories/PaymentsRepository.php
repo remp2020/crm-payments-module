@@ -100,7 +100,8 @@ class PaymentsRepository extends Repository
         $additionalType = null,
         $variableSymbol = null,
         IRow $address = null,
-        $recurrentCharge = false
+        $recurrentCharge = false,
+        array $metaData = []
     ) {
         $data = [
             'user_id' => $user->id,
@@ -146,6 +147,10 @@ class PaymentsRepository extends Repository
         $payment = $this->insert($data);
 
         $this->paymentItemsRepository->add($payment, $paymentItemContainer);
+
+        if (!empty($metaData)) {
+            $this->addMeta($payment, $metaData);
+        }
 
         $this->emitter->emit(new NewPaymentEvent($payment));
         return $payment;
