@@ -7,6 +7,8 @@ use Crm\PaymentsModule\Repository\PaymentsRepository;
 use Crm\PaymentsModule\Repository\RecurrentPaymentsRepository;
 use Nette\Http\Request;
 use Nette\Utils\Json;
+use Tracy\Debugger;
+use Tracy\ILogger;
 
 class PaymentProcessor
 {
@@ -79,10 +81,14 @@ class PaymentProcessor
             $payment = $this->paymentsRepository->find($payment->id);
 
             if ((boolean)$payment->payment_gateway->is_recurrent) {
-                $this->recurrentPaymentsRepository->createFromPayment(
-                    $payment,
-                    $gateway->getRecurrentToken()
-                );
+                if ($gateway->hasRecurrentToken()) {
+                    $this->recurrentPaymentsRepository->createFromPayment(
+                        $payment,
+                        $gateway->getRecurrentToken()
+                    );
+                } else {
+                    Debugger::log("Could not create recurrent payment from payment [{$payment->id}], missing recurrent token.", ILogger::ERROR);
+                }
             }
         } elseif ($result === false) {
             $this->paymentsRepository->updateStatus($payment, PaymentsRepository::STATUS_FAIL);

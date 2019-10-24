@@ -147,7 +147,7 @@ class Comfortpay extends GatewayAbstract implements RecurrentPaymentInterface
     public function hasRecurrentToken(): bool
     {
         $data = $this->getResponseData();
-        return isset($data['CID']);
+        return isset($data['CID']) && isset($data['TRES']) && $data['TRES'] === 'OK';
     }
 
     public function getRecurrentToken()
