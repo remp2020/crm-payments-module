@@ -3,6 +3,7 @@
 namespace Crm\PaymentsModule\Events;
 
 use Crm\PaymentsModule\Repository\PaymentsRepository;
+use Crm\PaymentsModule\Repository\RecurrentPaymentsRepository;
 use Crm\SubscriptionsModule\Events\SubscriptionStartsEvent;
 use Crm\SubscriptionsModule\Repository\SubscriptionsRepository;
 use Crm\UsersModule\Repository\AddressesRepository;
@@ -21,17 +22,21 @@ class PaymentStatusChangeHandler extends AbstractListener
 
     private $paymentsRepository;
 
+    private $recurrentPaymentsRepository;
+
     private $emitter;
 
     public function __construct(
         SubscriptionsRepository $subscriptionsRepository,
         AddressesRepository $addressesRepository,
         PaymentsRepository $paymentsRepository,
+        RecurrentPaymentsRepository $recurrentPaymentsRepository,
         Emitter $emitter
     ) {
         $this->subscriptionsRepository = $subscriptionsRepository;
         $this->addressesRepository = $addressesRepository;
         $this->paymentsRepository = $paymentsRepository;
+        $this->recurrentPaymentsRepository = $recurrentPaymentsRepository;
         $this->emitter = $emitter;
     }
 
@@ -40,6 +45,10 @@ class PaymentStatusChangeHandler extends AbstractListener
         $payment = $event->getPayment();
         // hard reload, other handlers could have alter the payment already
         $payment = $this->paymentsRepository->find($payment->id);
+
+        if (in_array($payment->status, [PaymentsRepository::STATUS_REFUND])) {
+            $this->stopRecurrentPayment($payment);
+        }
 
         if ($payment->subscription_id) {
             return;
@@ -112,5 +121,17 @@ class PaymentStatusChangeHandler extends AbstractListener
         }
 
         return $subscription;
+    }
+
+    private function stopRecurrentPayment(ActiveRow $payment)
+    {
+        $recurrent = $this->recurrentPaymentsRepository->recurrent($payment);
+        if (!$recurrent || $recurrent->state !== RecurrentPaymentsRepository::STATE_ACTIVE) {
+            return;
+        }
+
+        $this->recurrentPaymentsRepository->update($recurrent, [
+            'state' => RecurrentPaymentsRepository::STATE_SYSTEM_STOP
+        ]);
     }
 }
