@@ -112,7 +112,7 @@ Format: <comment>`--override={GATEWAY-CODE},{COUNT-TO-CHECK},{HOURS-TO-CHECK}`</
   - <info>{COUNT-TO-CHECK}</info> - sends notification if last <info>{COUNT-TO-CHECK}</info> payments are not valid.
   - <info>{HOURS-TO-CHECK}</info> - sends notification if no valid payments are present in <info>{HOURS-TO-CHECK}</info> hours.
 EOH
-)
+        )
             ->addUsage('--notify=email@example.com')
             ->addUsage('--notify=email@example.com --exclude=bank_transfer')
             ->addUsage('--notify=email@example.com --override=paypal,10,2')
