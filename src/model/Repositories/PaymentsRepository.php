@@ -256,7 +256,7 @@ class PaymentsRepository extends Repository
             'sales_funnel_id' => $payment->sales_funnel_id ?? $salesFunnelId, // pass explicit sales_funnel_id if payment doesn't contain one
         ]));
 
-        return $payment;
+        return $this->find($payment->id);
     }
 
     /**
