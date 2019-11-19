@@ -373,7 +373,8 @@ class PaymentFormFactory
                         $subscriptionType->id,
                         $item->name,
                         $item->amount,
-                        $item->vat
+                        $item->vat,
+                        $item->count
                     );
                     $paymentItemContainer->addItem($paymentItem);
                 }
