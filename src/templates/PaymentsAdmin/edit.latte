@@ -72,6 +72,7 @@
                 var item = $('<div class="payment-item"></div>').append($('#payment-items-template').html());
                 item.find('span[data-tag="iterator"]').html(i + 1);
                 item.find('input[data-tag="name"]').val(items[i].name).attr('disabled', paymentItemsDisabled);
+                item.find('input[data-tag="count"]').val(items[i].count).attr('disabled', paymentItemsDisabled);
                 item.find('input[data-tag="amount"]').val(items[i].amount).attr('disabled', paymentItemsDisabled);
                 item.find('input[data-tag="vat"]').val(items[i].vat).attr('disabled', paymentItemsDisabled);
                 domItems.append(item)
@@ -92,8 +93,8 @@
             var amount = 0;
 
             // subscription
-            $('#payment-items input[data-tag="amount"]').each(function () {
-                amount += Number($(this).val().replace(',', '.'));
+            $('#payment-items .payment-item').each(function () {
+                amount += Number($(this).find('input[data-tag=amount]').val().replace(',', '.')) * Number($(this).find('input[data-tag=count]').val());
             });
             $('#payment-items').show();
 
@@ -104,7 +105,7 @@
         }
 
         function resetListeners() {
-            $('#payment-items input[data-tag="amount"]').off('change').on('change', function () {
+            $('#payment-items input[data-tag="amount"], #payment-items input[data-tag="count"]').off('change').on('change', function () {
                 updatePaymentAmount();
             });
         }

@@ -91,6 +91,7 @@ class PaymentFormFactory
             foreach ($payment->related('payment_items')->fetchAll() as $item) {
                 $items[] = [
                     'amount' => $item->amount,
+                    'count' => $item->count,
                     'name' => $item->name,
                     'vat' => $item->vat,
                 ];

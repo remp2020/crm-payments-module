@@ -321,6 +321,7 @@ admin:
 		price_with_vat: Cena s DPH
 		vat_rate: Sadzba DPH
 		enter_number_of_products: Zadajte počet kusov
+		count: Počet kusov
 
 	report:
 		no_recurrent_charge:

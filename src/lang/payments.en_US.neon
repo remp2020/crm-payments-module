@@ -316,6 +316,7 @@ admin:
 		price_with_vat: Price with VAT
 		vat_rate: VAT rate
 		enter_number_of_products: Enter number of products
+		count: Count
 
 	report:
 		no_recurrent_charge:
