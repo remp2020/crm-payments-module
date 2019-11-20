@@ -130,7 +130,7 @@
           <a href="{plink :Payments:PaymentsAdmin:Edit $payment->id, $payment->user_id}" class="btn btn-primary btn-sm">
             <i class="fa fa-edit"></i> {_"payments.admin.component.user_payments_listing.edit"}
           </a>
-          {control listingWidget 'admin.payments.listing.action', $payment}
+          {control simpleWidget 'admin.payments.listing.action', $payment}
         </td>
       </tr>
     </tbody>
