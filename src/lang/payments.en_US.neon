@@ -313,7 +313,7 @@ admin:
 		new_for_user: New payment for
 		item: item
 		item_name: Name
-		price_with_vat: Price with VAT
+		price_with_vat: Unit price with VAT
 		vat_rate: VAT rate
 		enter_number_of_products: Enter number of products
 		count: Count

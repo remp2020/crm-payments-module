@@ -318,7 +318,7 @@ admin:
 		new_for_user: Nová platba pre
 		item: položka
 		item_name: Názov
-		price_with_vat: Cena s DPH
+		price_with_vat: Jednotková cena s DPH
 		vat_rate: Sadzba DPH
 		enter_number_of_products: Zadajte počet kusov
 		count: Počet kusov
