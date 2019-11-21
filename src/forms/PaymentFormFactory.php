@@ -94,6 +94,8 @@ class PaymentFormFactory
                     'count' => $item->count,
                     'name' => $item->name,
                     'vat' => $item->vat,
+                    'type' => $item->type,
+                    'postal_fee_id' => $item->postal_fee_id
                 ];
             }
             $defaults['payment_items'] = Json::encode($items);
