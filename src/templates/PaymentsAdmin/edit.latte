@@ -77,6 +77,7 @@
                 item.find('input[data-tag="vat"]').val(items[i].vat).attr('disabled', paymentItemsDisabled);
                 item.find('input[data-tag="type"]').val(items[i].type).attr('disabled', paymentItemsDisabled);
                 item.find('input[data-tag="postal_fee_id"]').val(items[i].postal_fee_id).attr('disabled', paymentItemsDisabled);
+                item.find('input[data-tag="product_id"]').val(items[i].product_id).attr('disabled', paymentItemsDisabled);
                 domItems.append(item)
             }
 

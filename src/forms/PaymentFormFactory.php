@@ -95,7 +95,8 @@ class PaymentFormFactory
                     'name' => $item->name,
                     'vat' => $item->vat,
                     'type' => $item->type,
-                    'postal_fee_id' => $item->postal_fee_id
+                    'postal_fee_id' => $item->postal_fee_id,
+                    'product_id' => $item->product_id,
                 ];
             }
             $defaults['payment_items'] = Json::encode($items);
@@ -370,7 +371,8 @@ class PaymentFormFactory
                 if ($item->amount < 0) {
                     $form['subscription_type_id']->addError('Cena položiek musí byť nezáporná');
                 }
-                if ($subscriptionType) {
+
+                if ($subscriptionType && $item->type === SubscriptionTypePaymentItem::TYPE) {
                     $paymentItem = new SubscriptionTypePaymentItem(
                         $subscriptionType->id,
                         $item->name,

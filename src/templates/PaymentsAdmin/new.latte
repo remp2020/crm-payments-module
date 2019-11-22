@@ -58,6 +58,7 @@
 
             if ($(this).val()) {
                 items = subscriptionTypes[$(this).val()].items.slice(0);
+                items[0].type = 'subscription_type';
             }
             if ($('input[name="payment_items"]').val()) {
                 items = JSON.parse($('input[name="payment_items"]').val());
@@ -75,6 +76,7 @@
                 item.find('input[data-tag="count"]').val(1);
                 item.find('input[data-tag="amount"]').val(items[i].amount);
                 item.find('input[data-tag="vat"]').val(items[i].vat);
+                item.find('input[data-tag="type"]').val(items[i].type);
                 domItems.append(item)
             }
 
