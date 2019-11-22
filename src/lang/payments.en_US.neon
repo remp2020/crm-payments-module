@@ -118,7 +118,7 @@ admin:
 				payment: Payment
 				message: Message
 			referrer: Referrer
-			edit: Edit
+			edit: Edit payment
 			n_a: "N/A"
 			payment:
 				address: Address

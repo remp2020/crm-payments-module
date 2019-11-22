@@ -127,9 +127,11 @@
         </td>
 
         <td style="white-space: nowrap">
-          <a href="{plink :Payments:PaymentsAdmin:Edit $payment->id, $payment->user_id}" class="btn btn-primary btn-sm">
-            <i class="fa fa-edit"></i> {_"payments.admin.component.user_payments_listing.edit"}
-          </a>
+          <div style="margin-bottom: 2px">
+            <a href="{plink :Payments:PaymentsAdmin:Edit $payment->id, $payment->user_id}" class="btn btn-primary btn-sm">
+              <i class="fa fa-edit"></i> {_"payments.admin.component.user_payments_listing.edit"}
+            </a>
+          </div>
           {control simpleWidget 'admin.payments.listing.action', $payment}
         </td>
       </tr>

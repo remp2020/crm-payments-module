@@ -118,7 +118,7 @@ admin:
 				payment: Platba
 				message: Správa
 			referrer: Referer
-			edit: Uprav
+			edit: Upraviť platbu
 			n_a: "N/A"
 			payment:
 				address: Adresa
