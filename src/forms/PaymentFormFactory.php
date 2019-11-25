@@ -361,10 +361,14 @@ class PaymentFormFactory
 
         $paymentItemContainer = new PaymentItemContainer();
 
+        $allowEditPaymentItems = true;
         if ((isset($values['custom_payment_items']) && $values['custom_payment_items'])
             || ($payment && $payment->status === 'form')
         ) {
             foreach (Json::decode($values->payment_items) as $item) {
+                if ($payment && $item->type !== SubscriptionTypePaymentItem::TYPE) {
+                    $allowEditPaymentItems = false;
+                }
                 if ($item->amount == 0) {
                     continue;
                 }
@@ -424,7 +428,7 @@ class PaymentFormFactory
                 $values['subscription_end_at'] = $subscriptionEndAt;
             }
 
-            if ($payment && $payment->status === 'form') {
+            if ($payment && $payment->status === 'form' && $allowEditPaymentItems) {
                 $this->paymentsRepository->update($payment, $values, $paymentItemContainer);
             } else {
                 $this->paymentsRepository->update($payment, $values);
