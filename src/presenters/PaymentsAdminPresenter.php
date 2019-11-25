@@ -12,6 +12,7 @@ use Crm\PaymentsModule\Forms\PaymentFormFactory;
 use Crm\PaymentsModule\PaymentsHistogramFactory;
 use Crm\PaymentsModule\Repository\PaymentGatewaysRepository;
 use Crm\PaymentsModule\Repository\PaymentsRepository;
+use Crm\SubscriptionsModule\PaymentItem\SubscriptionTypePaymentItem;
 use Crm\SubscriptionsModule\Repository\SubscriptionTypesRepository;
 use Crm\UsersModule\Repository\UsersRepository;
 use Nette\Application\BadRequestException;
@@ -223,6 +224,15 @@ class PaymentsAdminPresenter extends AdminPresenter
         }
         $this->template->payment = $payment;
         $this->template->user = $payment->user;
+
+        $allowEditPaymentItems = true;
+        foreach ($payment->related('payment_items')->fetchAll() as $item) {
+            if ($item->type !== SubscriptionTypePaymentItem::TYPE) {
+                $allowEditPaymentItems = false;
+                continue;
+            }
+        }
+        $this->template->allowEditPaymentItems = $allowEditPaymentItems;
     }
 
     public function renderNew($userId)

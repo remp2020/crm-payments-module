@@ -50,7 +50,7 @@
         var subscriptionTypes = JSON.parse(subscriptionTypesElem.val());
 
         var $subscriptionType = $('#' + {$control[paymentForm][subscription_type_id]->htmlId});
-        var paymentItemsDisabled = {$payment->status !== 'form'};
+        var paymentItemsDisabled = {$payment->status !== 'form' || !$allowEditPaymentItems};
 
         $subscriptionType.off('change').on('change', function () {
             // set items
