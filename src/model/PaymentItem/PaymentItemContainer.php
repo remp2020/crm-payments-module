@@ -22,6 +22,21 @@ class PaymentItemContainer
     }
 
     /**
+     * Switch $oldItem in PaymentItemContainer with $newItem
+     *
+     * @throws PaymentItemContainerException - Thrown if incorrect $itemIndex and $oldItem are provided.
+     */
+    public function switchItem(int $itemIndex, PaymentItemInterface $oldItem, PaymentItemInterface $newItem): self
+    {
+        if ($this->items[$itemIndex] === $oldItem) {
+            $this->items[$itemIndex] = $newItem;
+            return $this;
+        }
+
+        throw new PaymentItemContainerException("Unable to find PaymentItem [{$oldItem->name()}] with provided index [{$itemIndex}] in PaymentItemContainer. Container not updated.");
+    }
+
+    /**
      * @return PaymentItemInterface[]
      */
     public function items(): array

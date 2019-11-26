@@ -81,4 +81,16 @@ class PaymentMetaRepository extends Repository
             'value' => $value
         ])->fetch();
     }
+
+    /**
+     * @param ActiveRow $payment
+     * @param string $key
+     */
+    public function findByPaymentAndKey(ActiveRow $payment, string $key)
+    {
+        return $this->getTable()->where([
+                'payment_id' => $payment->id,
+                'key' => $key,
+            ])->fetch();
+    }
 }
