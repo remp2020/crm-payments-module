@@ -2,10 +2,10 @@
 
 namespace Crm\PaymentsModule\Presenters;
 
+use Crm\AdminModule\Presenters\AdminPresenter;
 use Crm\ApplicationModule\Components\Graphs\SmallBarGraphControlFactoryInterface;
 use Crm\ApplicationModule\Components\VisualPaginator;
 use Crm\ApplicationModule\DataProvider\DataProviderManager;
-use Crm\AdminModule\Presenters\AdminPresenter;
 use Crm\PaymentsModule\Components\ChangePaymentStatusFactoryInterface;
 use Crm\PaymentsModule\DataProvider\AdminFilterFormDataProviderInterface;
 use Crm\PaymentsModule\Forms\PaymentFormFactory;
@@ -226,12 +226,19 @@ class PaymentsAdminPresenter extends AdminPresenter
         $this->template->user = $payment->user;
 
         $allowEditPaymentItems = true;
-        foreach ($payment->related('payment_items')->fetchAll() as $item) {
-            if ($item->type !== SubscriptionTypePaymentItem::TYPE) {
-                $allowEditPaymentItems = false;
-                continue;
+
+        if ($payment->status !== 'form') {
+            $allowEditPaymentItems = false;
+        }
+        if ($allowEditPaymentItems) {
+            foreach ($payment->related('payment_items')->fetchAll() as $item) {
+                if ($item->type !== SubscriptionTypePaymentItem::TYPE) {
+                    $allowEditPaymentItems = false;
+                    break;
+                }
             }
         }
+
         $this->template->allowEditPaymentItems = $allowEditPaymentItems;
     }
 
