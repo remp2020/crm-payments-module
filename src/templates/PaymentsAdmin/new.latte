@@ -58,7 +58,9 @@
 
             if ($(this).val()) {
                 items = subscriptionTypes[$(this).val()].items.slice(0);
-                items[0].type = 'subscription_type';
+                for (var i = 0; i < items.length; i++) {
+                    items[i].type = 'subscription_type';
+                }
             }
             if ($('input[name="payment_items"]').val()) {
                 items = JSON.parse($('input[name="payment_items"]').val());
