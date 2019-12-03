@@ -8,7 +8,8 @@ use Crm\PaymentsModule\Repository\PaymentsRepository;
 use Crm\SegmentModule\Repository\SegmentsRepository;
 
 /**
- * Simple widget showing single stat of free subscribers.
+ * This widget fetches number of free subscribers and renders line with
+ * label and resulting value.
  *
  * @package Crm\PaymentsModule\Components
  */

@@ -8,7 +8,8 @@ use Crm\PaymentsModule\Repository\PaymentsRepository;
 use Nette\Localization\ITranslator;
 
 /**
- * Simple bootstrap modal for changing status + sending info email.
+ * This widget allow to edit payment status in case status is other than `paid`.
+ * Renders bootstrap with simple form and handles submit.
  *
  * @package Crm\PaymentsModule\Components
  */

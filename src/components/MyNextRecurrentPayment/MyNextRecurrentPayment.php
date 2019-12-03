@@ -8,7 +8,8 @@ use Crm\PaymentsModule\RecurrentPaymentsResolver;
 use Crm\PaymentsModule\Repository\RecurrentPaymentsRepository;
 
 /**
- * Simple bootstrap well widget showing next recurrent payment charge date and amount.
+ * This widget fetches last active recurrent payment for specific user
+ * and renders simple bootstrap well widget showing results.
  *
  * @package Crm\PaymentsModule\Components
  */

@@ -7,8 +7,8 @@ use Crm\PaymentsModule\PaymentItem\DonationPaymentItem;
 use Nette\Database\Table\ActiveRow;
 
 /**
- * Simple list item used in payments listing.
- * Shows donation as payment item.
+ * This widget takes payment item and renders result name, amount and price
+ * in case it's donation payment item type.
  *
  * @package Crm\PaymentsModule\Components
  */

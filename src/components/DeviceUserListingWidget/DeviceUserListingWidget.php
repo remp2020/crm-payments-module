@@ -6,8 +6,8 @@ use Crm\ApplicationModule\Widget\BaseWidget;
 use Nette\Database\Table\ActiveRow;
 
 /**
- * Simple list item with name of the users device.
- * Used in users listing.
+ * This widget takes payment and parses device from payments user agent field.
+ * Renders simple list item with result.
  *
  * @package Crm\PaymentsModule\Components
  */

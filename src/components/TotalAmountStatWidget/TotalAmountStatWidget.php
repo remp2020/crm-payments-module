@@ -7,7 +7,8 @@ use Crm\ApplicationModule\Widget\WidgetManager;
 use Crm\PaymentsModule\Repository\PaymentsRepository;
 
 /**
- * Simple single stat widget showing total amount of payments.
+ * This widget fetches total amount of payments and renders line with
+ * label and resulting value.
  *
  * @package Crm\PaymentsModule\Components
  */

@@ -8,7 +8,8 @@ use Crm\PaymentsModule\Repository\PaymentsRepository;
 use Nette\Utils\DateTime;
 
 /**
- * Simple single stat widget showing todays amount of payments.
+ * This widget fetches amount of today payments and renders line with
+ * label and resulting value.
  *
  * @package Crm\PaymentsModule\Components
  */

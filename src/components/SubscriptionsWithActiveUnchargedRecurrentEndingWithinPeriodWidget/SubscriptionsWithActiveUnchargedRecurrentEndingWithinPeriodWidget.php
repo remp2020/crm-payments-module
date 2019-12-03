@@ -10,8 +10,8 @@ use Nette\Localization\ITranslator;
 use Nette\Utils\DateTime;
 
 /**
- * Dashboard widget showing line of stats of users with active uncharged recurrent
- * for different time intervals.
+ * This widget fetches ending subscription with active uncharged recurrent payment
+ * fot different time intervals and renders line wwith resulting values.
  *
  * @package Crm\PaymentsModule\Components
  */

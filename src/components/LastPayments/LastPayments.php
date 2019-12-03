@@ -7,8 +7,8 @@ use Crm\ApplicationModule\Widget\WidgetManager;
 use Crm\PaymentsModule\Repository\PaymentsRepository;
 
 /**
- * Bootstrap listing of last payments for specific for payment gateway.
- * Used in payment gateway detail.
+ * This widgest fetches last payments for specific for payment gateway
+ * and renders bootstrap listing.
  *
  * @package Crm\PaymentsModule\Components
  */

@@ -7,7 +7,8 @@ use Crm\ApplicationModule\Widget\WidgetManager;
 use Crm\PaymentsModule\MailConfirmation\ParsedMailLogsRepository;
 
 /**
- * Widget with listing of users with wrong payment amount.
+ * This widgets fetches all parsed mail logs with wrong payment amount
+ * and renders bootstrap callout with list of these payments.
  *
  * @package Crm\PaymentsModule\Components
  */

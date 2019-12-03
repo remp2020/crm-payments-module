@@ -9,8 +9,8 @@ use Crm\ApplicationModule\Widget\WidgetManager;
 use Crm\SegmentModule\Repository\SegmentsValuesRepository;
 
 /**
- * Simple single stat widget used in dashboard.
- * Showing subscribers with payment number and change from last month.
+ * This widget takes segment code and date modifier and than fetches subscribers value
+ * without modifier and with modifier. Renders simple bootstrap badge with difference value
  *
  * @package Crm\PaymentsModule\Components
  */

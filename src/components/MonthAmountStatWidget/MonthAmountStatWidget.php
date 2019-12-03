@@ -8,7 +8,8 @@ use Crm\PaymentsModule\Repository\PaymentsRepository;
 use Nette\Utils\DateTime;
 
 /**
- * Single stat widget showing sum amount of payments in last month.
+ * This widget fetches number of payments this/last month and renders line with
+ * label and resulting values.
  *
  * @package Crm\PaymentsModule\Components
  */

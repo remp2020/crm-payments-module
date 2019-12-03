@@ -15,6 +15,10 @@ use Nette\Utils\DateTime;
 /**
  * Listing widget used in user detail shoing users payments.
  *
+ * This widget fetches all user payments. Renders bootstrap table with resulting dataset
+ * and adds change payment status widget and abilit to add any number of simple widgets.
+ * Also handles stopping recurrent payment.
+ *
  * @package Crm\PaymentsModule\Components
  */
 class UserPaymentsListing extends BaseWidget

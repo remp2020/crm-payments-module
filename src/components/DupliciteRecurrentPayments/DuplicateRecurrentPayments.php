@@ -9,8 +9,8 @@ use Nette\Application\BadRequestException;
 use Nette\Localization\ITranslator;
 
 /**
- * Bootstrap data listing.
- * Lists user accounts with 2 and more running recurrent subscriptions.
+ * This widgets fetches and renders bootstrap table with all duplicate recurrent payments.
+ * Also allows deactivating recurrent payment.
  *
  * @package Crm\PaymentsModule\Components
  */

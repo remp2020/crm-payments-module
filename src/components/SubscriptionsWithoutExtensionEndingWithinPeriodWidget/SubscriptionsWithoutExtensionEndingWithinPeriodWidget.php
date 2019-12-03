@@ -10,8 +10,8 @@ use Nette\Localization\ITranslator;
 use Nette\Utils\DateTime;
 
 /**
- * Dashboard widget showing line of stats of users with ending subscription
- * for different time intervals.
+ * This widget fetches ending subscription without extension
+ * fot different time intervals and renders line with resulting values.
  *
  * @package Crm\PaymentsModule\Components
  */

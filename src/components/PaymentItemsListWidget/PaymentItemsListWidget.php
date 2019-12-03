@@ -7,8 +7,8 @@ use Crm\SubscriptionsModule\PaymentItem\SubscriptionTypePaymentItem;
 use Nette\Database\Table\ActiveRow;
 
 /**
- * Widget used in payments listing.
- * Showing list of payment items.
+ * This widget takes payment item and renders name, count, amount and price
+ * in case it's other type than `subscription_type`.
  *
  * @package Crm\PaymentsModule\Components
  */

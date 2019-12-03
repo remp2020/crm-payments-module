@@ -15,8 +15,8 @@ use Crm\SubscriptionsModule\Repository\SubscriptionTypesRepository;
 use Kdyby\Translation\Translator;
 
 /**
- * Table widget showing different report stats for specific subscription type.
- * Used in subscription type detail.
+ * This widget uses `ReportTable` to fetch different stats for specific subscription type
+ * and renders table with resulting values.
  *
  * @package Crm\PaymentsModule\Components
  */
