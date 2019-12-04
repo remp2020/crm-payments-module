@@ -164,6 +164,11 @@ class PaymentsModule extends CrmModule
             800
         );
         $widgetManager->registerWidget(
+            'subscriptions.endinglist',
+            $this->getInstance(\Crm\PaymentsModule\Components\PaidSubscriptionsWithoutExtensionEndingWithinPeriodWidget::class),
+            900
+        );
+        $widgetManager->registerWidget(
             'dashboard.singlestat.actuals.system',
             $this->getInstance(\Crm\PaymentsModule\Components\SubscribersWithPaymentWidgetFactory::class)->create()->setDateModifier('-1 day'),
             500

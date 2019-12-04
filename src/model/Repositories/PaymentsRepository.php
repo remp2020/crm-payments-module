@@ -570,16 +570,22 @@ class PaymentsRepository extends Repository
      *
      * @return int
      */
-    public function subscriptionsWithoutExtensionEndingNextTwoWeeksCount($forceCacheUpdate = false)
+    public function subscriptionsWithoutExtensionEndingNextTwoWeeksCount($forceCacheUpdate = false, $onlyPaid = false)
     {
-        $callable = function () {
+        $cacheKey = 'subscriptions_without_extension_ending_next_two_weeks_count';
+        if ($onlyPaid) {
+            $cacheKey = 'paid_' . $cacheKey;
+        }
+
+        $callable = function () use ($onlyPaid) {
             return $this->subscriptionsWithoutExtensionEndingBetweenCount(
                 \Nette\Utils\DateTime::from('today 00:00'),
-                \Nette\Utils\DateTime::from('+14 days 23:59:59')
+                \Nette\Utils\DateTime::from('+14 days 23:59:59'),
+                $onlyPaid
             );
         };
         return $this->cacheRepository->loadAndUpdate(
-            'subscriptions_without_extension_ending_next_two_weeks_count',
+            $cacheKey,
             $callable,
             \Nette\Utils\DateTime::from(CacheRepository::REFRESH_TIME_5_MINUTES),
             $forceCacheUpdate
@@ -593,23 +599,29 @@ class PaymentsRepository extends Repository
      *
      * @return int
      */
-    public function subscriptionsWithoutExtensionEndingNextMonthCount($forceCacheUpdate = false)
+    public function subscriptionsWithoutExtensionEndingNextMonthCount($forceCacheUpdate = false, $onlyPaid = false)
     {
-        $callable = function () {
+        $cacheKey = 'subscriptions_without_extension_ending_next_month_count';
+        if ($onlyPaid) {
+            $cacheKey = 'paid_' . $cacheKey;
+        }
+
+        $callable = function () use ($onlyPaid) {
             return $this->subscriptionsWithoutExtensionEndingBetweenCount(
                 \Nette\Utils\DateTime::from('today 00:00'),
-                \Nette\Utils\DateTime::from('+31 days 23:59:59')
+                \Nette\Utils\DateTime::from('+31 days 23:59:59'),
+                $onlyPaid
             );
         };
         return $this->cacheRepository->loadAndUpdate(
-            'subscriptions_without_extension_ending_next_month_count',
+            $cacheKey,
             $callable,
             \Nette\Utils\DateTime::from(CacheRepository::REFRESH_TIME_5_MINUTES),
             $forceCacheUpdate
         );
     }
 
-    public function subscriptionsWithoutExtensionEndingBetweenCount(DateTime $startTime, DateTime $endTime)
+    public function subscriptionsWithoutExtensionEndingBetweenCount(DateTime $startTime, DateTime $endTime, $onlyPaid = false)
     {
         $s = $startTime;
         $e = $endTime;
@@ -630,13 +642,19 @@ SQL;
 
         $q = <<<SQL
         
-SELECT COUNT(id) as total FROM subscriptions 
-WHERE id IS NOT NULL AND end_time >= ? AND end_time <= ? AND id NOT IN (
+SELECT COUNT(subscriptions.id) as total FROM subscriptions 
+LEFT JOIN subscription_types ON subscription_types.id = subscriptions.subscription_type_id
+WHERE subscriptions.id IS NOT NULL AND end_time >= ? AND end_time <= ? AND subscriptions.id NOT IN (
   SELECT id FROM subscriptions WHERE end_time >= ? AND end_time <= ? AND next_subscription_id IS NOT NULL
   UNION 
   ($renewedSubscriptionsEndingBetweenSql)
 )
 SQL;
+
+        if ($onlyPaid) {
+            $q .= " AND subscription_types.price > 0 AND subscriptions.type NOT IN ('free')";
+        }
+
         return $this->getDatabase()->fetch($q, $s, $e, $s, $e, $s, $e)->total;
     }
 
