@@ -61,10 +61,14 @@ class UpdateRecurrentPaymentsExpiresCommand extends Command
             $count = intval($input->getOption('count'));
         }
 
-        $recurrentPayments = $this->recurrentPaymentsRepository->all()->where([
-            'expires_at' => null,
-            'state' => RecurrentPaymentsRepository::STATE_ACTIVE,
-        ])->limit($count);
+        $recurrentPayments = $this->recurrentPaymentsRepository->all()
+            ->select('payment_gateway.code, cid')
+            ->where([
+                'expires_at' => null,
+                'state' => RecurrentPaymentsRepository::STATE_ACTIVE,
+            ])
+            ->limit($count)
+            ->group('payment_gateway.code, cid');
 
         if ($code = $input->getOption('gateway')) {
             $gateway = $this->paymentGatewaysRepository->findByCode($code);
@@ -77,14 +81,13 @@ class UpdateRecurrentPaymentsExpiresCommand extends Command
 
         $gateways = [];
         foreach ($recurrentPayments as $recurrentPayment) {
-            $gateways[$recurrentPayment->payment_gateway->code][$recurrentPayment->cid] = $recurrentPayment;
+            $gateways[$recurrentPayment->code][$recurrentPayment->cid] = $recurrentPayment->cid;
         }
-
         if (empty($gateways)) {
             $output->writeln('<info>No cards.</info>');
         }
 
-        foreach ($gateways as $code => $recurrentPayments) {
+        foreach ($gateways as $code => $cids) {
             $gateway = $this->gatewayFactory->getGateway($code);
             if (!$gateway instanceof RecurrentPaymentInterface) {
                 $output->writeln("<error>Error: gateway {$code} does not implement RecurrentPaymentInterface</error>");
@@ -94,13 +97,13 @@ class UpdateRecurrentPaymentsExpiresCommand extends Command
             $output->writeln("Checking <comment>{$paymentGateway->name}</comment> expirations:");
 
             try {
-                $result = $gateway->checkExpire(array_keys($recurrentPayments));
+                $result = $gateway->checkExpire($cids);
                 foreach ($result as $token => $expire) {
-                    $recurrentPayment = $recurrentPayments[$token];
-                    $this->recurrentPaymentsRepository->update($recurrentPayment, [
-                        'expires_at' => $expire,
-                    ]);
-                    $output->writeln('  * CID: ' . $recurrentPayment->cid . ' User ID: ' . $recurrentPayment->user_id . ' Expires at: ' . $expire->format('Y-m-d H:i:s') . '</info>');
+                    $this->recurrentPaymentsRepository->getTable()
+                        ->where(['cid' => $token])
+                        ->update(['expires_at', $expire]);
+
+                    $output->writeln('  * CID: ' . $token . ' (expires at: ' . $expire->format('Y-m-d H:i:s') . ')</info>');
                 }
             } catch (\Exception $e) {
                 $output->writeln("  * <error>Error {$e->getMessage()}</error>");

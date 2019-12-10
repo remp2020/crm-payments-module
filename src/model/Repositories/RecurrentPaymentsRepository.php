@@ -213,7 +213,7 @@ class RecurrentPaymentsRepository extends Repository
         if ($problem) {
             $where['state'] = [self::STATE_SYSTEM_STOP, self::STATE_TB_FAILED, self::STATE_CHARGE_FAILED];
         }
-        return $this->getTable()->where($where)->order('charge_at DESC, created_at DESC');
+        return $this->getTable()->where($where)->order('recurrent_payments.charge_at DESC, recurrent_payments.created_at DESC');
     }
 
     public function getStatusPairs()
