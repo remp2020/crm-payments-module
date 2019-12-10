@@ -38,12 +38,14 @@ class UpdateRecurrentPaymentsExpiresCommand extends Command
                 'count',
                 null,
                 InputOption::VALUE_REQUIRED,
-                'Number of cids to process')
+                'Number of cids to process'
+            )
             ->addOption(
                 'gateway',
                 null,
                 InputOption::VALUE_REQUIRED,
-                'Payment gateway code to check use. If not specified, all recurring gateways are checked.');
+                'Payment gateway code to check use. If not specified, all recurring gateways are checked.'
+            );
     }
 
     public function execute(InputInterface $input, OutputInterface $output)
