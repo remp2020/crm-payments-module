@@ -35,7 +35,7 @@ class UpdateRecurrentPaymentsExpiresCommand extends Command
         $this->setName('payments:update_recurrent_payments_expires')
             ->setDescription('Update recurrent payments expires')
             ->addOption(
-                'count',
+                'limit',
                 null,
                 InputOption::VALUE_REQUIRED,
                 'Number of cids to process'
@@ -56,9 +56,9 @@ class UpdateRecurrentPaymentsExpiresCommand extends Command
         $output->writeln('<info>***** Recurrent Payment *****</info>');
         $output->writeln('');
 
-        $count = 100;
-        if ($input->getOption('count')) {
-            $count = intval($input->getOption('count'));
+        $limit = null;
+        if ($input->getOption('limit')) {
+            $limit = intval($input->getOption('limit'));
         }
 
         $recurrentPayments = $this->recurrentPaymentsRepository->all()
@@ -67,7 +67,6 @@ class UpdateRecurrentPaymentsExpiresCommand extends Command
                 'expires_at' => null,
                 'state' => RecurrentPaymentsRepository::STATE_ACTIVE,
             ])
-            ->limit($count)
             ->group('payment_gateway.code, cid');
 
         if ($code = $input->getOption('gateway')) {
@@ -79,6 +78,11 @@ class UpdateRecurrentPaymentsExpiresCommand extends Command
             $recurrentPayments->where(['payment_gateway_id' => $gateway->id]);
         }
 
+        $totalCount = (clone $recurrentPayments)->count('*');
+        if ($limit) {
+            $recurrentPayments->limit($limit);
+        }
+
         $gateways = [];
         foreach ($recurrentPayments as $recurrentPayment) {
             $gateways[$recurrentPayment->code][$recurrentPayment->cid] = $recurrentPayment->cid;
@@ -86,6 +90,8 @@ class UpdateRecurrentPaymentsExpiresCommand extends Command
         if (empty($gateways)) {
             $output->writeln('<info>No cards.</info>');
         }
+
+        $output->writeln("Processing <comment>$recurrentPayments->count()</comment>/<info>{$totalCount}</info> CIDs without expiration");
 
         foreach ($gateways as $code => $cids) {
             $gateway = $this->gatewayFactory->getGateway($code);
@@ -97,12 +103,14 @@ class UpdateRecurrentPaymentsExpiresCommand extends Command
             $output->writeln("Checking <comment>{$paymentGateway->name}</comment> expirations:");
 
             try {
-                $result = $gateway->checkExpire($cids);
+                $result = $gateway->checkExpire(array_values($cids));
                 foreach ($result as $token => $expire) {
-                    $this->recurrentPaymentsRepository->getTable()
-                        ->where(['cid' => $token])
-                        ->update(['expires_at', $expire]);
-
+                    $cidRecurrentPayments = $this->recurrentPaymentsRepository->getTable()->where(['cid' => $token]);
+                    foreach ($cidRecurrentPayments as $cidPayment) {
+                        $this->recurrentPaymentsRepository->update($cidPayment, [
+                            'expires_at' => $expire
+                        ]);
+                    }
                     $output->writeln('  * CID: ' . $token . ' (expires at: ' . $expire->format('Y-m-d H:i:s') . ')</info>');
                 }
             } catch (\Exception $e) {
