@@ -91,7 +91,7 @@ class UpdateRecurrentPaymentsExpiresCommand extends Command
             $output->writeln('<info>No cards.</info>');
         }
 
-        $output->writeln("Processing <comment>$recurrentPayments->count()</comment>/<info>{$totalCount}</info> CIDs without expiration");
+        $output->writeln("Processing <comment>{$recurrentPayments->count()}</comment>/<info>{$totalCount}</info> CIDs without expiration");
 
         foreach ($gateways as $code => $cids) {
             $gateway = $this->gatewayFactory->getGateway($code);
