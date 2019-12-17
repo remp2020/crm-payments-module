@@ -527,6 +527,9 @@ config:
 	recurrent_payment_charges:
 		name: Opakování rekurentních plateb
 		description: "Definice intervalů (https://en.wikipedia.org/wiki/ISO_8601#Durations) oddělených čárkou. (napr. PT15M, PT6H, PT6H, PT6H, PT6H)"
+	recurrent_charge_before:
+		name: "Realizace následující platby (počet hodin před vypršením)"
+		description: "napr. 48"
 	gopay_go_id:
 		name: GoPay Go ID
 	gopay_client_id:

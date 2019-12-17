@@ -225,6 +225,16 @@ class ConfigsSeeder implements ISeeder
             'payments.config.recurrent_payment_charges.description'
         );
 
+        $this->addPaymentConfig(
+            $output,
+            $category,
+            'recurrent_charge_before',
+            'payments.config.recurrent_charge_before.name',
+            48,
+            $sorting++,
+            'payments.config.recurrent_charge_before.description'
+        );
+
         // gopay
 
         $this->addPaymentConfig(

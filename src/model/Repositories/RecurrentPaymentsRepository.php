@@ -287,9 +287,13 @@ class RecurrentPaymentsRepository extends Repository
         $subscription = $payment->subscription;
 
         $endTime = $subscription->end_time;
+
+        $chargeBefore = $this->applicationConfig->get('recurrent_charge_before');
         if ($subscriptionType->recurrent_charge_before) {
-            $endTime->sub(new \DateInterval("PT{$subscriptionType->recurrent_charge_before}H"));
+            $chargeBefore = $subscriptionType->recurrent_charge_before;
         }
+
+        $endTime->sub(new \DateInterval("PT{$chargeBefore}H"));
 
         return $endTime;
     }
