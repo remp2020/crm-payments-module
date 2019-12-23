@@ -43,6 +43,16 @@ class ConfigsSeeder implements ISeeder
         $this->addPaymentConfig(
             $output,
             $category,
+            'recurrent_charge_before',
+            'payments.config.recurrent_charge_before.name',
+            48,
+            300,
+            'payments.config.recurrent_charge_before.description'
+        );
+
+        $this->addPaymentConfig(
+            $output,
+            $category,
             'donation_vat_rate',
             'payments.config.donation_vat_rate.name',
             null,
@@ -223,16 +233,6 @@ class ConfigsSeeder implements ISeeder
             'PT15M, PT6H, PT6H, PT6H, PT6H',
             $sorting++,
             'payments.config.recurrent_payment_charges.description'
-        );
-
-        $this->addPaymentConfig(
-            $output,
-            $category,
-            'recurrent_charge_before',
-            'payments.config.recurrent_charge_before.name',
-            48,
-            $sorting++,
-            'payments.config.recurrent_charge_before.description'
         );
 
         // gopay
