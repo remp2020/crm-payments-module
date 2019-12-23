@@ -533,7 +533,7 @@ config:
 		description: "Definicia intervalov (https://en.wikipedia.org/wiki/ISO_8601#Durations) oddelenych ciarkou. (napr. PT15M, PT6H, PT6H, PT6H, PT6H)"
 	recurrent_charge_before:
 		name: "Realizácia nasledujúcej platby (počet hodín pred vypršaním)"
-		description: "Počet hodín pred skončením predplatného kedy má nastať automatické obnovenie (napr. 48)"
+		description: "Počet hodín pred skončením predplatného kedy má nastať automatické obnovenie (napr. 48). Prázdna hodnota naplánuje realizáciu ďalšej platby pri ukončení predplatného."
 	gopay_go_id:
 		name: GoPay Go ID
 	gopay_client_id:

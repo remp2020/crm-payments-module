@@ -528,7 +528,7 @@ config:
 		description: "Interval definition (https://en.wikipedia.org/wiki/ISO_8601#Durations) separated by comma. (e.g. PT15M, PT6H, PT6H, PT6H, PT6H)"
 	recurrent_charge_before:
 		name: "Recurrent charge before (hours)"
-		description: "How many hours before the end of subscription the recurrent charge should be trigerred (e.g. 48)"
+		description: "How many hours before the end of subscription the recurrent charge should be trigerred (e.g. 48). Empty value will schedule next recurrent charge to the time of end of subscription."
 	gopay_go_id:
 		name: GoPay Go ID
 	gopay_client_id:

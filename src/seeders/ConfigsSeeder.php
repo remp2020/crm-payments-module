@@ -45,7 +45,7 @@ class ConfigsSeeder implements ISeeder
             $category,
             'recurrent_charge_before',
             'payments.config.recurrent_charge_before.name',
-            48,
+            null,
             300,
             'payments.config.recurrent_charge_before.description'
         );
