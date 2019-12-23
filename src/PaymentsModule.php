@@ -329,8 +329,11 @@ class PaymentsModule extends CrmModule
             $this->paymentsRepository->totalAmountSum(true, true);
             $this->paymentsRepository->freeSubscribersCount(true, true);
             $this->paymentsRepository->paidSubscribersCount(true, true);
+
             $this->paymentsRepository->subscriptionsWithoutExtensionEndingNextTwoWeeksCount(true);
             $this->paymentsRepository->subscriptionsWithoutExtensionEndingNextMonthCount(true);
+            $this->paymentsRepository->subscriptionsWithoutExtensionEndingNextTwoWeeksCount(true, true);
+            $this->paymentsRepository->subscriptionsWithoutExtensionEndingNextMonthCount(true, true);
             $this->paymentsRepository->subscriptionsWithActiveUnchargedRecurrentEndingNextTwoWeeksCount(true);
             $this->paymentsRepository->subscriptionsWithActiveUnchargedRecurrentEndingNextMonthCount(true);
 

@@ -567,7 +567,7 @@ class PaymentsRepository extends Repository
      * Cached value since computation of the value for next two weeks interval may be slow
      *
      * @param bool $forceCacheUpdate
-     *
+     * @param bool $onlyPaid
      * @return int
      */
     public function subscriptionsWithoutExtensionEndingNextTwoWeeksCount($forceCacheUpdate = false, $onlyPaid = false)
