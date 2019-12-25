@@ -61,6 +61,7 @@ services:
 	- Crm\PaymentsModule\Segment\RecurrentPaymentCriteria
 	- Crm\PaymentsModule\User\PaymentsUserDataProvider
 	- Crm\PaymentsModule\User\RecurrentPaymentsUserDataProvider
+	- Crm\PaymentsModule\Scenarios\PaymentStatusCriteria
 	- Crm\PaymentsModule\Segment\AmountCriteria
 	- Crm\PaymentsModule\Segment\StatusCriteria
 	- Crm\PaymentsModule\Segment\ReferenceCriteria
