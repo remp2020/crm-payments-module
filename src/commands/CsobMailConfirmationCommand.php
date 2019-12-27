@@ -34,6 +34,8 @@ class CsobMailConfirmationCommand extends Command
         $this->mailDownloader->download(function ($mailContents) use ($output) {
             return $this->markMailProcessed($mailContents, $output);
         });
+
+        return 0;
     }
 
     private function markMailProcessed(array $mailContents, OutputInterface $output)
