@@ -3,7 +3,7 @@
         <div class="col-md-2">
             <p>
                 <strong>{$dateRange['label']}: </strong>
-                <a class="text-danger" style="text-decoration: underline" href="{plink :Subscriptions:SubscriptionsEnds:default startTime => $dateRange['from'], endTime => $dateRange['to'], withoutNext => 1, withoutRecurrent => 1, freeSubscriptions => 1}">
+                <a class="text-danger" style="text-decoration: underline" href="{plink :Subscriptions:SubscriptionsEnds:default startTime => $dateRange['from']->format(DATE_RFC3339), endTime => $dateRange['to']->format(DATE_RFC3339), withoutNext => 1, withoutRecurrent => 1, freeSubscriptions => 1}">
                     {$$key} ks
                 </a>
                 <i data-toggle="tooltip" data-placement="top" title="{_dashboard.subscriptions.ending.no_renew_between.tooltip} {$dateRange['from']|userDate} - {$dateRange['to']|userDate}" class="fa fa-question-circle"></i>
