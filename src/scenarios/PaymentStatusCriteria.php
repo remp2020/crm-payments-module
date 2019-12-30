@@ -26,17 +26,9 @@ class PaymentStatusCriteria implements ScenariosCriteriaInterface
         ];
     }
 
-    public function addCondition(Selection $selection): Selection
+    public function addCondition(Selection $selection, $values)
     {
-        return $selection;
-        // TODO
-        //$where = [];
-        //
-        //$where[] = " payments.status IN ({$params->stringArray('code')->escapedString()}) ";
-        //
-        //return "SELECT DISTINCT(payments.id) AS id
-        //  FROM payments
-        //  WHERE " . implode(" AND ", $where);
+        $selection->where('status IN (?)', $values);
     }
 
     public function label(): string

@@ -274,7 +274,7 @@ class PaymentsModule extends CrmModule
 
     public function registerScenariosCriteria(ScenariosCriteriaStorage $scenariosCriteriaStorage)
     {
-        $scenariosCriteriaStorage->register('payments', 'status', $this->getInstance(PaymentStatusCriteria::class));
+        $scenariosCriteriaStorage->register('payment', 'status', $this->getInstance(PaymentStatusCriteria::class));
     }
 
     public function registerSeeders(SeederManager $seederManager)
