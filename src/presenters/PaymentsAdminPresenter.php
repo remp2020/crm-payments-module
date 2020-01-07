@@ -180,8 +180,9 @@ class PaymentsAdminPresenter extends AdminPresenter
             ->setHtml('<i class="fa fa-filter"></i> ' . $this->translator->translate('payments.admin.component.admin_filter_form.filter.label'));
         $presenter = $this;
 
-        $form->addSubmit('cancel', 'payments.admin.component.admin_filter_form.filter.cancel')->onClick[] = function () use ($presenter) {
-            $presenter->redirect('PaymentsAdmin:Default', ['text' => '']);
+        $form->addSubmit('cancel', 'payments.admin.component.admin_filter_form.filter.cancel')->onClick[] = function () use ($presenter, $form) {
+            $emptyDefaults = array_fill_keys(array_keys((array) $form->getComponents()), null);
+            $presenter->redirect('PaymentsAdmin:Default', $emptyDefaults);
         };
 
         $form->onSuccess[] = [$this, 'adminFilterSubmited'];

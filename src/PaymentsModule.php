@@ -166,6 +166,11 @@ class PaymentsModule extends CrmModule
             800
         );
         $widgetManager->registerWidget(
+            'subscriptions.endinglist',
+            $this->getInstance(\Crm\PaymentsModule\Components\PaidSubscriptionsWithoutExtensionEndingWithinPeriodWidget::class),
+            900
+        );
+        $widgetManager->registerWidget(
             'dashboard.singlestat.actuals.system',
             $this->getInstance(\Crm\PaymentsModule\Components\SubscribersWithPaymentWidgetFactory::class)->create()->setDateModifier('-1 day'),
             500
@@ -331,8 +336,11 @@ class PaymentsModule extends CrmModule
             $this->paymentsRepository->totalAmountSum(true, true);
             $this->paymentsRepository->freeSubscribersCount(true, true);
             $this->paymentsRepository->paidSubscribersCount(true, true);
+
             $this->paymentsRepository->subscriptionsWithoutExtensionEndingNextTwoWeeksCount(true);
             $this->paymentsRepository->subscriptionsWithoutExtensionEndingNextMonthCount(true);
+            $this->paymentsRepository->subscriptionsWithoutExtensionEndingNextTwoWeeksCount(true, true);
+            $this->paymentsRepository->subscriptionsWithoutExtensionEndingNextMonthCount(true, true);
             $this->paymentsRepository->subscriptionsWithActiveUnchargedRecurrentEndingNextTwoWeeksCount(true);
             $this->paymentsRepository->subscriptionsWithActiveUnchargedRecurrentEndingNextMonthCount(true);
 

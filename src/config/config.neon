@@ -91,6 +91,7 @@ services:
 	- Crm\PaymentsModule\Components\MonthToDateAmountStatWidget
 	- Crm\PaymentsModule\Components\SubscriptionsWithActiveUnchargedRecurrentEndingWithinPeriodWidget
 	- Crm\PaymentsModule\Components\SubscriptionsWithoutExtensionEndingWithinPeriodWidget
+	- Crm\PaymentsModule\Components\PaidSubscriptionsWithoutExtensionEndingWithinPeriodWidget
 	- Crm\PaymentsModule\Components\SubscriptionTypeReports
 	- Crm\PaymentsModule\Components\MyNextRecurrentPayment
 	- Crm\PaymentsModule\DataProvider\PaymentFromVariableSymbolDataProvider

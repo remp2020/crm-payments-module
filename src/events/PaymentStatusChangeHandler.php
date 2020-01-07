@@ -107,9 +107,12 @@ class PaymentStatusChangeHandler extends AbstractListener
             $startTime,
             $endTime,
             null,
-            $address
+            $address,
+            true,
+            $callbackBeforeNewSubscriptionEvent = function ($newSubscription) use ($payment) {
+                $this->paymentsRepository->update($payment, ['subscription_id' => $newSubscription]);
+            }
         );
-        $this->paymentsRepository->update($payment, ['subscription_id' => $subscription]);
 
         if ($subscription->end_time <= new DateTime()) {
             $this->subscriptionsRepository->setExpired($subscription);

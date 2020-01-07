@@ -485,13 +485,13 @@ config:
 		name: Comfortpay sharedsecret
 	comfortpay_local_cert_path:
 		name: Cesta ke Comfortpay lokálnímu certifikátu
-		description: "Cesta k certifikátu (napr. /data/web/example/cert.pem)"
+		description: "Cesta k certifikátu (např. /data/web/example/cert.pem)"
 	comfortpay_local_passphrase_path:
 		name: Lokální cesta ke Comfortpay passphrase
-		description: "Cert pass cesta (napr. /data/web/example/pass)"
+		description: "Cert pass cesta (např. /data/web/example/pass)"
 	comfortpay_tem:
 		name: Comfortpay tem
-		description: "Comfortpay odesílány info o registrování karet (napr. Y)"
+		description: "Comfortpay odesílány info o registrování karet (např. Y)"
 	comfortpay_rem:
 		name: Comfortpay rem
 		description: Comfortpay
@@ -523,10 +523,13 @@ config:
 		description: 'Přepínač pro "test" (sandbox) mód nebo "live" (production) mód'
 	recurrent_payment_gateway_fail_delay:
 		name: Pauza po neúspěšném spojení
-		description: "Definice intervalu (https://en.wikipedia.org/wiki/ISO_8601#Durations) po chybě v komunikaci. (napr. PT1H)"
+		description: "Definice intervalu (https://en.wikipedia.org/wiki/ISO_8601#Durations) po chybě v komunikaci. (např. PT1H)"
 	recurrent_payment_charges:
 		name: Opakování rekurentních plateb
-		description: "Definice intervalů (https://en.wikipedia.org/wiki/ISO_8601#Durations) oddělených čárkou. (napr. PT15M, PT6H, PT6H, PT6H, PT6H)"
+		description: "Definice intervalů (https://en.wikipedia.org/wiki/ISO_8601#Durations) oddělených čárkou. (např. PT15M, PT6H, PT6H, PT6H, PT6H)"
+	recurrent_charge_before:
+		name: "Realizace následující platby (počet hodin před vypršením)"
+		description: "Počet hodin před skončením předplatného kdy má nastat automatické obnovení (např. 48). Prázdná hodnota naplánuje realizaci další platby při ukončení předplatného."
 	gopay_go_id:
 		name: GoPay Go ID
 	gopay_client_id:

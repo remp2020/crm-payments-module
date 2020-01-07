@@ -118,7 +118,11 @@ class RecurrentPaymentsChargeCommand extends Command
 
                 // we want to load previous payment items only if new subscription has same subscription type
                 // and it isn't upgraded recurrent payment
-                if ($subscriptionType->id === $parentPayment->subscription_type_id && $subscriptionType->id === $recurrentPayment->subscription_type_id && !$customChargeAmount) {
+                if ($subscriptionType->id === $parentPayment->subscription_type_id
+                    && $subscriptionType->id === $recurrentPayment->subscription_type_id
+                    && $parentPayment->amount === $recurrentPayment->subscription_type->price
+                    && !$customChargeAmount
+                ) {
                     foreach ($this->paymentsRepository->getPaymentItems($parentPayment) as $key => $item) {
                         // TODO: unset donation payment item without relying on the name of payment item
                         // remove donation from items, it will be added by PaymentsRepository->add().
@@ -291,6 +295,8 @@ class RecurrentPaymentsChargeCommand extends Command
         $output->writeln('');
         $output->writeln('<info>All done. Took ' . round($duration, 2) . ' sec.</info>');
         $output->writeln('');
+
+        return 0;
     }
 
     private function validateRecurrentPayment($recurrentPayment)

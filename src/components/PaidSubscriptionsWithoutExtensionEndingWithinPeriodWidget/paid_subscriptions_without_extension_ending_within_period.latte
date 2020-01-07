@@ -1,0 +1,23 @@
+<style type="text/css">
+    .paid-without-extension {
+        color: #CD4E4B;
+    }
+    .paid-without-extension a {
+        color: #CD4E4B;
+        text-decoration: underline;
+    }
+</style>
+
+<div class="row paid-without-extension">
+    {foreach $dateRanges as $key => $dateRange}
+        <div class="col-md-2">
+            <p>
+                <strong>{$dateRange['label']}: </strong>
+                <a class="without-expaid-without-extension" href="{plink :Subscriptions:SubscriptionsEnds:default startTime => $dateRange['from']->format(DATE_RFC3339), endTime => $dateRange['to']->format(DATE_RFC3339), withoutNext => 1, withoutRecurrent => 1}">
+                    {$$key} ks
+                </a>
+                <i data-toggle="tooltip" data-placement="top" title="{_dashboard.subscriptions.ending.no_paid_renew_between.tooltip} {$dateRange['from']|userDate} - {$dateRange['to']|userDate}" class="fa fa-question-circle"></i>
+            </p>
+        </div>
+    {/foreach}
+</div>
