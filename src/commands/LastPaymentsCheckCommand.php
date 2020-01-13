@@ -268,7 +268,7 @@ EOH
             $userRow = new DataRow([
                 'email' => $email,
             ]);
-            $this->emitter->emit(new NotificationEvent($userRow, $this->emailTempate, [
+            $this->emitter->emit(new NotificationEvent($this->emitter, $userRow, $this->emailTempate, [
                 'gateway' => $gateway,
                 'error' => $error,
             ]));

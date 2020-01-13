@@ -83,7 +83,7 @@ class StopRecurrentPaymentsExpiresCommand extends Command
                 $userRow = new DataRow([
                     'email' => $recurrentPayment->user->email,
                 ]);
-                $this->emitter->emit(new NotificationEvent($userRow, 'card_expires_this_month'));
+                $this->emitter->emit(new NotificationEvent($this->emitter, $userRow, 'card_expires_this_month'));
             }
         }
 
