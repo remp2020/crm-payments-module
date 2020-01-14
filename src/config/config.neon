@@ -41,6 +41,7 @@ services:
 	- Crm\PaymentsModule\Commands\StopRecurrentPaymentsExpiresCommand
 	- Crm\PaymentsModule\Commands\LastPaymentsCheckCommand
 	- Crm\PaymentsModule\Commands\CidGetterCommand
+	- Crm\PaymentsModule\Commands\SingleChargeCommand
 	- Crm\PaymentsModule\Api\VariableSymbolApiHandler
 	- Crm\PaymentsModule\MailConfirmation\CidGetterDownloader
 	variableSymbol: Crm\PaymentsModule\Repository\VariableSymbol

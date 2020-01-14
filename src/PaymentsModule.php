@@ -23,6 +23,7 @@ use Crm\PaymentsModule\Commands\CsobMailConfirmationCommand;
 use Crm\PaymentsModule\Commands\LastPaymentsCheckCommand;
 use Crm\PaymentsModule\Commands\RecurrentPaymentsCardCheck;
 use Crm\PaymentsModule\Commands\RecurrentPaymentsChargeCommand;
+use Crm\PaymentsModule\Commands\SingleChargeCommand;
 use Crm\PaymentsModule\Commands\StopRecurrentPaymentsExpiresCommand;
 use Crm\PaymentsModule\Commands\TatraBankaMailConfirmationCommand;
 use Crm\PaymentsModule\Commands\UpdateRecurrentPaymentsExpiresCommand;
@@ -219,6 +220,7 @@ class PaymentsModule extends CrmModule
         $commandsContainer->registerCommand($this->getInstance(StopRecurrentPaymentsExpiresCommand::class));
         $commandsContainer->registerCommand($this->getInstance(LastPaymentsCheckCommand::class));
         $commandsContainer->registerCommand($this->getInstance(CalculateAveragesCommand::class));
+        $commandsContainer->registerCommand($this->getInstance(SingleChargeCommand::class));
     }
 
     public function registerApiCalls(ApiRoutersContainerInterface $apiRoutersContainer)
