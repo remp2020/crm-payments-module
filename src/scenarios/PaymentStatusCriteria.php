@@ -26,9 +26,9 @@ class PaymentStatusCriteria implements ScenariosCriteriaInterface
         ];
     }
 
-    public function addCondition(Selection $selection, $values)
+    public function addCondition(Selection $selection, $key, $values)
     {
-        $selection->where('status IN (?)', $values);
+        $selection->where('status IN (?)', $values->selection);
     }
 
     public function label(): string
