@@ -5,15 +5,15 @@ namespace Crm\PaymentsModule\Api;
 use Crm\ApiModule\Api\JsonResponse;
 use Crm\ApiModule\Authorization\ApiAuthorizationInterface;
 use Crm\ApiModule\Api\ApiHandler;
-use Crm\PaymentsModule\Repository\VariableSymbol;
+use Crm\PaymentsModule\VariableSymbolInterface;
 use Nette\Http\Response;
 
 class VariableSymbolApiHandler extends ApiHandler
 {
-    /** @var VariableSymbol  */
+    /** @var VariableSymbolInterface  */
     private $variableSymbol;
 
-    public function __construct(VariableSymbol $variableSymbol)
+    public function __construct(VariableSymbolInterface $variableSymbol)
     {
         $this->variableSymbol = $variableSymbol;
     }

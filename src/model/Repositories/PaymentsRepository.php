@@ -10,6 +10,7 @@ use Crm\ApplicationModule\Request;
 use Crm\PaymentsModule\Events\NewPaymentEvent;
 use Crm\PaymentsModule\Events\PaymentChangeStatusEvent;
 use Crm\PaymentsModule\PaymentItem\PaymentItemContainer;
+use Crm\PaymentsModule\VariableSymbolInterface;
 use Crm\PaymentsModule\VariableSymbolVariant;
 use Crm\SubscriptionsModule\Repository\SubscriptionsRepository;
 use Crm\SubscriptionsModule\Repository\SubscriptionTypesRepository;
@@ -58,7 +59,7 @@ class PaymentsRepository extends Repository
 
     public function __construct(
         Context $database,
-        VariableSymbol $variableSymbol,
+        VariableSymbolInterface $variableSymbol,
         SubscriptionTypesRepository $subscriptionTypesRepository,
         SubscriptionsRepository $subscriptionsRepository,
         PaymentGatewaysRepository $paymentGatewaysRepository,

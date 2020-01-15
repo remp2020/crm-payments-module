@@ -2,7 +2,9 @@
 
 namespace Crm\PaymentsModule\Repository;
 
-class VariableSymbol
+use Crm\PaymentsModule\VariableSymbolInterface;
+
+class VariableSymbol implements VariableSymbolInterface
 {
     /** @var \Nette\Database\Context */
     private $database;
@@ -12,7 +14,7 @@ class VariableSymbol
         $this->database = $database;
     }
 
-    public function getNew()
+    public function getNew(): string
     {
         do {
             $variableSymbol = $this->generateRandom();
