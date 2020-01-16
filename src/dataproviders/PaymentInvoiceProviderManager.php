@@ -48,8 +48,8 @@ class PaymentInvoiceProviderManager
                 continue;
             }
 
-            if (!isset($attachment['filename']) || empty(trim($attachment['filename']))) {
-                Debugger::log("Invoice attachment for payment [{$payment->variable_symbol}] is missing filename.", Debugger::ERROR);
+            if (!isset($attachment['file']) || empty(trim($attachment['file']))) {
+                Debugger::log("Invoice attachment for payment [{$payment->variable_symbol}] is missing file.", Debugger::ERROR);
                 continue;
             }
 
