@@ -455,7 +455,7 @@ class PaymentsRepository extends Repository
     public function paidSubscribers()
     {
         return $this->database->table('subscriptions')
-            ->where('start_time < ?', $this->database::literal('NOW()'))
+            ->where('start_time <= ?', $this->database::literal('NOW()'))
             ->where('end_time > ?', $this->database::literal('NOW()'))
             ->where('user.active = 1')
             ->where(':payments.id IS NOT NULL OR type IN (?)', ['upgrade', 'prepaid', 'gift']);
@@ -484,7 +484,7 @@ class PaymentsRepository extends Repository
     public function freeSubscribers()
     {
         $freeSubscribers = $this->database->table('subscriptions')
-            ->where('start_time < ?', $this->database::literal('NOW()'))
+            ->where('start_time <= ?', $this->database::literal('NOW()'))
             ->where('end_time > ?', $this->database::literal('NOW()'))
             ->where('user.active = 1')
             ->where(':payments.id IS NULL AND type NOT IN (?)', ['upgrade', 'prepaid', 'gift']);
