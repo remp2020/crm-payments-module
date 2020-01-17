@@ -43,7 +43,7 @@ services:
 	- Crm\PaymentsModule\Commands\CidGetterCommand
 	- Crm\PaymentsModule\Api\VariableSymbolApiHandler
 	- Crm\PaymentsModule\MailConfirmation\CidGetterDownloader
-	variableSymbolGenerator:
+	variableSymbol:
 		class: Crm\PaymentsModule\Repository\VariableSymbol
 	- Crm\PaymentsModule\Commands\CalculateAveragesCommand
 	- Crm\PaymentsModule\Gateways\Paypal

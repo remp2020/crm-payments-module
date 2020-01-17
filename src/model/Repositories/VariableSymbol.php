@@ -2,17 +2,12 @@
 
 namespace Crm\PaymentsModule\Repository;
 
+use Crm\ApplicationModule\Repository;
 use Crm\PaymentsModule\VariableSymbolInterface;
 
-class VariableSymbol implements VariableSymbolInterface
+class VariableSymbol extends Repository implements VariableSymbolInterface
 {
-    /** @var \Nette\Database\Context */
-    private $database;
-
-    public function __construct(\Nette\Database\Context $database)
-    {
-        $this->database = $database;
-    }
+    protected $tableName = 'variable_symbols';
 
     public function getNew(): string
     {
@@ -31,11 +26,6 @@ class VariableSymbol implements VariableSymbolInterface
         ]);
 
         return $variableSymbol;
-    }
-
-    private function getTable()
-    {
-        return $this->database->table('variable_symbols');
     }
 
     private function generateRandom($length = 10)
