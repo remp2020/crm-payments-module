@@ -286,9 +286,27 @@ class RecurrentPaymentsRepository extends Repository
         $subscriptionType = $payment->subscription_type;
         $subscription = $payment->subscription;
 
-        $endTime = $subscription->end_time;
-        if ($subscriptionType->recurrent_charge_before) {
-            $endTime->sub(new \DateInterval("PT{$subscriptionType->recurrent_charge_before}H"));
+        $endTime = clone $subscription->end_time;
+
+        $chargeBefore = null;
+        if (!$chargeBefore) {
+            $chargeBefore = $subscriptionType->recurrent_charge_before;
+        }
+        if (!$chargeBefore) {
+            $configSetting = $this->applicationConfig->get('recurrent_charge_before');
+            $validatedSetting = filter_var($configSetting, FILTER_VALIDATE_INT);
+            if ($validatedSetting === false || $validatedSetting < 0) {
+                Debugger::log("Global setting [recurrent_charge_before] ignored due to invalid value: " . $configSetting, Debugger::WARNING);
+            } else {
+                $chargeBefore = $validatedSetting;
+            }
+        }
+        if ($chargeBefore) {
+            $newEndTime = (clone $endTime)->sub(new \DateInterval("PT{$chargeBefore}H"));
+            if ($newEndTime < $subscription->start_time) {
+                Debugger::log("Calculated next charge of recurrent payment would be sooner than subscription start time. Check subscription: " . $subscription->id, Debugger::WARNING);
+            }
+            $endTime = $newEndTime;
         }
 
         return $endTime;

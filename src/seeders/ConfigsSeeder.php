@@ -43,6 +43,16 @@ class ConfigsSeeder implements ISeeder
         $this->addPaymentConfig(
             $output,
             $category,
+            'recurrent_charge_before',
+            'payments.config.recurrent_charge_before.name',
+            null,
+            300,
+            'payments.config.recurrent_charge_before.description'
+        );
+
+        $this->addPaymentConfig(
+            $output,
+            $category,
             'donation_vat_rate',
             'payments.config.donation_vat_rate.name',
             null,

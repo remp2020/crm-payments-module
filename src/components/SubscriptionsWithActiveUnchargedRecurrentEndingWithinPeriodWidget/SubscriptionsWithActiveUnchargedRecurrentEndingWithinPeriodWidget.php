@@ -11,7 +11,7 @@ use Nette\Utils\DateTime;
 
 /**
  * This widget fetches ending subscription with active uncharged recurrent payment
- * fot different time intervals and renders line wwith resulting values.
+ * for different time intervals and renders line wwith resulting values.
  *
  * @package Crm\PaymentsModule\Components
  */

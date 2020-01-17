@@ -8,6 +8,7 @@ use Crm\ApiModule\Router\ApiRoute;
 use Crm\ApplicationModule\CallbackManagerInterface;
 use Crm\ApplicationModule\Commands\CommandsContainerInterface;
 use Crm\ApplicationModule\Criteria\CriteriaStorage;
+use Crm\ApplicationModule\Criteria\ScenariosCriteriaStorage;
 use Crm\ApplicationModule\CrmModule;
 use Crm\ApplicationModule\DataProvider\DataProviderManager;
 use Crm\ApplicationModule\Event\EventsStorage;
@@ -22,6 +23,7 @@ use Crm\PaymentsModule\Commands\CsobMailConfirmationCommand;
 use Crm\PaymentsModule\Commands\LastPaymentsCheckCommand;
 use Crm\PaymentsModule\Commands\RecurrentPaymentsCardCheck;
 use Crm\PaymentsModule\Commands\RecurrentPaymentsChargeCommand;
+use Crm\PaymentsModule\Commands\SingleChargeCommand;
 use Crm\PaymentsModule\Commands\StopRecurrentPaymentsExpiresCommand;
 use Crm\PaymentsModule\Commands\TatraBankaMailConfirmationCommand;
 use Crm\PaymentsModule\Commands\UpdateRecurrentPaymentsExpiresCommand;
@@ -30,6 +32,7 @@ use Crm\PaymentsModule\DataProvider\SubscriptionsWithActiveUnchargedRecurrentEnd
 use Crm\PaymentsModule\DataProvider\SubscriptionsWithoutExtensionEndingWithinPeriodDataProvider;
 use Crm\PaymentsModule\MailConfirmation\ParsedMailLogsRepository;
 use Crm\PaymentsModule\Repository\PaymentsRepository;
+use Crm\PaymentsModule\Scenarios\PaymentStatusCriteria;
 use Crm\PaymentsModule\Seeders\ConfigsSeeder;
 use Crm\PaymentsModule\Seeders\PaymentGatewaysSeeder;
 use Crm\PaymentsModule\Seeders\SegmentsSeeder;
@@ -164,6 +167,11 @@ class PaymentsModule extends CrmModule
             800
         );
         $widgetManager->registerWidget(
+            'subscriptions.endinglist',
+            $this->getInstance(\Crm\PaymentsModule\Components\PaidSubscriptionsWithoutExtensionEndingWithinPeriodWidget::class),
+            900
+        );
+        $widgetManager->registerWidget(
             'dashboard.singlestat.actuals.system',
             $this->getInstance(\Crm\PaymentsModule\Components\SubscribersWithPaymentWidgetFactory::class)->create()->setDateModifier('-1 day'),
             500
@@ -212,6 +220,7 @@ class PaymentsModule extends CrmModule
         $commandsContainer->registerCommand($this->getInstance(StopRecurrentPaymentsExpiresCommand::class));
         $commandsContainer->registerCommand($this->getInstance(LastPaymentsCheckCommand::class));
         $commandsContainer->registerCommand($this->getInstance(CalculateAveragesCommand::class));
+        $commandsContainer->registerCommand($this->getInstance(SingleChargeCommand::class));
     }
 
     public function registerApiCalls(ApiRoutersContainerInterface $apiRoutersContainer)
@@ -270,6 +279,11 @@ class PaymentsModule extends CrmModule
         ]);
     }
 
+    public function registerScenariosCriteria(ScenariosCriteriaStorage $scenariosCriteriaStorage)
+    {
+        $scenariosCriteriaStorage->register('payment', 'status', $this->getInstance(PaymentStatusCriteria::class));
+    }
+
     public function registerSeeders(SeederManager $seederManager)
     {
         $seederManager->addSeeder($this->getInstance(ConfigsSeeder::class));
@@ -324,8 +338,11 @@ class PaymentsModule extends CrmModule
             $this->paymentsRepository->totalAmountSum(true, true);
             $this->paymentsRepository->freeSubscribersCount(true, true);
             $this->paymentsRepository->paidSubscribersCount(true, true);
+
             $this->paymentsRepository->subscriptionsWithoutExtensionEndingNextTwoWeeksCount(true);
             $this->paymentsRepository->subscriptionsWithoutExtensionEndingNextMonthCount(true);
+            $this->paymentsRepository->subscriptionsWithoutExtensionEndingNextTwoWeeksCount(true, true);
+            $this->paymentsRepository->subscriptionsWithoutExtensionEndingNextMonthCount(true, true);
             $this->paymentsRepository->subscriptionsWithActiveUnchargedRecurrentEndingNextTwoWeeksCount(true);
             $this->paymentsRepository->subscriptionsWithActiveUnchargedRecurrentEndingNextMonthCount(true);
 

@@ -34,6 +34,8 @@ class TatraBankaMailConfirmationCommand extends Command
         $this->mailDownloader->download(function ($mailContent) use ($output) {
             return $this->markMailProcessed($mailContent, $output);
         });
+
+        return 0;
     }
 
     private function markMailProcessed($mailContent, $output)

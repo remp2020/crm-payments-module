@@ -169,6 +169,8 @@ EOH
 
             $this->output->writeln("Done gateway <info>{$gateway->name}</info>\n");
         }
+
+        return 0;
     }
 
     /**

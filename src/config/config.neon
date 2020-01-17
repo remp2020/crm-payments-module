@@ -41,6 +41,7 @@ services:
 	- Crm\PaymentsModule\Commands\StopRecurrentPaymentsExpiresCommand
 	- Crm\PaymentsModule\Commands\LastPaymentsCheckCommand
 	- Crm\PaymentsModule\Commands\CidGetterCommand
+	- Crm\PaymentsModule\Commands\SingleChargeCommand
 	- Crm\PaymentsModule\Api\VariableSymbolApiHandler
 	- Crm\PaymentsModule\MailConfirmation\CidGetterDownloader
 	variableSymbol: Crm\PaymentsModule\Repository\VariableSymbol
@@ -61,6 +62,7 @@ services:
 	- Crm\PaymentsModule\Segment\RecurrentPaymentCriteria
 	- Crm\PaymentsModule\User\PaymentsUserDataProvider
 	- Crm\PaymentsModule\User\RecurrentPaymentsUserDataProvider
+	- Crm\PaymentsModule\Scenarios\PaymentStatusCriteria
 	- Crm\PaymentsModule\Segment\AmountCriteria
 	- Crm\PaymentsModule\Segment\StatusCriteria
 	- Crm\PaymentsModule\Segment\ReferenceCriteria
@@ -90,6 +92,7 @@ services:
 	- Crm\PaymentsModule\Components\MonthToDateAmountStatWidget
 	- Crm\PaymentsModule\Components\SubscriptionsWithActiveUnchargedRecurrentEndingWithinPeriodWidget
 	- Crm\PaymentsModule\Components\SubscriptionsWithoutExtensionEndingWithinPeriodWidget
+	- Crm\PaymentsModule\Components\PaidSubscriptionsWithoutExtensionEndingWithinPeriodWidget
 	- Crm\PaymentsModule\Components\SubscriptionTypeReports
 	- Crm\PaymentsModule\Components\MyNextRecurrentPayment
 	- Crm\PaymentsModule\DataProvider\PaymentFromVariableSymbolDataProvider

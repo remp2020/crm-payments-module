@@ -11,13 +11,13 @@ use Nette\Utils\DateTime;
 
 /**
  * This widget fetches ending subscription without extension
- * for different time intervals and renders line with resulting values.
+ * fot different time intervals and renders line with resulting values.
  *
  * @package Crm\PaymentsModule\Components
  */
-class SubscriptionsWithoutExtensionEndingWithinPeriodWidget extends BaseWidget implements IWidgetLegend
+class PaidSubscriptionsWithoutExtensionEndingWithinPeriodWidget extends BaseWidget implements IWidgetLegend
 {
-    private $templateName = 'subscriptions_without_extension_ending_within_period.latte';
+    private $templateName = 'paid_subscriptions_without_extension_ending_within_period.latte';
 
     private $paymentsRepository;
 
@@ -35,12 +35,12 @@ class SubscriptionsWithoutExtensionEndingWithinPeriodWidget extends BaseWidget i
 
     public function identifier()
     {
-        return 'subscriptionswithoutextensionendingwithinperiod';
+        return 'paidsubscriptionswithoutextensionendingwithinperiod';
     }
 
     public function legend(): string
     {
-        return sprintf('<span class="text-danger">%s</span>', $this->translator->translate('dashboard.subscriptions.ending.nonext.title'));
+        return sprintf('<span style="color: #CD4E4B;">%s</span>', $this->translator->translate('dashboard.subscriptions.ending.nonext_paid.title'));
     }
 
     public function render()
@@ -91,15 +91,16 @@ class SubscriptionsWithoutExtensionEndingWithinPeriodWidget extends BaseWidget i
             $this->template->$key = $this->paymentsRepository
                 ->subscriptionsWithoutExtensionEndingBetweenCount(
                     $dateRange['from'],
-                    $dateRange['to']
+                    $dateRange['to'],
+                    true
                 );
         }
 
         // Following computations are cached since we want to speed up page loading
         $this->template->subscriptionsNotRenewedInTwoWeeks = $this->paymentsRepository
-            ->subscriptionsWithoutExtensionEndingNextTwoWeeksCount();
+            ->subscriptionsWithoutExtensionEndingNextTwoWeeksCount(false, true);
         $this->template->subscriptionsNotRenewedInOneMonth = $this->paymentsRepository
-            ->subscriptionsWithoutExtensionEndingNextMonthCount();
+            ->subscriptionsWithoutExtensionEndingNextMonthCount(false, true);
 
         $this->template->dateRanges = $dateRanges;
         $this->template->setFile(__DIR__ . DIRECTORY_SEPARATOR . $this->templateName);

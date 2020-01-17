@@ -46,6 +46,8 @@ class CidGetterCommand extends Command
         $this->cidMailDownloader->download(function ($mailContent) use ($output) {
             return $this->markMailProcessed($mailContent, $output);
         }, $input->getArgument('variable_symbol'));
+
+        return 0;
     }
 
     private function markMailProcessed($mailContent, $output)
