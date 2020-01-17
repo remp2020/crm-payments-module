@@ -148,20 +148,8 @@ class RecurrentPaymentsChargeCommand extends Command
                     $paymentItemContainer->addItems(SubscriptionTypePaymentItem::fromSubscriptionType($subscriptionType));
                     // TODO: what about other types of payment items? (e.g. student donation?); seems we're losing them here
                 } else {
-                    // we're charging custom amount for subscription
-                    $items = SubscriptionTypePaymentItem::fromSubscriptionType($subscriptionType);
-                    if (count($items) === 1) {
-                        // custom amount is handable only for single-item payments; how would we split the custom amount otherwise?
-                        if ($customChargeAmount) {
-                            $items[0]->forcePrice($customChargeAmount);
-                        }
-                        $paymentItemContainer->addItems($items);
-                    } else {
-                        $msg = 'RecurringPayment_id: ' . $recurrentPayment->id . ' Card_id: ' . $recurrentPayment->cid . ' User_id: ' . $recurrentPayment->user_id . ' Error: Unchargeable custom amount';
-                        Debugger::log($msg, Debugger::EXCEPTION);
-                        $output->writeln('<error>' . $msg . '</error>');
-                        continue;
-                    }
+                    $items = $this->getSubscriptionTypeItemsForCustomChargeAmount($subscriptionType, $customChargeAmount);
+                    $paymentItemContainer->addItems($items);
                 }
 
                 if ($additionalType == 'recurrent' && $additionalAmount) {
@@ -297,6 +285,45 @@ class RecurrentPaymentsChargeCommand extends Command
         $output->writeln('');
 
         return 0;
+    }
+
+    public function getSubscriptionTypeItemsForCustomChargeAmount($subscriptionType, $customChargeAmount)
+    {
+        $items = SubscriptionTypePaymentItem::fromSubscriptionType($subscriptionType);
+
+        // sort items by vat (higher vat first)
+        usort($items, function (SubscriptionTypePaymentItem $a, SubscriptionTypePaymentItem $b) {
+            return $a->vat() < $b->vat();
+        });
+
+        // get vat-amount ratios, floor everything down to avoid scenario that everything is rounded up
+        // and sum of items would be greater than charged amount
+        $ratios = [];
+        foreach ($items as $item) {
+            $ratios[$item->vat()] = floor($item->unitPrice() / $subscriptionType->price * 100) / 100;
+        }
+        // any rounding weirdness (sum of ratios not being 1) should go in favor of higher vat (first item)
+        $ratios[array_keys($ratios)[0]] += 1 - array_sum($ratios);
+
+        // update prices based on found ratios
+        $sum = 0;
+        foreach ($items as $item) {
+            $itemPrice = floor($customChargeAmount * $ratios[$item->vat()] * 100) / 100;
+            $item->forcePrice($itemPrice);
+            $sum += $itemPrice;
+        }
+        // any rounding weirdness (sum of items not being $customChargeamount) should go in favor of higher vat (first item)
+        $items[0]->forcePrice(round($items[0]->unitPrice() + ($customChargeAmount - $sum), 2));
+
+        $checkSum = 0;
+        foreach ($items as $item) {
+            $checkSum += $item->totalPrice();
+        }
+        if ($checkSum !== $customChargeAmount) {
+            throw new \Exception("Cannot charge custom amount, sum of items [{$checkSum}] is different than charged amount [{$customChargeAmount}].");
+        }
+
+        return $items;
     }
 
     private function validateRecurrentPayment($recurrentPayment)
