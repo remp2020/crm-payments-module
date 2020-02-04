@@ -337,6 +337,26 @@ class ConfigsSeeder implements ISeeder
             'payments.config.vub_zip_password.description'
         );
 
+        $this->addPaymentConfig(
+            $output,
+            $category,
+            'tatrabanka_pgp_private_key_path',
+            'payments.config.tatrabanka_pgp_private_key_path.name',
+            '',
+            $sorting++,
+            'payments.config.tatrabanka_pgp_private_key_path.description'
+        );
+
+        $this->addPaymentConfig(
+            $output,
+            $category,
+            'tatrabanka_pgp_private_key_passphrase',
+            'payments.config.tatrabanka_pgp_private_key_passphrase.name',
+            '',
+            $sorting++,
+            'payments.config.tatrabanka_pgp_private_key_passphrase.description'
+        );
+
         $name = 'gopay_eet_enabled';
         $value = 0;
         $config = $this->configsRepository->loadByName($name);

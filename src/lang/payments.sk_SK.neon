@@ -558,6 +558,12 @@ config:
 	vub_zip_password:
 		name: VÚB ZIP Heslo
 		description: Heslo k ZIP súboru v potvrdzovacích emailoch z VÚB banky
+	tatrabanka_pgp_private_key_path:
+		name: TatraBanka PGP private key
+		description: Cesta k suboru PGP private key pre dešifrovanie TatraBanka e-mailov
+	tatrabanka_pgp_private_key_passphrase:
+		name: TatraBanka PGP private key passphrase
+		description: Heslo k suboru PGP private key pre dešifrovanie TatraBanka e-mailov
 	confirmation_mail_host:
 		name: Potvrzovacie emaily HOST
 		description: Emailovy server kde chodia potvrdzovacie emaily z banky

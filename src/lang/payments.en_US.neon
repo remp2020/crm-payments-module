@@ -553,6 +553,12 @@ config:
 	vub_zip_password:
 		name: VUB ZIP Password
 		description: Password to e-mailed ZIP file with payment confirmation from VUB bank.
+	tatrabanka_pgp_private_key_path:
+		name: TatraBanka PGP private key
+		description: Path to PGP private key file for decrypting TatraBanka e-mails
+	tatrabanka_pgp_private_key_passphrase:
+		name: TatraBanka PGP private key passphrase
+		description: Password for PGP private key file for decrypting TatraBanka e-mails
 	confirmation_mail_host:
 		name: Confirmation emails HOST
 		description: Email server where confirmation emails from the bank go

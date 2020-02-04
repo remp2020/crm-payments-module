@@ -8,6 +8,8 @@ use Tomaj\BankMailsParser\Parser\TatraBankaSimpleMailParser;
 use Tomaj\ImapMailDownloader\Downloader;
 use Tomaj\ImapMailDownloader\Email;
 use Tomaj\ImapMailDownloader\MailCriteria;
+use Tracy\Debugger;
+use Tracy\ILogger;
 
 class TatraBankaMailDownloader
 {
@@ -60,8 +62,10 @@ class TatraBankaMailDownloader
             $mailContent = $tatraBankaSimpleMailParser->parse($email->getBody());
 
             if (!$mailContent) {
-                //                throw new \Exception("Error in parsing email");
-                // nebudeme movovat spravu do spracovanych, ale aby sa oznacila ako precitana
+                Debugger::log(
+                    'Error in parsing TatraBanka (Kredit na ucte) email from: ' . $email->getDate(),
+                    ILogger::WARNING
+                );
                 return false;
             }
 

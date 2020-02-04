@@ -26,6 +26,7 @@ services:
 	- Crm\PaymentsModule\MailConfirmation\TatraBankaMailDownloader
 	- Crm\PaymentsModule\MailConfirmation\CsobMailDownloader
 	- Crm\PaymentsModule\MailConfirmation\SkCsobMailDownloader
+	- Crm\PaymentsModule\MailConfirmation\TatraBankaStatementMailDownloader
 	- Crm\PaymentsModule\MailConfirmation\MailProcessor
 	- Crm\PaymentsModule\Components\ChangePaymentStatusFactoryInterface
 	- Crm\PaymentsModule\Components\DuplicateRecurrentPaymentsControlFactoryInterface
@@ -44,6 +45,7 @@ services:
 	- Crm\PaymentsModule\Commands\CidGetterCommand
 	- Crm\PaymentsModule\Commands\SingleChargeCommand
 	- Crm\PaymentsModule\Commands\SkCsobMailConfirmationCommand
+	- Crm\PaymentsModule\Commands\TatraBankaStatementMailConfirmationCommand
 	- Crm\PaymentsModule\Api\VariableSymbolApiHandler
 	- Crm\PaymentsModule\MailConfirmation\CidGetterDownloader
 	variableSymbol:
