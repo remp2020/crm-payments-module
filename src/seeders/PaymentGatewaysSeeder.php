@@ -142,5 +142,17 @@ class PaymentGatewaysSeeder implements ISeeder
         } else {
             $output->writeln('  * payment gateway <info>gopay_recurrent</info> exists');
         }
+
+        if (!$this->paymentGatewaysRepository->exists('free')) {
+            $this->paymentGatewaysRepository->add(
+                'Free',
+                'free',
+                10,
+                true
+            );
+            $output->writeln('  <comment>* payment gateway <info>Free</info> created</comment>');
+        } else {
+            $output->writeln('  * payment gateway <info>Free</info> exists');
+        }
     }
 }
