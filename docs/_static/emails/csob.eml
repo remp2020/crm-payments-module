@@ -1,0 +1,102 @@
+Return-Path: <example@example.cz>
+Received: from bnts-zimbra-n1.example.com (LHLO bnts-zimbra-n1.example.com)
+ (127.0.0.1) by bnts-zimbra-n1.example.com with LMTP; Thu, 13 Feb 2020
+ 09:15:49 +0100 (CET)
+Received: from localhost (localhost [127.0.0.1])
+	by bnts-zimbra-n1.example.com (Postfix) with ESMTP id CC2B3482350C7
+	for <csob-payments@example.com>; Thu, 13 Feb 2020 09:15:49 +0100 (CET)
+X-Spam-Flag: NO
+X-Spam-Score: -4.2
+X-Spam-Level:
+X-Spam-Status: No, score=-4.2 required=5 tests=[ALL_TRUSTED=-1, BAYES_00=-1.9,
+	DKIM_SIGNED=0.1, DKIM_VALID=-0.1, DKIM_VALID_AU=-0.1,
+	DMARC_PASS_REJECT=-1.2, SPF_HELO_NONE=0.001, SPF_PASS=-0.001]
+	autolearn=ham autolearn_force=no
+Authentication-Results: bnts-zimbra-n1.example.com (amavisd-new);
+	dkim=pass (1024-bit key) header.d=csob.cz
+Received: from bnts-zimbra-n1.example.com ([127.0.0.1])
+	by localhost (bnts-zimbra-n1.example.com [127.0.0.1]) (amavisd-new, port 10032)
+	with ESMTP id FhfK5zuizvti for <csob-payments@example.com>;
+	Thu, 13 Feb 2020 09:15:49 +0100 (CET)
+Received: from localhost (localhost [127.0.0.1])
+	by bnts-zimbra-n1.example.com (Postfix) with ESMTP id 6EDAE4880C400
+	for <csob-payments@example.com>; Thu, 13 Feb 2020 09:15:49 +0100 (CET)
+X-Virus-Scanned: amavisd-new at bnts-zimbra-n1.example.com
+Received: from bnts-zimbra-n1.example.com ([127.0.0.1])
+	by localhost (bnts-zimbra-n1.example.com [127.0.0.1]) (amavisd-new, port 10026)
+	with ESMTP id eDQd9Q5aNuqx for <csob-payments@example.com>;
+	Thu, 13 Feb 2020 09:15:49 +0100 (CET)
+Received: from bnts-mta-n1.example.com (bnts-mta-n1.example.com [127.0.0.1])
+	by bnts-zimbra-n1.example.com (Postfix) with ESMTPS id 45DD4482350C7
+	for <csob-payments@example.com>; Thu, 13 Feb 2020 09:15:49 +0100 (CET)
+Received-SPF: Pass (sender SPF authorized) identity=mailfrom; client-ip=127.0.0.1; helo=mail3b.csob.cz; envelope-from=example@example.cz; receiver=csob-payments@example.com
+Received: from mail3b.csob.cz (mail3b.csob.cz [127.0.0.1])
+	by bnts-mta-n1.example.com (Postfix) with ESMTPS id A01203F1CF
+	for <csob-payments@example.com>; Thu, 13 Feb 2020 09:15:46 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple;
+  d=csob.cz; i=@csob.cz; q=dns/txt; s=alpha;
+  t=1581581746; x=1613117746;
+  h=date:from:to:message-id:subject:mime-version:
+   content-transfer-encoding;
+  bh=7KUqNZttkHoZp+q0Ik++lVsm/tNATr7uuwl+S4aDhUM=;
+  b=Oe+f88jF4jE+YIDk60plhx8I5z7kdqsn578BQ5xuHVMseaNOHsnPUvnV
+   ltuyvrbKj9V2wT/WVywJUfyf0TBe8BX6sMgkyMWIMWha3TQSKuexRFLxx
+   L51rA8a2uCAHiuxY38z/89+fIZtU2tYn3HfjFuGPsQDNI357BYBLemV9t
+   c=;
+IronPort-SDR: DvBrDfyfOZx3zpZhQbJ3QybHFcz9HR3aoKcuAOxmFdqCRa0wfizzSHPk+8xmPYYUi14NdAvmUA
+ grxsT7D32X8Q==
+X-Footer: Y3NvYi5jeg==
+Date: Thu, 13 Feb 2020 09:15:44 +0100 (CET)
+From: CSOB Notification <example@example.cz>
+To: csob-payments@example.com
+Message-ID: <1185619474.2990391512381744320.JavaMail.mqsi@s08986ue>
+Subject: =?utf-8?Q?CEB_Info:_Za=C3=BA=C4=8Dtov=C3=A1n=C3=AD_platby?=
+MIME-Version: 1.0
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: quoted-printable
+Authentication-Results: bnts-mta-n1.example.com;
+	dkim=pass header.d=csob.cz header.s=alpha header.b=Oe+f88jF;
+	dmarc=pass (policy=reject) header.from=csob.cz;
+	spf=pass (bnts-mta-n1.example.com: domain of example@example.cz designates 127.0.0.1 as permitted sender) smtp.mailfrom=example@example.cz
+X-Spamd-Bar: ----
+X-Spamd-Result: default: False [-4.95 / 11.50];
+	 ARC_NA(0.00)[];
+	 R_DKIM_ALLOW(-0.20)[csob.cz:s=alpha];
+	 FROM_HAS_DN(0.00)[];
+	 DWL_DNSWL_MED(-2.00)[csob.cz:dkim];
+	 TO_MATCH_ENVRCPT_ALL(0.00)[];
+	 R_SPF_ALLOW(-0.20)[+ip4:127.0.0.1/27];
+	 MIME_GOOD(-0.10)[text/plain];
+	 TO_DN_NONE(0.00)[];
+	 RCVD_DKIM_ARC_DNSWL_MED(-0.50)[];
+	 RCPT_COUNT_ONE(0.00)[1];
+	 DKIM_TRACE(0.00)[csob.cz:+];
+	 RCVD_IN_DNSWL_MED(-0.20)[127.0.0.1:from];
+	 DMARC_POLICY_ALLOW(-0.50)[csob.cz,reject];
+	 RCVD_COUNT_ZERO(0.00)[0];
+	 FROM_EQ_ENVFROM(0.00)[];
+	 MIME_TRACE(0.00)[0:+];
+	 MID_RHS_NOT_FQDN(0.50)[];
+	 ASN(0.00)[asn:5610, ipnet:127.0.0.1/22, country:CZ];
+	 BAYES_HAM(-3.00)[100.00%];
+	 R_MIXED_CHARSET(1.25)[subject]
+
+V=C3=A1=C5=BEen=C3=BD kliente,
+
+dne 13.2.2020 byla na =C3=BA=C4=8Dtu 285406871 za=C3=BA=C4=8Dtovan=C3=A1 tr=
+ansakce typu: P=C5=99=C3=ADchoz=C3=AD =C3=BAhrada okam=C5=BEit=C3=A1.
+
+N=C3=A1zev smlouvy: Example International a.s.
+=C4=8C=C3=ADslo smlouvy: 42712306
+Majitel smlouvy: Company a.s.
+=C3=9A=C4=8Det: 285406871, CZK, N MEDIA A.S.
+=C4=8C=C3=A1stka: +395,00 CZK
+=C3=9A=C4=8Det protistrany: 2300123571/2010
+N=C3=A1zev protistrany: Novak, Pavel
+Variabiln=C3=AD symbol: 5016123921       =20
+
+Z=C5=AFstatek na =C3=BA=C4=8Dtu po za=C3=BA=C4=8Dtov=C3=A1n=C3=AD transakce=
+: +13=C2=A0124=C2=A0149,39 CZK.
+
+S p=C5=99=C3=A1n=C3=ADm kr=C3=A1sn=C3=A9ho dne
+Va=C5=A1e =C4=8CSOB

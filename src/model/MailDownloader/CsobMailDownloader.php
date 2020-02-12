@@ -22,11 +22,11 @@ class CsobMailDownloader
 
     public function __construct(ApplicationConfig $config)
     {
-        $this->imapHost = $config->get('confirmation_mail_host');
-        $this->imapPort = $config->get('confirmation_mail_port');
-        $this->username = $config->get('confirmation_mail_username');
-        $this->password = $config->get('confirmation_mail_password');
-        $this->processedFolder = $config->get('confirmation_mail_processed_folder');
+        $this->imapHost = $config->get('csob_confirmation_host');
+        $this->imapPort = $config->get('csob_confirmation_port');
+        $this->username = $config->get('csob_confirmation_username');
+        $this->password = $config->get('csob_confirmation_password');
+        $this->processedFolder = $config->get('csob_confirmation_processed_folder');
     }
 
     public function download($callback)

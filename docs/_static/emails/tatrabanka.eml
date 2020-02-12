@@ -1,0 +1,135 @@
+Delivered-To: platbysys@example.com
+Received: by 2002:a9d:4792:0:0:0:0:0 with SMTP id b18csp736749otf;
+        Wed, 11 Dec 2019 04:13:53 -0800 (PST)
+X-Received: by 2002:adf:f789:: with SMTP id q9mr3573658wrp.103.1576066433181;
+        Wed, 11 Dec 2019 04:13:53 -0800 (PST)
+ARC-Seal: i=2; a=rsa-sha256; t=1576066433; cv=pass;
+        d=google.com; s=arc-20160816;
+        b=W5EBqHHPQz194gkmge4KY7DKHFXVxH+A92LYtx2Vj1DrXcptrFeycMonu2QkYzFL/d
+         B3POR3/7teyJacd+wx2Qxmk4NUh5ZezyB3G0mIRCirHtC0/LMOF3neZFJ5pE2CbnkXsK
+         cKoRIxq7L8ZV7FbGIlYfu99HbSqHMiZunrHmMCbvjk9zgoruqAgLQ+94L16ELwza7Iev
+         Dosz74I6tsnWrf9RFfdWsthJ1otn574VDNJI00O+yexqTZBjC0OufaFckUjVCeMZkodo
+         xlu9iw71CWt2cyR6OxHjA2p/KjfBPJ5XjZ6OjF+6vXtD2SH8TIw3ZN/NH1iKQ5isXY2o
+         wBsQ==
+ARC-Message-Signature: i=2; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
+        h=date:content-transfer-encoding:mime-version:subject:message-id:to
+         :from:dkim-signature:delivered-to;
+        bh=L/A4SdjE4QhnWC5Fx2o2mJP+7/ZwKouYPj5Q44zhgtM=;
+        b=x6iJ9ukMHIsHABaWyX9NU++gCkQBaKL7xM3h2eS068aYKb+9tQj5+Lkl/n4JvuvBKF
+         Nxck1v6PHxAPPS4MFOcPKEpa8TKjjMyJ5CSaxyg6Hwz4/2nX7hBkstJE4Rp0yho10HB8
+         PAzUCKMs+8YGPUExvvMGCBlj50NB970iUz2H/eeu7TzqGQvVVni4S1iC2j7beXmD4rBs
+         efNmrDplPqbJ8YBjc66EcBouzV0LhHgcnGMv37p/4ARai3AWRxdVX6s1iRPm2/Ky+hBF
+         B7gkoDCFOpKCmNo3Jl7ZCWu751/jnbNTMR5ncNmybUstjY76O19gtpM7MaAQBfde6jO7
+         6OEg==
+ARC-Authentication-Results: i=2; mx.google.com;
+       dkim=pass header.i=@example.com header.s=mta header.b=Ct6kRAl8;
+       arc=pass (i=1 spf=pass spfdomain=example.com dkim=pass dkdomain=example.com);
+       spf=pass (google.com: domain of platby+caf_=platbysys=example.com@example.com designates 127.0.0.1 as permitted sender) smtp.mailfrom="platby+caf_=platbysys=example.com@example.com"
+Return-Path: <platby+caf_=platbysys=example.com@example.com>
+Received: from mail-sor-f41.google.com (mail-sor-f41.google.com. [127.0.0.1])
+        by mx.google.com with SMTPS id b7sor1089530wro.19.2019.12.11.04.13.53
+        for <platbysys@example.com>
+        (Google Transport Security);
+        Wed, 11 Dec 2019 04:13:53 -0800 (PST)
+Received-SPF: pass (google.com: domain of platby+caf_=platbysys=example.com@example.com designates 127.0.0.1 as permitted sender) client-ip=127.0.0.1;
+Authentication-Results: mx.google.com;
+       dkim=pass header.i=@example.com header.s=mta header.b=Ct6kRAl8;
+       arc=pass (i=1 spf=pass spfdomain=example.com dkim=pass dkdomain=example.com);
+       spf=pass (google.com: domain of platby+caf_=platbysys=example.com@example.com designates 127.0.0.1 as permitted sender) smtp.mailfrom="platby+caf_=platbysys=example.com@example.com"
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:delivered-to:dkim-signature:from:to:message-id
+         :subject:mime-version:content-transfer-encoding:date;
+        bh=L/A4SdjE4QhnWC5Fx2o2mJP+7/ZwKouYPj5Q44zhgtM=;
+        b=N5p29FyCjZ/JuhY5lIYSj9TYYnohac5nLa83+GrMQinXfh2aRRlyRG9oNcem6kzMbX
+         ChtFyZOxqzVso59unRg28KZ0KVcg6XthfdTAKp4FmxoszPN01qa/5KO2NcX77NWdqagk
+         j3JOpjt1tvwUpIKaM7WTIXAnlV/CyzgDf0YXc3/waB+hZNBLxFuszgzD8TE/bP229+PN
+         JhfANa1yUO8O4Ud0VWWkExdwRVLDU2wPkgtnFPj3n7tW2VS11ylB/cv1r/O1kPgmeIC0
+         HJOX8dEq/Yz7IeIA3Ndfc+d4aCBj4rokp1Nmwcch3nkmXa7WSir//25riCcMVlmfSOm0
+         Ht+g==
+X-Gm-Message-State: APjAAAUE+YWWIlQMJ2rCZ/++oOol16A3n7Nfcb1pz+K/kX0IVXIW3uX8
+	Sv1tpfq0HLBEfmdrH/ZocLMEpG7t66bAvQ9XCufNWfE4QyN1oe1BKA==
+X-Received: by 2002:adf:e641:: with SMTP id b1mr3488366wrn.34.1576066432918;
+        Wed, 11 Dec 2019 04:13:52 -0800 (PST)
+X-Forwarded-To: platbysys@example.com
+X-Forwarded-For: platby@example.com platbysys@example.com
+Delivered-To: platby@example.com
+Received: by 2002:adf:ed0f:0:0:0:0:0 with SMTP id a15csp685175wro;
+        Wed, 11 Dec 2019 04:13:52 -0800 (PST)
+X-Google-Smtp-Source: APXvYqx1m0In9ebikJsjCGt8wHkfJojIP7+6pjW5iEAbVjwPPx2Ph9s5Kyq5VLmcYKlK/dyMwYKl
+X-Received: by 2002:a05:600c:282:: with SMTP id 2mr3138913wmk.73.1576066431975;
+        Wed, 11 Dec 2019 04:13:51 -0800 (PST)
+ARC-Seal: i=1; a=rsa-sha256; t=1576066431; cv=none;
+        d=google.com; s=arc-20160816;
+        b=hm3zY+WwjlcGsuefxlR4WyVGSvtaNObOxgXkoz+uQ8jgshDneDCQBrKqNgMDAX55fi
+         6TPLukjoD9erGphbuZIt7uX/yICl2KvcIGQJyiVKiG1kwzAyDpCoCqG4Ue+okQYByCPu
+         LfvehgZj/fB4XzdOH0KWENKpJ881hj5PS6z8DN2dngqw85cCiJHIPBBjrkKGV8UkZRVj
+         RiGJMqAdSId0w8A6LH0MzPwgRsdY7Q7qg1D+Kv3HlNDtDcuFj+niquc3kQgDJbWgEDeI
+         IABQmsZ2m3ZA+BQKhfnVzKGB7qMcdxoO6et72ErMLRL/sOUYVB2YXDlujMhdr8x4pXSy
+         c1yg==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
+        h=date:content-transfer-encoding:mime-version:subject:message-id:to
+         :from:dkim-signature;
+        bh=L/A4SdjE4QhnWC5Fx2o2mJP+7/ZwKouYPj5Q44zhgtM=;
+        b=GTLE/gn/3PTFrql9u2mswtC/w6VXhaHwpV8dyyEWtBKNB63TRle2AWmTTJiKbUwq2+
+         xXMruu7x53GCkQa7hzJC0S92s4kDWR+45Heh/wUkK3p8rjh20HQQ+KAIj0eL5CZmLjd7
+         W8EplVMVYoHHHj7mOlbBM1SM5OtS9j++Il/YPC9pLTxPPfp5WjI96FiKCPlNdgQI2rqR
+         3Rtx8v6QottZpVQTFCDI/9Qu+DKFJiiJ3zgSq3ZHyoDB62+k/32dzGdLNuqN5RkoLxMm
+         iUL3EDSxRC97Rs6IllSAlHgNsB/wRyLs8XzBgSGSGeufCiGQzuPbCoHzDkijeVL0+Ye1
+         32rg==
+ARC-Authentication-Results: i=1; mx.google.com;
+       dkim=pass header.i=@example.com header.s=mta header.b=Ct6kRAl8;
+       spf=pass (google.com: domain of b-mail@example.com designates 127.0.0.1 as permitted sender) smtp.mailfrom=b-mail@example.com
+Return-Path: <b-mail@example.com>
+Received: from p2tatrask.example.com (p2tatrask.example.com. [127.0.0.1])
+        by mx.google.com with ESMTPS id u8si1816323wrq.325.2019.12.11.04.13.51
+        for <platby@example.com>
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 11 Dec 2019 04:13:51 -0800 (PST)
+Received-SPF: pass (google.com: domain of b-mail@example.com designates 127.0.0.1 as permitted sender) client-ip=127.0.0.1;
+Received: from psmsgw.example.com (psmsgw.example.com [127.0.0.1])
+	by p2tatrask.example.com (Postfix) with ESMTP id AF714131A2
+	for <platby@example.com>; Wed, 11 Dec 2019 13:13:51 +0100 (CET)
+X-DKIM: Sendmail DKIM Filter v2.8.3 p2tatrask.example.com AF714131A2
+DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple; d=example.com; s=mta;
+	t=1576066431; bh=qnDxKx19xpojPHdNvdAwXeC1HpxvvBkmp46ernIKzL0=;
+	h=From:To:Message-ID:Subject:MIME-Version:Content-Type:
+	 Content-Transfer-Encoding:Date;
+	b=Ct6kRAl8PJnAbxOGHmvsoSwv4tn0PeHvXFdTj/F2UL0ZEgr65z9/X76pQiUXh3Xff
+	 oPSflQ4RLmct9qDDUO9xuNh8WNOJZveMiiM8Yl0Yk2rIpPAdYmUqOyYOgA2bGUPtUE
+	 Eib23O8zQCXAyWrSNYGX3IZGQ0P3hITsh/29zq2x1rV8vbciNeMxL5jVsRFkn6Yfeb
+	 QDEaeVR0adO34eCDfFo2UwTskYl9l8TRJT20DI0H3bgw4HlnCuRYIb0eEWK05INlKY
+	 qjLLYQFx3bOFW2RiYE4OZjBsN0DhkEoqOavn1scqm1evn4ix8++VevGgz4OsR2HhZt
+	 Aa1E/KUXOYiZQ==
+Received: from psmsgw (localhost [127.0.0.1])
+	by psmsgw.example.com (Postfix) with ESMTP id A8F23E440
+	for <platby@example.com>; Wed, 11 Dec 2019 13:13:51 +0100 (CET)
+From: b-mail@example.com
+To: platby@example.com
+Message-ID: <9238355.1602059.1576066431689.JavaMail.bmail@psmsgw>
+Subject: Kredit na ucte (ID=111219/320305-1)
+MIME-Version: 1.0
+Content-Type: text/plain; charset=ISO-8859-2
+Content-Transfer-Encoding: 7bit
+Date: Wed, 11 Dec 2019 13:13:51 +0100 (CET)
+
+Vazeny klient,
+
+11.12.2019 13:13 bol zostatok Vasho uctu SK0211000000002946123456 zvyseny o 4,00 EUR.
+uctovny zostatok:                            88 888,62 EUR
+aktualny zostatok:                           88 888,62 EUR
+disponibilny zostatok:                       88 888,62 EUR
+
+Popis transakcie: CCINT 1100/000000-2611123000
+Referencia platitela: /VS12319670000/SS123/KS308          
+Ucet protistrany: Novak Jozef, Ing.
+
+S pozdravom
+
+TATRA BANKA, a.s.
+
+http://www.example.com
+
+Poznamka: Vase pripomienky alebo otazky tykajuce sa tejto spravy alebo inej nasej sluzby nam poslite, prosim, pouzitim kontaktneho formulara na nasej Web stranke.
+
+Odporucame Vam mazat si po precitani prichadzajuce bmail notifikacie. Historiu uctu najdete v ucelenom tvare v pohyboch cez internet banking a nemusite ju pracne skladat zo starych bmailov.

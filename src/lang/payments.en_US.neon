@@ -472,6 +472,7 @@ frontend:
 
 config:
 	category: Payments
+	category_confirmation: Confirmation e-mails
 	donation_vat_rate:
 		name: Donation VAT rate
 	tatrapay_sharedsecret:
@@ -550,9 +551,6 @@ config:
 		name: Comfortpay mid
 	comfortpay_ws:
 		name: Comforpay ws
-	vub_zip_password:
-		name: VUB ZIP Password
-		description: Password to e-mailed ZIP file with payment confirmation from VUB bank.
 	tatrabanka_pgp_private_key_path:
 		name: TatraBanka PGP private key
 		description: Path to PGP private key file for decrypting TatraBanka e-mails
@@ -571,3 +569,78 @@ config:
 	confirmation_mail_processed_folder:
 		name: FOLDER confirmation emails after processing
 		description: IMAP folder to which the email will be moved after processing
+	tb_simple_confirmation_host:
+		name: TatraBanka Simple host
+		description: "IMAP connection host (eg. imap.gmail.com) (<a href='https://github.com/remp2020/crm-payments-module#confirmation-e-mails' target='_blank'>info</a>)"
+	tb_simple_confirmation_port:
+		name: TatraBanka Simple port
+		description: "IMAP connection port (eg. 993) (<a href='https://github.com/remp2020/crm-payments-module#confirmation-e-mails' target='_blank'>info</a>)"
+	tb_simple_confirmation_username:
+		name: TatraBanka Simple username
+		description: "IMAP connection username (eg. example@gmail.com) (<a href='https://github.com/remp2020/crm-payments-module#confirmation-e-mails' target='_blank'>info</a>)"
+	tb_simple_confirmation_password:
+		name: TatraBanka Simple password
+		description: "IMAP connection password (eg. password) (<a href='https://github.com/remp2020/crm-payments-module#confirmation-e-mails' target='_blank'>info</a>)"
+	tb_simple_confirmation_processed_folder:
+		name: TatraBanka Simple folder
+		description: "IMAP folder to which the email will be moved after processing (napr. INBOX/processed) (<a href='https://github.com/remp2020/crm-payments-module#confirmation-e-mails' target='_blank'>info</a>)"
+	tb_confirmation_host:
+		name: TatraBanka host
+		description: "IMAP connection host (eg. imap.gmail.com) (<a href='https://github.com/remp2020/crm-payments-module#confirmation-e-mails' target='_blank'>info</a>)"
+	tb_confirmation_port:
+		name: TatraBanka port
+		description: "IMAP connection port (eg. 993) (<a href='https://github.com/remp2020/crm-payments-module#confirmation-e-mails' target='_blank'>info</a>)"
+	tb_confirmation_username:
+		name: TatraBanka username
+		description: "IMAP connection username (eg. example@gmail.com) (<a href='https://github.com/remp2020/crm-payments-module#confirmation-e-mails' target='_blank'>info</a>)"
+	tb_confirmation_password:
+		name: TatraBanka password
+		description: "IMAP connection password (eg. password) (<a href='https://github.com/remp2020/crm-payments-module#confirmation-e-mails' target='_blank'>info</a>)"
+	tb_confirmation_processed_folder:
+		name: TatraBanka folder
+		description: "IMAP folder to which the email will be moved after processing (napr. INBOX/processed) (<a href='https://github.com/remp2020/crm-payments-module#confirmation-e-mails' target='_blank'>info</a>)"
+	csob_confirmation_host:
+		name: CSOB host
+		description: "IMAP connection host (eg. imap.gmail.com) (<a href='https://github.com/remp2020/crm-payments-module#confirmation-e-mails' target='_blank'>info</a>)"
+	csob_confirmation_port:
+		name: CSOB port
+		description: "IMAP connection port (eg. 993) (<a href='https://github.com/remp2020/crm-payments-module#confirmation-e-mails' target='_blank'>info</a>)"
+	csob_confirmation_username:
+		name: CSOB username
+		description: "IMAP connection username (eg. example@gmail.com) (<a href='https://github.com/remp2020/crm-payments-module#confirmation-e-mails' target='_blank'>info</a>)"
+	csob_confirmation_password:
+		name: CSOB password
+		description: "IMAP connection password (eg. password) (<a href='https://github.com/remp2020/crm-payments-module#confirmation-e-mails' target='_blank'>info</a>)"
+	csob_confirmation_processed_folder:
+		name: CSOB folder
+		description: "IMAP folder to which the email will be moved after processing (napr. INBOX/processed) (<a href='https://github.com/remp2020/crm-payments-module#confirmation-e-mails' target='_blank'>info</a>)"
+	sk_csob_confirmation_host:
+		name: Slovak CSOB host
+		description: "IMAP connection host (eg. imap.gmail.com) (<a href='https://github.com/remp2020/crm-payments-module#confirmation-e-mails' target='_blank'>info</a>)"
+	sk_csob_confirmation_port:
+		name: Slovak CSOB port
+		description: "IMAP connection port (eg. 993) (<a href='https://github.com/remp2020/crm-payments-module#confirmation-e-mails' target='_blank'>info</a>)"
+	sk_csob_confirmation_username:
+		name: Slovak CSOB username
+		description: "IMAP connection username (eg. example@gmail.com) (<a href='https://github.com/remp2020/crm-payments-module#confirmation-e-mails' target='_blank'>info</a>)"
+	sk_csob_confirmation_password:
+		name: Slovak CSOB password
+		description: "IMAP connection password (eg. password) (<a href='https://github.com/remp2020/crm-payments-module#confirmation-e-mails' target='_blank'>info</a>)"
+	sk_csob_confirmation_processed_folder:
+		name: Slovak CSOB folder
+		description: "IMAP folder to which the email will be moved after processing (napr. INBOX/processed) (<a href='https://github.com/remp2020/crm-payments-module#confirmation-e-mails' target='_blank'>info</a>)"
+	tbs_confirmation_host:
+		name: TatraBanka statement host
+		description: "IMAP connection host (eg. imap.gmail.com) (<a href='https://github.com/remp2020/crm-payments-module#confirmation-e-mails' target='_blank'>info</a>)"
+	tbs_confirmation_port:
+		name: TatraBanka statement port
+		description: "IMAP connection port (eg. 993) (<a href='https://github.com/remp2020/crm-payments-module#confirmation-e-mails' target='_blank'>info</a>)"
+	tbs_confirmation_username:
+		name: TatraBanka statement username
+		description: "IMAP connection username (eg. example@gmail.com) (<a href='https://github.com/remp2020/crm-payments-module#confirmation-e-mails' target='_blank'>info</a>)"
+	tbs_confirmation_password:
+		name: TatraBanka statement password
+		description: "IMAP connection password (eg. password) (<a href='https://github.com/remp2020/crm-payments-module#confirmation-e-mails' target='_blank'>info</a>)"
+	tbs_confirmation_processed_folder:
+		name: TatraBanka statement folder
+		description: "IMAP folder to which the email will be moved after processing (napr. INBOX/processed) (<a href='https://github.com/remp2020/crm-payments-module#confirmation-e-mails' target='_blank'>info</a>)"

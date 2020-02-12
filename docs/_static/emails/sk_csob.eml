@@ -1,0 +1,107 @@
+Delivered-To: platbysys@example.com
+Received: by 0:0:0:0:0:0:0:0 with SMTP id e4csp593397otj;
+        Fri, 6 Sep 2019 05:09:41 -0700 (PDT)
+X-Received: by 2002:a1c:1f44:: with SMTP id f65mr6827625wmf.11.1567771781860;
+        Fri, 06 Sep 2019 05:09:41 -0700 (PDT)
+ARC-Seal: i=2; a=rsa-sha256; t=1567771781; cv=pass;
+        d=google.com; s=arc-20160816;
+        b=BthMF642W32GHXT4fPo/j6EfeWT3bJmiaRD8C0EK2GGWlgFHttIGtk5kwoQLv9zACC
+         DjnYCoa3r+Hi4USX6DZQ2F73MGIYiA3GgO5mIA50YFjvMbqhwnxK+xYoulkt3IqyinK2
+         6pdfSFBBKsEm+RvPessEjnaeCFBhE3ZRutfAOyNiF+r9XHQLvrvCcSi8Y6PpZGxaCDZZ
+         uwc6oGRpB+sWviEW/9OfXeUsZVKKcavXiQwWEfdqi7tnlEFhVrvPxdLX4rndZ5RMmE2V
+         Fc0lS0ext3aLYJ8G31XjZWwotnfg1lxv6nDmfK5qc55+qneNhpBywdxBoIq+TIcm73uP
+         qYpQ==
+ARC-Message-Signature: i=2; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
+        h=date:mime-version:subject:message-id:to:from:ironport-sdr
+         :delivered-to;
+        bh=B7gDru6bbMzGrF4RA3Bd9YCt+rAIV7nQSCaC/TJ1xAw=;
+        b=xsQ9IFoQh9pHPy26bwwKwB1p1OCQoMczaJ7EYcYeeaw+O6yTcYfBQMl2F7yhGJuC9p
+         ya5UziT+vwHxa0jA3qbUDSRlbAzf9po2nPBPzm6MTdm4CEK/wskvlwJI7outqNsyvfRT
+         dcXBs2XOdkwyE91pAgCVMLOBlfxK56ueSg9dEkeKkDjzFM2feTBYRDF/y1XyymchD0TE
+         TY+Qr3foil3K4gBuDxu9FhZorgnPCJhq0Z0YBEWnEz4Vm8SJwcO9AOPeOvTFbBhpZtGg
+         /bFjlZ2/SQN1iIRLjPHmAcoUjs6SDSwiH//SUrgxChEaYKiEtSt6By8K2Q2rmkP3aFPR
+         4U3w==
+ARC-Authentication-Results: i=2; mx.google.com;
+       arc=pass (i=1 spf=pass spfdomain=example.sk);
+       spf=pass (google.com: domain of platby+caf_=platbysys=example.com@example.com designates 127.0.0.1 as permitted sender) smtp.mailfrom="platby+caf_=platbysys=example.com@example.com"
+Return-Path: <platby+caf_=platbysys=example.com@example.com>
+Received: from mail-sor-f41.google.com (mail-sor-f41.google.com. [127.0.0.1])
+        by mx.google.com with SMTPS id r22sor3745698wmh.22.2019.09.06.05.09.41
+        for <platbysys@example.com>
+        (Google Transport Security);
+        Fri, 06 Sep 2019 05:09:41 -0700 (PDT)
+Received-SPF: pass (google.com: domain of platby+caf_=platbysys=example.com@example.com designates 127.0.0.1 as permitted sender) client-ip=127.0.0.1;
+Authentication-Results: mx.google.com;
+       arc=pass (i=1 spf=pass spfdomain=example.sk);
+       spf=pass (google.com: domain of platby+caf_=platbysys=example.com@example.com designates 127.0.0.1 as permitted sender) smtp.mailfrom="platby+caf_=platbysys=example.com@example.com"
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-original-authentication-results:x-gm-message-state:delivered-to
+         :ironport-sdr:from:to:message-id:subject:mime-version:date;
+        bh=B7gDru6bbMzGrF4RA3Bd9YCt+rAIV7nQSCaC/TJ1xAw=;
+        b=jF5+SSTImGlT9ad+ObmH9eyC6FFkfD9jnpXHomQbMU2KqpGDM7Rl909lB+EZb7y36h
+         1meKnbQiZnXcI1cnR+PxajrAvHWa1cPeMJ1fto7FIdRoQo+yndOvVt1KMWNbED77P8oM
+         4gWCnTAM6FabLrJuOr29oSo03UjyRwV9LWzlwJ0XrGGszYQ7JXK6zXGBgytzW2lZXZL5
+         7hg7SYeeo00jGK3I7GUckt9e4lSfHbbOk2QZBPD7F/3MUDqUESNcFTfz/tjFkF+Hk203
+         BO3nMzVMfTEWlLKLz3y3gMiK+Ej1qjplG21mriCysgymISwuLwVvKG32pMBZnwcXL2q3
+         gtvw==
+X-Original-Authentication-Results: mx.google.com;       spf=pass (google.com: domain of admintbs@example.sk designates 127.0.0.1 as permitted sender) smtp.mailfrom=AdminTBS@example.sk
+X-Gm-Message-State: APjAAAUr31D9qcPpBZSC8G6srcN/AMou529KWsFwQzM+n9rNgRKgoxqS
+	TaAhINwjIjQax5wI12wPYKic4faXv5UKY/hmEA7dvTGmSoaH/IXXOg==
+X-Received: by 2002:a1c:7f86:: with SMTP id a128mr7290221wmd.104.1567771781338;
+        Fri, 06 Sep 2019 05:09:41 -0700 (PDT)
+X-Forwarded-To: platbysys@example.com
+X-Forwarded-For: platby@example.com platbysys@example.com
+Delivered-To: platby@example.com
+Received: by 0:0:0:0:0:0:0:0 with SMTP id g18csp685705wru;
+        Fri, 6 Sep 2019 05:09:40 -0700 (PDT)
+X-Google-Smtp-Source: APXvYqxPnZV9AFoNzAPwnAifEKvoHdmIkjEnDcQZt14TkE4sEO05YbNKhmyEoGNkOEXU3Fudl59T
+X-Received: by 2002:a5d:62c1:: with SMTP id o1mr6996577wrv.231.1567771780029;
+        Fri, 06 Sep 2019 05:09:40 -0700 (PDT)
+ARC-Seal: i=1; a=rsa-sha256; t=1567771780; cv=none;
+        d=google.com; s=arc-20160816;
+        b=VPRiBGXZnitTA/uupZ42hAtRqhJE2rx9BDOJM4LUS/dv/3jKF8mlGRPk2NRLlXiEeI
+         0DOu0M1ejE32sncf38aUHnEbSAGGX+F7w0awYr4bG3C4EwfXfNuR/89mMMRecQO6ZDDV
+         qL9wrlKY796Hpm7+AORxsOT4zuhR132JTU/pYkmKnlmaAX2VWPOhCqCrZ7yvqaDrQnP8
+         ULpN6UyfrdV0B5+qPX2deDztH9YqwPSwD5NMS/LMPMmXAWwB061m7psjeqjDOvYPQa3V
+         Nn5GpyQ/P5EBrI2qhcw6w+0eNH5CB9/uggZaw0PN1gZ2JiwR1Dm4HkEGu5W8u2/Pu2fJ
+         qUgQ==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
+        h=date:mime-version:subject:message-id:to:from:ironport-sdr;
+        bh=B7gDru6bbMzGrF4RA3Bd9YCt+rAIV7nQSCaC/TJ1xAw=;
+        b=FbNGXLBMftSUem0ACa5E7BM6+J+ifYwfkbiJQI8TSZ00l7/yIsaXqble6l4t9SLcCp
+         wSnXx3LEi9ApfMy39qsV4f1PGhkSWnGmd5hVg894Ji5wGYp9VJ9eazSoZqRZTpJFs2fB
+         aU1Te1TFTsbswGNvp4qEGm38ky4Zt0fgIPZX32yw6+1q9az+jfohlFZ64mDVlWCmIZ0c
+         RwX2uI43UD8NisGKyT7fEr4FVXsqYDmDCMNSz81ng+EQyYuYL/O0B+JH8bW6TePLjedR
+         ms6dULK5NpzOOBSlWuIgVAla82YCnk8M4Zm4YpmcWS/zJpqnWfSfEzzc4CPqiO21kxXP
+         1uew==
+ARC-Authentication-Results: i=1; mx.google.com;
+       spf=pass (google.com: domain of admintbs@example.sk designates 127.0.0.1 as permitted sender) smtp.mailfrom=AdminTBS@example.sk
+Return-Path: <AdminTBS@example.sk>
+Received: from mail1b.csob.cz (mail1b.csob.cz. [127.0.0.1])
+        by mx.google.com with ESMTPS id l5si4579329wrb.227.2019.09.06.05.09.39
+        for <platby@example.com>
+        (version=TLS1_2 cipher=AES128-GCM-SHA256 bits=128/128);
+        Fri, 06 Sep 2019 05:09:40 -0700 (PDT)
+Received-SPF: pass (google.com: domain of admintbs@example.sk designates 127.0.0.1 as permitted sender) client-ip=127.0.0.1;
+IronPort-SDR: 8kwS/7/2BlViB7djMkphEqYPi1vw8gnKPOYJnyHPk0myI1oaRt9k7DYB9mSBHLY2Gai9KxwnMO
+ NGmYqz532gxw==
+From: =?Cp1250?Q?=C8SOB?= <AdminTBS@example.sk>
+To: <platby@example.com>
+Message-ID: <23937677.17128411567771779010.JavaMail.xMQCsk@ASBA0N21>
+Subject: =?windows-1250?Q?=C8SOB_Info_24_-_Av=EDzo?=
+MIME-Version: 1.0
+Content-Type: multipart/mixed;
+	boundary="----=_Part_856420_26410749.1567771779007"
+Return-Path: AdminTBS@example.sk
+Date: Fri, 6 Sep 2019 14:09:38 +0200
+
+------=_Part_856420_26410749.1567771779007
+Content-Type: text/plain; charset="windows-1250"
+MIME-Version: 1.0
+Content-Transfer-Encoding: base64
+
+VuGeZW7hIGtsaWVudGthLCB24Z5lbv0ga2xpZW50LAoKZG92b751amVtZSBzaSBW4W0gb3pu4W1pnSwgnmUgZPJhIDYuOS4yMDE5IGJvbGEgbmEg+uh0ZSBTSzEzIDc1MDAgMDAwMCAwMDQwIDE5NDIgMTIzNCBFWEFNUExFIFBSRVNTLCBBLlMuIHph+uh0b3ZhbuEgc3VtYSBTRVBBIHBsYXRvYm7paG8gcHLta2F6dToKc3VtYTogICAgICAgICAgICAgICAgICAgICsxMTUwLDAwIEVVUgp6IProdHU6ICAgICAgICAgICAgICAgICAgU0s5MSA3NTAwIDAwMDAgMDA0MCAxMjM0IDEyMzQKYmFua2E6ICAgICAgICAgICAgICAgICAgIENFS09TS0JYCmRldGFpbHkgcGxhdGJ5Ogpu4XpvdiBwcm90afrodHU6ICAgICAgICAgTk9WQUsgSk9aRUYKcmVmZXJlbmNpYSBwbGF0aXRlvmE6ICAgIC9WUzIxMjA0MTIzNC9TUzEyMy9LUzAzMDgKaW5mb3Jt4WNpYSBwcmUgcHLtamVtY3U6IE1hcm9rbyAyMDE5CgoKClpvc3RhdG9rIG5hIProdGUgcG8gemH66HRvdmFu7SBzdW15IHBsYXRvYm5laiBvcGVy4WNpZTogKzE0MDUwLDcwIEVVUgoKVGVudG8gZS1tYWlsIGplIGdlbmVyb3Zhbv0gYXV0b21hdGlja3ksIHByb3PtbWUsIG5lb2Rwb3ZlZGFqdGUgbmHyLgpBayBt4XRlIG904XpreSBhbGVibyBwcm9ibOlteSBz+nZpc2lhY2Ugc28gc2x1nmJhbWkgRWxla3Ryb25pY2vpaG8gYmFua292bu1jdHZhIGtvbnRha3R1anRlIG7hcyBwcm9z7W0gbmEgZS1tYWlsIGFkcmVzZSBoZWxwZGVza2ViQGNzb2Iuc2sKCs9ha3VqZW1lIHphIHZ5dZ5pdGllIHNsdZ5pZWIgyFNPQiBJbmZvIDI0LAoKyFNPQi4KCjo6Ojo6Ojo6Ojo6Ojo6Ojo6Ojo6Ojo6Ojo6Ojo6Ojo6Ojo6Ojo6Ojo6Ojo6Ojo6Ojo6Ojo6Ojo6Ojo6Ojo6Ojo6Ojo6Ojo6Ojo6Ojo6Ojo6Ojo6Ojo6Ojo6CgpQcmF2bmUgaW5mb3JtYWNpZTogVGVudG8gZS1tYWlsIGEgdnNldGt5IHByaXBvamVuZSBzdWJvcnkgc3UgZG92ZXJuZSBhIG1venUgYnl0IGNocmFuZW5lIHpha29ub20uIFBva2lhbCBuaWUgc3RlIG9wcmF2bmVueW0gcHJpamVtY29tLCBwb3RvbSBha2Frb2x2ZWsgZm9ybWEgenZlcmVqbm92YW5pYSwgcmVwcm9kdWtvdmFuaWEsIGtvcGlyb3ZhbmlhLCBkaXN0cmlidWNpZSBhbGVibyBzaXJlbmlhIGplIHByaXNuZSB6YWthemFuYS4gQWsgc3RlIG9iZHJ6YWxpIHRlbnRvIGUtbWFpbCBvbXlsb20sIG96bmFtdGUgdG8sIHByb3NpbSwgb2thbXppdGUgQ1NPQiBhIG5hc2xlZG5lIHptYXp0ZSB0ZW50byBlLW1haWwuIENTT0IgbmV6b2Rwb3ZlZGEgemEgYmV6Y2h5Ym55IGEgdXBsbnkgcHJlbm9zIHphc2llbGFueWNoIGluZm9ybWFjaWksIGFuaSB6YSBvbmVza29yZW5pZSBhbGVibyBwcmVydXNlbmllIHByZW5vc3UgYSBhbmkgemEgc2tvZHkgc3Bvc29iZW5lIHBvdXppdGltIGFsZWJvIGRvdmVyb3UgayB0eW10byBpbmZvcm1hY2lhbS4gVnNldGt5IGUtbWFpbG92ZSBzcHJhdnkgYWRyZXNvdmFuZSwgb2JkcnphbmUgYWxlYm8gemFzbGFuZSBDU09CIGFsZWJvIGplaiB6YW1lc3RuYW5jYW1pIHN1IHBvdmF6b3ZhbmUgemEgY2lzdG8gcHJhY292bmUuIFBvZGxhIHRvaG8gamUgayBuaW0gcHJpc3R1cG92YW5lIGEgb2Rvc2llbGF0ZWwgaSBwcmlqZW1jYSB0eWNodG8gc3ByYXYgc3VobGFzaWEgcyB0eW0sIHplIG1venUgYnl0IGNpdGFuZSBhaiBpbnltaSBwb3ZlcmVueW1pIHphbWVzdG5hbmNhbWkgQ1NPQiBha28gc3UgcG92b2RueSBwcmlqZW1jYSBhIG9kb3NpZWxhdGVsLiBUYXRvIHNrdXRvY25vc3QgbW96ZSBuYXN0YXQgcHJpIHphYmV6cGVjb3Zhbmkga29udGludWl0eSBwcmFjb3ZueWNoIGNpbm5vc3RpIGEgcHJpIHphYmV6cGVjb3ZhbmkgcHJhdmlkZWxuZWoga29udHJvbHkuCgpMZWdhbCBEaXNjbGFpbWVyOiBUaGlzIGUtbWFpbCBhbmQgYW55IGF0dGFjaGVkIGZpbGVzIGFyZSBjb25maWRlbnRpYWwgYW5kIG1heSBiZSBsZWdhbGx5IHByaXZpbGVnZWQuIElmIHlvdSBhcmUgbm90IHRoZSBhZGRyZXNzZWUsIGFueSBkaXNjbG9zdXJlLCByZXByb2R1Y3Rpb24sIGNvcHlpbmcsIGRpc3RyaWJ1dGlvbiwgb3Igb3RoZXIgZGlzc2VtaW5hdGlvbiBvciB1c2Ugb2YgdGhpcyBjb21tdW5pY2F0aW9uIGlzIHN0cmljdGx5IHByb2hpYml0ZWQuIElmIHlvdSBoYXZlIHJlY2VpdmVkIHRoaXMgdHJhbnNtaXNzaW9uIGluIGVycm9yIHBsZWFzZSBub3RpZnkgQ1NPQiBpbW1lZGlhdGVseSBhbmQgdGhlbiBkZWxldGUgdGhpcyBlLW1haWwuIENTT0IgZG9lcyBub3QgYWNjZXB0IGxpYWJpbGl0eSBmb3IgdGhlIGNvcnJlY3QgYW5kIGNvbXBsZXRlIHRyYW5zbWlzc2lvbiBvZiB0aGUgaW5mb3JtYXRpb24sIG5vciBmb3IgYW55IGRlbGF5IG9yIGludGVycnVwdGlvbiBvZiB0aGUgdHJhbnNtaXNzaW9uLCBub3IgZm9yIGRhbWFnZXMgYXJpc2luZyBmcm9tIHRoZSB1c2Ugb2Ygb3IgcmVsaWFuY2Ugb24gdGhlIGluZm9ybWF0aW9uLiBBbGwgZS1tYWlsIG1lc3NhZ2VzIGFkZHJlc3NlZCB0bywgcmVjZWl2ZWQgb3Igc2VudCBieSBDU09CIG9yIENTT0IgZW1wbG95ZWVzIGFyZSBkZWVtZWQgdG8gYmUgcHJvZmVzc2lvbmFsIGluIG5hdHVyZS4gQWNjb3JkaW5nbHksIHRoZSBzZW5kZXIgb3IgcmVjaXBpZW50IG9mIHRoZXNlIG1lc3NhZ2VzIGFncmVlcyB0aGF0IHRoZXkgbWF5IGJlIHJlYWQgYnkgb3RoZXIgQ1NPQiBlbXBsb3llZXMgdGhhbiB0aGUgb2ZmaWNpYWwgcmVjaXBpZW50IG9yIHNlbmRlciBpbiBvcmRlciB0byBlbnN1cmUgdGhlIGNvbnRpbnVpdHkgb2Ygd29yay1yZWxhdGVkIGFjdGl2aXRpZXMgYW5kIGFsbG93IHN1cGVydmlzaW9uIHRoZXJlb2YuCg==
+
+------=_Part_856420_26410749.1567771779007--
+

@@ -503,3 +503,45 @@ Admin user detail listing widget.
 
 [How to use](https://github.com/remp2020/crm-payments-module/blob/1fee1560e7c9a83fe25ddc579c6af0f4264897df/src/PaymentsModule.php#L111)
 
+## Confirmation e-mails
+
+Examples of confirmation mails received from banks. Every type of mail has it's own IMAP access configurable in application configuration.
+
+### TatraBanka Simple
+
+**From:** b-mail (at) tatrabanka (dot) sk
+
+**Subject:** e-commerce
+
+[Example e-mail file](docs/_static/emails/tatrabanka_simple.eml)
+
+### TatraBanka
+
+**From:** b-mail (at) tatrabanka (dot) sk
+
+**Subject:** Kredit na ucte
+
+[Example e-mail file](docs/_static/emails/tatrabanka.eml)
+
+### TatraBanka Statement
+
+**From:** vypis_obchodnik (at) tatrabanka (dot) sk
+
+[Example e-mail file](docs/_static/emails/tatrabanka_statement.eml)
+
+### CSOB
+
+**From:** notification (at) csob (dot) cz
+
+**Subject:** CEB Info: Zaúčtování platby
+
+[Example e-mail file](docs/_static/emails/csob.eml)
+
+### Slovak CSOB
+
+**From:** AdminTBS (at) csob (dot) sk
+
+**Subject:** ČSOB Info 24 - Avízo
+
+[Example e-mail file](docs/_static/emails/sk_csob.eml)
+

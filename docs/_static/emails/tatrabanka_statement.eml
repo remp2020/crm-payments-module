@@ -1,0 +1,95 @@
+Delivered-To: platbysys@example.com
+Received: by 0:0:0:0:0:0:0:0 with SMTP id b18csp467561otf;
+        Tue, 10 Dec 2019 23:40:10 -0800 (PST)
+X-Google-Smtp-Source: APXvYqzqSgIB+0Woq3WIC4/lV7XrO9A9huRyrKBu4KRg/OBPkVt0gYQpnKW2y5PH9ugPNW50t3wU
+X-Received: by 2002:a5d:5592:: with SMTP id i18mr1949050wrv.55.1576050010038;
+        Tue, 10 Dec 2019 23:40:10 -0800 (PST)
+ARC-Seal: i=1; a=rsa-sha256; t=1576050010; cv=none;
+        d=google.com; s=arc-20160816;
+        b=DqgVvP7mqYpzdaguCxBpoEQKgFExRoKpnz8tXhb0BTnHwNfEMG+lI3ijI3h4hwfBd9
+         zL4hZPqOXYJz2VFBjeSejNiEHFsTakqS8tkP5acEB9m3buiJ0DtFp9ShVcWcVoGVonWX
+         mXn/NvfN5fJQvrsG1So7sKShEs5Qt8X3Mn95eb8L0HfMo7zycM9Qlf72NpCZF2+vRyt5
+         9BbjCQ3D5PhMvfGmmL/mOYG4hK1VxkAzW6gmq4NImIUZGEOAsZQq7F5uW+95+h+duFRe
+         xDIRzSPWkl/zvRdyBTGwUCMVWFpH9kZXMDjnv5UACZEqgNssmxodcB/c9AdZT8o+fBOY
+         6RAg==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
+        h=content-transfer-encoding:mime-version:subject:message-id:to:from
+         :date:dkim-signature;
+        bh=oseQz5UtrP+18TGQ+LwQDfCnxROLaNJ9DdM5m10Xwzw=;
+        b=v7/w1tjKmMT1gvEuYsP8Q4NqiGy7y0umycgGfvsc5ovSNw04XcnIYEKb6FRFPGh0Xt
+         qFFgEVwHPNCwSb2fBNOnxGeubchm4lQXHFrm7RzLnJVCMlEgmQxhi0pXZTBQtDyy2p0Z
+         CianuHiLTzyA1GAXceQ/Rwt+X4y3PyD0bT5/BU1zipHZ1CPotDbg/R8TpDLXKLLkM4tq
+         KN6YSWOwXh/0F7JUsS9MT9nV2xFLm9QHOcuRLp5Uhqqf47je3YXr9y/gC6ZnSZXHwecl
+         egYRuFchqDF7liWNsIFT5hj955G2jubVWXwqNp/hdHJ7XHueXxiG39s/gf+Gou26OpRv
+         RVGQ==
+ARC-Authentication-Results: i=1; mx.google.com;
+       dkim=pass header.i=@example.com header.s=mta header.b=MEikNpnH;
+       spf=pass (google.com: domain of vypis_obchodnik@example.com designates 127.0.0.1 as permitted sender) smtp.mailfrom=vypis_obchodnik@example.com
+Return-Path: <vypis_obchodnik@example.com>
+Received: from p1tatrask2.example.com (p1tatrask2.example.com. [127.0.0.1])
+        by mx.google.com with ESMTPS id z15si1304967wrt.173.2019.12.10.23.40.09
+        for <platbysys@example.com>
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 10 Dec 2019 23:40:10 -0800 (PST)
+Received-SPF: pass (google.com: domain of vypis_obchodnik@example.com designates 127.0.0.1 as permitted sender) client-ip=127.0.0.1;
+Authentication-Results: mx.google.com;
+       dkim=pass header.i=@example.com header.s=mta header.b=MEikNpnH;
+       spf=pass (google.com: domain of vypis_obchodnik@example.com designates 127.0.0.1 as permitted sender) smtp.mailfrom=vypis_obchodnik@example.com
+Received: from TATRBA01.TATRABANKA.SK (unknown [127.0.0.1])
+	by p1tatrask.example.com (Postfix) with ESMTP id 8EDBA168E3
+	for <platbysys@example.com>; Wed, 11 Dec 2019 08:40:09 +0100 (CET)
+X-DKIM: Sendmail DKIM Filter v2.8.3 p1tatrask.example.com 8EDBA168E3
+DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple; d=example.com; s=mta;
+	t=1576050009; bh=oseQz5UtrP+18TGQ+LwQDfCnxROLaNJ9DdM5m10Xwzw=;
+	h=Date:From:To:Message-ID:Subject:MIME-Version:Content-Type:
+	 Content-Transfer-Encoding;
+	b=MEikNpnHf5rLsK2g/NAJJDs/Crl8EOXIo/E6uNC1J8pQNHTCFp85GP/f8pCBTn5Uz
+	 ZtNeBKubPLwMevM3dnpy4qP44pd0e+wq+teSppr6B81woZZS46LEWRC7Njy49VAckB
+	 Ag7GdNebSWQB1ND6v0ulbn02WHubE6sR48TB1bb1hmfKQiqK76otA0tUquJsbwAZQP
+	 2+MgNgdpg4r9weuppFvYkWeoc2sIJqH7FlXS+p+WxQKlBwE9+PM41J1RLeknMWt7ZL
+	 0k76dI+PJiM5p319asDL2yEjMtboDmZGPV0ec2ZkwGrEobXp+/CbGkEK1+wLkXEdpM
+	 /nv8kDsQF8U6w==
+Date: Wed, 11 Dec 2019 08:40:09 +0100 (CET)
+From: vypis_obchodnik@example.com
+To: platbysys@example.com
+Message-ID: <1371493657.15401576050009620.JavaMail.rsowner@TATRBA01.TATRABANKA.SK>
+Subject: PETIT1_ D_20191210-20191210
+MIME-Version: 1.0
+Content-Type: text/plain; charset=windows-1250
+Content-Transfer-Encoding: 7bit
+
+-----BEGIN PGP MESSAGE-----
+
+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
+BVFRjLb8BrcHWZ9O
+=WXwP
+
+-----END PGP MESSAGE-----
+

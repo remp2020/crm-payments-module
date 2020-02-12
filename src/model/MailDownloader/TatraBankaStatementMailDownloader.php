@@ -29,11 +29,11 @@ class TatraBankaStatementMailDownloader
 
     public function __construct(ApplicationConfig $config)
     {
-        $this->imapHost = $config->get('confirmation_mail_host');
-        $this->imapPort = $config->get('confirmation_mail_port');
-        $this->username = $config->get('confirmation_mail_username');
-        $this->password = $config->get('confirmation_mail_password');
-        $this->processedFolder = $config->get('confirmation_mail_processed_folder');
+        $this->imapHost = $config->get('tbs_confirmation_host');
+        $this->imapPort = $config->get('tbs_confirmation_port');
+        $this->username = $config->get('tbs_confirmation_username');
+        $this->password = $config->get('tbs_confirmation_password');
+        $this->processedFolder = $config->get('tbs_confirmation_processed_folder');
 
         $this->pgpPrivateKeyPath = $config->get('tatrabanka_pgp_private_key_path');
         $this->pgpPassphrase = $config->get('tatrabanka_pgp_private_key_passphrase');

@@ -473,6 +473,7 @@ frontend:
 
 config:
 	category: Platby
+	category_confirmation: Potvrzovací e-maily
 	donation_vat_rate:
 		name: DPH pro dary
 	tatrapay_sharedsecret:
@@ -551,9 +552,6 @@ config:
 		name: Comfortpay mid
 	comfortpay_ws:
 		name: Comforpay ws
-	vub_zip_password:
-		name: VÚB ZIP Heslo
-		description: Heslo k ZIP souboru v potvrzovacích emailech z VÚB banky
 	tatrabanka_pgp_private_key_path:
 		name: Tatrabanka PGP private key
 		description: Cesta k souboru PGP private key pro dešifrování Tatrabanka e-mailů
@@ -571,4 +569,79 @@ config:
 		name: Potvrzovací emaily Heslo
 	confirmation_mail_processed_folder:
 		name: Potvrzovací emaily FOLDER po Zpracování
-		description: IMAP folder do ktereho se přesune email po zpracování
+		description: IMAP složka do ktereho se přesune email po zpracování
+	tb_simple_confirmation_host:
+		name: TatraBanka Simple host
+		description: "IMAP host pro připojení (např. imap.gmail.com) (<a href='https://github.com/remp2020/crm-payments-module#confirmation-e-mails' target='_blank'>info</a>)"
+	tb_simple_confirmation_port:
+		name: TatraBanka Simple port
+		description: "IMAP port pro připojení (např. 993) (<a href='https://github.com/remp2020/crm-payments-module#confirmation-e-mails' target='_blank'>info</a>)"
+	tb_simple_confirmation_username:
+		name: TatraBanka Simple username
+		description: "IMAP přihlašovací jméno pro připojení (např. example@gmail.com) (<a href='https://github.com/remp2020/crm-payments-module#confirmation-e-mails' target='_blank'>info</a>)"
+	tb_simple_confirmation_password:
+		name: TatraBanka Simple password
+		description: "IMAP heslo pro připojení (např. password) (<a href='https://github.com/remp2020/crm-payments-module#confirmation-e-mails' target='_blank'>info</a>)"
+	tb_simple_confirmation_processed_folder:
+		name: TatraBanka Simple složka
+		description: "IMAP složka do kterého se přesune email po zpracování (např. INBOX/processed) (<a href='https://github.com/remp2020/crm-payments-module#confirmation-e-mails' target='_blank'>info</a>)"
+	tb_confirmation_host:
+		name: TatraBanka host
+		description: "IMAP host pro připojení (např. imap.gmail.com) (<a href='https://github.com/remp2020/crm-payments-module#confirmation-e-mails' target='_blank'>info</a>)"
+	tb_confirmation_port:
+		name: TatraBanka port
+		description: "IMAP port pro připojení (např. 993) (<a href='https://github.com/remp2020/crm-payments-module#confirmation-e-mails' target='_blank'>info</a>)"
+	tb_confirmation_username:
+		name: TatraBanka username
+		description: "IMAP přihlašovací jméno pro připojení (např. example@gmail.com) (<a href='https://github.com/remp2020/crm-payments-module#confirmation-e-mails' target='_blank'>info</a>)"
+	tb_confirmation_password:
+		name: TatraBanka password
+		description: "IMAP heslo pro připojení (např. password) (<a href='https://github.com/remp2020/crm-payments-module#confirmation-e-mails' target='_blank'>info</a>)"
+	tb_confirmation_processed_folder:
+		name: TatraBanka složka
+		description: "IMAP složka do kterého se přesune email po zpracování (např. INBOX/processed) (<a href='https://github.com/remp2020/crm-payments-module#confirmation-e-mails' target='_blank'>info</a>)"
+	csob_confirmation_host:
+		name: CSOB host
+		description: "IMAP host pro připojení (např. imap.gmail.com) (<a href='https://github.com/remp2020/crm-payments-module#confirmation-e-mails' target='_blank'>info</a>)"
+	csob_confirmation_port:
+		name: CSOB port
+		description: "IMAP port pro připojení (např. 993) (<a href='https://github.com/remp2020/crm-payments-module#confirmation-e-mails' target='_blank'>info</a>)"
+	csob_confirmation_username:
+		name: CSOB username
+		description: "IMAP přihlašovací jméno pro připojení (např. example@gmail.com) (<a href='https://github.com/remp2020/crm-payments-module#confirmation-e-mails' target='_blank'>info</a>)"
+	csob_confirmation_password:
+		name: CSOB password
+		description: "IMAP heslo pro připojení (např. password) (<a href='https://github.com/remp2020/crm-payments-module#confirmation-e-mails' target='_blank'>info</a>)"
+	csob_confirmation_processed_folder:
+		name: CSOB složka
+		description: "IMAP složka do kterého se přesune email po zpracování (např. INBOX/processed) (<a href='https://github.com/remp2020/crm-payments-module#confirmation-e-mails' target='_blank'>info</a>)"
+	sk_csob_confirmation_host:
+		name: Slovak CSOB host
+		description: "IMAP host pro připojení (např. imap.gmail.com) (<a href='https://github.com/remp2020/crm-payments-module#confirmation-e-mails' target='_blank'>info</a>)"
+	sk_csob_confirmation_port:
+		name: Slovak CSOB port
+		description: "IMAP port pro připojení (např. 993) (<a href='https://github.com/remp2020/crm-payments-module#confirmation-e-mails' target='_blank'>info</a>)"
+	sk_csob_confirmation_username:
+		name: Slovak CSOB username
+		description: "IMAP přihlašovací jméno pro připojení (např. example@gmail.com) (<a href='https://github.com/remp2020/crm-payments-module#confirmation-e-mails' target='_blank'>info</a>)"
+	sk_csob_confirmation_password:
+		name: Slovak CSOB password
+		description: "IMAP heslo pro připojení (např. password) (<a href='https://github.com/remp2020/crm-payments-module#confirmation-e-mails' target='_blank'>info</a>)"
+	sk_csob_confirmation_processed_folder:
+		name: Slovak CSOB složka
+		description: "IMAP složka do kterého se přesune email po zpracování (např. INBOX/processed) (<a href='https://github.com/remp2020/crm-payments-module#confirmation-e-mails' target='_blank'>info</a>)"
+	tbs_confirmation_host:
+		name: TatraBanka vypis host
+		description: "IMAP host pro připojení (např. imap.gmail.com) (<a href='https://github.com/remp2020/crm-payments-module#confirmation-e-mails' target='_blank'>info</a>)"
+	tbs_confirmation_port:
+		name: TatraBanka vypis port
+		description: "IMAP port pro připojení (např. 993) (<a href='https://github.com/remp2020/crm-payments-module#confirmation-e-mails' target='_blank'>info</a>)"
+	tbs_confirmation_username:
+		name: TatraBanka vypis username
+		description: "IMAP přihlašovací jméno pro připojení (např. example@gmail.com) (<a href='https://github.com/remp2020/crm-payments-module#confirmation-e-mails' target='_blank'>info</a>)"
+	tbs_confirmation_password:
+		name: TatraBanka vypis password
+		description: "IMAP heslo pro připojení (např. password) (<a href='https://github.com/remp2020/crm-payments-module#confirmation-e-mails' target='_blank'>info</a>)"
+	tbs_confirmation_processed_folder:
+		name: TatraBanka vypis složka
+		description: "IMAP složka do kterého se přesune email po zpracování (např. INBOX/processed) (<a href='https://github.com/remp2020/crm-payments-module#confirmation-e-mails' target='_blank'>info</a>)"

@@ -7,6 +7,7 @@ use Crm\ApplicationModule\Config\ApplicationConfig;
 use Crm\ApplicationModule\Config\Repository\ConfigCategoriesRepository;
 use Crm\ApplicationModule\Config\Repository\ConfigsRepository;
 use Crm\ApplicationModule\Seeders\ISeeder;
+use Nette\Database\Connection;
 use Symfony\Component\Console\Output\OutputInterface;
 
 class ConfigsSeeder implements ISeeder
@@ -19,14 +20,18 @@ class ConfigsSeeder implements ISeeder
 
     private $category;
 
+    private $database;
+
     public function __construct(
         ConfigCategoriesRepository $configCategoriesRepository,
         ConfigsRepository $configsRepository,
-        ConfigBuilder $configBuilder
+        ConfigBuilder $configBuilder,
+        Connection $database
     ) {
         $this->configCategoriesRepository = $configCategoriesRepository;
         $this->configsRepository = $configsRepository;
         $this->configBuilder = $configBuilder;
+        $this->database = $database;
     }
 
     public function seed(OutputInterface $output)
@@ -327,36 +332,6 @@ class ConfigsSeeder implements ISeeder
             null
         );
 
-        $this->addPaymentConfig(
-            $output,
-            $category,
-            'vub_zip_password',
-            'payments.config.vub_zip_password.name',
-            '',
-            $sorting++,
-            'payments.config.vub_zip_password.description'
-        );
-
-        $this->addPaymentConfig(
-            $output,
-            $category,
-            'tatrabanka_pgp_private_key_path',
-            'payments.config.tatrabanka_pgp_private_key_path.name',
-            '',
-            $sorting++,
-            'payments.config.tatrabanka_pgp_private_key_path.description'
-        );
-
-        $this->addPaymentConfig(
-            $output,
-            $category,
-            'tatrabanka_pgp_private_key_passphrase',
-            'payments.config.tatrabanka_pgp_private_key_passphrase.name',
-            '',
-            $sorting++,
-            'payments.config.tatrabanka_pgp_private_key_passphrase.description'
-        );
-
         $name = 'gopay_eet_enabled';
         $value = 0;
         $config = $this->configsRepository->loadByName($name);
@@ -462,6 +437,305 @@ class ConfigsSeeder implements ISeeder
             $output->writeln("  <comment>* config item <info>$name</info> created</comment>");
         } else {
             $output->writeln("  * config item <info>$name</info> exists");
+        }
+
+        $categoryName = 'payments.config.category_confirmation';
+        $this->category = $category = $this->configCategoriesRepository->loadByName($categoryName);
+        if (!$category) {
+            $this->category = $category = $this->configCategoriesRepository->add($categoryName, 'fa fa-check-double', 1600);
+            $output->writeln('  <comment>* config category <info>Potvrdzovacie e-maily</info> created</comment>');
+        } else {
+            $output->writeln('  * config category <info>Potvrdzovacie e-maily</info> exists');
+        }
+
+        $this->addPaymentConfig(
+            $output,
+            $category,
+            'tb_simple_confirmation_host',
+            'payments.config.tb_simple_confirmation_host.name',
+            '',
+            1,
+            'payments.config.tb_simple_confirmation_host.description'
+        );
+
+        $this->addPaymentConfig(
+            $output,
+            $category,
+            'tb_simple_confirmation_port',
+            'payments.config.tb_simple_confirmation_port.name',
+            '',
+            2,
+            'payments.config.tb_simple_confirmation_port.description'
+        );
+
+        $this->addPaymentConfig(
+            $output,
+            $category,
+            'tb_simple_confirmation_username',
+            'payments.config.tb_simple_confirmation_username.name',
+            '',
+            3,
+            'payments.config.tb_simple_confirmation_username.description'
+        );
+
+        $this->addPaymentConfig(
+            $output,
+            $category,
+            'tb_simple_confirmation_password',
+            'payments.config.tb_simple_confirmation_password.name',
+            '',
+            4,
+            'payments.config.tb_simple_confirmation_password.description'
+        );
+
+        $this->addPaymentConfig(
+            $output,
+            $category,
+            'tb_simple_confirmation_processed_folder',
+            'payments.config.tb_simple_confirmation_processed_folder.name',
+            '',
+            5,
+            'payments.config.tb_simple_confirmation_processed_folder.description'
+        );
+
+        $this->addPaymentConfig(
+            $output,
+            $category,
+            'tb_confirmation_host',
+            'payments.config.tb_confirmation_host.name',
+            '',
+            6,
+            'payments.config.tb_confirmation_host.description'
+        );
+
+        $this->addPaymentConfig(
+            $output,
+            $category,
+            'tb_confirmation_port',
+            'payments.config.tb_confirmation_port.name',
+            '',
+            7,
+            'payments.config.tb_confirmation_port.description'
+        );
+
+        $this->addPaymentConfig(
+            $output,
+            $category,
+            'tb_confirmation_username',
+            'payments.config.tb_confirmation_username.name',
+            '',
+            8,
+            'payments.config.tb_confirmation_username.description'
+        );
+
+        $this->addPaymentConfig(
+            $output,
+            $category,
+            'tb_confirmation_password',
+            'payments.config.tb_confirmation_password.name',
+            '',
+            9,
+            'payments.config.tb_confirmation_password.description'
+        );
+
+        $this->addPaymentConfig(
+            $output,
+            $category,
+            'tb_confirmation_processed_folder',
+            'payments.config.tb_confirmation_processed_folder.name',
+            '',
+            10,
+            'payments.config.tb_confirmation_processed_folder.description'
+        );
+
+        $this->addPaymentConfig(
+            $output,
+            $category,
+            'csob_confirmation_host',
+            'payments.config.csob_confirmation_host.name',
+            '',
+            11,
+            'payments.config.csob_confirmation_host.description'
+        );
+
+        $this->addPaymentConfig(
+            $output,
+            $category,
+            'csob_confirmation_port',
+            'payments.config.csob_confirmation_port.name',
+            '',
+            12,
+            'payments.config.csob_confirmation_port.description'
+        );
+
+        $this->addPaymentConfig(
+            $output,
+            $category,
+            'csob_confirmation_username',
+            'payments.config.csob_confirmation_username.name',
+            '',
+            13,
+            'payments.config.csob_confirmation_username.description'
+        );
+
+        $this->addPaymentConfig(
+            $output,
+            $category,
+            'csob_confirmation_password',
+            'payments.config.csob_confirmation_password.name',
+            '',
+            14,
+            'payments.config.csob_confirmation_password.description'
+        );
+
+        $this->addPaymentConfig(
+            $output,
+            $category,
+            'csob_confirmation_processed_folder',
+            'payments.config.csob_confirmation_processed_folder.name',
+            '',
+            15,
+            'payments.config.csob_confirmation_processed_folder.description'
+        );
+
+        $this->addPaymentConfig(
+            $output,
+            $category,
+            'sk_csob_confirmation_host',
+            'payments.config.sk_csob_confirmation_host.name',
+            '',
+            16,
+            'payments.config.sk_csob_confirmation_host.description'
+        );
+
+        $this->addPaymentConfig(
+            $output,
+            $category,
+            'sk_csob_confirmation_port',
+            'payments.config.sk_csob_confirmation_port.name',
+            '',
+            17,
+            'payments.config.sk_csob_confirmation_port.description'
+        );
+
+        $this->addPaymentConfig(
+            $output,
+            $category,
+            'sk_csob_confirmation_username',
+            'payments.config.sk_csob_confirmation_username.name',
+            '',
+            18,
+            'payments.config.sk_csob_confirmation_username.description'
+        );
+
+        $this->addPaymentConfig(
+            $output,
+            $category,
+            'sk_csob_confirmation_password',
+            'payments.config.sk_csob_confirmation_password.name',
+            '',
+            19,
+            'payments.config.sk_csob_confirmation_password.description'
+        );
+
+        $this->addPaymentConfig(
+            $output,
+            $category,
+            'sk_csob_confirmation_processed_folder',
+            'payments.config.sk_csob_confirmation_processed_folder.name',
+            '',
+            20,
+            'payments.config.sk_csob_confirmation_processed_folder.description'
+        );
+
+        $this->addPaymentConfig(
+            $output,
+            $category,
+            'tbs_confirmation_host',
+            'payments.config.tbs_confirmation_host.name',
+            '',
+            21,
+            'payments.config.tbs_confirmation_host.description'
+        );
+
+        $this->addPaymentConfig(
+            $output,
+            $category,
+            'tbs_confirmation_port',
+            'payments.config.tbs_confirmation_port.name',
+            '',
+            22,
+            'payments.config.tbs_confirmation_port.description'
+        );
+
+        $this->addPaymentConfig(
+            $output,
+            $category,
+            'tbs_confirmation_username',
+            'payments.config.tbs_confirmation_username.name',
+            '',
+            23,
+            'payments.config.tbs_confirmation_username.description'
+        );
+
+        $this->addPaymentConfig(
+            $output,
+            $category,
+            'tbs_confirmation_password',
+            'payments.config.tbs_confirmation_password.name',
+            '',
+            24,
+            'payments.config.tbs_confirmation_password.description'
+        );
+
+        $this->addPaymentConfig(
+            $output,
+            $category,
+            'tbs_confirmation_processed_folder',
+            'payments.config.tbs_confirmation_processed_folder.name',
+            '',
+            25,
+            'payments.config.tbs_confirmation_processed_folder.description'
+        );
+
+        $this->addPaymentConfig(
+            $output,
+            $category,
+            'tatrabanka_pgp_private_key_path',
+            'payments.config.tatrabanka_pgp_private_key_path.name',
+            '',
+            26,
+            'payments.config.tatrabanka_pgp_private_key_path.description'
+        );
+
+        $this->addPaymentConfig(
+            $output,
+            $category,
+            'tatrabanka_pgp_private_key_passphrase',
+            'payments.config.tatrabanka_pgp_private_key_passphrase.name',
+            '',
+            27,
+            'payments.config.tatrabanka_pgp_private_key_passphrase.description'
+        );
+
+        $result = $this->database->fetch("select display_name, name from configs where name = 'vub_zip_password' and display_name = 'vub_eplatby.config.vub_zip_password.name'");
+        if (false === $result) {
+            $this->database->query("
+                update configs set config_category_id = (select id from config_categories where name = 'payments.config.category_confirmation')
+                where name = 'vub_zip_password';
+    
+                update configs set display_name = 'vub_eplatby.config.vub_zip_password.name' where name = 'vub_zip_password';
+                update configs set description = 'vub_eplatby.config.vub_zip_password.description' where name = 'vub_zip_password';
+                update configs set sorting = 206 where name = 'vub_zip_password';
+    
+                update configs set sorting = 26 where name = 'tatrabanka_pgp_private_key_path';
+                update configs set sorting = 27 where name = 'tatrabanka_pgp_private_key_passphrase';
+    
+                update configs set config_category_id = (select id from config_categories where name = 'payments.config.category_confirmation')
+                where name = 'tatrabanka_pgp_private_key_path';
+                update configs set config_category_id = (select id from config_categories where name = 'payments.config.category_confirmation')
+                where name = 'tatrabanka_pgp_private_key_passphrase';
+            ");
         }
     }
 
