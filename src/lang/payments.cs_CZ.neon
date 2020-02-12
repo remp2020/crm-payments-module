@@ -551,3 +551,18 @@ config:
 		name: Comfortpay mid
 	comfortpay_ws:
 		name: Comforpay ws
+	vub_zip_password:
+		name: VÚB ZIP Heslo
+		description: Heslo k ZIP souboru v potvrzovacích emailech z VÚB banky
+	confirmation_mail_host:
+		name: Potvrzovací emaily HOST
+		description: Emailový server kde chodí potvrzovací emaily z banky
+	confirmation_mail_port:
+		name: Potvrzovací emaily PORT
+	confirmation_mail_username:
+		name: Potvrzovací emaily Username
+	confirmation_mail_password:
+		name: Potvrzovací emaily Heslo
+	confirmation_mail_processed_folder:
+		name: Potvrzovací emaily FOLDER po Zpracování
+		description: IMAP folder do ktereho se přesune email po zpracování

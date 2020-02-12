@@ -327,6 +327,16 @@ class ConfigsSeeder implements ISeeder
             null
         );
 
+        $this->addPaymentConfig(
+            $output,
+            $category,
+            'vub_zip_password',
+            'payments.config.vub_zip_password.name',
+            '',
+            $sorting++,
+            'payments.config.vub_zip_password.description'
+        );
+
         $name = 'gopay_eet_enabled';
         $value = 0;
         $config = $this->configsRepository->loadByName($name);
@@ -345,6 +355,91 @@ class ConfigsSeeder implements ISeeder
         } elseif ($config->has_default_value && $config->value !== $value) {
             $this->configsRepository->update($config, ['value' => $value, 'has_default_value' => true]);
             $output->writeln("  <comment>* config item <info>$name</info> updated</comment>");
+        } else {
+            $output->writeln("  * config item <info>$name</info> exists");
+        }
+
+        $name = 'confirmation_mail_host';
+        $config = $this->configsRepository->loadByName($name);
+        if (!$config) {
+            $this->configBuilder->createNew()
+                ->setName($name)
+                ->setDisplayName('payments.config.confirmation_mail_host.name')
+                ->setDescription('payments.config.confirmation_mail_host.description')
+                ->setType(ApplicationConfig::TYPE_STRING)
+                ->setAutoload(true)
+                ->setConfigCategory($category)
+                ->setSorting(1000)
+                ->save();
+            $output->writeln("  <comment>* config item <info>$name</info> created</comment>");
+        } else {
+            $output->writeln("  * config item <info>$name</info> exists");
+        }
+
+        $name = 'confirmation_mail_port';
+        $config = $this->configsRepository->loadByName($name);
+        if (!$config) {
+            $this->configBuilder->createNew()
+                ->setName($name)
+                ->setDisplayName('payments.config.confirmation_mail_port.name')
+                ->setDescription('')
+                ->setType(ApplicationConfig::TYPE_STRING)
+                ->setAutoload(true)
+                ->setConfigCategory($category)
+                ->setSorting(1001)
+                ->save();
+            $output->writeln("  <comment>* config item <info>$name</info> created</comment>");
+        } else {
+            $output->writeln("  * config item <info>$name</info> exists");
+        }
+
+        $name = 'confirmation_mail_username';
+        $config = $this->configsRepository->loadByName($name);
+        if (!$config) {
+            $this->configBuilder->createNew()
+                ->setName($name)
+                ->setDisplayName('payments.config.confirmation_mail_username.name')
+                ->setDescription('')
+                ->setType(ApplicationConfig::TYPE_STRING)
+                ->setAutoload(true)
+                ->setConfigCategory($category)
+                ->setSorting(1002)
+                ->save();
+            $output->writeln("  <comment>* config item <info>$name</info> created</comment>");
+        } else {
+            $output->writeln("  * config item <info>$name</info> exists");
+        }
+
+        $name = 'confirmation_mail_password';
+        $config = $this->configsRepository->loadByName($name);
+        if (!$config) {
+            $this->configBuilder->createNew()
+                ->setName($name)
+                ->setDisplayName('payments.config.confirmation_mail_password.name')
+                ->setDescription('')
+                ->setType(ApplicationConfig::TYPE_PASSWORD)
+                ->setAutoload(true)
+                ->setConfigCategory($category)
+                ->setSorting(1003)
+                ->save();
+            $output->writeln("  <comment>* config item <info>$name</info> created</comment>");
+        } else {
+            $output->writeln("  * config item <info>$name</info> exists");
+        }
+
+        $name = 'confirmation_mail_processed_folder';
+        $config = $this->configsRepository->loadByName($name);
+        if (!$config) {
+            $this->configBuilder->createNew()
+                ->setName($name)
+                ->setDisplayName('payments.config.confirmation_mail_processed_folder.name')
+                ->setDescription('payments.config.confirmation_mail_processed_folder.description')
+                ->setType(ApplicationConfig::TYPE_STRING)
+                ->setAutoload(true)
+                ->setConfigCategory($category)
+                ->setSorting(1004)
+                ->save();
+            $output->writeln("  <comment>* config item <info>$name</info> created</comment>");
         } else {
             $output->writeln("  * config item <info>$name</info> exists");
         }

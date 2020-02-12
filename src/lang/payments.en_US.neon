@@ -550,3 +550,18 @@ config:
 		name: Comfortpay mid
 	comfortpay_ws:
 		name: Comforpay ws
+	vub_zip_password:
+		name: VUB ZIP Password
+		description: Password to e-mailed ZIP file with payment confirmation from VUB bank.
+	confirmation_mail_host:
+		name: Confirmation emails HOST
+		description: Email server where confirmation emails from the bank go
+	confirmation_mail_port:
+		name: Confirmation emails PORT
+	confirmation_mail_username:
+		name: Confirmation emails Username
+	confirmation_mail_password:
+		name: Confirmation emails Password
+	confirmation_mail_processed_folder:
+		name: FOLDER confirmation emails after processing
+		description: IMAP folder to which the email will be moved after processing
