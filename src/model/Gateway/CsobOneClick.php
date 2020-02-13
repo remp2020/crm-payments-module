@@ -3,6 +3,7 @@
 namespace Crm\PaymentsModule\Gateways;
 
 use Crm\ApplicationModule\Config\ApplicationConfig;
+use Crm\ApplicationModule\Request;
 use Crm\PaymentsModule\GatewayFail;
 use Crm\PaymentsModule\RecurrentPaymentFailStop;
 use Crm\PaymentsModule\RecurrentPaymentFailTry;
@@ -178,6 +179,7 @@ class CsobOneClick extends GatewayAbstract implements RecurrentPaymentInterface
                 'payId' => $token,
                 'transactionId' => $payment->variable_symbol,
                 'cart' => $this->getCart($payment),
+                'clientIp' => Request::getIp(),
             ])->send();
         } catch (\Exception $exception) {
             if ($exception instanceof Exception) {

@@ -7,6 +7,7 @@ use Crm\PaymentsModule\Events\RecurrentPaymentFailEvent;
 use Crm\PaymentsModule\Events\RecurrentPaymentFailTryEvent;
 use Crm\PaymentsModule\GatewayFactory;
 use Crm\PaymentsModule\GatewayFail;
+use Crm\PaymentsModule\Gateways\RecurrentPaymentInterface;
 use Crm\PaymentsModule\PaymentItem\DonationPaymentItem;
 use Crm\PaymentsModule\PaymentItem\PaymentItemContainer;
 use Crm\PaymentsModule\RecurrentPaymentFailStop;
@@ -188,6 +189,7 @@ class RecurrentPaymentsChargeCommand extends Command
                 'payment_id' => $payment->id,
             ]);
 
+            /** @var RecurrentPaymentInterface $gateway */
             $gateway = $this->gatewayFactory->getGateway($payment->payment_gateway->code);
             try {
                 $gateway->charge($payment, $recurrentPayment->cid);
@@ -274,7 +276,9 @@ class RecurrentPaymentsChargeCommand extends Command
                 $payment->id
             );
 
-            $output->writeln("<info>Recurrent payment: #{$recurrentPayment->id} Token: {$recurrentPayment->cid} User: #{$recurrentPayment->user_id} Status: {$gateway->getResultCode()}</info>");
+            $output->writeln("Recurrent payment: #{$recurrentPayment->id} (<comment>{$recurrentPayment->cid}</comment>)");
+            $output->writeln("  * status: <info>{$gateway->getResultCode()}</info>");
+            $output->writeln("  * message: {$gateway->getResultMessage()}");
         }
 
         $end = microtime(true);
