@@ -173,13 +173,21 @@ class CsobOneClick extends GatewayAbstract implements RecurrentPaymentInterface
     public function charge($payment, $token)
     {
         $this->initialize();
+        $clientIp = Request::getIp();
+
+        // clientIp for offline payment (cli) should be the same as the one used during initial payment
+        // https://github.com/csob/paymentgateway/issues/471
+        $initialPaymentMeta = $this->paymentMetaRepository->findByMeta('pay_id', $token);
+        if ($clientIp === 'cli' && $initialPaymentMeta) {
+            $clientIp = $initialPaymentMeta->payment->ip;
+        }
 
         try {
             $this->response = $this->gateway->oneClickPayment([
                 'payId' => $token,
                 'transactionId' => $payment->variable_symbol,
                 'cart' => $this->getCart($payment),
-                'clientIp' => Request::getIp(),
+                'clientIp' => $clientIp,
             ])->send();
         } catch (\Exception $exception) {
             if ($exception instanceof Exception) {
