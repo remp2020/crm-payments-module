@@ -605,47 +605,47 @@ config:
 		name: TatraBanka zložka
 		description: "IMAP zložka do ktoreho sa presunie email po spracovani (napr. INBOX/processed) (<a href='https://github.com/remp2020/crm-payments-module#confirmation-e-mails' target='_blank'>info</a>)"
 	csob_confirmation_host:
-		name: CSOB host
+		name: 'ČSOB (CZ) host'
 		description: "IMAP host pre pripojenie (napr. imap.gmail.com) (<a href='https://github.com/remp2020/crm-payments-module#confirmation-e-mails' target='_blank'>info</a>)"
 	csob_confirmation_port:
-		name: CSOB port
+		name: 'ČSOB (CZ) port'
 		description: "IMAP port pre pripojenie (napr. 993) (<a href='https://github.com/remp2020/crm-payments-module#confirmation-e-mails' target='_blank'>info</a>)"
 	csob_confirmation_username:
-		name: CSOB username
+		name: 'ČSOB (CZ) username'
 		description: "IMAP prihlasovacie meno pre pripojenie (napr. example@gmail.com) (<a href='https://github.com/remp2020/crm-payments-module#confirmation-e-mails' target='_blank'>info</a>)"
 	csob_confirmation_password:
-		name: CSOB password
+		name: 'ČSOB (CZ) password'
 		description: "IMAP heslo pre pripojenie (napr. password) (<a href='https://github.com/remp2020/crm-payments-module#confirmation-e-mails' target='_blank'>info</a>)"
 	csob_confirmation_processed_folder:
-		name: CSOB zložka
+		name: 'ČSOB (CZ) zložka'
 		description: "IMAP zložka do ktoreho sa presunie email po spracovani (napr. INBOX/processed) (<a href='https://github.com/remp2020/crm-payments-module#confirmation-e-mails' target='_blank'>info</a>)"
 	sk_csob_confirmation_host:
-		name: Slovak CSOB host
+		name: 'ČSOB (SK) host'
 		description: "IMAP host pre pripojenie (napr. imap.gmail.com) (<a href='https://github.com/remp2020/crm-payments-module#confirmation-e-mails' target='_blank'>info</a>)"
 	sk_csob_confirmation_port:
-		name: Slovak CSOB port
+		name: 'ČSOB (SK) port'
 		description: "IMAP port pre pripojenie (napr. 993) (<a href='https://github.com/remp2020/crm-payments-module#confirmation-e-mails' target='_blank'>info</a>)"
 	sk_csob_confirmation_username:
-		name: Slovak CSOB username
+		name: 'ČSOB (SK) username'
 		description: "IMAP prihlasovacie meno pre pripojenie (napr. example@gmail.com) (<a href='https://github.com/remp2020/crm-payments-module#confirmation-e-mails' target='_blank'>info</a>)"
 	sk_csob_confirmation_password:
-		name: Slovak CSOB password
+		name: 'ČSOB (SK) password'
 		description: "IMAP heslo pre pripojenie (napr. password) (<a href='https://github.com/remp2020/crm-payments-module#confirmation-e-mails' target='_blank'>info</a>)"
 	sk_csob_confirmation_processed_folder:
-		name: Slovak CSOB zložka
+		name: 'ČSOB (SK) zložka'
 		description: "IMAP zložka do ktoreho sa presunie email po spracovani (napr. INBOX/processed) (<a href='https://github.com/remp2020/crm-payments-module#confirmation-e-mails' target='_blank'>info</a>)"
 	tbs_confirmation_host:
-		name: TatraBanka vypis host
+		name: TatraBanka výpis host
 		description: "IMAP host pre pripojenie (napr. imap.gmail.com) (<a href='https://github.com/remp2020/crm-payments-module#confirmation-e-mails' target='_blank'>info</a>)"
 	tbs_confirmation_port:
-		name: TatraBanka vypis port
+		name: TatraBanka výpis port
 		description: "IMAP port pre pripojenie (napr. 993) (<a href='https://github.com/remp2020/crm-payments-module#confirmation-e-mails' target='_blank'>info</a>)"
 	tbs_confirmation_username:
-		name: TatraBanka vypis username
+		name: TatraBanka výpis username
 		description: "IMAP prihlasovacie meno pre pripojenie (napr. example@gmail.com) (<a href='https://github.com/remp2020/crm-payments-module#confirmation-e-mails' target='_blank'>info</a>)"
 	tbs_confirmation_password:
-		name: TatraBanka vypis password
+		name: TatraBanka výpis password
 		description: "IMAP heslo pre pripojenie (napr. password) (<a href='https://github.com/remp2020/crm-payments-module#confirmation-e-mails' target='_blank'>info</a>)"
 	tbs_confirmation_processed_folder:
-		name: TatraBanka vypis zložka
+		name: TatraBanka výpis zložka
 		description: "IMAP zložka do ktoreho sa presunie email po spracovani (napr. INBOX/processed) (<a href='https://github.com/remp2020/crm-payments-module#confirmation-e-mails' target='_blank'>info</a>)"

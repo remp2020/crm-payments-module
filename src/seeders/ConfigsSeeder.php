@@ -6,19 +6,20 @@ use Crm\ApplicationModule\Builder\ConfigBuilder;
 use Crm\ApplicationModule\Config\ApplicationConfig;
 use Crm\ApplicationModule\Config\Repository\ConfigCategoriesRepository;
 use Crm\ApplicationModule\Config\Repository\ConfigsRepository;
+use Crm\ApplicationModule\Seeders\ConfigsTrait;
 use Crm\ApplicationModule\Seeders\ISeeder;
 use Nette\Database\Connection;
 use Symfony\Component\Console\Output\OutputInterface;
 
 class ConfigsSeeder implements ISeeder
 {
+    use ConfigsTrait;
+
     private $configCategoriesRepository;
 
     private $configsRepository;
 
     private $configBuilder;
-
-    private $category;
 
     private $database;
 
@@ -37,737 +38,736 @@ class ConfigsSeeder implements ISeeder
     public function seed(OutputInterface $output)
     {
         $categoryName = 'payments.config.category';
-        $this->category = $category = $this->configCategoriesRepository->loadByName($categoryName);
+        $category = $this->configCategoriesRepository->loadByName($categoryName);
         if (!$category) {
-            $this->category = $category = $this->configCategoriesRepository->add($categoryName, 'fa fa-credit-card', 300);
+            $category = $this->configCategoriesRepository->add($categoryName, 'fa fa-credit-card', 300);
             $output->writeln('  <comment>* config category <info>Platby</info> created</comment>');
         } else {
             $output->writeln('  * config category <info>Platby</info> exists');
         }
 
-        $this->addPaymentConfig(
+        $this->addConfig(
             $output,
             $category,
             'recurrent_charge_before',
+            ApplicationConfig::TYPE_STRING,
             'payments.config.recurrent_charge_before.name',
-            null,
-            300,
-            'payments.config.recurrent_charge_before.description'
+            'payments.config.recurrent_charge_before.description',
+            '',
+            300
         );
 
-        $this->addPaymentConfig(
+        $this->addConfig(
             $output,
             $category,
             'donation_vat_rate',
+            ApplicationConfig::TYPE_STRING,
             'payments.config.donation_vat_rate.name',
+            null,
             null,
             800
         );
 
         $sorting = 1000;
 
-        $this->addPaymentConfig($output, $category, 'tatrapay_mid', 'payments.config.tatrapay_mid.name', 'aoj', $sorting++);
-        $this->addPaymentConfig(
+        // TATRAPAY
+
+        $this->addConfig(
+            $output,
+            $category,
+            'tatrapay_mid',
+            ApplicationConfig::TYPE_STRING,
+            'payments.config.tatrapay_mid.name',
+            null,
+            'aoj',
+            $sorting++
+        );
+
+        $this->addConfig(
             $output,
             $category,
             'tatrapay_sharedsecret',
+            ApplicationConfig::TYPE_STRING,
             'payments.config.tatrapay_sharedsecret.name',
+            null,
             '',
             $sorting++
         );
 
-        $this->addPaymentConfig($output, $category, 'cardpay_mid', 'payments.config.cardpay_mid.name', '1joa', $sorting++);
-        $this->addPaymentConfig(
+        $this->addConfig(
+            $output,
+            $category,
+            'tatrapay_mode',
+            ApplicationConfig::TYPE_STRING,
+            'payments.config.tatrapay_mode.name',
+            null,
+            'live',
+            $sorting++
+        );
+
+        // CARDPAY
+
+        $this->addConfig(
+            $output,
+            $category,
+            'cardpay_mid',
+            ApplicationConfig::TYPE_STRING,
+            'payments.config.cardpay_mid.name',
+            null,
+            '1joa',
+            $sorting++
+        );
+
+        $this->addConfig(
             $output,
             $category,
             'cardpay_sharedsecret',
+            ApplicationConfig::TYPE_STRING,
             'payments.config.cardpay_sharedsecret.name',
+            null,
             '',
             $sorting++
         );
 
-        $this->addPaymentConfig($output, $category, 'comfortpay_mid', 'payments.config.comfortpay_mid.name', '5120', $sorting++);
-        $this->addPaymentConfig($output, $category, 'comfortpay_ws', 'payments.config.comfortpay_ws.name', '668862', $sorting++);
-        $this->addPaymentConfig(
+        $this->addConfig(
+            $output,
+            $category,
+            'cardpay_mode',
+            ApplicationConfig::TYPE_STRING,
+            'payments.config.cardpay_mode.name',
+            null,
+            'live',
+            $sorting++
+        );
+
+        // COMFORTPAY
+
+        $this->addConfig(
+            $output,
+            $category,
+            'comfortpay_mid',
+            ApplicationConfig::TYPE_STRING,
+            'payments.config.comfortpay_mid.name',
+            null,
+            '5120',
+            $sorting++
+        );
+
+        $this->addConfig(
+            $output,
+            $category,
+            'comfortpay_ws',
+            ApplicationConfig::TYPE_STRING,
+            'payments.config.comfortpay_ws.name',
+            null,
+            '668862',
+            $sorting++
+        );
+
+        $this->addConfig(
             $output,
             $category,
             'comfortpay_terminalid',
+            ApplicationConfig::TYPE_STRING,
             'payments.config.comfortpay_terminalid.name',
+            null,
             '',
             $sorting++
         );
-        $this->addPaymentConfig(
+
+        $this->addConfig(
             $output,
             $category,
             'comfortpay_sharedsecret',
+            ApplicationConfig::TYPE_STRING,
             'payments.config.comfortpay_sharedsecret.name',
+            null,
             '',
             $sorting++
         );
-        $this->addPaymentConfig(
+
+        $this->addConfig(
             $output,
             $category,
             'comfortpay_local_cert_path',
+            ApplicationConfig::TYPE_STRING,
             'payments.config.comfortpay_local_cert_path.name',
-            '123',
-            $sorting++,
-            'payments.config.comfortpay_local_passphrase_path.description'
+            'payments.config.comfortpay_local_passphrase_path.description',
+            '',
+            $sorting++
         );
-        $this->addPaymentConfig(
+
+        $this->addConfig(
             $output,
             $category,
             'comfortpay_local_passphrase_path',
+            ApplicationConfig::TYPE_STRING,
             'payments.config.comfortpay_local_passphrase_path.name',
-            '123',
-            $sorting++,
-            'payments.config.comfortpay_local_passphrase_path.description'
+            'payments.config.comfortpay_local_passphrase_path.description',
+            '',
+            $sorting++
         );
-        $this->addPaymentConfig(
+
+        $this->addConfig(
             $output,
             $category,
             'comfortpay_tem',
+            ApplicationConfig::TYPE_STRING,
             'payments.config.comfortpay_tem.name',
-            'info@info.sk',
-            $sorting++,
-            'payments.config.comfortpay_tem.description'
+            'payments.config.comfortpay_tem.description',
+            'admin@example.com',
+            $sorting++
         );
-        $this->addPaymentConfig(
+
+        $this->addConfig(
             $output,
             $category,
             'comfortpay_rem',
+            ApplicationConfig::TYPE_STRING,
             'payments.config.comfortpay_rem.name',
-            'info@info.sk',
-            $sorting++,
-            'payments.config.comfortpay_rem.description'
+            'payments.config.comfortpay_rem.description',
+            'admin@example.com',
+            $sorting++
         );
 
-        $this->addPaymentConfig($output, $category, 'paypal_mode', 'payments.config.paypal_mode.name', 'live', $sorting++);
-        $this->addPaymentConfig(
+        $this->addConfig(
+            $output,
+            $category,
+            'comfortpay_mode',
+            ApplicationConfig::TYPE_STRING,
+            'payments.config.comfortpay_mode.name',
+            null,
+            'live',
+            $sorting++
+        );
+
+        // PAYPAL
+
+        $this->addConfig(
+            $output,
+            $category,
+            'paypal_mode',
+            ApplicationConfig::TYPE_STRING,
+            'payments.config.paypal_mode.name',
+            null,
+            'live',
+            $sorting++
+        );
+
+        $this->addConfig(
             $output,
             $category,
             'paypal_username',
+            ApplicationConfig::TYPE_STRING,
             'payments.config.paypal_username.name',
+            null,
             '',
             $sorting++
         );
-        $this->addPaymentConfig(
+
+        $this->addConfig(
             $output,
             $category,
             'paypal_password',
+            ApplicationConfig::TYPE_STRING,
             'payments.config.paypal_password.name',
+            null,
             '',
             $sorting++
         );
-        $this->addPaymentConfig(
+
+        $this->addConfig(
             $output,
             $category,
             'paypal_signature',
+            ApplicationConfig::TYPE_STRING,
             'payments.config.paypal_signature.name',
+            null,
             '',
             $sorting++
         );
-        $this->addPaymentConfig($output, $category, 'paypal_merchant', 'payments.config.paypal_merchant.name', '', $sorting);
 
-        $this->addPaymentConfig(
+        $this->addConfig(
+            $output,
+            $category,
+            'paypal_merchant',
+            ApplicationConfig::TYPE_STRING,
+            'payments.config.paypal_merchant.name',
+            null,
+            '',
+            $sorting++
+        );
+
+        $this->addConfig(
             $output,
             $category,
             'csob_merchant_id',
+            ApplicationConfig::TYPE_STRING,
             'payments.config.csob_merchant_id.name',
+            'payments.config.csob_merchant_id.description',
             '',
-            $sorting++,
-            'payments.config.csob_merchant_id.description'
+            $sorting++
         );
 
-        $this->addPaymentConfig(
+        $this->addConfig(
             $output,
             $category,
             'csob_shop_name',
+            ApplicationConfig::TYPE_STRING,
             'payments.config.csob_shop_name.name',
+            'payments.config.csob_shop_name.description',
             '',
-            $sorting++,
-            "payments.config.csob_shop_name.description"
+            $sorting++
         );
 
-        $this->addPaymentConfig(
+        $this->addConfig(
             $output,
             $category,
             'csob_bank_public_key_file_path',
+            ApplicationConfig::TYPE_STRING,
             'payments.config.csob_bank_public_key_file_path.name',
+            'payments.config.csob_bank_public_key_file_path.description',
             '',
-            $sorting++,
-            'payments.config.csob_bank_public_key_file_path.description'
+            $sorting++
         );
 
-        $this->addPaymentConfig(
+        $this->addConfig(
             $output,
             $category,
             'csob_private_key_file_path',
+            ApplicationConfig::TYPE_STRING,
             'payments.config.csob_private_key_file_path.name',
+            'payments.config.csob_private_key_file_path.description',
             '',
-            $sorting++,
-            'payments.config.csob_private_key_file_path.description'
+            $sorting++
         );
 
-        $this->addPaymentConfig(
+        $this->addConfig(
             $output,
             $category,
             'csob_mode',
+            ApplicationConfig::TYPE_STRING,
             'payments.config.csob_mode.name',
+            'payments.config.csob_mode.description',
             '',
-            $sorting++,
-            'payments.config.csob_mode.description'
+            $sorting++
         );
 
         // recurrent payments
 
-        $this->addPaymentConfig(
+        $this->addConfig(
             $output,
             $category,
             'recurrent_payment_gateway_fail_delay',
+            ApplicationConfig::TYPE_STRING,
             'payments.config.recurrent_payment_gateway_fail_delay.name',
+            'payments.config.recurrent_payment_gateway_fail_delay.description',
             'PT1H',
-            $sorting++,
-            'payments.config.recurrent_payment_gateway_fail_delay.description'
+            $sorting++
         );
 
-        $this->addPaymentConfig(
+        $this->addConfig(
             $output,
             $category,
             'recurrent_payment_charges',
+            ApplicationConfig::TYPE_STRING,
             'payments.config.recurrent_payment_charges.name',
+            'payments.config.recurrent_payment_charges.description',
             'PT15M, PT6H, PT6H, PT6H, PT6H',
-            $sorting++,
-            'payments.config.recurrent_payment_charges.description'
+            $sorting++
         );
 
-        // gopay
+        // GOPAY
 
-        $this->addPaymentConfig(
+        $this->addConfig(
             $output,
             $category,
             'gopay_go_id',
+            ApplicationConfig::TYPE_STRING,
             'payments.config.gopay_go_id.name',
-            '',
-            $sorting++,
-            null
+            null,
+            null,
+            $sorting++
         );
-        
-        $this->addPaymentConfig(
+
+        $this->addConfig(
             $output,
             $category,
             'gopay_client_id',
+            ApplicationConfig::TYPE_STRING,
             'payments.config.gopay_client_id.name',
-            '',
-            $sorting++,
-            null
+            null,
+            null,
+            $sorting++
         );
 
-        $this->addPaymentConfig(
+        $this->addConfig(
             $output,
             $category,
             'gopay_client_secret',
+            ApplicationConfig::TYPE_STRING,
             'payments.config.gopay_client_secret.name',
-            '',
-            $sorting++,
-            null
+            null,
+            null,
+            $sorting++
         );
 
-        $this->addPaymentConfig(
+        $this->addConfig(
             $output,
             $category,
             'gopay_mode',
+            ApplicationConfig::TYPE_STRING,
             'payments.config.gopay_mode.name',
-            'true',
-            $sorting++,
-            null
+            null,
+            null,
+            $sorting++
         );
 
-        $this->addPaymentConfig(
+        $this->addConfig(
             $output,
             $category,
             'gopay_recurrence_date_to',
+            ApplicationConfig::TYPE_STRING,
             'payments.config.gopay_recurrence_date_to.name',
+            null,
             '2030-12-30',
-            $sorting++,
-            null
+            $sorting++
         );
 
-        $this->addPaymentConfig(
-            $output,
-            $category,
-            'tatrapay_mode',
-            'payments.config.tatrapay_mode.name',
-            'live',
-            $sorting++,
-            null
-        );
-
-        $this->addPaymentConfig(
-            $output,
-            $category,
-            'cardpay_mode',
-            'payments.config.cardpay_mode.name',
-            'live',
-            $sorting++,
-            null
-        );
-
-        $this->addPaymentConfig(
-            $output,
-            $category,
-            'comfortpay_mode',
-            'payments.config.comfortpay_mode.name',
-            'live',
-            $sorting++,
-            null
-        );
-
-        $this->addPaymentConfig(
+        $this->addConfig(
             $output,
             $category,
             'gopay_eet_enabled',
+            ApplicationConfig::TYPE_STRING,
             'payments.config.gopay_eet_enabled.name',
+            'payments.config.gopay_eet_enabled.description',
             0,
-            $sorting++,
-            null
+            $sorting++
         );
 
-        $name = 'gopay_eet_enabled';
-        $value = 0;
-        $config = $this->configsRepository->loadByName($name);
-        if (!$config) {
-            $this->configBuilder->createNew()
-                ->setName($name)
-                ->setDisplayName('payments.config.gopay_eet_enabled.name')
-                ->setDescription('payments.config.gopay_eet_enabled.description')
-                ->setValue($value)
-                ->setType(ApplicationConfig::TYPE_BOOLEAN)
-                ->setAutoload(false)
-                ->setConfigCategory($category)
-                ->setSorting($sorting++)
-                ->save();
-            $output->writeln("  <comment>* config item <info>$name</info> created</comment>");
-        } elseif ($config->has_default_value && $config->value !== $value) {
-            $this->configsRepository->update($config, ['value' => $value, 'has_default_value' => true]);
-            $output->writeln("  <comment>* config item <info>$name</info> updated</comment>");
-        } else {
-            $output->writeln("  * config item <info>$name</info> exists");
-        }
-
-        $name = 'confirmation_mail_host';
-        $config = $this->configsRepository->loadByName($name);
-        if (!$config) {
-            $this->configBuilder->createNew()
-                ->setName($name)
-                ->setDisplayName('payments.config.confirmation_mail_host.name')
-                ->setDescription('payments.config.confirmation_mail_host.description')
-                ->setType(ApplicationConfig::TYPE_STRING)
-                ->setAutoload(true)
-                ->setConfigCategory($category)
-                ->setSorting(1000)
-                ->save();
-            $output->writeln("  <comment>* config item <info>$name</info> created</comment>");
-        } else {
-            $output->writeln("  * config item <info>$name</info> exists");
-        }
-
-        $name = 'confirmation_mail_port';
-        $config = $this->configsRepository->loadByName($name);
-        if (!$config) {
-            $this->configBuilder->createNew()
-                ->setName($name)
-                ->setDisplayName('payments.config.confirmation_mail_port.name')
-                ->setDescription('')
-                ->setType(ApplicationConfig::TYPE_STRING)
-                ->setAutoload(true)
-                ->setConfigCategory($category)
-                ->setSorting(1001)
-                ->save();
-            $output->writeln("  <comment>* config item <info>$name</info> created</comment>");
-        } else {
-            $output->writeln("  * config item <info>$name</info> exists");
-        }
-
-        $name = 'confirmation_mail_username';
-        $config = $this->configsRepository->loadByName($name);
-        if (!$config) {
-            $this->configBuilder->createNew()
-                ->setName($name)
-                ->setDisplayName('payments.config.confirmation_mail_username.name')
-                ->setDescription('')
-                ->setType(ApplicationConfig::TYPE_STRING)
-                ->setAutoload(true)
-                ->setConfigCategory($category)
-                ->setSorting(1002)
-                ->save();
-            $output->writeln("  <comment>* config item <info>$name</info> created</comment>");
-        } else {
-            $output->writeln("  * config item <info>$name</info> exists");
-        }
-
-        $name = 'confirmation_mail_password';
-        $config = $this->configsRepository->loadByName($name);
-        if (!$config) {
-            $this->configBuilder->createNew()
-                ->setName($name)
-                ->setDisplayName('payments.config.confirmation_mail_password.name')
-                ->setDescription('')
-                ->setType(ApplicationConfig::TYPE_PASSWORD)
-                ->setAutoload(true)
-                ->setConfigCategory($category)
-                ->setSorting(1003)
-                ->save();
-            $output->writeln("  <comment>* config item <info>$name</info> created</comment>");
-        } else {
-            $output->writeln("  * config item <info>$name</info> exists");
-        }
-
-        $name = 'confirmation_mail_processed_folder';
-        $config = $this->configsRepository->loadByName($name);
-        if (!$config) {
-            $this->configBuilder->createNew()
-                ->setName($name)
-                ->setDisplayName('payments.config.confirmation_mail_processed_folder.name')
-                ->setDescription('payments.config.confirmation_mail_processed_folder.description')
-                ->setType(ApplicationConfig::TYPE_STRING)
-                ->setAutoload(true)
-                ->setConfigCategory($category)
-                ->setSorting(1004)
-                ->save();
-            $output->writeln("  <comment>* config item <info>$name</info> created</comment>");
-        } else {
-            $output->writeln("  * config item <info>$name</info> exists");
-        }
-
-        $categoryName = 'payments.config.category_confirmation';
-        $this->category = $category = $this->configCategoriesRepository->loadByName($categoryName);
-        if (!$category) {
-            $this->category = $category = $this->configCategoriesRepository->add($categoryName, 'fa fa-check-double', 1600);
+        $confirmationCategory = $this->configCategoriesRepository->loadByName('payments.config.category_confirmation');
+        if (!$confirmationCategory) {
+            $confirmationCategory = $this->configCategoriesRepository->add('payments.config.category_confirmation', 'fa fa-check-double', 1600);
             $output->writeln('  <comment>* config category <info>Potvrdzovacie e-maily</info> created</comment>');
         } else {
             $output->writeln('  * config category <info>Potvrdzovacie e-maily</info> exists');
         }
 
-        $this->addPaymentConfig(
+        // default values for confirmation configs in case previous version of configs was already used
+        $host = $this->configsRepository->loadByName('confirmation_mail_host')->value ?? '';
+        $port = $this->configsRepository->loadByName('confirmation_mail_port')->value ?? '';
+        $username = $this->configsRepository->loadByName('confirmation_mail_username')->value ?? '';
+        $password = $this->configsRepository->loadByName('confirmation_mail_password')->value ?? '';
+        $processedFolder = $this->configsRepository->loadByName('confirmation_mail_processed_folder')->value ?? '';
+
+        $this->addConfig(
             $output,
-            $category,
+            $confirmationCategory,
             'tb_simple_confirmation_host',
+            ApplicationConfig::TYPE_STRING,
             'payments.config.tb_simple_confirmation_host.name',
-            '',
-            1,
-            'payments.config.tb_simple_confirmation_host.description'
+            'payments.config.tb_simple_confirmation_host.description',
+            $host,
+            101
         );
 
-        $this->addPaymentConfig(
+        $this->addConfig(
             $output,
-            $category,
+            $confirmationCategory,
             'tb_simple_confirmation_port',
+            ApplicationConfig::TYPE_STRING,
             'payments.config.tb_simple_confirmation_port.name',
-            '',
-            2,
-            'payments.config.tb_simple_confirmation_port.description'
+            'payments.config.tb_simple_confirmation_port.description',
+            $port,
+            102
         );
 
-        $this->addPaymentConfig(
+        $this->addConfig(
             $output,
-            $category,
+            $confirmationCategory,
             'tb_simple_confirmation_username',
+            ApplicationConfig::TYPE_STRING,
             'payments.config.tb_simple_confirmation_username.name',
-            '',
-            3,
-            'payments.config.tb_simple_confirmation_username.description'
+            'payments.config.tb_simple_confirmation_username.description',
+            $username,
+            103
         );
 
-        $this->addPaymentConfig(
+        $this->addConfig(
             $output,
-            $category,
+            $confirmationCategory,
             'tb_simple_confirmation_password',
+            ApplicationConfig::TYPE_STRING,
             'payments.config.tb_simple_confirmation_password.name',
-            '',
-            4,
-            'payments.config.tb_simple_confirmation_password.description'
+            'payments.config.tb_simple_confirmation_password.description',
+            $password,
+            104
         );
 
-        $this->addPaymentConfig(
+        $this->addConfig(
             $output,
-            $category,
+            $confirmationCategory,
             'tb_simple_confirmation_processed_folder',
+            ApplicationConfig::TYPE_STRING,
             'payments.config.tb_simple_confirmation_processed_folder.name',
-            '',
-            5,
-            'payments.config.tb_simple_confirmation_processed_folder.description'
+            'payments.config.tb_simple_confirmation_processed_folder.description',
+            $processedFolder,
+            105
         );
 
-        $this->addPaymentConfig(
+        $this->addConfig(
             $output,
-            $category,
+            $confirmationCategory,
             'tb_confirmation_host',
+            ApplicationConfig::TYPE_STRING,
             'payments.config.tb_confirmation_host.name',
-            '',
-            6,
-            'payments.config.tb_confirmation_host.description'
+            'payments.config.tb_confirmation_host.description',
+            $host,
+            201
         );
 
-        $this->addPaymentConfig(
+        $this->addConfig(
             $output,
-            $category,
+            $confirmationCategory,
             'tb_confirmation_port',
+            ApplicationConfig::TYPE_STRING,
             'payments.config.tb_confirmation_port.name',
-            '',
-            7,
-            'payments.config.tb_confirmation_port.description'
+            'payments.config.tb_confirmation_port.description',
+            $port,
+            202
         );
 
-        $this->addPaymentConfig(
+        $this->addConfig(
             $output,
-            $category,
+            $confirmationCategory,
             'tb_confirmation_username',
+            ApplicationConfig::TYPE_STRING,
             'payments.config.tb_confirmation_username.name',
-            '',
-            8,
-            'payments.config.tb_confirmation_username.description'
+            'payments.config.tb_confirmation_username.description',
+            $username,
+            203
         );
 
-        $this->addPaymentConfig(
+        $this->addConfig(
             $output,
-            $category,
+            $confirmationCategory,
             'tb_confirmation_password',
+            ApplicationConfig::TYPE_STRING,
             'payments.config.tb_confirmation_password.name',
-            '',
-            9,
-            'payments.config.tb_confirmation_password.description'
+            'payments.config.tb_confirmation_password.description',
+            $password,
+            204
         );
 
-        $this->addPaymentConfig(
+        $this->addConfig(
             $output,
-            $category,
+            $confirmationCategory,
             'tb_confirmation_processed_folder',
+            ApplicationConfig::TYPE_STRING,
             'payments.config.tb_confirmation_processed_folder.name',
-            '',
-            10,
-            'payments.config.tb_confirmation_processed_folder.description'
+            'payments.config.tb_confirmation_processed_folder.description',
+            $processedFolder,
+            205
         );
 
-        $this->addPaymentConfig(
+        $this->addConfig(
             $output,
-            $category,
+            $confirmationCategory,
             'csob_confirmation_host',
+            ApplicationConfig::TYPE_STRING,
             'payments.config.csob_confirmation_host.name',
-            '',
-            11,
-            'payments.config.csob_confirmation_host.description'
+            'payments.config.csob_confirmation_host.description',
+            $host,
+            301
         );
 
-        $this->addPaymentConfig(
+        $this->addConfig(
             $output,
-            $category,
+            $confirmationCategory,
             'csob_confirmation_port',
+            ApplicationConfig::TYPE_STRING,
             'payments.config.csob_confirmation_port.name',
-            '',
-            12,
-            'payments.config.csob_confirmation_port.description'
+            'payments.config.csob_confirmation_port.description',
+            $port,
+            302
         );
 
-        $this->addPaymentConfig(
+        $this->addConfig(
             $output,
-            $category,
+            $confirmationCategory,
             'csob_confirmation_username',
+            ApplicationConfig::TYPE_STRING,
             'payments.config.csob_confirmation_username.name',
-            '',
-            13,
-            'payments.config.csob_confirmation_username.description'
+            'payments.config.csob_confirmation_username.description',
+            $username,
+            303
         );
 
-        $this->addPaymentConfig(
+        $this->addConfig(
             $output,
-            $category,
+            $confirmationCategory,
             'csob_confirmation_password',
+            ApplicationConfig::TYPE_STRING,
             'payments.config.csob_confirmation_password.name',
-            '',
-            14,
-            'payments.config.csob_confirmation_password.description'
+            'payments.config.csob_confirmation_password.description',
+            $password,
+            304
         );
 
-        $this->addPaymentConfig(
+        $this->addConfig(
             $output,
-            $category,
+            $confirmationCategory,
             'csob_confirmation_processed_folder',
+            ApplicationConfig::TYPE_STRING,
             'payments.config.csob_confirmation_processed_folder.name',
-            '',
-            15,
-            'payments.config.csob_confirmation_processed_folder.description'
+            'payments.config.csob_confirmation_processed_folder.description',
+            $processedFolder,
+            305
         );
 
-        $this->addPaymentConfig(
+        $this->addConfig(
             $output,
-            $category,
+            $confirmationCategory,
             'sk_csob_confirmation_host',
+            ApplicationConfig::TYPE_STRING,
             'payments.config.sk_csob_confirmation_host.name',
-            '',
-            16,
-            'payments.config.sk_csob_confirmation_host.description'
+            'payments.config.sk_csob_confirmation_host.description',
+            $host,
+            401
         );
 
-        $this->addPaymentConfig(
+        $this->addConfig(
             $output,
-            $category,
+            $confirmationCategory,
             'sk_csob_confirmation_port',
+            ApplicationConfig::TYPE_STRING,
             'payments.config.sk_csob_confirmation_port.name',
-            '',
-            17,
-            'payments.config.sk_csob_confirmation_port.description'
+            'payments.config.sk_csob_confirmation_port.description',
+            $port,
+            402
         );
 
-        $this->addPaymentConfig(
+        $this->addConfig(
             $output,
-            $category,
+            $confirmationCategory,
             'sk_csob_confirmation_username',
+            ApplicationConfig::TYPE_STRING,
             'payments.config.sk_csob_confirmation_username.name',
-            '',
-            18,
-            'payments.config.sk_csob_confirmation_username.description'
+            'payments.config.sk_csob_confirmation_username.description',
+            $username,
+            403
         );
 
-        $this->addPaymentConfig(
+        $this->addConfig(
             $output,
-            $category,
+            $confirmationCategory,
             'sk_csob_confirmation_password',
+            ApplicationConfig::TYPE_STRING,
             'payments.config.sk_csob_confirmation_password.name',
-            '',
-            19,
-            'payments.config.sk_csob_confirmation_password.description'
+            'payments.config.sk_csob_confirmation_password.description',
+            $password,
+            404
         );
 
-        $this->addPaymentConfig(
+        $this->addConfig(
             $output,
-            $category,
+            $confirmationCategory,
             'sk_csob_confirmation_processed_folder',
+            ApplicationConfig::TYPE_STRING,
             'payments.config.sk_csob_confirmation_processed_folder.name',
-            '',
-            20,
-            'payments.config.sk_csob_confirmation_processed_folder.description'
+            'payments.config.sk_csob_confirmation_processed_folder.description',
+            $processedFolder,
+            405
         );
 
-        $this->addPaymentConfig(
+        $this->addConfig(
             $output,
-            $category,
+            $confirmationCategory,
             'tbs_confirmation_host',
+            ApplicationConfig::TYPE_STRING,
             'payments.config.tbs_confirmation_host.name',
-            '',
-            21,
-            'payments.config.tbs_confirmation_host.description'
+            'payments.config.tbs_confirmation_host.description',
+            $host,
+            501
         );
 
-        $this->addPaymentConfig(
+        $this->addConfig(
             $output,
-            $category,
+            $confirmationCategory,
             'tbs_confirmation_port',
+            ApplicationConfig::TYPE_STRING,
             'payments.config.tbs_confirmation_port.name',
-            '',
-            22,
-            'payments.config.tbs_confirmation_port.description'
+            'payments.config.tbs_confirmation_port.description',
+            $port,
+            502
         );
 
-        $this->addPaymentConfig(
+        $this->addConfig(
             $output,
-            $category,
+            $confirmationCategory,
             'tbs_confirmation_username',
+            ApplicationConfig::TYPE_STRING,
             'payments.config.tbs_confirmation_username.name',
-            '',
-            23,
-            'payments.config.tbs_confirmation_username.description'
+            'payments.config.tbs_confirmation_username.description',
+            $username,
+            503
         );
 
-        $this->addPaymentConfig(
+        $this->addConfig(
             $output,
-            $category,
+            $confirmationCategory,
             'tbs_confirmation_password',
+            ApplicationConfig::TYPE_STRING,
             'payments.config.tbs_confirmation_password.name',
-            '',
-            24,
-            'payments.config.tbs_confirmation_password.description'
+            'payments.config.tbs_confirmation_password.description',
+            $password,
+            504
         );
 
-        $this->addPaymentConfig(
+        $this->addConfig(
             $output,
-            $category,
+            $confirmationCategory,
             'tbs_confirmation_processed_folder',
+            ApplicationConfig::TYPE_STRING,
             'payments.config.tbs_confirmation_processed_folder.name',
-            '',
-            25,
-            'payments.config.tbs_confirmation_processed_folder.description'
+            'payments.config.tbs_confirmation_processed_folder.description',
+            $processedFolder,
+            505
         );
 
-        $this->addPaymentConfig(
+        $this->addConfig(
             $output,
-            $category,
+            $confirmationCategory,
             'tatrabanka_pgp_private_key_path',
+            ApplicationConfig::TYPE_STRING,
             'payments.config.tatrabanka_pgp_private_key_path.name',
-            '',
-            26,
-            'payments.config.tatrabanka_pgp_private_key_path.description'
+            'payments.config.tatrabanka_pgp_private_key_path.description',
+            null,
+            506
         );
 
-        $this->addPaymentConfig(
+        $this->addConfig(
             $output,
-            $category,
+            $confirmationCategory,
             'tatrabanka_pgp_private_key_passphrase',
+            ApplicationConfig::TYPE_STRING,
             'payments.config.tatrabanka_pgp_private_key_passphrase.name',
-            '',
-            27,
-            'payments.config.tatrabanka_pgp_private_key_passphrase.description'
+            'payments.config.tatrabanka_pgp_private_key_passphrase.description',
+            null,
+            507
         );
 
-        $result = $this->database->fetch("select display_name, name from configs where name = 'vub_zip_password' and display_name = 'vub_eplatby.config.vub_zip_password.name'");
-        if (false === $result) {
-            $this->database->query("
-                update configs set config_category_id = (select id from config_categories where name = 'payments.config.category_confirmation')
-                where name = 'vub_zip_password';
-    
-                update configs set display_name = 'vub_eplatby.config.vub_zip_password.name' where name = 'vub_zip_password';
-                update configs set description = 'vub_eplatby.config.vub_zip_password.description' where name = 'vub_zip_password';
-                update configs set sorting = 206 where name = 'vub_zip_password';
-    
-                update configs set sorting = 26 where name = 'tatrabanka_pgp_private_key_path';
-                update configs set sorting = 27 where name = 'tatrabanka_pgp_private_key_passphrase';
-    
-                update configs set config_category_id = (select id from config_categories where name = 'payments.config.category_confirmation')
-                where name = 'tatrabanka_pgp_private_key_path';
-                update configs set config_category_id = (select id from config_categories where name = 'payments.config.category_confirmation')
-                where name = 'tatrabanka_pgp_private_key_passphrase';
-            ");
-        }
-    }
+        // moving configs to different category if they already existed
+        $config = $this->configsRepository->loadByName('tatrabanka_pgp_private_key_path');
+        $this->configsRepository->update($config, [
+            'config_category_id' => $confirmationCategory->id,
+            'sorting' => 506,
+        ]);
 
-    private function addPaymentConfig(OutputInterface $output, $category, $name, $displayName, $value, $sorting, $description = null)
-    {
-        $config = $this->configsRepository->loadByName($name);
-        if (!$config) {
-            $this->configBuilder->createNew()
-                ->setName($name)
-                ->setDisplayName($displayName)
-                ->setDescription($description)
-                ->setValue($value)
-                ->setType(ApplicationConfig::TYPE_STRING)
-                ->setAutoload(true)
-                ->setConfigCategory($category)
-                ->setSorting($sorting)
-                ->save();
-            $output->writeln("  <comment>* config item <info>$name</info> created</comment>");
-        } else {
-            $output->writeln("  * config item <info>$name</info> exists");
-
-            if ($config->has_default_value && $config->value !== $value) {
-                $this->configsRepository->update($config, ['value' => $value, 'has_default_value' => true]);
-                $output->writeln("  <comment>* config item <info>$name</info> updated</comment>");
-            }
-
-            if ($config->category->name != $this->category->name) {
-                $this->configsRepository->update($config, [
-                    'config_category_id' => $this->category->id
-                ]);
-                $output->writeln("  <comment>* config item <info>$name</info> updated</comment>");
-            }
-        }
+        $config = $this->configsRepository->loadByName('tatrabanka_pgp_private_key_passphrase');
+        $this->configsRepository->update($config, [
+            'config_category_id' => $confirmationCategory->id,
+            'sorting' => 507,
+        ]);
     }
 }
