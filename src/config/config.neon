@@ -78,7 +78,6 @@ services:
 	- Crm\PaymentsModule\Seeders\SegmentsSeeder
 	- Crm\PaymentsModule\Events\PaymentStatusChangeHandler
 	- Crm\PaymentsModule\Events\SubscriptionPreUpdateHandler
-	- Crm\PaymentsModule\Repository\PaymentItemsRepository
 	subscribersWithPaymentWidgetFactory:
 		class: Crm\PaymentsModule\Components\SubscribersWithPaymentWidgetFactory
 
