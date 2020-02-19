@@ -23,10 +23,19 @@ class GatewayFactory
         $this->gateways[$code] = $gatewayClass;
     }
 
+    public function unregisterGateway($code)
+    {
+        if (!isset($this->gateways[$code])) {
+            throw new \Exception('trying to unregister gateway with code that doesn\'t exists: ' . $code);
+        }
+        unset($this->gateways[$code]);
+    }
+
     /**
      * @param $code
      * @return PaymentInterface
      * @throws UnknownPaymentMethodCode
+     * @throws \Exception
      */
     public function getGateway($code)
     {
