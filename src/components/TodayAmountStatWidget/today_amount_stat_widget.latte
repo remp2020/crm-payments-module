@@ -1,2 +1,8 @@
-{_dashboard.payments.sum.title} <i class="fa fa-question-circle" data-toggle="tooltip" data-original-title="{_dashboard.payments.sum.tooltip, ['start' => date('d.m.Y H:i:s', strtotime('today 00:00')), 'end' => date('d.m.Y H:i:s')]}"></i>
-{$todayAmount|diff:$yesterdayAmount|noescape}
+<div style="display:flex;">
+    <div style="flex-shrink: 0; flex-basis: content; flex-grow: 0">
+        {_dashboard.payments.sum.title} <i class="fa fa-question-circle" data-toggle="tooltip" data-original-title="{_dashboard.payments.sum.tooltip, ['start' => date('d.m.Y H:i:s', strtotime('today 00:00')), 'end' => date('d.m.Y H:i:s')]}"></i>
+    </div>
+    <div style="text-align: right; flex-basis: max-content; flex-shrink: 1; flex-grow: 1">
+        {$todayAmount|diffPrice:$yesterdayAmount|noescape}
+    </div>
+</div>
