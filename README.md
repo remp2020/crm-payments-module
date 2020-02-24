@@ -211,6 +211,22 @@ services:
 	 		- registerRedirectResolver(Crm\FooModule\Model\FooPaymentCompleteRedirectResolver(), 400)
 ```
 
+#### Bank Transfer landing page
+
+When `bank_transfer` is used, user isn't redirected to external payment gateway provider, but CRM displays payment information that user should use to complete the payment manually.
+
+By default, this is handled by [`BankTransferPresenter`](src/presenters/BankTransferPresenter.php), but you can use your own custom screen with transfer information by using your own redirect resolver instead of bank transfers' [default resolver](src/model/SuccessPageResolver/BankTransferPaymentCompleteRedirectResolver.php).
+
+Create the resolver and register it with priority >10 in your `config.neon`.
+
+```neon
+services:
+	# ...
+	paymentCompleteRedirect:
+		setup:
+			- registerRedirectResolver(Crm\FooModule\BankTransferPaymentCompleteRedirectResolver(), 50)
+``` 
+
 ## Bank email processing
 
 Sometimes user doesn't finish the whole payment process and quits after the payment was made but before returning to the CRM
