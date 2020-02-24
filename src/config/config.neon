@@ -81,7 +81,9 @@ services:
 		class: Crm\PaymentsModule\Components\SubscribersWithPaymentWidgetFactory
 
 	paymentCompleteRedirect:
-	 	class: Crm\PaymentsModule\Model\PaymentCompleteRedirectManager
+		class: Crm\PaymentsModule\Model\PaymentCompleteRedirectManager
+		setup:
+			- registerRedirectResolver(Crm\PaymentsModule\BankTransferPaymentCompleteRedirectResolver(), 10)
 
 	paymentInvoiceProvider:
 		class: Crm\PaymentsModule\DataProvider\PaymentInvoiceProviderManager

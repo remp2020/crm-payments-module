@@ -6,13 +6,32 @@ use Nette\Database\Table\ActiveRow;
 
 interface PaymentCompleteRedirectResolver
 {
+    /**
+     * PAID represents valid paid payment, that ended up successfully.
+     */
     const PAID = 'paid';
 
+    /**
+     * NOT_SETTLED represents state where payment will most likely be confirmed in the near future,
+     * but the gateway provider didn't make the final confirmation yet.
+     */
     const NOT_SETTLED = 'not_settled';
 
+    /**
+     * CANCELLED is used when user intentionally cancels the payment process on the payment gateway provider site.
+     */
     const CANCELLED = 'cancelled';
 
+    /**
+     * ERROR is used if there's any kind of unexpected error during payment processing.
+     */
     const ERROR = 'error';
+
+    /**
+     * FORM is used for payments, that didn't really go through external gateway and will be confirmed offline later
+     * (e.g. manually, by importing bank statements or by reading notification emails from gateway provider)
+     */
+    const FORM = 'form';
 
     /**
      * shouldRedirect decides whether the implementation should be used to redirect user after successful payment to

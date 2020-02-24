@@ -61,17 +61,6 @@ class ReturnPresenter extends FrontendPresenter
         return $this->returnPayment($gatewayCode);
     }
 
-    public function renderBankTransfer()
-    {
-        $this->template->bankNumber = $this->applicationConfig->get('supplier_bank_account_number');
-        $this->template->bankIban = $this->applicationConfig->get('supplier_iban');
-        $this->template->bankSwift = $this->applicationConfig->get('supplier_swift');
-
-        $payment = $this->getPayment();
-        $this->template->payment = $payment;
-        $this->template->note = 'VS' . $payment->variable_symbol;
-    }
-
     public function renderGoPay($id)
     {
         if ($id === null) {
@@ -224,6 +213,8 @@ class ReturnPresenter extends FrontendPresenter
                 $this->resolveRedirect($payment, PaymentCompleteRedirectResolver::ERROR);
             }
         });
+
+        $this->resolveRedirect($payment, PaymentCompleteRedirectResolver::FORM);
     }
 
     public function getPayment()
