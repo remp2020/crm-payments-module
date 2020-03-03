@@ -101,11 +101,6 @@ Vaše ČSOB
         $this->assertEquals(strtotime('25.9.2018'), $mailContent->getTransactionDate());
     }
 
-    public function testSingleOutgoingTransfer()
-    {
-        $this->markTestSkipped("We're waiting for some outgoing transfer to be executed to see the email template");
-    }
-
     public function testSingleCardpaySettlement()
     {
         $email = 'Vážený kliente,
