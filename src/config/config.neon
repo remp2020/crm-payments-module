@@ -8,10 +8,14 @@ services:
 		setup:
 			- registerGateway('bank_transfer', Crm\PaymentsModule\Gateways\BankTransfer)
 
-	- Crm\PaymentsModule\Repository\PaymentGatewaysRepository
-	- Crm\PaymentsModule\Repository\PaymentsRepository
-	- Crm\PaymentsModule\Repository\PaymentLogsRepository
-	- Crm\PaymentsModule\Repository\PaymentMetaRepository
+	paymentGatewaysRepository: Crm\PaymentsModule\Repository\PaymentGatewaysRepository
+	paymentsRepository: Crm\PaymentsModule\Repository\PaymentsRepository
+	paymentLogsRepository: Crm\PaymentsModule\Repository\PaymentLogsRepository
+	paymentMetaRepository: Crm\PaymentsModule\Repository\PaymentMetaRepository
+	recurrentPaymentsRepository: Crm\PaymentsModule\Repository\RecurrentPaymentsRepository
+	parsedMailLogsRepository: Crm\PaymentsModule\MailConfirmation\ParsedMailLogsRepository
+	paymentItemsRepository: Crm\PaymentsModule\Repository\PaymentItemsRepository
+
 	- Crm\PaymentsModule\Forms\PaymentFormFactory
 	- Crm\PaymentsModule\Forms\PaymentGatewayFormFactory
 	- Crm\PaymentsModule\Forms\AccountantExportFormFactory
@@ -21,8 +25,7 @@ services:
 	- Crm\PaymentsModule\PaymentProcessor
 	- Crm\PaymentsModule\RecurrentPaymentsProcessor
 	- Crm\PaymentsModule\Builder\ParsedMailLogsBuilder
-	- Crm\PaymentsModule\Repository\RecurrentPaymentsRepository
-	- Crm\PaymentsModule\MailConfirmation\ParsedMailLogsRepository
+
 	- Crm\PaymentsModule\MailConfirmation\TatraBankaMailDownloader
 	- Crm\PaymentsModule\MailConfirmation\CsobMailDownloader
 	- Crm\PaymentsModule\MailConfirmation\SkCsobMailDownloader
@@ -76,7 +79,6 @@ services:
 	- Crm\PaymentsModule\Seeders\SegmentsSeeder
 	- Crm\PaymentsModule\Events\PaymentStatusChangeHandler
 	- Crm\PaymentsModule\Events\SubscriptionPreUpdateHandler
-	- Crm\PaymentsModule\Repository\PaymentItemsRepository
 	subscribersWithPaymentWidgetFactory:
 		class: Crm\PaymentsModule\Components\SubscribersWithPaymentWidgetFactory
 
