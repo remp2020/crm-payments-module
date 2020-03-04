@@ -17,7 +17,7 @@ class PaymentMetaRepository extends Repository
      * @param bool $override
      * @return \Nette\Database\Table\IRow
      */
-    public function add(ActiveRow $payment, $key, $value, $override = true)
+    final public function add(ActiveRow $payment, $key, $value, $override = true)
     {
         if ($override && $this->exists($payment, $key)) {
             $this->getTable()->where([
@@ -40,7 +40,7 @@ class PaymentMetaRepository extends Repository
      * @param array $keys
      * @return Selection
      */
-    public function values(ActiveRow $payment, ...$keys)
+    final public function values(ActiveRow $payment, ...$keys)
     {
         return $this->getTable()->where([
             'payment_id' => $payment->id,
@@ -53,7 +53,7 @@ class PaymentMetaRepository extends Repository
      * @param string $key
      * @return bool
      */
-    public function exists(ActiveRow $payment, $key)
+    final public function exists(ActiveRow $payment, $key)
     {
         return $this->getTable()->where([
             'payment_id' => $payment->id,
@@ -66,7 +66,7 @@ class PaymentMetaRepository extends Repository
      * @param string $key
      * @return int
      */
-    public function remove(ActiveRow $payment, $key)
+    final public function remove(ActiveRow $payment, $key)
     {
         return $this->getTable()->where([
             'payment_id' => $payment->id,
@@ -74,7 +74,7 @@ class PaymentMetaRepository extends Repository
         ])->delete();
     }
 
-    public function findByMeta(string $key, string $value)
+    final public function findByMeta(string $key, string $value)
     {
         return $this->getTable()->where([
             'key' => $key,
@@ -86,7 +86,7 @@ class PaymentMetaRepository extends Repository
      * @param ActiveRow $payment
      * @param string $key
      */
-    public function findByPaymentAndKey(ActiveRow $payment, string $key)
+    final public function findByPaymentAndKey(ActiveRow $payment, string $key)
     {
         return $this->getTable()->where([
                 'payment_id' => $payment->id,

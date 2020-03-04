@@ -87,7 +87,7 @@ class PaymentsRepository extends Repository
         $this->cacheRepository = $cacheRepository;
     }
 
-    public function add(
+    final public function add(
         ActiveRow $subscriptionType = null,
         ActiveRow $paymentGateway,
         ActiveRow $user,
@@ -157,7 +157,7 @@ class PaymentsRepository extends Repository
         return $payment;
     }
 
-    public function addMeta($payment, $data)
+    final public function addMeta($payment, $data)
     {
         if (empty($data)) {
             return null;
@@ -171,7 +171,7 @@ class PaymentsRepository extends Repository
         return $added;
     }
 
-    public function copyPayment(ActiveRow $payment)
+    final public function copyPayment(ActiveRow $payment)
     {
         $newPayment = $this->insert([
             'amount' => $payment->amount,
@@ -197,7 +197,7 @@ class PaymentsRepository extends Repository
         return $newPayment;
     }
 
-    public function getPaymentItems(ActiveRow $payment): array
+    final public function getPaymentItems(ActiveRow $payment): array
     {
         $items = [];
         foreach ($payment->related('payment_items') as $paymentItem) {
@@ -217,12 +217,12 @@ class PaymentsRepository extends Repository
      * @param string $paymentItemType
      * @return array|IRow[]
      */
-    public function getPaymentItemsByType(ActiveRow $payment, string $paymentItemType): array
+    final public function getPaymentItemsByType(ActiveRow $payment, string $paymentItemType): array
     {
         return $this->paymentItemsRepository->getByType($payment, $paymentItemType);
     }
 
-    public function update(IRow &$row, $data, PaymentItemContainer $paymentItemContainer = null)
+    final public function update(IRow &$row, $data, PaymentItemContainer $paymentItemContainer = null)
     {
         if ($paymentItemContainer) {
             $this->paymentItemsRepository->deleteByPayment($row);
@@ -233,7 +233,7 @@ class PaymentsRepository extends Repository
         return parent::update($row, $data);
     }
 
-    public function updateStatus(ActiveRow $payment, $status, $sendEmail = false, $note = null, $errorMessage = null, $salesFunnelId = null)
+    final public function updateStatus(ActiveRow $payment, $status, $sendEmail = false, $note = null, $errorMessage = null, $salesFunnelId = null)
     {
         $data = [
             'status' => $status,
@@ -269,7 +269,7 @@ class PaymentsRepository extends Repository
      * @param $variableSymbol
      * @return ActiveRow
      */
-    public function findByVs($variableSymbol)
+    final public function findByVs($variableSymbol)
     {
         return $this->findBy('variable_symbol', $this->variableSymbolVariants($variableSymbol));
     }
@@ -280,12 +280,12 @@ class PaymentsRepository extends Repository
         return $variableSymbolVariant->variableSymbolVariants($variableSymbol);
     }
 
-    public function findLastByVS(string $variableSymbol)
+    final public function findLastByVS(string $variableSymbol)
     {
         return $this->findAllByVS($variableSymbol)->order('created_at DESC')->limit(1)->fetch();
     }
 
-    public function findAllByVS(string $variableSymbol)
+    final public function findAllByVS(string $variableSymbol)
     {
         return $this->getTable()->where(
             'variable_symbol',
@@ -293,12 +293,12 @@ class PaymentsRepository extends Repository
         );
     }
 
-    public function addSubscriptionToPayment(IRow $subscription, IRow $payment)
+    final public function addSubscriptionToPayment(IRow $subscription, IRow $payment)
     {
         return parent::update($payment, ['subscription_id' => $subscription->id]);
     }
 
-    public function subscriptionPayment(IRow $subscription)
+    final public function subscriptionPayment(IRow $subscription)
     {
         return $this->getTable()->where(['subscription_id' => $subscription->id])->select('*')->limit(1)->fetch();
     }
@@ -307,12 +307,12 @@ class PaymentsRepository extends Repository
      * @param int $userId
      * @return \Nette\Database\Table\Selection
      */
-    public function userPayments($userId)
+    final public function userPayments($userId)
     {
         return $this->getTable()->where(['user_id' => $userId])->order('created_at DESC');
     }
 
-    public function userPaymentsWithRecurrent($userId)
+    final public function userPaymentsWithRecurrent($userId)
     {
         return $this->getTable()->where(['payments.user_id' => $userId])->order('created_at DESC');
     }
@@ -329,7 +329,7 @@ class PaymentsRepository extends Repository
      * @param bool $recurrentCharge
      * @return Selection
      */
-    public function all($text = '', $payment_gateway = null, $subscription_type = null, $status = null, $start = null, $end = null, $sales_funnel = null, $donation = null, $recurrentCharge = null)
+    final public function all($text = '', $payment_gateway = null, $subscription_type = null, $status = null, $start = null, $end = null, $sales_funnel = null, $donation = null, $recurrentCharge = null)
     {
         $where = [];
         if ($text != '') {
@@ -366,12 +366,12 @@ class PaymentsRepository extends Repository
         return $this->getTable()->where($where);
     }
 
-    public function allWithoutOrder()
+    final public function allWithoutOrder()
     {
         return $this->getTable();
     }
 
-    public function totalAmountSum($allowCached = false, $forceCacheUpdate = false)
+    final public function totalAmountSum($allowCached = false, $forceCacheUpdate = false)
     {
         $callable = function () {
             return $this->getTable()->where(['status' => self::STATUS_PAID])->sum('amount');
@@ -389,17 +389,17 @@ class PaymentsRepository extends Repository
         return $callable();
     }
 
-    public function totalUserAmountSum($userId)
+    final public function totalUserAmountSum($userId)
     {
         return $this->getTable()->where(['user_id' => $userId, 'status' => self::STATUS_PAID])->sum('amount');
     }
 
-    public function totalUserAmounts()
+    final public function totalUserAmounts()
     {
         return $this->getDatabase()->query("SELECT user_id,email,SUM(amount) AS total FROM payments INNER JOIN users ON users.id=payments.user_id WHERE payments.status='paid' GROUP BY user_id ORDER BY total DESC");
     }
 
-    public function getStatusPairs()
+    final public function getStatusPairs()
     {
         return [
             self::STATUS_FORM => self::STATUS_FORM,
@@ -412,12 +412,12 @@ class PaymentsRepository extends Repository
         ];
     }
 
-    public function getPaymentsWithNotes()
+    final public function getPaymentsWithNotes()
     {
         return $this->getTable()->where(['NOT note' => null])->order('created_at DESC');
     }
 
-    public function totalCount($allowCached = false, $forceCacheUpdate = false)
+    final public function totalCount($allowCached = false, $forceCacheUpdate = false)
     {
         $callable = function () {
             return parent::totalCount();
@@ -433,7 +433,7 @@ class PaymentsRepository extends Repository
         return $callable();
     }
 
-    public function paidSubscribersCount($allowCached = false, $forceCacheUpdate = false)
+    final public function paidSubscribersCount($allowCached = false, $forceCacheUpdate = false)
     {
         $callable = function () {
             return $this->paidSubscribers()
@@ -453,7 +453,7 @@ class PaymentsRepository extends Repository
         return $callable();
     }
 
-    public function paidSubscribers()
+    final public function paidSubscribers()
     {
         return $this->database->table('subscriptions')
             ->where('start_time <= ?', $this->database::literal('NOW()'))
@@ -462,7 +462,7 @@ class PaymentsRepository extends Repository
             ->where(':payments.id IS NOT NULL OR type IN (?)', ['upgrade', 'prepaid', 'gift']);
     }
 
-    public function freeSubscribersCount($allowCached = false, $forceCacheUpdate = false)
+    final public function freeSubscribersCount($allowCached = false, $forceCacheUpdate = false)
     {
         $callable = function () {
             return $this->freeSubscribers()
@@ -482,7 +482,7 @@ class PaymentsRepository extends Repository
         return $callable();
     }
 
-    public function freeSubscribers()
+    final public function freeSubscribers()
     {
         $freeSubscribers = $this->database->table('subscriptions')
             ->where('start_time <= ?', $this->database::literal('NOW()'))
@@ -503,7 +503,7 @@ class PaymentsRepository extends Repository
      * @param DateTime $to
      * @return \Crm\ApplicationModule\Selection
      */
-    public function paidBetween(DateTime $from, DateTime $to)
+    final public function paidBetween(DateTime $from, DateTime $to)
     {
         return $this->getTable()->where([
             'status' => self::STATUS_PAID,
@@ -512,7 +512,7 @@ class PaymentsRepository extends Repository
         ]);
     }
 
-    public function subscriptionsWithActiveUnchargedRecurrentEndingNextTwoWeeksCount($forceCacheUpdate = false)
+    final public function subscriptionsWithActiveUnchargedRecurrentEndingNextTwoWeeksCount($forceCacheUpdate = false)
     {
         $callable = function () {
             return $this->subscriptionsWithActiveUnchargedRecurrentEndingBetween(
@@ -529,7 +529,7 @@ class PaymentsRepository extends Repository
         );
     }
 
-    public function subscriptionsWithActiveUnchargedRecurrentEndingNextMonthCount($forceCacheUpdate = false)
+    final public function subscriptionsWithActiveUnchargedRecurrentEndingNextMonthCount($forceCacheUpdate = false)
     {
         $callable = function () {
             return $this->subscriptionsWithActiveUnchargedRecurrentEndingBetween(
@@ -551,7 +551,7 @@ class PaymentsRepository extends Repository
      * @param DateTime $endTime
      * @return mixed|Selection
      */
-    public function subscriptionsWithActiveUnchargedRecurrentEndingBetween(DateTime $startTime, DateTime $endTime)
+    final public function subscriptionsWithActiveUnchargedRecurrentEndingBetween(DateTime $startTime, DateTime $endTime)
     {
         return $this->database->table('subscriptions')
             ->where(':payments.id IS NOT NULL')
@@ -571,7 +571,7 @@ class PaymentsRepository extends Repository
      * @param bool $onlyPaid
      * @return int
      */
-    public function subscriptionsWithoutExtensionEndingNextTwoWeeksCount($forceCacheUpdate = false, $onlyPaid = false)
+    final public function subscriptionsWithoutExtensionEndingNextTwoWeeksCount($forceCacheUpdate = false, $onlyPaid = false)
     {
         $cacheKey = 'subscriptions_without_extension_ending_next_two_weeks_count';
         if ($onlyPaid) {
@@ -600,7 +600,7 @@ class PaymentsRepository extends Repository
      *
      * @return int
      */
-    public function subscriptionsWithoutExtensionEndingNextMonthCount($forceCacheUpdate = false, $onlyPaid = false)
+    final public function subscriptionsWithoutExtensionEndingNextMonthCount($forceCacheUpdate = false, $onlyPaid = false)
     {
         $cacheKey = 'subscriptions_without_extension_ending_next_month_count';
         if ($onlyPaid) {
@@ -622,7 +622,7 @@ class PaymentsRepository extends Repository
         );
     }
 
-    public function subscriptionsWithoutExtensionEndingBetweenCount(DateTime $startTime, DateTime $endTime, $onlyPaid = false)
+    final public function subscriptionsWithoutExtensionEndingBetweenCount(DateTime $startTime, DateTime $endTime, $onlyPaid = false)
     {
         $s = $startTime;
         $e = $endTime;
@@ -665,7 +665,7 @@ SQL;
      * @param DateTime $endTime
      * @return Selection
      */
-    public function subscriptionsWithoutExtensionEndingBetween(DateTime $startTime, DateTime $endTime)
+    final public function subscriptionsWithoutExtensionEndingBetween(DateTime $startTime, DateTime $endTime)
     {
         $endingSubscriptions = $this->subscriptionsRepository->subscriptionsEndingBetween($startTime, $endTime)->select('subscriptions.id')->fetchAll();
         $renewedSubscriptions = $this->subscriptionsRepository->renewedSubscriptionsEndingBetween($startTime, $endTime)->select('subscriptions.id')->fetchAll();
@@ -682,7 +682,7 @@ SQL;
      * @param DateTime $from
      * @return Selection
      */
-    public function unconfirmedPayments(DateTime $from)
+    final public function unconfirmedPayments(DateTime $from)
     {
         return $this->getTable()
             ->where('payments.status = ?', self::STATUS_FORM)
@@ -694,7 +694,7 @@ SQL;
      * @param string $urlKey
      * @return \Crm\ApplicationModule\Selection
      */
-    public function findBySalesFunnelUrlKey(string $urlKey)
+    final public function findBySalesFunnelUrlKey(string $urlKey)
     {
         return $this->getTable()
             ->where('sales_funnel.url_key', $urlKey);

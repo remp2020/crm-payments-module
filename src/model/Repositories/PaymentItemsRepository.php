@@ -31,7 +31,7 @@ class PaymentItemsRepository extends Repository
         $this->emitter = $emitter;
     }
 
-    public function add(IRow $payment, PaymentItemContainer $container): array
+    final public function add(IRow $payment, PaymentItemContainer $container): array
     {
         $rows = [];
         /** @var PaymentItemInterface $item */
@@ -54,7 +54,7 @@ class PaymentItemsRepository extends Repository
         return $rows;
     }
 
-    public function deleteByPayment(IRow $payment, $type = null)
+    final public function deleteByPayment(IRow $payment, $type = null)
     {
         $q = $this->getTable()
             ->where('payment_id', $payment->id);
@@ -69,7 +69,7 @@ class PaymentItemsRepository extends Repository
      * @param string $paymentItemType
      * @return array|IRow[]
      */
-    public function getByType(IRow $payment, string $paymentItemType): array
+    final public function getByType(IRow $payment, string $paymentItemType): array
     {
         return $payment->related('payment_items')->where('type = ?', $paymentItemType)->fetchAll();
     }

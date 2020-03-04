@@ -25,14 +25,14 @@ class PaymentGatewaysRepository extends Repository
         $this->gatewayFactory = $gatewayFactory;
     }
 
-    public function all()
+    final public function all()
     {
         return $this->getTable()
             ->where('code IN (?)', $this->gatewayFactory->getRegisteredCodes())
             ->order('sorting');
     }
 
-    public function find($id)
+    final public function find($id)
     {
         return $this->getTable()
             ->where(['id' => $id])
@@ -40,7 +40,7 @@ class PaymentGatewaysRepository extends Repository
             ->fetch();
     }
 
-    public function findByCode($code)
+    final public function findByCode($code)
     {
         return $this->getTable()
             ->where(['code' => $code])
@@ -52,12 +52,12 @@ class PaymentGatewaysRepository extends Repository
     /**
      * @return Selection
      */
-    public function getAllVisible()
+    final public function getAllVisible()
     {
         return $this->all()->where(['visible' => true]);
     }
 
-    public function add(
+    final public function add(
         $name,
         $code,
         $sorting = 10,
@@ -75,12 +75,12 @@ class PaymentGatewaysRepository extends Repository
         ]);
     }
 
-    public function exists($code)
+    final public function exists($code)
     {
         return $this->getTable()->where(['code' => $code])->count('*') > 0;
     }
 
-    public function update(IRow &$row, $data)
+    final public function update(IRow &$row, $data)
     {
         $values['modified_at'] = new DateTime();
         parent::update($row, $data);

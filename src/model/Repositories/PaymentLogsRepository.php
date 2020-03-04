@@ -11,7 +11,7 @@ class PaymentLogsRepository extends Repository
     
     protected $tableName = 'payment_logs';
 
-    public function add($status, $message, $sourceUrl, $paymentId = null)
+    final public function add($status, $message, $sourceUrl, $paymentId = null)
     {
         return $this->insert([
             'status' => $status,

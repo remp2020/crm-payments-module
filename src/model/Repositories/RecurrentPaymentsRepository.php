@@ -45,7 +45,7 @@ class RecurrentPaymentsRepository extends Repository
         $this->hermesEmitter = $hermesEmitter;
     }
 
-    public function add($cid, $payment, $chargeAt, $customAmount, $retries)
+    final public function add($cid, $payment, $chargeAt, $customAmount, $retries)
     {
         return $this->insert([
             'cid' => $cid,
@@ -62,7 +62,7 @@ class RecurrentPaymentsRepository extends Repository
         ]);
     }
 
-    public function createFromPayment(IRow $payment, string $recurrentToken): ?IRow
+    final public function createFromPayment(IRow $payment, string $recurrentToken): ?IRow
     {
         if ($payment->status !== PaymentsRepository::STATUS_PAID) {
             Debugger::log("Could not create recurrent payment from payment [{$payment->id}], invalid payment status: [{$payment->status}]");
@@ -87,13 +87,13 @@ class RecurrentPaymentsRepository extends Repository
         );
     }
 
-    public function update(IRow &$row, $data)
+    final public function update(IRow &$row, $data)
     {
         $data['updated_at'] = new DateTime();
         return parent::update($row, $data);
     }
 
-    public function setCharged(IRow $recurrentPayment, $payment, $status, $approval)
+    final public function setCharged(IRow $recurrentPayment, $payment, $status, $approval)
     {
         $fireEvent = true;
         if ($recurrentPayment->state === self::STATE_CHARGED) {
@@ -115,7 +115,7 @@ class RecurrentPaymentsRepository extends Repository
         }
     }
 
-    public function getChargeablePayments()
+    final public function getChargeablePayments()
     {
         return $this->getTable()
             ->where('status IS NULL')
@@ -130,7 +130,7 @@ class RecurrentPaymentsRepository extends Repository
      * @param $userId
      * @return \Crm\ApplicationModule\Selection
      */
-    public function getUserActiveRecurrentPayments($userId)
+    final public function getUserActiveRecurrentPayments($userId)
     {
         return $this->getTable()
             ->where([
@@ -146,13 +146,13 @@ class RecurrentPaymentsRepository extends Repository
      * @param $userId
      * @return \Crm\ApplicationModule\Selection
      */
-    public function userRecurrentPayments($userId)
+    final public function userRecurrentPayments($userId)
     {
         return $this->getTable()
             ->where(['user_id' => $userId]);
     }
 
-    public function reactiveByUser($id, $userId)
+    final public function reactiveByUser($id, $userId)
     {
         $rp = $this->getTable()->where(['user_id' => $userId, 'id' => $id])->fetch();
         if ($rp == null) {
@@ -162,7 +162,7 @@ class RecurrentPaymentsRepository extends Repository
         return $rp;
     }
 
-    public function stoppedByUser($id, $userId)
+    final public function stoppedByUser($id, $userId)
     {
         $rp = $this->getTable()->where(['user_id' => $userId, 'id' => $id])->fetch();
         if ($rp == null) {
@@ -172,7 +172,7 @@ class RecurrentPaymentsRepository extends Repository
         return $rp;
     }
 
-    public function stoppedByGDPR($userId)
+    final public function stoppedByGDPR($userId)
     {
         $rps = $this->getTable()->where([
             'user_id' => $userId,
@@ -185,7 +185,7 @@ class RecurrentPaymentsRepository extends Repository
         return true;
     }
 
-    public function stoppedByAdmin($id)
+    final public function stoppedByAdmin($id)
     {
         $rp = $this->find($id);
         if ($rp == null) {
@@ -195,13 +195,13 @@ class RecurrentPaymentsRepository extends Repository
         return $rp;
     }
 
-    public function getChargableBefore($date)
+    final public function getChargableBefore($date)
     {
         return $this->getTable()
             ->where('charge_at < ?', $date);
     }
 
-    public function all($problem = null, $subscriptionType = null, $status = null)
+    final public function all($problem = null, $subscriptionType = null, $status = null)
     {
         $where = [];
         if ($subscriptionType) {
@@ -216,12 +216,12 @@ class RecurrentPaymentsRepository extends Repository
         return $this->getTable()->where($where)->order('recurrent_payments.charge_at DESC, recurrent_payments.created_at DESC');
     }
 
-    public function getStatusPairs()
+    final public function getStatusPairs()
     {
         return $this->getTable()->select('status')->group('status')->fetchPairs('status', 'status');
     }
 
-    public function isStoppedBySubscription(IRow $subscription)
+    final public function isStoppedBySubscription(IRow $subscription)
     {
         $payment = $this->database->table('payments')->where(['subscription_id' => $subscription->id])->limit(1)->fetch();
         if ($payment) {
@@ -231,7 +231,7 @@ class RecurrentPaymentsRepository extends Repository
         return false;
     }
 
-    public function isStopped($recurrent)
+    final public function isStopped($recurrent)
     {
         if (!$recurrent) {
             return true;
@@ -249,17 +249,17 @@ class RecurrentPaymentsRepository extends Repository
         return false;
     }
 
-    public function hasUserStopped($userId)
+    final public function hasUserStopped($userId)
     {
         return $this->getTable()->where(['user_id' => $userId, 'state' => self::STATE_USER_STOP])->count('*');
     }
 
-    public function recurrent(IRow $payment)
+    final public function recurrent(IRow $payment)
     {
         return $this->getTable()->where(['parent_payment_id' => $payment->id])->fetch();
     }
 
-    public function getLastWithState(IRow $recurrentPayment, $state)
+    final public function getLastWithState(IRow $recurrentPayment, $state)
     {
         return $this->getTable()->where([
             'cid' => $recurrentPayment->cid,
@@ -269,7 +269,7 @@ class RecurrentPaymentsRepository extends Repository
         ])->order('charge_at DESC')->fetch();
     }
 
-    public function getDuplicate()
+    final public function getDuplicate()
     {
         return $this->getTable()
             ->select('COUNT(*) AS payments')
@@ -281,7 +281,7 @@ class RecurrentPaymentsRepository extends Repository
             ->fetchAll();
     }
 
-    public function calculateChargeAt($payment)
+    final public function calculateChargeAt($payment)
     {
         $subscriptionType = $payment->subscription_type;
         $subscription = $payment->subscription;
