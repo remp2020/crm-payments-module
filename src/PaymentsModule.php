@@ -29,6 +29,7 @@ use Crm\PaymentsModule\Commands\StopRecurrentPaymentsExpiresCommand;
 use Crm\PaymentsModule\Commands\TatraBankaStatementMailConfirmationCommand;
 use Crm\PaymentsModule\Commands\TatraBankaMailConfirmationCommand;
 use Crm\PaymentsModule\Commands\UpdateRecurrentPaymentsExpiresCommand;
+use Crm\PaymentsModule\DataProvider\CanDeleteAddressDataProvider;
 use Crm\PaymentsModule\DataProvider\PaymentFromVariableSymbolDataProvider;
 use Crm\PaymentsModule\DataProvider\SubscriptionsWithActiveUnchargedRecurrentEndingWithinPeriodDataProvider;
 use Crm\PaymentsModule\DataProvider\SubscriptionsWithoutExtensionEndingWithinPeriodDataProvider;
@@ -308,6 +309,10 @@ class PaymentsModule extends CrmModule
         $dataProviderManager->registerDataProvider(
             'subscriptions.dataprovider.payment_from_variable_symbol',
             $this->getInstance(PaymentFromVariableSymbolDataProvider::class)
+        );
+        $dataProviderManager->registerDataProvider(
+            'users.dataprovider.address.can_delete',
+            $this->getInstance(CanDeleteAddressDataProvider::class)
         );
     }
 

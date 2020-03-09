@@ -335,6 +335,9 @@ admin:
 		total_recurrent_subscriptions:
 			label: "Kúpili typ predplatného (rekurentne)"
 
+	address:
+		cant_delete: 'Táto adresa sa používa pri platbe: %payments%|Táto adresa sa používa pri platbách: %payments%'
+
 form:
 	payment_gateway:
 		name:

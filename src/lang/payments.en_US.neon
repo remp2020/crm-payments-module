@@ -330,6 +330,9 @@ admin:
 		total_recurrent_subscriptions:
 			label: "Purchased subscription type (recurrent)"
 
+	address:
+		cant_delete: 'This address is used in payment: %payments%|This address is used in payments: %payments%'
+
 form:
 	payment_gateway:
 		name:
