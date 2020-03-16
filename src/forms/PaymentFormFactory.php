@@ -89,15 +89,21 @@ class PaymentFormFactory
             $defaults = $payment->toArray();
             $items = [];
             foreach ($payment->related('payment_items')->fetchAll() as $item) {
-                $items[] = [
+                $item = [
                     'amount' => $item->amount,
                     'count' => $item->count,
                     'name' => $item->name,
                     'vat' => $item->vat,
                     'type' => $item->type,
-                    'postal_fee_id' => $item->postal_fee_id,
-                    'product_id' => $item->product_id,
                 ];
+                // TODO: temporary solution until whole form is refactored and fields handled by dataproviders
+                if (array_key_exists('postal_fee_idx', $item)) {
+                    $item['postal_fee_idx'] = $item->postal_fee_id;
+                }
+                if (array_key_exists('product_idx', $item)) {
+                    $item['product_idx'] = $item->product_id;
+                }
+                $items[] = $item;
             }
             $defaults['payment_items'] = Json::encode($items);
 
