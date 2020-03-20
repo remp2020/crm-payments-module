@@ -294,11 +294,13 @@ class RecurrentPaymentsRepository extends Repository
         }
         if (!$chargeBefore) {
             $configSetting = $this->applicationConfig->get('recurrent_charge_before');
-            $validatedSetting = filter_var($configSetting, FILTER_VALIDATE_INT);
-            if ($validatedSetting === false || $validatedSetting < 0) {
-                Debugger::log("Global setting [recurrent_charge_before] ignored due to invalid value: " . $configSetting, Debugger::WARNING);
-            } else {
-                $chargeBefore = $validatedSetting;
+            if ($configSetting !== null && $configSetting !== '') {
+                $validatedSetting = filter_var($configSetting, FILTER_VALIDATE_INT);
+                if ($validatedSetting !== false && $validatedSetting >= 0) {
+                    $chargeBefore = $validatedSetting;
+                } else {
+                    Debugger::log("Global setting [recurrent_charge_before] ignored due to invalid value: " . $configSetting, Debugger::WARNING);
+                }
             }
         }
         if ($chargeBefore) {
