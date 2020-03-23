@@ -71,16 +71,6 @@ class PaymentsTranslateConfigs extends AbstractMigration
             update configs set display_name = 'payments.config.recurrent_payment_charges.name' where name = 'recurrent_payment_charges';
             update configs set description = 'payments.config.recurrent_payment_charges.description' where name = 'recurrent_payment_charges';
             
-            update configs set display_name = 'payments.config.gopay_go_id.name' where name = 'gopay_go_id';
-            update configs set display_name = 'payments.config.gopay_client_id.name' where name = 'gopay_client_id';
-            update configs set display_name = 'payments.config.gopay_client_secret.name' where name = 'gopay_client_secret';
-            update configs set display_name = 'payments.config.gopay_mode.name' where name = 'gopay_mode';
-            update configs set display_name = 'payments.config.gopay_recurrence_date_to.name' where name = 'gopay_recurrence_date_to';
-            
-            
-            update configs set display_name = 'payments.config.gopay_eet_enabled.name' where name = 'gopay_eet_enabled';
-            update configs set description = 'payments.config.gopay_eet_enabled.description' where name = 'gopay_eet_enabled';
-            
             update configs set display_name = 'payments.config.tatrapay_mid.name' where name = 'tatrapay_mid';
             
             update configs set display_name = 'payments.config.cardpay_mid.name' where name = 'cardpay_mid';

@@ -237,14 +237,6 @@ class PaymentsModule extends CrmModule
                 \Crm\ApiModule\Authorization\AdminLoggedAuthorization::class
             )
         );
-
-        $apiRoutersContainer->attachRouter(
-            new ApiRoute(
-                new ApiIdentifier('1', 'payments', 'gopay-notification'),
-                \Crm\PaymentsModule\Api\GoPayNotificationHandler::class,
-                \Crm\ApiModule\Authorization\NoAuthorization::class
-            )
-        );
     }
 
     public function registerCleanupFunction(CallbackManagerInterface $cleanUpManager)
@@ -373,7 +365,6 @@ class PaymentsModule extends CrmModule
 
     public function registerRoutes(RouteList $router)
     {
-        $router[] = new Route('payments/return/go-pay?id=<id>', 'Payments:Return:goPay');
         $router[] = new Route('payments/return/gateway/<gatewayCode>', 'Payments:Return:gateway');
     }
 }

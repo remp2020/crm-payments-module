@@ -533,6 +533,14 @@ config:
 	recurrent_charge_before:
 		name: "Recurrent charge before (hours)"
 		description: "How many hours before the end of subscription the recurrent charge should be trigerred (e.g. 48). Empty value will schedule next recurrent charge to the time of end of subscription."
+	tatrapay_mid:
+		name: Tatrapay mid
+	cardpay_mid:
+		name: Cardpay mid
+	comfortpay_mid:
+		name: Comfortpay mid
+	comfortpay_ws:
+		name: Comforpay ws
 	gopay_go_id:
 		name: GoPay Go ID
 	gopay_client_id:
@@ -544,16 +552,8 @@ config:
 	gopay_recurrence_date_to:
 		name: GoPay Recurrent profile date to
 	gopay_eet_enabled:
-		name: Zapnute EET
-		description: Zapnuty EET reporting z platobnej brany
-	tatrapay_mid:
-		name: Tatrapay mid
-	cardpay_mid:
-		name: Cardpay mid
-	comfortpay_mid:
-		name: Comfortpay mid
-	comfortpay_ws:
-		name: Comforpay ws
+		name: Enabled EET
+		description: Enabled EET reporting from payment gateway
 	tatrabanka_pgp_private_key_path:
 		name: TatraBanka PGP private key
 		description: Path to PGP private key file for decrypting TatraBanka e-mails

@@ -61,43 +61,6 @@ class ReturnPresenter extends FrontendPresenter
         return $this->returnPayment($gatewayCode);
     }
 
-    public function renderGoPay($id)
-    {
-        if ($id === null) {
-            $this->paymentLogsRepository->add(
-                'ERROR',
-                "Gopay returned without transaction reference: '{$this->VS}'",
-                $this->request->getUrl(),
-                null
-            );
-            $this->resolveRedirect(null, PaymentCompleteRedirectResolver::ERROR);
-        }
-
-        $meta = $this->paymentMetaRepository->findByMeta('gopay_transaction_reference', $id);
-        if (!$meta) {
-            $this->paymentLogsRepository->add(
-                'ERROR',
-                "Cannot find gopay transaction reference '{$id}'",
-                $this->request->getUrl(),
-                null
-            );
-            $this->resolveRedirect(null, PaymentCompleteRedirectResolver::ERROR);
-        }
-
-        $payment = $meta->payment;
-
-        if (!in_array($payment->payment_gateway->code, ['gopay', 'gopay_recurrent'])) {
-            $this->paymentLogsRepository->add(
-                'ERROR',
-                "Return to wrong payment type 'gopay'",
-                $this->request->getUrl(),
-                $payment->id
-            );
-            $this->resolveRedirect(null, PaymentCompleteRedirectResolver::ERROR);
-        }
-        return $this->processPayment($payment);
-    }
-
     public function renderViamo()
     {
         $responseString = urldecode($this->params['responseString']);
