@@ -368,6 +368,7 @@ form:
 			required: Musí být zadaný variabilní symbol
 			placeholder: například 87239102385
 			generate: Vygeneruj
+			already_used: Variabilní symbol byl nedávno použit
 		amount:
 			label: Částka
 			required: Musí být zadána částka

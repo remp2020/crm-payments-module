@@ -368,6 +368,7 @@ form:
 			required: Variable symbol is required
 			placeholder: e.g. 87239102385
 			generate: Generate
+			already_used: Variable symbol has been used recently
 		amount:
 			label: Amount
 			required: Amount is required

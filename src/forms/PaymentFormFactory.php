@@ -132,7 +132,13 @@ class PaymentFormFactory
                 'description',
                 Html::el('a', ['href' => '/api/v1/payments/variable-symbol', 'class' => 'variable_symbol_generate'])
                     ->setHtml($this->translator->translate('payments.form.payment.variable_symbol.generate'))
-            );
+            )->addRule(function (TextInput $control) {
+                $paymentRow = $this->paymentsRepository->findLastByVS($control->getValue());
+                if ($paymentRow) {
+                    return $paymentRow->created_at < new DateTime('-15 minutes');
+                }
+                return true;
+            }, 'payments.form.payment.variable_symbol.already_used');
         }
 
         $form->addText('amount', 'payments.form.payment.amount.label')
