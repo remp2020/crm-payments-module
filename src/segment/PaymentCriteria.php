@@ -2,8 +2,9 @@
 
 namespace Crm\PaymentsModule\Segment;
 
-use Crm\PaymentsModule\Repository\PaymentsRepository;
 use Crm\ApplicationModule\Criteria\CriteriaInterface;
+use Crm\PaymentsModule\Repository\PaymentItemsRepository;
+use Crm\PaymentsModule\Repository\PaymentsRepository;
 use Crm\SegmentModule\Criteria\Fields;
 use Crm\SegmentModule\Params\BooleanParam;
 use Crm\SegmentModule\Params\DateTimeParam;
@@ -16,13 +17,17 @@ class PaymentCriteria implements CriteriaInterface
 {
     private $paymentsRepository;
 
+    private $paymentItemsRepository;
+
     private $subscriptionTypesRepository;
 
     public function __construct(
         PaymentsRepository $paymentsRepository,
+        PaymentItemsRepository $paymentItemsRepository,
         SubscriptionTypesRepository $subscriptionTypesRepository
     ) {
         $this->paymentsRepository = $paymentsRepository;
+        $this->paymentItemsRepository = $paymentItemsRepository;
         $this->subscriptionTypesRepository = $subscriptionTypesRepository;
     }
 
@@ -58,6 +63,15 @@ class PaymentCriteria implements CriteriaInterface
                 null,
                 array_keys($this->paymentsRepository->getStatusPairs())
             ),
+            new StringArrayParam(
+                "item_types",
+                "Payment item types",
+                "Filters users with payments with specific types of payment items",
+                false,
+                [],
+                null,
+                array_keys($this->paymentItemsRepository->getTypes())
+            ),
             new NumberArrayParam(
                 "subscription_type",
                 "Subscription type",
@@ -86,8 +100,12 @@ class PaymentCriteria implements CriteriaInterface
             $where[] = " payments.status IN ({$params->stringArray('status')->escapedString()}) ";
         }
 
+        if ($params->has('item_types')) {
+            $where[] = " payment_items.type IN ({$params->stringArray('item_types')->escapedString()}) ";
+        }
+
         if ($params->has('created')) {
-            $where += $params->datetime('created')->escapedConditions('payments.created_at');
+            $where = array_merge($where, $params->datetime('created')->escapedConditions('payments.created_at'));
         }
 
         if ($params->has('subscription_type')) {
@@ -97,6 +115,7 @@ class PaymentCriteria implements CriteriaInterface
 
         return "SELECT DISTINCT(payments.user_id) AS id, " . Fields::formatSql($this->fields()) . "
           FROM payments
+          LEFT JOIN payment_items ON payment_items.payment_id = payments.id
           WHERE " . implode(" AND ", $where);
     }
 
@@ -108,6 +127,12 @@ class PaymentCriteria implements CriteriaInterface
                 $result .= " with {$paramBag->stringArray('status')->escapedString()} payment";
             } else {
                 $result .= ' with payment';
+            }
+
+            if ($paramBag->has('item_types')) {
+                $result .= " with {$paramBag->stringArray('item_types')->escapedString()} items";
+            } else {
+                $result .= ' with all item types';
             }
 
             if ($paramBag->has('additional_amount')) {

@@ -73,4 +73,9 @@ class PaymentItemsRepository extends Repository
     {
         return $payment->related('payment_items')->where('type = ?', $paymentItemType)->fetchAll();
     }
+
+    final public function getTypes(): array
+    {
+        return $this->getTable()->select('DISTINCT type')->fetchPairs('type', 'type');
+    }
 }
