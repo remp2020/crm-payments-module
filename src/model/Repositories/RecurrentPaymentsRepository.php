@@ -17,6 +17,10 @@ class RecurrentPaymentsRepository extends Repository
 {
     protected $tableName = 'recurrent_payments';
 
+    protected $auditLogExcluded = [
+        'updated_at',
+    ];
+
     const STATE_USER_STOP = 'user_stop';
     const STATE_ADMIN_STOP = 'admin_stop';
     const STATE_ACTIVE = 'active';
