@@ -38,25 +38,41 @@
                         {$payment->amount|price}
                     </td>
                     <td>
-                       {foreach $payment->related('recurrent_payments', 'parent_payment_id') as $recurrent}
-                            {if $recurrent->payment_id == NULL}
-                                {if $recurrent->state == \Crm\PaymentsModule\Repository\RecurrentPaymentsRepository::STATE_ACTIVE}
-                                    <a class="btn btn-sm btn-primary" n:href="recurrentStop $recurrent->id">{_payments.frontend.my.stop_recurrent}</a>
-                                {elseif $recurrent->state == \Crm\PaymentsModule\Repository\RecurrentPaymentsRepository::STATE_USER_STOP}
-                                    {_payments.frontend.my.user_stopped}<br>
-                                    <a n:if="$recurrent->cid && $recurrent->charge_at > new \DateTime()" n:href="Reactivate! $recurrent->id" class="btn btn-sm btn-green">{_payments.frontend.my.restart_recurrent}</a>
-                                {elseif $recurrent->state == \Crm\PaymentsModule\Repository\RecurrentPaymentsRepository::STATE_ADMIN_STOP}
-                                    <span class="label label-info">{_payments.frontend.my.user_stopped_requested}</span>
-                                {elseif $recurrent->state == \Crm\PaymentsModule\Repository\RecurrentPaymentsRepository::STATE_SYSTEM_STOP}
-                                    <span class="label label-danger">{_payments.frontend.my.failed_recurrent}</span>
-                                {/if}
-                            {else}
-                                {if $recurrent->state == \Crm\PaymentsModule\Repository\RecurrentPaymentsRepository::STATE_CHARGE_FAILED}
-                                    <span class="label label-danger">{_payments.frontend.my.failed_recurrent}</span>
-                                {else}
-                                    <span class="label label-success">{_payments.frontend.my.success_recurrent}</span>
-                                {/if}
+                        {foreach $payment->related('recurrent_payments', 'parent_payment_id') as $recurrent}
+                            {* if recurrent charge for this payment failed, try to locate following recurring profile for this payment *}
+                            {if $recurrent->state === \Crm\PaymentsModule\Repository\RecurrentPaymentsRepository::STATE_CHARGE_FAILED}
+                                {php $recurrent = $resolver->resolveFailedRecurrent($recurrent); }
+                                {php $lastChargeFailDate = $resolver->getLastChargeFailedDateTime(); }
                             {/if}
+
+                            {switch $recurrent->state}
+                                {case \Crm\PaymentsModule\Repository\RecurrentPaymentsRepository::STATE_CHARGED}
+                                    <span class="label label-success">{_payments.frontend.my.success_recurrent}</span>
+                                {case \Crm\PaymentsModule\Repository\RecurrentPaymentsRepository::STATE_ACTIVE}
+                                    {if isset($lastChargeFailDate)}
+                                        <span class="label label-danger">{_payments.frontend.my.charge_failed.title}</span>
+                                        <ul style="font-style: italic; margin-left: 1em;">
+                                            <li>{_payments.frontend.my.charge_failed.last_try}: {$lastChargeFailDate}</li>
+                                            <li>{_payments.frontend.my.charge_failed.next_try}: {$recurrent->charge_at}</li>
+                                        </ul>
+                                    {/if}
+                                    <a class="btn btn-sm btn-primary" n:href="recurrentStop $recurrent->id">{_payments.frontend.my.stop_recurrent}</a>
+                                {case \Crm\PaymentsModule\Repository\RecurrentPaymentsRepository::STATE_USER_STOP}
+                                    <span class="label label-info">{_payments.frontend.my.user_stopped}</span>
+                                    <span n:if="$recurrent->cid && $recurrent->charge_at > new \DateTime()">
+                                        <br><br>
+                                        <a n:href="Reactivate! $recurrent->id" class="btn btn-sm btn-green">
+                                            {_payments.frontend.my.restart_recurrent}
+                                        </a>
+                                    </span>
+
+                                {case \Crm\PaymentsModule\Repository\RecurrentPaymentsRepository::STATE_ADMIN_STOP}
+                                    <span class="label label-info">{_payments.frontend.my.user_stopped_requested}</span>
+                                {case \Crm\PaymentsModule\Repository\RecurrentPaymentsRepository::STATE_SYSTEM_STOP}
+                                    <span class="label label-danger">{_payments.frontend.my.failed_recurrent}</span>
+                                {case \Crm\PaymentsModule\Repository\RecurrentPaymentsRepository::STATE_CHARGE_FAILED}
+                                    <span class="label label-danger">{_payments.frontend.my.failed_recurrent}</span><br><br>
+                            {/switch}
                         {/foreach}
                     </td>
                     <td>

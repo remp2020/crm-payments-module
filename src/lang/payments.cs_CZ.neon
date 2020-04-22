@@ -447,6 +447,10 @@ frontend:
 		user_stopped_requested: Zastavené na Vaši žádost
 		failed_recurrent: Neúspěšné opakování
 		success_recurrent: Automaticky prodloužená
+		charge_failed:
+			title: Automatické prodloužení selhalo
+			last_try: Předchozí pokus
+			next_try: Následující pokus
 		no_payments: Nemáte žádné platby
 		buy_offer: Můžete si předplatné zakoupit a získat tak přístup k obsahu
 		next_recurrent_payment: "Máte zapnuté automatické obnovování předplatného, nejbližší platba v hodnotě <strong>%charge_amount%</strong> proběhne <strong>%charge_date%</strong>."
