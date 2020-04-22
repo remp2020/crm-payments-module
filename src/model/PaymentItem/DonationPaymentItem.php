@@ -12,11 +12,11 @@ class DonationPaymentItem implements PaymentItemInterface
 
     private $vat;
 
-    public function __construct(string $name, float $price, int $vat)
+    public function __construct(string $name, float $price, string $vat)
     {
         $this->name = $name;
         $this->price = $price;
-        $this->vat = $vat;
+        $this->vat = (int)$vat;
     }
 
     public function type(): string
