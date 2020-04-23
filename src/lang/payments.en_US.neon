@@ -468,7 +468,7 @@ frontend:
 		subtitle: 'List of saved cards'
 		card_with_expiration: 'Card with expiration'
 		use_card: 'Use saved card and pay %sum%'
-		use_new_card: 'Enter a new card'
+		use_new_card: 'Pay with another card'
 	proforma_invoice:
 		title: Proforma invoice payment
 		form_title: 'Please fill up your invoice details to complete the order'

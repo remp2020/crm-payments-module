@@ -468,7 +468,7 @@ frontend:
 		subtitle: 'Seznam uložených karet'
 		card_with_expiration: 'Karta s expirací'
 		use_card: 'Použít uloženou kartu a zaplatit %sum%'
-		use_new_card: 'Zadat novou kartu'
+		use_new_card: 'Zaplatit jinou kartou'
 	proforma_invoice:
 		title: Platba předfakturou
 		form_title: 'Pro dokončení objednávky prosím vyplňte fakturační údaje'
