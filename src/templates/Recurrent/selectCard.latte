@@ -44,7 +44,7 @@
 
         <input type="hidden" name="payment_id" value="{$payment->id}" />
 
-        <div class="col-md-6 select-card">
+        <div class="col-md-12 select-card">
             <div class="section">{_payments.frontend.select_card.subtitle}</div>
 
             <div>
@@ -58,7 +58,8 @@
                             <span>{_payments.frontend.select_card.card_with_expiration} <strong>{$card->expires_at|date:'m/y'}</strong></span>
                         </td>
                         <td>
-                            <a n:href="UseExistingCard! $card->id,$payment->id" class="pay-button btn btn-primary">{_payments.frontend.select_card.use_card}</a>
+                            {var $amount = ($payment->amount|price:null,2,false)}
+                            <a n:href="UseExistingCard! $card->id,$payment->id" class="pay-button btn btn-primary">{_payments.frontend.select_card.use_card, ['sum' => $amount]|noescape}</a>
                         </td>
                     </tr>
                 {/foreach}

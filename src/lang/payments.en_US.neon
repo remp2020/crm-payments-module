@@ -465,10 +465,10 @@ frontend:
 	select_card:
 		title: 'Select card to complete the payment'
 		lead: 'We remember your cards, so you do nott have to enter their number again.'
-		subtitle: 'Seznam uložených karet'
-		card_with_expiration: 'Karta s expirací'
-		use_card: 'Použít kartu'
-		use_new_card: 'Zadat novou kartu'
+		subtitle: 'List of saved cards'
+		card_with_expiration: 'Card with expiration'
+		use_card: 'Use saved card and pay %sum%'
+		use_new_card: 'Enter a new card'
 	proforma_invoice:
 		title: Proforma invoice payment
 		form_title: 'Please fill up your invoice details to complete the order'

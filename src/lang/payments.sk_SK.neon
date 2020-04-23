@@ -472,7 +472,7 @@ frontend:
 		lead: 'Pamätáme si Vami použité karty, takže ich číslo nemusíte zadávať znova.'
 		subtitle: 'Zoznam uložených kariet'
 		card_with_expiration: 'Karta s expiráciou'
-		use_card: 'Použiť kartu'
+		use_card: 'Použiť zapamätanú kartu a zaplatiť %sum%'
 		use_new_card: 'Zadať novú kartu'
 	proforma_invoice:
 		title: Platba predfaktúrou
