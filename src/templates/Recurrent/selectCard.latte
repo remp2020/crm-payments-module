@@ -10,7 +10,7 @@
             padding-bottom: 10px;
         }
 
-        .select-card span {
+        .select-card .expiration-info {
             margin-bottom: 0;
             font-weight: 100;
             vertical-align: middle;
@@ -55,10 +55,10 @@
                 {foreach $cards as $i => $card}
                     <tr>
                         <td>
-                            <span>{_payments.frontend.select_card.card_with_expiration} <strong>{$card->expires_at|date:'m/y'}</strong></span>
+                            <span class="expiration-info">{_payments.frontend.select_card.card_with_expiration} <strong>{$card->expires_at|date:'m/y'}</strong></span>
                         </td>
                         <td>
-                            {var $amount = ($payment->amount|price:null,2,false)}
+                            {var $amount = ($payment->amount|price)}
                             <a n:href="UseExistingCard! $card->id,$payment->id" class="pay-button btn btn-success">{_payments.frontend.select_card.use_card, ['sum' => $amount]|noescape}</a>
                         </td>
                     </tr>
