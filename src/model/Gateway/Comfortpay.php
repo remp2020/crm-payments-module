@@ -125,8 +125,9 @@ class Comfortpay extends GatewayAbstract implements RecurrentPaymentInterface
                 'vs' => $payment->variable_symbol,
                 'ss' => '0308',
                 'currency' => $this->applicationConfig->get('currency'),
-                'cid' => $token,
+                'referedCardId' => $token,
                 'transactionId' => $payment->id,
+                'transactionType' => Gateway::TRANSACTION_TYPE_PURCHASE,
             ]);
             $this->response = $request->send();
         } catch (\Exception $exception) {
