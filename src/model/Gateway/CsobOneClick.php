@@ -12,7 +12,6 @@ use Nette\Application\LinkGenerator;
 use Nette\Database\IRow;
 use Nette\Http\Response;
 use Nette\Localization\ITranslator;
-use Nette\Utils\Json;
 use Omnipay\Common\Exception\InvalidRequestException;
 use Omnipay\Csob\Gateway;
 use Omnipay\Omnipay;
@@ -21,10 +20,19 @@ use Tracy\Debugger;
 
 class CsobOneClick extends GatewayAbstract implements RecurrentPaymentInterface
 {
-    const SERVER_FAILURE_CODES = [
-        120, // Merchant blocked (merchant is not authorised to accept payments)
-        260, // MasterPass server error (MasterPass payment can not be completed due to a technical error)
-        900, // Internal error (internal error in request processing)
+    private const MERCHANT_BLOCKED = 120; // merchant is not authorised to accept payments
+    private const MASTERPASS_SERVER_ERROR = 260; // masterPass payment can not be completed due to a technical error
+    private const INTERNAL_ERROR = 260; // internal error in request processing
+
+    private const ONECLICK_TEMPLATE_PAYMENT_EXPIRED = 710;
+    private const ONECLICK_TEMPLATE_CARD_EXPIRED = 720;
+    private const ONECLICK_TEMPLATE_CUSTOMER_REJECTED = 730;
+    private const ONECLICK_TEMPLATE_PAYMENT_REVERSED = 740;
+
+    private const SERVER_FAILURE_CODES = [
+        self::MERCHANT_BLOCKED,
+        self::MASTERPASS_SERVER_ERROR,
+        self::INTERNAL_ERROR,
     ];
 
     /** @var \Omnipay\Csob\Gateway */
@@ -35,6 +43,13 @@ class CsobOneClick extends GatewayAbstract implements RecurrentPaymentInterface
     private $resultCode;
 
     private $resultMessage;
+
+    protected $cancelErrorCodes = [
+        self::ONECLICK_TEMPLATE_PAYMENT_EXPIRED,
+        self::ONECLICK_TEMPLATE_CARD_EXPIRED,
+        self::ONECLICK_TEMPLATE_CUSTOMER_REJECTED,
+        self::ONECLICK_TEMPLATE_PAYMENT_REVERSED,
+    ];
 
     public function __construct(
         LinkGenerator $linkGenerator,
@@ -194,21 +209,18 @@ class CsobOneClick extends GatewayAbstract implements RecurrentPaymentInterface
                 $this->resultCode = $exception->getCode();
                 $this->resultMessage = $exception->getMessage();
             }
-            $log = [
-                'exception' => get_class($exception),
-                'message' => $exception->getMessage(),
-            ];
-            Debugger::log(Json::encode($log));
 
             // CSOB library doesn't return any response here and throws Exception on any kind of error.
             // We can't rely on the future checks to throw FailTry and we need to do it here manually.
             if (!in_array($this->resultCode, self::SERVER_FAILURE_CODES)) {
                 if ($this->hasStopRecurrentPayment($payment, $this->resultCode)) {
-                    throw new RecurrentPaymentFailStop();
+                    throw new RecurrentPaymentFailStop($exception->getMessage(), $exception->getCode());
                 }
-                throw new RecurrentPaymentFailTry();
+                Debugger::log($exception);
+                throw new RecurrentPaymentFailTry($exception->getMessage(), $exception->getCode());
             }
 
+            Debugger::log($exception);
             throw new GatewayFail($exception->getMessage(), $exception->getCode());
         }
 
