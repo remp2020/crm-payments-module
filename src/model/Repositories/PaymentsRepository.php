@@ -394,11 +394,6 @@ class PaymentsRepository extends Repository
         return $this->getTable()->where(['user_id' => $userId, 'status' => self::STATUS_PAID])->sum('amount');
     }
 
-    final public function totalUserAmounts()
-    {
-        return $this->getDatabase()->query("SELECT user_id,email,SUM(amount) AS total FROM payments INNER JOIN users ON users.id=payments.user_id WHERE payments.status='paid' GROUP BY user_id ORDER BY total DESC");
-    }
-
     final public function getStatusPairs()
     {
         return [
