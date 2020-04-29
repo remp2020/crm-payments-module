@@ -1,4 +1,4 @@
 <div n:if="count($listPayments) > 0" class="bs-callout bs-callout-warning">
   <h4>{_payments.admin.component.parsed_mails_failed_notification.title}</h4>
-  <a n:foreach="$listPayments as $payment" href="{plink :Users:UsersAdmin:show id => $payment['user_id']}">{$payment['amount']} <small>({$payment['email']})</small>{sep},{/sep}</a>
+  <a n:foreach="$listPayments as $payment" href="{plink :Users:UsersAdmin:show id => $payment['user_id']}">{$payment['amount']} <small>({$payment['public_name']})</small>{sep},{/sep}</a>
 </div>

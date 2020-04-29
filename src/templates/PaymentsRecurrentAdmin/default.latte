@@ -54,7 +54,7 @@
 		      <td>{$recurrentPayment->charge_at|userDate}</td>
 		      <td>{$recurrentPayment->created_at|userDate}</td>
 		      <td>{$recurrentPayment->subscription_type->name}</td>
-		      <td><a href="{link :Users:UsersAdmin:Show $recurrentPayment->user_id}">{$recurrentPayment->user->email}</a></td>
+		      <td><a href="{link :Users:UsersAdmin:Show $recurrentPayment->user_id}">{$recurrentPayment->user->public_name}</a></td>
 		      <td>{$recurrentPayment->retries}</td>
 		      <td>{$recurrentPayment->status}</td>
               <td>

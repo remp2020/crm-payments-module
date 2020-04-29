@@ -20,7 +20,7 @@
                 <tr>
                     <td> #{$recurrentPayment->user_id}</td>
                     <td colspan="8">
-                        <strong><a href="{plink :Users:UsersAdmin:Show $recurrentPayment->user_id}">{$recurrentPayment->user->email}</a></strong>
+                        <strong><a href="{plink :Users:UsersAdmin:Show $recurrentPayment->user_id}">{$recurrentPayment->user->public_name}</a></strong>
                     </td>
                 </tr>
                 {foreach $recurrentPayment->user->related('recurrent_payments') as $payment}

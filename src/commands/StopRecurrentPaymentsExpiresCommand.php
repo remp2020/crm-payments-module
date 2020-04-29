@@ -56,7 +56,7 @@ class StopRecurrentPaymentsExpiresCommand extends Command
         $output->writeln('Total: <info>' . count($recurrentPayments) . '</info>');
 
         foreach ($recurrentPayments as $recurrentPayment) {
-            $output->writeln("Processing user #[{$recurrentPayment->user->id}] <info>{$recurrentPayment->user->email}</info>");
+            $output->writeln("Processing user #[{$recurrentPayment->user->id}] <info>{$recurrentPayment->user->public_name}</info>");
 
             // v buducnosti by bolo fajn tu len emitovat event
             // a posielanie emailu dat do email modulu
@@ -77,13 +77,17 @@ class StopRecurrentPaymentsExpiresCommand extends Command
             ])->count('*') > 0;
 
             if ($hasNewRecurrent) {
-                $output->writeln("  * has new recurrent <info>{$recurrentPayment->user->email}</info>");
+                $output->writeln("  * has new recurrent <info>{$recurrentPayment->user->public_name}</info>");
             } else {
-                $output->writeln("  * Sending email <info>{$recurrentPayment->user->email}</info>");
-                $userRow = new DataRow([
-                    'email' => $recurrentPayment->user->email,
-                ]);
-                $this->emitter->emit(new NotificationEvent($this->emitter, $userRow, 'card_expires_this_month'));
+                if (isset($recurrentPayment->user->email)) {
+                    $output->writeln("  * Sending email <info>{$recurrentPayment->user->email}</info>");
+                    $userRow = new DataRow([
+                        'email' => $recurrentPayment->user->email,
+                    ]);
+                    $this->emitter->emit(new NotificationEvent($this->emitter, $userRow, 'card_expires_this_month'));
+                } else {
+                    $output->writeln("  * Card expires this month, email not sent <info>{$recurrentPayment->user->public_name}</info>, userID: <info>{$recurrentPayment->user->id}</info>");
+                }
             }
         }
 

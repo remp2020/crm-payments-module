@@ -83,7 +83,7 @@ class ParsedMailLogsRepository extends Repository
                     $listPayments[] = [
                         'user_id' => $payment->user->id,
                         'amount' => $wrongAmountPayment->amount,
-                        'email' => $payment->user->email
+                        'public_name' => $payment->user->public_name
                     ];
                 }
             }

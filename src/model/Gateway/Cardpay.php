@@ -24,9 +24,12 @@ class Cardpay extends GatewayAbstract
     {
         $this->initialize();
 
-        $name = preg_replace('/\+/', '_', $payment->user->email);
+        $name = null;
         if (!empty($payment->ref('user')->last_name)) {
             $name = Strings::webalize($payment->user->last_name . ' ' . $payment->user->first_name);
+        }
+        if (!$name) {
+            $name = Strings::webalize($payment->user->public_name);
         }
 
         $name = substr($name, 0, 30);

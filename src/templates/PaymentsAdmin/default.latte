@@ -69,7 +69,7 @@
 		      	<i n:if="$payment->note" class="fa fa-info-circle text-danger fa-wh" data-toggle="tooltip" data-placement="top" title="{$payment->note|breaklines}"></i>
 				<span n:if="$payment->recurrent_charge" class="label label-warning">{_payments.admin.payments.recurrent_charge}</span>
 		      </td>
-		      <td><a href="{link :Users:UsersAdmin:Show $payment->user_id}">{$payment->user->email}</a></td>
+		      <td><a href="{link :Users:UsersAdmin:Show $payment->user_id}">{$payment->user->public_name}</a></td>
 		      <td>
 				{$payment->amount|price}
 				<span n:if="$payment->additional_type" class="label label-primary">
