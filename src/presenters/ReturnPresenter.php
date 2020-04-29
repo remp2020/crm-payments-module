@@ -128,7 +128,7 @@ class ReturnPresenter extends FrontendPresenter
                 if (!$this->getUser()->isLoggedIn()) {
                     // autologin regular user with regular payment
                     if ($payment->user->role !== UsersRepository::ROLE_ADMIN) {
-                        $presenter->getUser()->login(['username' => $payment->user->email, 'alwaysLogin' => true]);
+                        $presenter->getUser()->login(['user' => $payment->user, 'autoLogin' => true]);
                     } else {
                         // redirect admin user to sign in form (no autologin allowed)
                         $presenter->flashMessage($this->translator->translate('sales_funnel.frontend.disabled_auto_login.title'), 'warning');
