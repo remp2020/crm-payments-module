@@ -192,10 +192,11 @@ class RecurrentPaymentsChargeCommand extends Command
             /** @var RecurrentPaymentInterface $gateway */
             $gateway = $this->gatewayFactory->getGateway($payment->payment_gateway->code);
             try {
-                $gateway->charge($payment, $recurrentPayment->cid);
-
-                $this->paymentsRepository->updateStatus($payment, PaymentsRepository::STATUS_PAID);
-                $payment = $this->paymentsRepository->find($payment->id);
+                if ($payment->status !== PaymentsRepository::STATUS_PAID) {
+                    $gateway->charge($payment, $recurrentPayment->cid);
+                    $this->paymentsRepository->updateStatus($payment, PaymentsRepository::STATUS_PAID);
+                    $payment = $this->paymentsRepository->find($payment->id);
+                }
 
                 $retries = explode(', ', $this->applicationConfig->get('recurrent_payment_charges'));
                 $retries = count((array)$retries);
