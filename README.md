@@ -97,7 +97,7 @@ to the success page registered by the module.
 
 The flow of payment processing can be described with following diagram:
 
-![Payment processing diagram](./src/docs/payment_processing.svg)
+![Payment processing diagram](./docs/payment_processing.svg)
 
 ### Recurrent payments
 
@@ -327,7 +327,7 @@ Response:
 
 Simple admin dashboard widget showing free subscribers count.
 
-![alt text](docs/_static/free_subscribers.png "Actual free subscribers stat widget")
+![alt text](docs/free_subscribers.png "Actual free subscribers stat widget")
 
 [Source code](https://github.com/remp2020/crm-payments-module/blob/1fee1560e7c9a83fe25ddc579c6af0f4264897df/src/components/ActualFreeSubscribersStatWidget/ActualFreeSubscribersStatWidget.php#L1)
 
@@ -337,7 +337,7 @@ Simple admin dashboard widget showing free subscribers count.
 
 Simple admin dashboard widget showing paid subscribers count.
 
-![alt text](docs/_static/paid_subscribers.png "Actual paid subscribers stat widget")
+![alt text](docs/paid_subscribers.png "Actual paid subscribers stat widget")
 
 [Source code](https://github.com/remp2020/crm-payments-module/blob/1fee1560e7c9a83fe25ddc579c6af0f4264897df/src/components/ActualPaidSubscribersStatWidget/ActualPaidSubscribersStatWidget.php#L1)
 
@@ -347,7 +347,7 @@ Simple admin dashboard widget showing paid subscribers count.
 
 Admin listing/detail change payment status modal component.
 
-![alt text](docs/_static/change_payment_status.png "Change payment status modal")
+![alt text](docs/change_payment_status.png "Change payment status modal")
 
 [Source code](https://github.com/remp2020/crm-payments-module/blob/1fee1560e7c9a83fe25ddc579c6af0f4264897df/src/components/ChangePaymentStatus/ChangePaymentStatus.php#L1)
 
@@ -357,7 +357,7 @@ Admin listing/detail change payment status modal component.
 
 Admin user listing device component.
 
-![alt text](docs/_static/device.png "DeviceUserListingWidget")
+![alt text](docs/device.png "DeviceUserListingWidget")
 
 [Source code](https://github.com/remp2020/crm-payments-module/blob/1fee1560e7c9a83fe25ddc579c6af0f4264897df/src/components/DeviceUserListingWidget/DeviceUserListingWidget.php#L1)
 
@@ -365,7 +365,7 @@ Admin user listing device component.
 
 **DonationPaymentItemListWidget**
 
-![alt text](docs/_static/payment_item.png "DonationPaymentItemListWidget")
+![alt text](docs/payment_item.png "DonationPaymentItemListWidget")
 
 [Source code](https://github.com/remp2020/crm-payments-module/blob/1fee1560e7c9a83fe25ddc579c6af0f4264897df/src/components/DonationPaymentItemListWidget/PaymentItemsListWidget.php#L1)
 
@@ -375,7 +375,7 @@ Admin user listing device component.
 
 Admin listing of duplicit recurrent payments.
 
-![alt text](docs/_static/duplicit_recurrent_payment.png "DupliciteRecurrentPayments")
+![alt text](docs/duplicit_recurrent_payment.png "DupliciteRecurrentPayments")
 
 [Source code](https://github.com/remp2020/crm-payments-module/blob/1fee1560e7c9a83fe25ddc579c6af0f4264897df/src/components/DupliciteRecurrentPayments/DuplicateRecurrentPayments.php#L1)
 
@@ -385,7 +385,7 @@ Admin listing of duplicit recurrent payments.
 
 Admin listing of last payments in payment gateway detail. 
 
-![alt text](docs/_static/gateway_payments.png "LastPayments")
+![alt text](docs/gateway_payments.png "LastPayments")
 
 [Source code](https://github.com/remp2020/crm-payments-module/blob/1fee1560e7c9a83fe25ddc579c6af0f4264897df/src/components/LastPayments/LastPayments.php#L1)
 
@@ -395,7 +395,7 @@ Admin listing of last payments in payment gateway detail.
 
 Admin dashboard simple stat widget showing payments amount for last month.
 
-![alt text](docs/_static/amount_money.png "MonthAmountStatWidget")
+![alt text](docs/amount_money.png "MonthAmountStatWidget")
 
 [Source code](https://github.com/remp2020/crm-payments-module/blob/1fee1560e7c9a83fe25ddc579c6af0f4264897df/src/components/MonthAmountStatWidget/MonthAmountStatWidget.php#L1)
 
@@ -405,7 +405,7 @@ Admin dashboard simple stat widget showing payments amount for last month.
 
 Admin dashboard simple stat widget showing payments amount for last month.
 
-![alt text](docs/_static/amount_money.png "MonthToDateAmountStatWidget")
+![alt text](docs/amount_money.png "MonthToDateAmountStatWidget")
 
 [Source code](https://github.com/remp2020/crm-payments-module/blob/1fee1560e7c9a83fe25ddc579c6af0f4264897df/src/components/MonthToDateAmountStatWidget/MonthToDateAmountStatWidget.php#L1)
 
@@ -413,7 +413,7 @@ Admin dashboard simple stat widget showing payments amount for last month.
 
 **MyNextRecurrentPayment**
 
-![alt text](docs/_static/my_recurrent_payment.png "MyNextRecurrentPayment")
+![alt text](docs/my_recurrent_payment.png "MyNextRecurrentPayment")
 
 [Source code](https://github.com/remp2020/crm-payments-module/blob/1fee1560e7c9a83fe25ddc579c6af0f4264897df/src/components/MyNextRecurrentPayment/MyNextRecurrentPayment.php#L1)
 
@@ -423,7 +423,7 @@ Admin dashboard simple stat widget showing payments amount for last month.
 
 Payments admin widget showing payments with wrong amount.
 
-![alt text](docs/_static/incorrect_amount.png "ParsedMails")
+![alt text](docs/incorrect_amount.png "ParsedMails")
 
 [Source code](https://github.com/remp2020/crm-payments-module/blob/1fee1560e7c9a83fe25ddc579c6af0f4264897df/src/components/ParsedMails/ParsedMailsFailedNotification.php#L1)
 
@@ -433,7 +433,7 @@ Payments admin widget showing payments with wrong amount.
 
 Admin listing of payment items in payment detail.
 
-![alt text](docs/_static/payment_items.png "PaymentItemsListWidget")
+![alt text](docs/payment_items.png "PaymentItemsListWidget")
 
 [Source code](https://github.com/remp2020/crm-payments-module/blob/1fee1560e7c9a83fe25ddc579c6af0f4264897df/src/components/PaymentItemsListWidget/PaymentItemsListWidget.php#L1)
 
@@ -443,7 +443,7 @@ Admin listing of payment items in payment detail.
 
 Admin dashboard single stat widget.
 
-![alt text](docs/_static/subscribers_with_payment.png "SubscribersWithPaymentWidget")
+![alt text](docs/subscribers_with_payment.png "SubscribersWithPaymentWidget")
 
 [Source code](https://github.com/remp2020/crm-payments-module/blob/1fee1560e7c9a83fe25ddc579c6af0f4264897df/src/components/SubscribersWithPaymentWidget/SubscribersWithPaymentWidget.php#L1)
 
@@ -453,7 +453,7 @@ Admin dashboard single stat widget.
 
 Admin listing widget.
 
-![alt text](docs/_static/subscription_active_uncharged.png "SubscriptionsWithActiveUnchargedRecurrentEndingWithinPeriodWidget")
+![alt text](docs/subscription_active_uncharged.png "SubscriptionsWithActiveUnchargedRecurrentEndingWithinPeriodWidget")
 
 [Source code](https://github.com/remp2020/crm-payments-module/blob/1fee1560e7c9a83fe25ddc579c6af0f4264897df/src/components/SubscriptionsWithActiveUnchargedRecurrentEndingWithinPeriodWidget/SubscriptionsWithActiveUnchargedRecurrentEndingWithinPeriodWidget.php#L1)
 
@@ -463,7 +463,7 @@ Admin listing widget.
 
 Admin dashboard stats widget.
 
-![alt text](docs/_static/subscription_active_uncharged.png "SubscriptionsWithoutExtensionEndingWithinPeriodWidget")
+![alt text](docs/subscription_active_uncharged.png "SubscriptionsWithoutExtensionEndingWithinPeriodWidget")
 
 [Source code](https://github.com/remp2020/crm-payments-module/blob/1fee1560e7c9a83fe25ddc579c6af0f4264897df/src/components/SubscriptionsWithoutExtensionEndingWithinPeriodWidget/SubscriptionsWithoutExtensionEndingWithinPeriodWidget.php#L1)
 
@@ -473,7 +473,7 @@ Admin dashboard stats widget.
 
 Admin subscription type detail stats widget.
 
-![alt text](docs/_static/subscription_type_stats.png "SubscriptionTypeReports")
+![alt text](docs/subscription_type_stats.png "SubscriptionTypeReports")
 
 [Source code](https://github.com/remp2020/crm-payments-module/blob/1fee1560e7c9a83fe25ddc579c6af0f4264897df/src/components/SubscriptionTypeReportsWidget/SubscriptionTypeReports.php#L1)
 
@@ -483,7 +483,7 @@ Admin subscription type detail stats widget.
 
 Admin dashboard simple single stat widget.
 
-![alt text](docs/_static/today_amount.png "TodayAmountStatWidget")
+![alt text](docs/today_amount.png "TodayAmountStatWidget")
 
 [Source code](https://github.com/remp2020/crm-payments-module/blob/1fee1560e7c9a83fe25ddc579c6af0f4264897df/src/components/TodayAmountStatWidget/TodayAmountStatWidget.php#L1)
 
@@ -493,7 +493,7 @@ Admin dashboard simple single stat widget.
 
 Admin dashboard simple single stat widget.
 
-![alt text](docs/_static/total_payments.png "TotalAmountStatWidget")
+![alt text](docs/total_payments.png "TotalAmountStatWidget")
 
 [Source code](https://github.com/remp2020/crm-payments-module/blob/1fee1560e7c9a83fe25ddc579c6af0f4264897df/src/components/TotalAmountStatWidget/TotalAmountStatWidget.php#L1)
 
@@ -503,7 +503,7 @@ Admin dashboard simple single stat widget.
 
 Admin user detail stat widget.
 
-![alt text](docs/_static/user_spent.png "TotalUserPayments")
+![alt text](docs/user_spent.png "TotalUserPayments")
 
 [Source code](https://github.com/remp2020/crm-payments-module/blob/1fee1560e7c9a83fe25ddc579c6af0f4264897df/src/components/TotalUserPayments/TotalUserPayments.php#L1)
 
@@ -513,7 +513,7 @@ Admin user detail stat widget.
 
 Admin user detail listing widget.
 
-![alt text](docs/_static/user_payments_listing.png "UserPayments")
+![alt text](docs/user_payments_listing.png "UserPayments")
 
 [Source code](https://github.com/remp2020/crm-payments-module/blob/1fee1560e7c9a83fe25ddc579c6af0f4264897df/src/components/UserPayments/UserPaymentsListing.php#L1)
 
@@ -529,7 +529,7 @@ Examples of confirmation mails received from banks. Every type of mail has it's 
 
 **Subject:** e-commerce
 
-[Example e-mail file](docs/_static/emails/tatrabanka_simple.eml)
+[Example e-mail file](docs/tatrabanka_simple.eml)
 
 ### TatraBanka
 
@@ -537,13 +537,13 @@ Examples of confirmation mails received from banks. Every type of mail has it's 
 
 **Subject:** Kredit na ucte
 
-[Example e-mail file](docs/_static/emails/tatrabanka.eml)
+[Example e-mail file](docs/tatrabanka.eml)
 
 ### TatraBanka Statement
 
 **From:** vypis_obchodnik (at) tatrabanka (dot) sk
 
-[Example e-mail file](docs/_static/emails/tatrabanka_statement.eml)
+[Example e-mail file](docs/tatrabanka_statement.eml)
 
 ### CSOB
 
@@ -551,7 +551,7 @@ Examples of confirmation mails received from banks. Every type of mail has it's 
 
 **Subject:** CEB Info: Zaúčtování platby
 
-[Example e-mail file](docs/_static/emails/csob.eml)
+[Example e-mail file](docs/csob.eml)
 
 ### Slovak CSOB
 
@@ -559,5 +559,5 @@ Examples of confirmation mails received from banks. Every type of mail has it's 
 
 **Subject:** ČSOB Info 24 - Avízo
 
-[Example e-mail file](docs/_static/emails/sk_csob.eml)
+[Example e-mail file](docs/sk_csob.eml)
 
