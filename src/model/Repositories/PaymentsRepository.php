@@ -453,8 +453,8 @@ class PaymentsRepository extends Repository
         return $this->database->table('subscriptions')
             ->where('start_time <= ?', $this->database::literal('NOW()'))
             ->where('end_time > ?', $this->database::literal('NOW()'))
-            ->where('user.active = 1')
-            ->where(':payments.id IS NOT NULL OR type IN (?)', ['upgrade', 'prepaid', 'gift']);
+            ->where('is_paid = 1')
+            ->where('user.active = 1');
     }
 
     final public function freeSubscribersCount($allowCached = false, $forceCacheUpdate = false)
@@ -482,8 +482,8 @@ class PaymentsRepository extends Repository
         $freeSubscribers = $this->database->table('subscriptions')
             ->where('start_time <= ?', $this->database::literal('NOW()'))
             ->where('end_time > ?', $this->database::literal('NOW()'))
-            ->where('user.active = 1')
-            ->where(':payments.id IS NULL AND type NOT IN (?)', ['upgrade', 'prepaid', 'gift']);
+            ->where('is_paid = 0')
+            ->where('user.active = 1');
 
         $paidSubscribers = $this->paidSubscribers()->select('subscriptions.user_id');
         if ($paidSubscribers->fetchAll()) {

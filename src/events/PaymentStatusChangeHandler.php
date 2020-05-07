@@ -102,6 +102,7 @@ class PaymentStatusChangeHandler extends AbstractListener
         $subscription = $this->subscriptionsRepository->add(
             $payment->subscription_type,
             $payment->payment_gateway->is_recurrent,
+            true,
             $payment->user,
             $subscriptionType,
             $startTime,
