@@ -210,6 +210,10 @@ class PaymentsModule extends CrmModule
             'payments.frontend.payments_my.top',
             $this->getInstance(\Crm\PaymentsModule\Components\MyNextRecurrentPayment::class)
         );
+        $widgetManager->registerWidget(
+            'segment.detail.statspanel.row',
+            $this->getInstance(\Crm\PaymentsModule\Components\AvgMonthPaymentWidget::class)
+        );
     }
 
     public function registerCommands(CommandsContainerInterface $commandsContainer)
