@@ -9,6 +9,12 @@ menu:
 
 admin:
 	component:
+		avg_month_payment_widget:
+			avg_month_payment: Average monthly payment
+
+		avg_subscription_payment_widget:
+			avg_subscription_payment: Average payments for subscriptions
+
 		actual_free_subscribers_stat_widget:
 			title: Subscribers without payment
 			help: Number of subscribers with active subscription without payment. Every user is counted once even though subscriber has multiple subscriptions.

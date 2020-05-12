@@ -9,6 +9,12 @@ menu:
 
 admin:
 	component:
+		avg_month_payment_widget:
+			avg_month_payment: Priemerná mesačná platba
+
+		avg_subscription_payment_widget:
+			avg_subscription_payment: Priemerný počet platieb za predplatné
+
 		actual_free_subscribers_stat_widget:
 			title: Predplatitelia bez platby
 			help: Počet predplatiteľov s aktívnym predplatným bez platby. Jeden používateľ je jeden krát aj keď ma viac predplatných.

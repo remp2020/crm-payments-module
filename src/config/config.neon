@@ -90,6 +90,8 @@ services:
 		class: Crm\PaymentsModule\DataProvider\PaymentInvoiceProviderManager
 
 	# widgets
+	- Crm\PaymentsModule\Components\AvgMonthPaymentWidget
+	- Crm\PaymentsModule\Components\AvgSubscriptionPaymentWidget
 	- Crm\PaymentsModule\Components\UserPaymentsListing
 	- Crm\PaymentsModule\Components\ParsedMailsFailedNotification
 	- Crm\PaymentsModule\Components\TotalAmountStatWidget
