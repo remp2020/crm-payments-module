@@ -2,13 +2,6 @@
 
 namespace Crm\PaymentsModule\Gateways;
 
-use Crm\ApplicationModule\Config\ApplicationConfig;
-use Crm\PaymentsModule\Repository\PaymentMetaRepository;
-use Nette\Application\LinkGenerator;
-use Nette\Http\Response;
-use Nette\Localization\ITranslator;
-use Crm\PaymentsModule\Gateways\GatewayAbstract;
-
 class Free extends GatewayAbstract
 {
 

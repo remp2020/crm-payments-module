@@ -67,15 +67,33 @@ Payments module doesn't provide service commands.
 
 Module has a default set of supported payment gateways developed and used by us:
 
-* *Bank Transfer.* Gateway generates unfinished payment and displays user bank account, amount and transaction
+* `free`. Developed for development purposes, to be used for testing payment-related flows.
+* `bank_transfer`. Gateway generates unfinished payment and displays user bank account, amount and transaction
 identification so the payment can be paired and confirmed later.
-* *Cardpay* (tatrabanka.sk). One-time card payment provided by Slovak bank.
-* *Comfortpay* (tatrabanka.sk). Recurrent card payment provided by Slovak bank (CRM is handling charging)
-* *CSOB* (csob.cz). One-time card payment provided by Czech bank.
-* *CSOB One Click* (csob.cz). Recurrent card payment provided by Czech bank (CRM ish handling charging)
-* *Paypal* (paypal.com). One-time payment provided by major global provider.
-* *Paypal Reference* (paypal.com). Recurrent payment provided by major global provider (CRM is handling charging)
-* *Tatrapay* (tatrabanka.sk). One-time payment linked to Slovak bank's internet banking.
+* `cardpay` (tatrabanka.sk). One-time card payment provided by Slovak bank.
+* `comfortpay` (tatrabanka.sk). Recurrent card payment provided by Slovak bank (CRM is handling charging)
+* `csob` (csob.cz). One-time card payment provided by Czech bank.
+* `csob_one_click` (csob.cz). Recurrent card payment provided by Czech bank (CRM ish handling charging)
+* `paypal` (paypal.com). One-time payment provided by major global provider.
+* `paypal_reference` (paypal.com). Recurrent payment provided by major global provider (CRM is handling charging)
+* `tatrapay` (tatrabanka.sk). One-time payment linked to Slovak bank's internet banking.
+
+By default, only `bank_transfer` as a default payment gateway is enabled by PaymentsModule. You can enable gateways you wish to use by adding following snippet to your `app/config/config.neon`:
+
+```neon
+services:
+	# ...
+	gatewayFactory:
+		setup:
+			- registerGateway(free, Crm\PaymentsModule\Gateways\Free)
+```
+
+At this moment, there are several gateway implementations you can add to your CRM installation as a separate module:
+
+* [`stripe`](https://github.com/remp2020/crm-stripe-module) (stripe.com). One-time payment provided by major global provider.
+* [`stripe_recurrent`](https://github.com/remp2020/crm-stripe-module) (stripe.com). Recurrent payment provided by major global provider (CRM is handling charging)
+* [`slsp_sporopay`](https://github.com/remp2020/crm-slsp-sporopay-module) (slsp.sk). One-time payment linked to Slovak bank's internet banking.
+* [`vub_eplatby`](https://github.com/remp2020/crm-vub-eplatby-module) (vub.sk). One-time payment linked to Slovak bank's internet banking.
 
 ### Standard (one-time) payments
 

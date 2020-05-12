@@ -7,7 +7,6 @@ services:
 		class: Crm\PaymentsModule\GatewayFactory
 		setup:
 			- registerGateway('bank_transfer', Crm\PaymentsModule\Gateways\BankTransfer)
-			- registerGateway('free', Crm\PaymentsModule\Gateways\Free)
 
 	paymentGatewaysRepository: Crm\PaymentsModule\Repository\PaymentGatewaysRepository
 	paymentsRepository: Crm\PaymentsModule\Repository\PaymentsRepository
@@ -61,6 +60,7 @@ services:
 	- Crm\PaymentsModule\Gateways\Cardpay
 	- Crm\PaymentsModule\Gateways\Comfortpay
 	- Crm\PaymentsModule\Gateways\BankTransfer
+	- Crm\PaymentsModule\Gateways\Free
 	- Crm\PaymentsModule\Gateways\Csob
 	- Crm\PaymentsModule\Gateways\CsobOneClick
 	- Crm\PaymentsModule\Segment\PaymentCriteria
