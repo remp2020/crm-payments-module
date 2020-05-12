@@ -110,7 +110,7 @@ class PaymentCriteria implements CriteriaInterface
 
         if ($params->has('subscription_type')) {
             $values = $params->numberArray('subscription_type')->escapedString();
-            $where[] = " subscription_type_id IN ({$values}) ";
+            $where[] = " payment_items.subscription_type_id IN ({$values}) ";
         }
 
         return "SELECT DISTINCT(payments.user_id) AS id, " . Fields::formatSql($this->fields()) . "
