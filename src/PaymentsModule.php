@@ -214,6 +214,10 @@ class PaymentsModule extends CrmModule
             'segment.detail.statspanel.row',
             $this->getInstance(\Crm\PaymentsModule\Components\AvgMonthPaymentWidget::class)
         );
+        $widgetManager->registerWidget(
+            'segment.detail.statspanel.row',
+            $this->getInstance(\Crm\PaymentsModule\Components\AvgSubscriptionPaymentWidget::class)
+        );
     }
 
     public function registerCommands(CommandsContainerInterface $commandsContainer)

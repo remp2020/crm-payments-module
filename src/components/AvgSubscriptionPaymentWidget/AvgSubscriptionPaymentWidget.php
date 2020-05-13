@@ -6,9 +6,9 @@ use Crm\ApplicationModule\Widget\BaseWidget;
 use Crm\ApplicationModule\Widget\WidgetManager;
 use Crm\UsersModule\Repository\UserMetaRepository;
 
-class AvgMonthPaymentWidget extends BaseWidget
+class AvgSubscriptionPaymentWidget extends BaseWidget
 {
-    private $templateName = 'avg_month_payment_widget.latte';
+    private $templateName = 'avg_subscription_payment_widget.latte';
 
     private $userMetaRepository;
 
@@ -20,7 +20,7 @@ class AvgMonthPaymentWidget extends BaseWidget
 
     public function identifier()
     {
-        return 'avgmonthpaymentwidget';
+        return 'avgsubscriptionpaymentwidget';
     }
 
     public function render(array $usersIds)
@@ -29,11 +29,11 @@ class AvgMonthPaymentWidget extends BaseWidget
             $usersIds = implode(',', $usersIds);
             $average = $this->userMetaRepository
                 ->getTable()
-                ->select('AVG(value) AS avg_month_payment')
-                ->where(['key' => 'avg_month_payment', 'user_id' => $usersIds])
+                ->select('AVG(value) AS avg_subscription_payment')
+                ->where(['key' => 'paid_payments', 'user_id' => $usersIds])
                 ->fetch();
 
-            $this->template->avgMonthPayment = $average->avg_month_payment;
+            $this->template->avgSubscriptionPayments = $average->avg_subscription_payment;
 
             $this->template->setFile(__DIR__ . DIRECTORY_SEPARATOR . $this->templateName);
             $this->template->render();
