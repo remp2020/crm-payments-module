@@ -23,13 +23,13 @@ class AvgSubscriptionPaymentWidget extends BaseWidget
         return 'avgsubscriptionpaymentwidget';
     }
 
-    public function render(array $usersIds)
+    public function render(array $userIds)
     {
-        if (count($usersIds)) {
+        if (count($userIds)) {
             $average = $this->userMetaRepository
                 ->getTable()
                 ->select('AVG(value) AS avg_subscription_payment')
-                ->where(['key' => 'paid_payments', 'user_id' => $usersIds])
+                ->where(['key' => 'paid_payments', 'user_id' => $userIds])
                 ->fetch();
 
             $this->template->avgSubscriptionPayments = $average->avg_subscription_payment;
