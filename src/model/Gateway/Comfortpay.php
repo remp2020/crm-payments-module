@@ -10,6 +10,7 @@ use Nette\Utils\Strings;
 use Omnipay\ComfortPay\Gateway;
 use Omnipay\Omnipay;
 use Tracy\Debugger;
+use Tracy\ILogger;
 
 class Comfortpay extends GatewayAbstract implements RecurrentPaymentInterface
 {
@@ -171,11 +172,19 @@ class Comfortpay extends GatewayAbstract implements RecurrentPaymentInterface
     public function getResultMessage()
     {
         $data = $this->getResponseData();
+        if (!isset($data['transactionApproval'])) {
+            Debugger::log("Comfortpay response data doesn't include transactionApproval: " . Json::encode($data), ILogger::WARNING);
+            return null;
+        }
         return $data['transactionApproval'];
     }
 
     public function isNotSettled()
     {
-        return $this->getResponseData()['RES'] === "TOUT";
+        $data = $this->getResponseData();
+        if (!isset($data['RES'])) {
+            Debugger::log("Comfortpay response data doesn't include RES: " . Json::encode($data), ILogger::WARNING);
+        }
+        return $data['RES'] === "TOUT";
     }
 }

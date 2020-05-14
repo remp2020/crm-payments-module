@@ -91,6 +91,7 @@ class RecurrentPaymentsChargeCommand extends Command
 
         $chargeableRecurrentPayments = $this->recurrentPaymentsRepository->getChargeablePayments();
 
+        $output->writeln('Date: ' . (new DateTime())->format(DATE_RFC3339));
         $output->writeln('Charging: <info>' . $chargeableRecurrentPayments->count('*') . '</info> payments');
         $output->writeln('');
 
@@ -195,7 +196,14 @@ class RecurrentPaymentsChargeCommand extends Command
             /** @var RecurrentPaymentInterface $gateway */
             $gateway = $this->gatewayFactory->getGateway($payment->payment_gateway->code);
             try {
-                if ($payment->status !== PaymentsRepository::STATUS_PAID) {
+                if ($payment->status === PaymentsRepository::STATUS_PAID) {
+                    $this->recurrentPaymentsProcessor->processChargedRecurrent(
+                        $recurrentPayment,
+                        $gateway->getResultCode(),
+                        $gateway->getResultMessage(),
+                        $customChargeAmount
+                    );
+                } else {
                     $result = $gateway->charge($payment, $recurrentPayment->cid);
                     switch ($result) {
                         case RecurrentPaymentInterface::CHARGE_OK:

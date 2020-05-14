@@ -16,6 +16,7 @@ use Omnipay\PayPal\Support\InstantUpdateApi\BillingAgreement;
 use Omnipay\PayPalReference\ExpressGateway;
 use Omnipay\PayPalReference\Message\CreateBillingAgreementResponse;
 use Tracy\Debugger;
+use Tracy\ILogger;
 
 class PaypalReference extends GatewayAbstract implements RecurrentPaymentInterface
 {
@@ -143,12 +144,20 @@ class PaypalReference extends GatewayAbstract implements RecurrentPaymentInterfa
     public function getResultCode()
     {
         $data = $this->getResponseData();
+        if (!isset($data['ACK'])) {
+            Debugger::log("Paypal response data doesn't include ACK flag: " . Json::encode($data), ILogger::WARNING);
+            return null;
+        }
         return $data['ACK'];
     }
 
     public function getResultMessage()
     {
         $data = $this->getResponseData();
+        if (!isset($data['ACK'])) {
+            Debugger::log("Paypal response data doesn't include ACK flag: " . Json::encode($data), ILogger::WARNING);
+            return null;
+        }
         return $data['ACK'];
     }
 }
