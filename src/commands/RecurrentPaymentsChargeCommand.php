@@ -199,7 +199,12 @@ class RecurrentPaymentsChargeCommand extends Command
                     $result = $gateway->charge($payment, $recurrentPayment->cid);
                     switch ($result) {
                         case RecurrentPaymentInterface::CHARGE_OK:
-                            $this->recurrentPaymentsProcessor->processChargedRecurrent($gateway, $recurrentPayment, $customChargeAmount);
+                            $this->recurrentPaymentsProcessor->processChargedRecurrent(
+                                $recurrentPayment,
+                                $gateway->getResultCode(),
+                                $gateway->getResultMessage(),
+                                $customChargeAmount
+                            );
                             break;
                         case RecurrentPaymentInterface::CHARGE_PENDING:
                             $this->recurrentPaymentsProcessor->processPendingRecurrent($recurrentPayment);
