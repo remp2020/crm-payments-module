@@ -12,9 +12,9 @@ use Nette\Utils\Json;
 use Omnipay\Common\Exception\InvalidRequestException;
 use Omnipay\Omnipay;
 use Omnipay\PayPal\Message\ExpressCompletePurchaseResponse;
+use Omnipay\PayPal\Support\InstantUpdateApi\BillingAgreement;
 use Omnipay\PayPalReference\ExpressGateway;
 use Omnipay\PayPalReference\Message\CreateBillingAgreementResponse;
-use Omnipay\PayPal\Support\InstantUpdateApi\BillingAgreement;
 use Tracy\Debugger;
 
 class PaypalReference extends GatewayAbstract implements RecurrentPaymentInterface
@@ -100,7 +100,7 @@ class PaypalReference extends GatewayAbstract implements RecurrentPaymentInterfa
         throw new InvalidRequestException("paypal reference gateway doesn't support token expiration checking (it should never expire)");
     }
 
-    public function charge($payment, $token)
+    public function charge($payment, $token): string
     {
         $this->initialize();
 
@@ -124,6 +124,8 @@ class PaypalReference extends GatewayAbstract implements RecurrentPaymentInterfa
             $responseData = $this->response->getData();
             $this->paymentMetaRepository->add($payment, 'transaction_id', $responseData['TRANSACTIONID']);
         }
+
+        return self::CHARGE_OK;
     }
 
     public function hasRecurrentToken(): bool

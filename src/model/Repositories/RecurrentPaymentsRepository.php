@@ -24,6 +24,7 @@ class RecurrentPaymentsRepository extends Repository
     const STATE_USER_STOP = 'user_stop';
     const STATE_ADMIN_STOP = 'admin_stop';
     const STATE_ACTIVE = 'active';
+    const STATE_PENDING = 'pending';
     const STATE_CHARGED = 'charged';
     const STATE_CHARGE_FAILED = 'charge_failed';
     const STATE_SYSTEM_STOP = 'system_stop';
@@ -261,6 +262,11 @@ class RecurrentPaymentsRepository extends Repository
     final public function recurrent(IRow $payment)
     {
         return $this->getTable()->where(['parent_payment_id' => $payment->id])->fetch();
+    }
+
+    final public function findByPayment(IRow $payment)
+    {
+        return $this->findBy('payment_id', $payment->id);
     }
 
     final public function getLastWithState(IRow $recurrentPayment, $state)

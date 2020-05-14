@@ -115,7 +115,7 @@ class Comfortpay extends GatewayAbstract implements RecurrentPaymentInterface
         return $response;
     }
 
-    public function charge($payment, $token)
+    public function charge($payment, $token): string
     {
         $this->initialize();
 
@@ -146,6 +146,8 @@ class Comfortpay extends GatewayAbstract implements RecurrentPaymentInterface
         }
 
         $this->checkChargeStatus($payment, $this->getResultCode());
+
+        return self::CHARGE_OK;
     }
 
     public function hasRecurrentToken(): bool

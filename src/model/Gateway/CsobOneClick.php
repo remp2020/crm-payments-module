@@ -177,15 +177,7 @@ class CsobOneClick extends GatewayAbstract implements RecurrentPaymentInterface
         throw new InvalidRequestException("csob one click gateway doesn't support token expiration checking");
     }
 
-    /**
-     * @param $payment
-     * @param string $token
-     * @return void
-     * @throws GatewayFail
-     * @throws \Crm\PaymentsModule\RecurrentPaymentFailStop
-     * @throws \Crm\PaymentsModule\RecurrentPaymentFailTry
-     */
-    public function charge($payment, $token)
+    public function charge($payment, $token): string
     {
         $this->initialize();
         $clientIp = Request::getIp();
@@ -225,6 +217,8 @@ class CsobOneClick extends GatewayAbstract implements RecurrentPaymentInterface
         }
 
         $this->checkChargeStatus($payment, $this->getResultCode());
+
+        return self::CHARGE_OK;
     }
 
     public function hasRecurrentToken(): bool

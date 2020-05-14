@@ -3,8 +3,6 @@
 namespace Crm\PaymentsModule\Commands;
 
 use Crm\ApplicationModule\Config\ApplicationConfig;
-use Crm\PaymentsModule\Events\RecurrentPaymentFailEvent;
-use Crm\PaymentsModule\Events\RecurrentPaymentFailTryEvent;
 use Crm\PaymentsModule\GatewayFactory;
 use Crm\PaymentsModule\GatewayFail;
 use Crm\PaymentsModule\Gateways\RecurrentPaymentInterface;
@@ -13,6 +11,7 @@ use Crm\PaymentsModule\PaymentItem\PaymentItemContainer;
 use Crm\PaymentsModule\RecurrentPaymentFailStop;
 use Crm\PaymentsModule\RecurrentPaymentFailTry;
 use Crm\PaymentsModule\RecurrentPaymentFastCharge;
+use Crm\PaymentsModule\RecurrentPaymentsProcessor;
 use Crm\PaymentsModule\RecurrentPaymentsResolver;
 use Crm\PaymentsModule\Repository\PaymentLogsRepository;
 use Crm\PaymentsModule\Repository\PaymentsRepository;
@@ -43,6 +42,8 @@ class RecurrentPaymentsChargeCommand extends Command
 
     private $recurrentPaymentsResolver;
 
+    private $recurrentPaymentsProcessor;
+
     private $translator;
 
     public function __construct(
@@ -53,6 +54,7 @@ class RecurrentPaymentsChargeCommand extends Command
         Emitter $emitter,
         ApplicationConfig $applicationConfig,
         RecurrentPaymentsResolver $recurrentPaymentsResolver,
+        RecurrentPaymentsProcessor $recurrentPaymentsProcessor,
         ITranslator $translator
     ) {
         parent::__construct();
@@ -63,6 +65,7 @@ class RecurrentPaymentsChargeCommand extends Command
         $this->emitter = $emitter;
         $this->applicationConfig = $applicationConfig;
         $this->recurrentPaymentsResolver = $recurrentPaymentsResolver;
+        $this->recurrentPaymentsProcessor = $recurrentPaymentsProcessor;
         $this->translator = $translator;
     }
 
@@ -193,81 +196,38 @@ class RecurrentPaymentsChargeCommand extends Command
             $gateway = $this->gatewayFactory->getGateway($payment->payment_gateway->code);
             try {
                 if ($payment->status !== PaymentsRepository::STATUS_PAID) {
-                    $gateway->charge($payment, $recurrentPayment->cid);
-                    $this->paymentsRepository->updateStatus($payment, PaymentsRepository::STATUS_PAID);
-                    $payment = $this->paymentsRepository->find($payment->id);
+                    $result = $gateway->charge($payment, $recurrentPayment->cid);
+                    switch ($result) {
+                        case RecurrentPaymentInterface::CHARGE_OK:
+                            $this->recurrentPaymentsProcessor->processChargedRecurrent($gateway, $recurrentPayment, $customChargeAmount);
+                            break;
+                        case RecurrentPaymentInterface::CHARGE_PENDING:
+                            $this->recurrentPaymentsProcessor->processPendingRecurrent($recurrentPayment);
+                            break;
+                        default:
+                            throw new \Exception('unhandled charge result provided by gateway: ' . $result);
+                    }
                 }
-
-                $retries = explode(', ', $this->applicationConfig->get('recurrent_payment_charges'));
-                $retries = count((array)$retries);
-
-                $this->recurrentPaymentsRepository->add(
-                    $recurrentPayment->cid,
-                    $payment,
-                    $this->recurrentPaymentsRepository->calculateChargeAt($payment),
-                    $customChargeAmount,
-                    --$retries
-                );
-
-                $this->recurrentPaymentsRepository->setCharged($recurrentPayment, $payment, $gateway->getResultCode(), $gateway->getResultMessage());
             } catch (RecurrentPaymentFailTry $exception) {
-                $charges = explode(', ', $this->applicationConfig->get('recurrent_payment_charges'));
-                $charges = array_reverse((array)$charges);
-
-                $next = new \DateInterval(end($charges));
-                if (isset($charges[$recurrentPayment->retries])) {
-                    $next = new \DateInterval($charges[$recurrentPayment->retries]);
-                }
-
-                $nextCharge = new DateTime();
-                $nextCharge->add($next);
-
-                $this->paymentsRepository->updateStatus($payment, PaymentsRepository::STATUS_FAIL);
-                $this->recurrentPaymentsRepository->add(
-                    $recurrentPayment->cid,
-                    $payment,
-                    $nextCharge,
-                    $customChargeAmount,
-                    $recurrentPayment->retries - 1
+                $this->recurrentPaymentsProcessor->processFailedRecurrent(
+                    $recurrentPayment,
+                    $gateway->getResultCode(),
+                    $gateway->getResultMessage(),
+                    $customChargeAmount
                 );
-
-                $this->recurrentPaymentsRepository->update($recurrentPayment, [
-                    'state' => RecurrentPaymentsRepository::STATE_CHARGE_FAILED,
-                    'status' => $gateway->getResultCode(),
-                    'approval' => $gateway->getResultMessage(),
-                ]);
-
-                $this->emitter->emit(new RecurrentPaymentFailTryEvent($recurrentPayment));
             } catch (RecurrentPaymentFailStop $exception) {
-                $this->paymentsRepository->updateStatus($payment, PaymentsRepository::STATUS_FAIL);
-                $this->recurrentPaymentsRepository->update($recurrentPayment, [
-                    'state' => RecurrentPaymentsRepository::STATE_SYSTEM_STOP,
-                    'status' => $gateway->getResultCode(),
-                    'approval' => $gateway->getResultMessage(),
-                ]);
-
-                $this->emitter->emit(new RecurrentPaymentFailEvent($recurrentPayment));
-            } catch (GatewayFail $exception) {
-                $next = new \DateInterval($this->applicationConfig->get('recurrent_payment_gateway_fail_delay'));
-                $nextCharge = new DateTime();
-                $nextCharge->add($next);
-
-                $this->paymentsRepository->updateStatus($payment, PaymentsRepository::STATUS_FAIL);
-                $this->recurrentPaymentsRepository->add(
-                    $recurrentPayment->cid,
-                    $payment,
-                    $nextCharge,
-                    $customChargeAmount,
-                    $recurrentPayment->retries
+                $this->recurrentPaymentsProcessor->processStoppedRecurrent(
+                    $recurrentPayment,
+                    $gateway->getResultCode(),
+                    $gateway->getResultMessage()
                 );
-
-                $this->recurrentPaymentsRepository->update($recurrentPayment, [
-                    'state' => RecurrentPaymentsRepository::STATE_CHARGE_FAILED,
-                    'status' => $exception->getCode(),
-                    'approval' => $exception->getMessage(),
-                ]);
-
-                $this->emitter->emit(new RecurrentPaymentFailTryEvent($recurrentPayment));
+            } catch (GatewayFail $exception) {
+                $this->recurrentPaymentsProcessor->processRecurrentChargeError(
+                    $recurrentPayment,
+                    $exception->getCode(),
+                    $exception->getMessage(),
+                    $customChargeAmount
+                );
             }
 
             $this->paymentLogsRepository->add(
