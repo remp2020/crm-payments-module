@@ -40,7 +40,7 @@ class CalculateAveragesCommand extends \Symfony\Component\Console\Command\Comman
                 id,
                 'subscription_payments',
                 (
-                    SELECT COUNT(DISTINCT(payments.id))
+                    SELECT COALESCE(COUNT(DISTINCT(payments.id)), 0)
                     FROM payments
                     INNER JOIN payment_items ON payment_items.payment_id = payments.id AND payment_items.type IN ('$subscriptionTypeItem')
                     WHERE
@@ -60,7 +60,7 @@ SQL
                 id,
                 'subscription_payments_amount',
                 (
-                    SELECT SUM(payment_items.amount * payment_items.count)
+                    SELECT COALESCE(SUM(payment_items.amount * payment_items.count), 0)
                     FROM payments
                     INNER JOIN payment_items ON payment_items.payment_id = payments.id AND payment_items.type IN ('$subscriptionTypeItem')
                     WHERE
