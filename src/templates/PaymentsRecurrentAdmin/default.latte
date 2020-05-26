@@ -70,8 +70,6 @@
                       <span class="label label-success">{_"payments.admin.component.user_payments_listing.recurrent_profile.charged"}</span>
                   {elseif $recurrentPayment->state == \Crm\PaymentsModule\Repository\RecurrentPaymentsRepository::STATE_CHARGE_FAILED}
                       <span class="label label-warning">{_"payments.admin.component.user_payments_listing.recurrent_profile.charge_failed"}</span>
-                  {elseif $recurrentPayment->state == \Crm\PaymentsModule\Repository\RecurrentPaymentsRepository::STATE_TB_FAILED}
-                      <span class="label label-danger">{_"payments.admin.component.user_payments_listing.recurrent_profile.tb_failed"}</span>
                   {/if}
               </td>
               <td>

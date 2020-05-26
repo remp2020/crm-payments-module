@@ -76,7 +76,6 @@ class RecurrentPaymentFormFactory
             RecurrentPaymentsRepository::STATE_CHARGED => RecurrentPaymentsRepository::STATE_CHARGED,
             RecurrentPaymentsRepository::STATE_CHARGE_FAILED => RecurrentPaymentsRepository::STATE_CHARGE_FAILED,
             RecurrentPaymentsRepository::STATE_SYSTEM_STOP => RecurrentPaymentsRepository::STATE_SYSTEM_STOP,
-            RecurrentPaymentsRepository::STATE_TB_FAILED => RecurrentPaymentsRepository::STATE_TB_FAILED,
         ])->setPrompt('payments.admin.component.recurrent_payment_form.state.prompt')
             ->setRequired('payments.admin.component.recurrent_payment_form.state.required')
             ->setAttribute('placeholder', 'payments.admin.component.recurrent_payment_form.state.placeholder');

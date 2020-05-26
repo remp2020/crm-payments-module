@@ -145,7 +145,6 @@ admin:
 				system_stop: "Neúspešné opakovanie, zastavená"
 				charged: Automaticky predĺžená
 				charge_failed: "Neúspešné opakovanie, opakovanie o 6h"
-				tb_failed: CHYBA V TB.
 			parsed_mail_logs:
 				title: "Spracované/potvrdené platby"
 				changed_to_paid: Stav zmenený na zaplatené

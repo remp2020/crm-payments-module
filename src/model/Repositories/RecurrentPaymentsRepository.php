@@ -28,7 +28,6 @@ class RecurrentPaymentsRepository extends Repository
     const STATE_CHARGED = 'charged';
     const STATE_CHARGE_FAILED = 'charge_failed';
     const STATE_SYSTEM_STOP = 'system_stop';
-    const STATE_TB_FAILED = 'tb_failed';
 
     private $emitter;
 
@@ -216,7 +215,7 @@ class RecurrentPaymentsRepository extends Repository
             $where['status'] = $status;
         }
         if ($problem) {
-            $where['state'] = [self::STATE_SYSTEM_STOP, self::STATE_TB_FAILED, self::STATE_CHARGE_FAILED];
+            $where['state'] = [self::STATE_SYSTEM_STOP, self::STATE_CHARGE_FAILED];
         }
         return $this->getTable()->where($where)->order('recurrent_payments.charge_at DESC, recurrent_payments.created_at DESC');
     }
@@ -241,13 +240,13 @@ class RecurrentPaymentsRepository extends Repository
         if (!$recurrent) {
             return true;
         }
-        if (in_array($recurrent->state, [self::STATE_TB_FAILED, self::STATE_SYSTEM_STOP, self::STATE_USER_STOP, self::STATE_ADMIN_STOP])) {
+        if (in_array($recurrent->state, [self::STATE_SYSTEM_STOP, self::STATE_USER_STOP, self::STATE_ADMIN_STOP])) {
             return true;
         }
         if ($recurrent->state == self::STATE_CHARGE_FAILED) {
             // najdeme najnovsi rekurent s tymto cid a zistime ci je stopnuty
             $newRecurrent = $this->getTable()->where(['cid' => $recurrent->cid, 'charge_at > ' => $recurrent->charge_at])->order('charge_at DESC')->limit(1)->fetch();
-            if ($newRecurrent && in_array($newRecurrent->state, [self::STATE_TB_FAILED, self::STATE_SYSTEM_STOP, self::STATE_USER_STOP, self::STATE_ADMIN_STOP])) {
+            if ($newRecurrent && in_array($newRecurrent->state, [self::STATE_SYSTEM_STOP, self::STATE_USER_STOP, self::STATE_ADMIN_STOP])) {
                 return true;
             }
         }

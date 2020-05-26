@@ -145,7 +145,6 @@ admin:
 				system_stop: "Unable to charge, stopped"
 				charged: Automatically renewed
 				charge_failed: "Unable to charge, next attempt in 6 hours"
-				tb_failed: ERROR in TB.
 			parsed_mail_logs:
 				title: "Processed/confirmed payments"
 				changed_to_paid: Status changed to paid

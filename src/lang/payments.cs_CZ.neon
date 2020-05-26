@@ -145,7 +145,6 @@ admin:
 				system_stop: "Neúspěšné opakování, zastavena"
 				charged: Automaticky prodloužena
 				charge_failed: "Neúspěšné opakování, opakování o 6h."
-				tb_failed: CHYBA V TB.
 			parsed_mail_logs:
 				title: "Zpracované/potvrzené platby"
 				changed_to_paid: Stav změněn na zaplaceno
