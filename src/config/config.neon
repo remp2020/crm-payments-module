@@ -50,6 +50,7 @@ services:
 	- Crm\PaymentsModule\Commands\SkCsobMailConfirmationCommand
 	- Crm\PaymentsModule\Commands\TatraBankaStatementMailConfirmationCommand
 	- Crm\PaymentsModule\Api\VariableSymbolApiHandler
+	- Crm\PaymentsModule\Api\ListRecurrentPaymentsApiHandler
 	- Crm\PaymentsModule\MailConfirmation\CidGetterDownloader
 	variableSymbol:
 		class: Crm\PaymentsModule\Repository\VariableSymbol

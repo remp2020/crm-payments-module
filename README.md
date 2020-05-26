@@ -339,6 +339,48 @@ Response:
 }
 ```
 
+---
+
+#### GET `/api/v1/users/recurrent-payments`
+
+API call returns list of all user's recurrent payments.
+
+##### *Headers:*
+
+| Name | Value | Required | Description |
+| --- |---| --- | --- |
+| Authorization | Bearer *String* | yes | User token. |
+
+##### *Params:*
+
+| Name | Value | Required | Description |
+| --- |---| --- | --- |
+| state | *String* | no | Filter to return only payments with desired state. Available values: `active`, `user_stop`, `admin_stop`, `pending`, `charged`, `charge_failed`, `system_stop`. |
+
+##### *Example:*
+
+```shell
+curl 'http://crm.press/api/v1/users/recurrent-payments?state=active' \
+--header 'Content-Type: application/json' \
+--header 'Authorization: Bearer XXX'
+```
+
+Response:
+
+```json5
+[
+  {
+    "id": 154233,
+    "parent_payment_id": 1231610,
+    "charge_at": "2020-10-07T08:54:00+02:00",
+    "payment_gateway_code": "stripe_recurrent",
+    "subscription_type_code": "sample",
+    "state": "active",
+    "retries": 4
+  }
+]
+```
+
 ## Components
 
 **ActualFreeSubscribersStatWidget**

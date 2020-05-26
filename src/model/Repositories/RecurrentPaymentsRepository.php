@@ -322,4 +322,17 @@ class RecurrentPaymentsRepository extends Repository
 
         return $endTime;
     }
+
+    final public function getStates()
+    {
+        return [
+            self::STATE_USER_STOP,
+            self::STATE_ADMIN_STOP,
+            self::STATE_ACTIVE,
+            self::STATE_PENDING,
+            self::STATE_CHARGED,
+            self::STATE_CHARGE_FAILED,
+            self::STATE_SYSTEM_STOP,
+        ];
+    }
 }

@@ -26,8 +26,8 @@ use Crm\PaymentsModule\Commands\RecurrentPaymentsChargeCommand;
 use Crm\PaymentsModule\Commands\SingleChargeCommand;
 use Crm\PaymentsModule\Commands\SkCsobMailConfirmationCommand;
 use Crm\PaymentsModule\Commands\StopRecurrentPaymentsExpiresCommand;
-use Crm\PaymentsModule\Commands\TatraBankaStatementMailConfirmationCommand;
 use Crm\PaymentsModule\Commands\TatraBankaMailConfirmationCommand;
+use Crm\PaymentsModule\Commands\TatraBankaStatementMailConfirmationCommand;
 use Crm\PaymentsModule\Commands\UpdateRecurrentPaymentsExpiresCommand;
 use Crm\PaymentsModule\DataProvider\CanDeleteAddressDataProvider;
 use Crm\PaymentsModule\DataProvider\PaymentFromVariableSymbolDataProvider;
@@ -39,6 +39,7 @@ use Crm\PaymentsModule\Scenarios\PaymentStatusCriteria;
 use Crm\PaymentsModule\Seeders\ConfigsSeeder;
 use Crm\PaymentsModule\Seeders\PaymentGatewaysSeeder;
 use Crm\PaymentsModule\Seeders\SegmentsSeeder;
+use Crm\UsersModule\Auth\UserTokenAuthorization;
 use Kdyby\Translation\Translator;
 use League\Event\Emitter;
 use Nette\Application\Routers\Route;
@@ -243,6 +244,14 @@ class PaymentsModule extends CrmModule
                 new ApiIdentifier('1', 'payments', 'variable-symbol'),
                 \Crm\PaymentsModule\Api\VariableSymbolApiHandler::class,
                 \Crm\ApiModule\Authorization\AdminLoggedAuthorization::class
+            )
+        );
+
+        $apiRoutersContainer->attachRouter(
+            new ApiRoute(
+                new ApiIdentifier('1', 'users', 'recurrent-payments'),
+                \Crm\PaymentsModule\Api\ListRecurrentPaymentsApiHandler::class,
+                UserTokenAuthorization::class
             )
         );
     }
