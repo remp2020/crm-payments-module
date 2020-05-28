@@ -45,6 +45,10 @@ class TotalUserPayments extends BaseWidget
             $meta = $this->userMetaRepository->userMeta($userId);
             $this->template->meta = $meta;
 
+            $this->template->subscriptionPaymentsAmount = $meta['subscription_payments_amount'] ?? 0;
+            $this->template->subscriptionPayments = $meta['subscription_payments'] ?? 0;
+            $this->template->avgMonthPayment = $meta['avg_month_payment'] ?? 0;
+
             $average = $this->userMetaRepository->getTable()->select('AVG(value) AS average')->where(['key' => 'avg_month_payment'])->fetch();
             $this->template->averageMonthSum = (float) $average->average;
         }

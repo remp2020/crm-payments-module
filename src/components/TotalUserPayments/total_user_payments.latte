@@ -3,34 +3,34 @@
   <div class="panel-body">
 	{if $totalSum > 0}
 
-        {if isset($meta['subscription_payments_amount']) && isset($meta['subscription_payments'])}
+        {if !empty($subscriptionPayments) && !empty($subscriptionPaymentsAmount)}
             <span class="text-success" style="font-size:1.5em">
-             <strong>{$meta['subscription_payments_amount']|price}</strong>
+             <strong>{$subscriptionPaymentsAmount|price}</strong>
             </span>
 
             {_payments.admin.component.total_user_payments.for}
             <span class="text-success" style="font-size:1.2em">
-                <strong>{$meta['subscription_payments']}</strong>
+                <strong>{$subscriptionPayments}</strong>
             </span>
-            {_payments.admin.component.total_user_payments.for_subscription_payments, $meta['subscription_payments']}<br>
+            {_payments.admin.component.total_user_payments.for_subscription_payments, $subscriptionPayments}<br>
         {/if}
 
         {control simpleWidget 'payments.admin.total_user_payments', $meta}
 
-        {ifset $meta['avg_month_payment']}
+        {ifset $avgMonthPayment}
           <hr>
 
-          <span style="font-size:1.4em">{$meta['avg_month_payment']|price}</span> {_payments.admin.component.total_user_payments.monthly_average}
+          <span style="font-size:1.4em">{$avgMonthPayment|price}</span> {_payments.admin.component.total_user_payments.monthly_average}
           <br>
 
           <small>
-            {if $meta['avg_month_payment'] >= $averageMonthSum}
+            {if $avgMonthPayment >= $averageMonthSum}
               <span class="text-success">
-                  <i class="fa fa-caret-up"></i> {$meta['avg_month_payment'] - $averageMonthSum|price} {_payments.admin.component.total_user_payments.more}
+                  <i class="fa fa-caret-up"></i> {$avgMonthPayment - $averageMonthSum|price} {_payments.admin.component.total_user_payments.more}
               </span> {_payments.admin.component.total_user_payments.than_average}
             {else}
               <span class="text-warning">
-                  <i class="fa fa-caret-down"></i> {$averageMonthSum - $meta['avg_month_payment']|price} {_payments.admin.component.total_user_payments.less}
+                  <i class="fa fa-caret-down"></i> {$averageMonthSum - $avgMonthPayment|price} {_payments.admin.component.total_user_payments.less}
               </span> {_payments.admin.component.total_user_payments.than_average}
             {/if}
           </small>
