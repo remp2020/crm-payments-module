@@ -3,6 +3,7 @@
 namespace Crm\PaymentsModule\Presenters;
 
 use Crm\ApplicationModule\Presenters\FrontendPresenter;
+use Crm\ApplicationModule\User\UserData;
 use Crm\PaymentsModule\Gateways\GatewayAbstract;
 use Crm\PaymentsModule\Model\PaymentCompleteRedirectManager;
 use Crm\PaymentsModule\Model\PaymentCompleteRedirectResolver;
@@ -10,7 +11,6 @@ use Crm\PaymentsModule\PaymentProcessor;
 use Crm\PaymentsModule\Repository\PaymentLogsRepository;
 use Crm\PaymentsModule\Repository\PaymentMetaRepository;
 use Crm\PaymentsModule\Repository\PaymentsRepository;
-use Crm\UsersModule\Auth\Access\AccessToken;
 use Crm\UsersModule\Repository\UserMetaRepository;
 use Crm\UsersModule\Repository\UsersRepository;
 
@@ -34,8 +34,8 @@ class ReturnPresenter extends FrontendPresenter
     /** @var PaymentCompleteRedirectManager @inject */
     public $paymentCompleteRedirectManager;
 
-    /** @var AccessToken @inject */
-    public $accessToken;
+    /** @var UserData @inject */
+    public $userData;
 
     /** @persistent */
     public $VS;
@@ -136,13 +136,9 @@ class ReturnPresenter extends FrontendPresenter
                     }
                 }
 
-                // issue new access token with new access data (old token will be removed)
+                // update all user tokens with new access data
                 if ($presenter->getUser()->isLoggedIn()) {
-                    $presenter->accessToken->addUserToken(
-                        $presenter->getUser(),
-                        $presenter->request,
-                        $presenter->response
-                    );
+                    $presenter->userData->refreshUserTokens($presenter->getUser()->getId());
                 }
                 $presenter->paymentLogsRepository->add(
                     'OK',
