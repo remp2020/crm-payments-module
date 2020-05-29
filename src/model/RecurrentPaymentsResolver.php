@@ -8,7 +8,6 @@ use Crm\PaymentsModule\Repository\RecurrentPaymentsRepository;
 use Crm\SubscriptionsModule\Repository\SubscriptionTypesRepository;
 use Nette\Database\Table\ActiveRow;
 use Nette\Utils\DateTime;
-use Tracy\Debugger;
 
 class RecurrentPaymentsResolver
 {
@@ -95,17 +94,15 @@ class RecurrentPaymentsResolver
     public function resolveFailedRecurrent(ActiveRow $recurrentPayment): ActiveRow
     {
         if ($recurrentPayment->state === RecurrentPaymentsRepository::STATE_CHARGE_FAILED) {
-            $this->lastFailedChargeAt = $recurrentPayment->charge_at;
-            if (isset($recurrentPayment->payment) && ($nextRecurrent = $this->recurrentPaymentsRepository->recurrent($recurrentPayment->payment))) {
-                $recurrentPayment = $this->resolveFailedRecurrent($nextRecurrent);
-            } else {
-                Debugger::log('Unable to find next payment for failed recurrent ID [' . $recurrentPayment->id . ']', Debugger::ERROR);
-            }
+            $this->lastFailedChargeAt = $recurrentPayment->payment->created_at;
+
+            $nextRecurrent = $this->recurrentPaymentsRepository->recurrent($recurrentPayment->payment);
+            $recurrentPayment = $this->resolveFailedRecurrent($nextRecurrent);
         }
         return $recurrentPayment;
     }
 
-    public function getLastChargeFailedDateTime(): DateTime
+    public function getLastFailedChargeDateTime(): DateTime
     {
         if ($this->lastFailedChargeAt === null) {
             throw new \Exception('No last charge_failed date is set. Did you call `resolveFailedRecurrent()`?');

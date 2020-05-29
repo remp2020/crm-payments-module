@@ -42,21 +42,23 @@
                             {* if recurrent charge for this payment failed, try to locate following recurring profile for this payment *}
                             {if $recurrent->state === \Crm\PaymentsModule\Repository\RecurrentPaymentsRepository::STATE_CHARGE_FAILED}
                                 {php $recurrent = $resolver->resolveFailedRecurrent($recurrent); }
-                                {php $lastChargeFailDate = $resolver->getLastChargeFailedDateTime(); }
+                                {php $lastFailedChargeDate = $resolver->getLastFailedChargeDateTime(); }
                             {/if}
 
                             {switch $recurrent->state}
                                 {case \Crm\PaymentsModule\Repository\RecurrentPaymentsRepository::STATE_CHARGED}
                                     <span class="label label-success">{_payments.frontend.my.success_recurrent}</span>
                                 {case \Crm\PaymentsModule\Repository\RecurrentPaymentsRepository::STATE_ACTIVE}
-                                    {if isset($lastChargeFailDate)}
+                                    {if isset($lastFailedChargeDate)}
                                         <span class="label label-danger">{_payments.frontend.my.charge_failed.title}</span>
-                                        <ul style="font-style: italic; margin-left: 1em;">
-                                            <li>{_payments.frontend.my.charge_failed.last_try}: {$lastChargeFailDate}</li>
-                                            <li>{_payments.frontend.my.charge_failed.next_try}: {$recurrent->charge_at}</li>
-                                        </ul>
+                                        <div class="text-muted" style="margin: 1em 0">
+                                            <small>
+                                                {_payments.frontend.my.charge_failed.last_try}: {$lastFailedChargeDate|userDate}<br>
+                                                {_payments.frontend.my.charge_failed.next_try}: {$recurrent->charge_at|userDate}
+                                            </small>
+                                        </div>
                                     {/if}
-                                    <a class="btn btn-sm btn-primary" n:href="recurrentStop $recurrent->id">{_payments.frontend.my.stop_recurrent}</a>
+                                    <a class="btn btn-sm btn-default" n:href="recurrentStop $recurrent->id">{_payments.frontend.my.stop_recurrent}</a>
                                 {case \Crm\PaymentsModule\Repository\RecurrentPaymentsRepository::STATE_USER_STOP}
                                     <span class="label label-info">{_payments.frontend.my.user_stopped}</span>
                                     <span n:if="$recurrent->cid && $recurrent->charge_at > new \DateTime()">
