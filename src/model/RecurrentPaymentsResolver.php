@@ -7,6 +7,7 @@ use Crm\PaymentsModule\Repository\PaymentsRepository;
 use Crm\PaymentsModule\Repository\RecurrentPaymentsRepository;
 use Crm\SubscriptionsModule\Repository\SubscriptionTypesRepository;
 use Nette\Database\Table\ActiveRow;
+use Nette\Utils\DateTime;
 
 class RecurrentPaymentsResolver
 {
@@ -15,6 +16,8 @@ class RecurrentPaymentsResolver
     private $recurrentPaymentsRepository;
 
     private $subscriptionTypesRepository;
+
+    public $lastFailedChargeAt = null;
 
     public function __construct(
         PaymentsRepository $paymentsRepository,
@@ -75,5 +78,36 @@ class RecurrentPaymentsResolver
             }
         }
         return $amount;
+    }
+
+    /**
+     * resolveFailedRecurrent checks following recurring payments after charge failed and returns last recurring payment.
+     *
+     * This method follows sequence:
+     * - get $recurrentPayment->payment
+     * - get $payment->recurringPayment (via parent_payment_id)
+     *
+     * So methods always follows original payment and it doesn't jump to recurrent payment of other subscription.
+     *
+     * If resolved is unable to find following recurring profile, it returns same payment.
+     */
+    public function resolveFailedRecurrent(ActiveRow $recurrentPayment): ActiveRow
+    {
+        if ($recurrentPayment->state === RecurrentPaymentsRepository::STATE_CHARGE_FAILED) {
+            $this->lastFailedChargeAt = $recurrentPayment->payment->created_at;
+
+            $nextRecurrent = $this->recurrentPaymentsRepository->recurrent($recurrentPayment->payment);
+            $recurrentPayment = $this->resolveFailedRecurrent($nextRecurrent);
+        }
+        return $recurrentPayment;
+    }
+
+    public function getLastFailedChargeDateTime(): DateTime
+    {
+        if ($this->lastFailedChargeAt === null) {
+            throw new \Exception('No last charge_failed date is set. Did you call `resolveFailedRecurrent()`?');
+        }
+
+        return new DateTime($this->lastFailedChargeAt);
     }
 }

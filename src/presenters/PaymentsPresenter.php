@@ -32,6 +32,7 @@ class PaymentsPresenter extends FrontendPresenter
         $this->onlyLoggedIn();
 
         $this->template->payments = $this->paymentsRepository->userPaymentsWithRecurrent($this->getUser()->getId());
+        $this->template->resolver = $this->recurrentPaymentsResolver;
     }
 
     public function handleReactivate($recurrentId)
