@@ -3,7 +3,6 @@
 namespace Crm\PaymentsModule\Presenters;
 
 use Crm\ApplicationModule\Presenters\FrontendPresenter;
-use Crm\ApplicationModule\User\UserData;
 use Crm\PaymentsModule\Gateways\GatewayAbstract;
 use Crm\PaymentsModule\Model\PaymentCompleteRedirectManager;
 use Crm\PaymentsModule\Model\PaymentCompleteRedirectResolver;
@@ -13,6 +12,7 @@ use Crm\PaymentsModule\Repository\PaymentMetaRepository;
 use Crm\PaymentsModule\Repository\PaymentsRepository;
 use Crm\UsersModule\Repository\UserMetaRepository;
 use Crm\UsersModule\Repository\UsersRepository;
+use Crm\UsersModule\User\UserData;
 
 class ReturnPresenter extends FrontendPresenter
 {
@@ -137,9 +137,8 @@ class ReturnPresenter extends FrontendPresenter
                 }
 
                 // update all user tokens with new access data
-                if ($presenter->getUser()->isLoggedIn()) {
-                    $presenter->userData->refreshUserTokens($presenter->getUser()->getId());
-                }
+                $presenter->userData->refreshUserTokens($payment->user_id);
+
                 $presenter->paymentLogsRepository->add(
                     'OK',
                     "Redirecting to success url with vs '{$payment->variable_symbol}'",
