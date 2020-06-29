@@ -82,6 +82,16 @@ class PaymentMetaRepository extends Repository
         ])->fetch();
     }
 
+    final public function findAllByMeta(string $key, string $value)
+    {
+        return $this->getTable()->where([
+                'key' => $key,
+                'value' => $value
+            ])
+            ->order('id DESC')
+            ->fetchAll();
+    }
+
     /**
      * @param ActiveRow $payment
      * @param string $key
