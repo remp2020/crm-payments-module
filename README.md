@@ -382,6 +382,59 @@ Response:
 ]
 ```
 
+---
+
+#### POST `/api/v1/recurrent-payment/stop`
+
+API call to stop user's recurrent payment. State of recurrent payment is set to `user_stop`. Nothing else is changed and user can reactivate recurrent payment.
+
+##### *Headers:*
+
+| Name | Value | Required | Description |
+| --- |---| --- | --- |
+| Authorization | Bearer *String* | yes | User token. |
+
+##### *Payload params:*
+
+| Name | Value | Required | Description |
+| --- |---| --- | --- |
+| id | *Integer* | yes | RecurrentPayment ID. |
+
+##### *Example:*
+
+```shell
+curl -X POST 'http://crm.press/api/v1/recurrent-payment/stop' \
+--header 'Content-Type: application/json' \
+--header 'Authorization: Bearer XXX' \
+--data-raw '{
+    "id": 999999
+}'
+```
+
+Response:
+
+_On success HTTP status 200 OK is returned with recurrent payment's details._
+
+```json5
+{
+  "id": 999999,
+  "parent_payment_id": 1234567,
+  "charge_at": "2020-10-07T08:54:00+02:00", // charge is not changed when stopping recurrent
+  "payment_gateway_code": "stripe_recurrent",
+  "subscription_type_code": "sample",
+  "state": "user_stop", // this endpoint always sets state to `user_stop`
+  "retries": 4
+}
+```
+
+In addition to API responses described at the beginning of [API documentation](#api-documentation) section:
+
+| Value | Description |
+| --- | --- |
+| 409 Conflict | Recurrent payment cannot be stopped by user _(reason is in error message)_ |
+
+---
+
 ## Components
 
 **ActualFreeSubscribersStatWidget**

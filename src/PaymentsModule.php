@@ -258,6 +258,14 @@ class PaymentsModule extends CrmModule
                 UserTokenAuthorization::class
             )
         );
+
+        $apiRoutersContainer->attachRouter(
+            new ApiRoute(
+                new ApiIdentifier('1', 'recurrent-payment', 'stop'),
+                \Crm\PaymentsModule\Api\StopRecurrentPaymentApiHandler::class,
+                UserTokenAuthorization::class
+            )
+        );
     }
 
     public function registerCleanupFunction(CallbackManagerInterface $cleanUpManager)
