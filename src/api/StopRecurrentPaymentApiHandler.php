@@ -42,7 +42,10 @@ class StopRecurrentPaymentApiHandler extends ApiHandler
         $user = $data['token']->user;
 
         // validate JSON payload
-        $validation = $this->validateInput(__DIR__ . '/stop-recurrent-payment.schema.json');
+        $validation = $this->validateInput(
+            __DIR__ . '/stop-recurrent-payment.schema.json',
+            $this->rawPayload()
+        );
         if ($validation->hasErrorResponse()) {
             return $validation->getErrorResponse();
         }
