@@ -9,6 +9,7 @@ use Crm\ApiModule\Params\InputParam;
 use Crm\ApiModule\Params\ParamsProcessor;
 use Crm\PaymentsModule\Repository\RecurrentPaymentsRepository;
 use Nette\Http\Response;
+use Nette\Utils\DateTime;
 
 class ListRecurrentPaymentsApiHandler extends ApiHandler
 {
@@ -24,9 +25,15 @@ class ListRecurrentPaymentsApiHandler extends ApiHandler
         return [
             new InputParam(
                 InputParam::TYPE_GET,
-                'state',
+                'states',
                 InputParam::OPTIONAL,
-                $this->recurrentPaymentsRepository->getStates()
+                $this->recurrentPaymentsRepository->getStates(),
+                true
+            ),
+            new InputParam(
+                InputParam::TYPE_GET,
+                'chargeable_from',
+                InputParam::OPTIONAL
             ),
         ];
     }
@@ -55,8 +62,21 @@ class ListRecurrentPaymentsApiHandler extends ApiHandler
         $params = $paramsProcessor->getValues();
 
         $recurrentPayments = $this->recurrentPaymentsRepository->userRecurrentPayments($user->id);
-        if (isset($params['state'])) {
-            $recurrentPayments->where('state = ?', $params['state']);
+        if ($params['states'] ?? false) {
+            $recurrentPayments->where(['state' => $params['states']]);
+        }
+        if ($params['chargeable_from'] ?? false) {
+            $chargeableFrom = DateTime::createFromFormat('c', $params['chargeable_from']);
+            if (!$chargeableFrom) {
+                $response = new JsonResponse([
+                    'status' => 'error',
+                    'code' => 'invalid_date',
+                    'message' => 'Invalid format provided for charge_at parameter, ISO 8601 expected: ' . $params['chargeable_from']
+                ]);
+                $response->setHttpCode(Response::S400_BAD_REQUEST);
+                return $response;
+            }
+            $recurrentPayments->where('charge_at >= ?', $chargeableFrom);
         }
 
         $results = [];
@@ -64,7 +84,7 @@ class ListRecurrentPaymentsApiHandler extends ApiHandler
             $results[] = [
                 'id' => $recurrentPayment->id,
                 'parent_payment_id' => $recurrentPayment->parent_payment_id,
-                'charge_at' => $recurrentPayment->charge_at,
+                'charge_at' => $recurrentPayment->charge_at->format('c'),
                 'payment_gateway_code' => $recurrentPayment->payment_gateway->code,
                 'subscription_type_code' => $recurrentPayment->subscription_type->code,
                 'state' => $recurrentPayment->state,

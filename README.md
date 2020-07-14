@@ -355,12 +355,13 @@ API call returns list of all user's recurrent payments.
 
 | Name | Value | Required | Description |
 | --- |---| --- | --- |
-| state | *String* | no | Filter to return only payments with desired state. Available values: `active`, `user_stop`, `admin_stop`, `pending`, `charged`, `charge_failed`, `system_stop`. |
+| states | *String Array* | no | Filter to return only payments with desired states. Available values: `active`, `user_stop`, `admin_stop`, `pending`, `charged`, `charge_failed`, `system_stop`. |
+| chargeable_from | *String* | no | ISO 8601 based date to filter only payments with `charge_at` parameter after the specified date.
 
 ##### *Example:*
 
 ```shell
-curl 'http://crm.press/api/v1/users/recurrent-payments?state=active' \
+curl 'http://crm.press/api/v1/users/recurrent-payments?states[]=active&states[]=user_stop&chargeable_from=2020-07-10T09%3A13%3A38%2B00%3A00' \
 --header 'Content-Type: application/json' \
 --header 'Authorization: Bearer XXX'
 ```

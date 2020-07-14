@@ -13,6 +13,7 @@ use Crm\SubscriptionsModule\Repository\SubscriptionTypesMetaRepository;
 use Crm\SubscriptionsModule\Repository\SubscriptionTypesRepository;
 use Crm\SubscriptionsModule\Seeders\SubscriptionExtensionMethodsSeeder;
 use Crm\SubscriptionsModule\Seeders\SubscriptionLengthMethodSeeder;
+use Crm\UsersModule\Repository\AccessTokensRepository;
 use Nette\DI\Container;
 
 class PaymentsTestCase extends DatabaseTestCase
@@ -29,6 +30,9 @@ class PaymentsTestCase extends DatabaseTestCase
     /** @var  \Crm\PaymentsModule\Repository\PaymentGatewaysRepository */
     protected $paymentGatewaysRepository;
 
+    /** @var AccessTokensRepository */
+    protected $accessTokensRepository;
+
     public function requiredSeeders(): array
     {
         return [
@@ -40,6 +44,7 @@ class PaymentsTestCase extends DatabaseTestCase
     public function requiredRepositories(): array
     {
         return [
+            AccessTokensRepository::class,
             PaymentsRepository::class,
             PaymentMetaRepository::class,
             PaymentGatewaysRepository::class,
@@ -54,6 +59,7 @@ class PaymentsTestCase extends DatabaseTestCase
         parent::setUp();
         $this->container = $GLOBALS['container'];
 
+        $this->accessTokensRepository = $this->getRepository(AccessTokensRepository::class);
         $this->paymentsRepository = $this->getRepository(PaymentsRepository::class);
         $this->paymentGatewaysRepository = $this->getRepository(PaymentGatewaysRepository::class);
         $this->recurrentPaymentsRepository = $this->getRepository(RecurrentPaymentsRepository::class);
