@@ -66,7 +66,7 @@ class ListRecurrentPaymentsApiHandler extends ApiHandler
             $recurrentPayments->where(['state' => $params['states']]);
         }
         if ($params['chargeable_from'] ?? false) {
-            $chargeableFrom = DateTime::createFromFormat('c', $params['chargeable_from']);
+            $chargeableFrom = DateTime::createFromFormat(DATE_ATOM, $params['chargeable_from']);
             if (!$chargeableFrom) {
                 $response = new JsonResponse([
                     'status' => 'error',
