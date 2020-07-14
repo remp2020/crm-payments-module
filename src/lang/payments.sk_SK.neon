@@ -6,6 +6,7 @@ menu:
 	parsed_mails: Spracované platobné e-maily
 	recurrent_payments: Rekurentné platby
 	duplicate_recurrent_payments: Duplicitné rekurentné platby
+	retention_analysis: Analýza retencie
 
 admin:
 	component:
@@ -272,6 +273,40 @@ admin:
 			cancel: Zruš filter
 
 		updated: Rekurentný profil bol upravený
+
+	retention_analysis:
+		title: Analýza retencie
+		no_records: "Nenašli sa žiadne vypracované analýzy"
+		new_analysis: Nová analýza
+		preview_run: Predpočítať počet používateľov pre analýzu
+		analysis_name: Názov analýzy
+		state: Stav
+		together: Spolu
+		month: Mesiac
+		payments_count: "Počet používateľov s prvým predplatným spĺňajúcim zvolený filter"
+		results_not_available: "Výsledky nie sú v tomto stave analýzy dostupné."
+		actions: Akcie
+		created_at: Vytvorené
+		started_at: Spustené
+		finished_at: Dokončené
+		schedule_computation: Spustiť výpočet
+		parameters: Parametre
+		results: Výsledky
+		period_explanation: "PERIÓDA (31-dňové intervaly po prvom predplatnom podľa zadaného filtra)"
+		continue_method_explanation: "Metóda CONTINUE - do výpočtu sú zahrnuté všetky predplatné, aj po prerušení."
+		analysis_was_scheduled: "Analýza bola zadaná, výsledok sa objaví po dokončení v tabuľke."
+		first_subscription_month_count: "Mesiac prvého predplatného / počet"
+		back: Späť na zoznam
+		fields:
+			min_date_of_payment: "Zahrnúť platby od (dátumu)"
+			min_date_of_payment_desc: "Ak nie je zvolené, zarhnuté sú všetky platby."
+			previous_user_subscriptions: Predchádzajúce predplatné používateľa
+			without_previous_subscription: Bez predchádzajúceho predplatného
+			with_previous_subscription_at_least_one_paid: S predchádzajúcim predplatným - aspoň jedno platené
+			with_previous_subscription_all_unpaid: S predchádzajúcim predplatným - všetky neplatené
+		errors:
+			long_execution_time: "Analýza sa nedokončila v časovom limite %minutes% minút. Zadajte prosím iné parametre."
+			unexpected_error: "Nastala neočakávaná chyba. Detaily chyby boli zalogované."
 
 	dashboard:
 		recurrent_charge:

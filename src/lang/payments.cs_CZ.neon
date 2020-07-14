@@ -6,6 +6,7 @@ menu:
 	parsed_mails: Zpracované platební e-maily
 	recurrent_payments: Rekurentní platby
 	duplicate_recurrent_payments: Duplicitní rekurentné platby
+	retention_analysis: Analýza retence
 
 admin:
 	component:
@@ -267,6 +268,40 @@ admin:
 			cancel: Zruš filtr
 
 		updated: Rekurentní profil byl upraven
+
+	retention_analysis:
+		title: Analýza retence
+		no_records: "Nebyly nalezeny žádné vypracované analýzy"
+		new_analysis: Nová analýza
+		preview_run: Zjistit počet uživatelů pro analýzu
+		analysis_name: Název analýzy
+		state: Stav
+		together: Spolu
+		month: Měsíc
+		payments_count: "Počet uživatelů s prvním předplatným"
+		results_not_available: "Výsledky nejsou v tomto stavu analýzy dostupné."
+		actions: Akce
+		created_at: Vytvořené
+		started_at: Spuštěné
+		finished_at: Dokončené
+		schedule_computation: Spustit výpočet
+		parameters: Parametry
+		results: Výsledky
+		period_explanation: "PERIODY (31-denní intervaly po prvním předplatném podle zadaného filtru)"
+		continue_method_explanation: "Metoda CONTINUE - do výpočtu jsou zahrnuty všechny předplatné, i po přerušení."
+		analysis_was_scheduled: "Analýza byla zadána, výsledek se objeví po dokončení v tabulce."
+		first_subscription_month_count: "Měsíc prvního předplatného / počet"
+		back: Zpět na seznam
+		fields:
+			min_date_of_payment: "Zahrnout platby od (data)"
+			min_date_of_payment_desc: "Pokud není zvoleno, zarhnuté jsou všechny platby."
+			previous_user_subscriptions: Předchozí předplatné uživatele
+			without_previous_subscription: Bez předchozího předplatného
+			with_previous_subscription_at_least_one_paid: S předchozím předplatným - alespoň jedno placené
+			with_previous_subscription_all_unpaid: S předchozím předplatným - všechny neplacené
+		errors:
+			long_execution_time: "Analýza se nedokončila v časovém limitu %minutes% minut. Zadejte prosím jiné parametry."
+			unexpected_error: "Nastala neočekávaná chyba. Detaily chyby byly zalogované."
 
 	dashboard:
 		recurrent_charge:

@@ -46,6 +46,7 @@ use Nette\Application\Routers\Route;
 use Nette\Application\Routers\RouteList;
 use Nette\DI\Container;
 use Symfony\Component\Console\Output\OutputInterface;
+use Tomaj\Hermes\Dispatcher;
 
 class PaymentsModule extends CrmModule
 {
@@ -92,6 +93,9 @@ class PaymentsModule extends CrmModule
         $mainMenu->addChild($menuItem);
 
         $menuItem = new MenuItem($this->translator->translate('payments.menu.duplicate_recurrent_payments'), ':Payments:PaymentsRecurrentAdmin:duplicates', 'fa fa-exclamation-triangle', 660);
+        $mainMenu->addChild($menuItem);
+
+        $menuItem = new MenuItem($this->translator->translate('payments.menu.retention_analysis'), ':Payments:RetentionAnalysisAdmin:', 'fa fa-chart-line', 670);
         $mainMenu->addChild($menuItem);
 
         $menuContainer->attachMenuItem($mainMenu);
@@ -335,6 +339,14 @@ class PaymentsModule extends CrmModule
         $emitter->addListener(
             \Crm\SubscriptionsModule\Events\SubscriptionPreUpdateEvent::class,
             $this->getInstance(\Crm\PaymentsModule\Events\SubscriptionPreUpdateHandler::class)
+        );
+    }
+
+    public function registerHermesHandlers(Dispatcher $dispatcher)
+    {
+        $dispatcher->registerHandler(
+            'retention-analysis-job',
+            $this->getInstance(\Crm\PaymentsModule\Hermes\RetentionAnalysisJobHandler::class)
         );
     }
 

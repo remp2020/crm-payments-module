@@ -6,6 +6,7 @@ menu:
 	parsed_mails: Parsed payment emails
 	recurrent_payments: Recurrent payments
 	duplicate_recurrent_payments: Duplicate recurrent payments
+	retention_analysis: Retention analysis
 
 admin:
 	component:
@@ -275,6 +276,40 @@ admin:
 			recurrent: Only charged automatically
 			manual: Only manual
 		arpu: "ARPU - Average revenue per user"
+
+	retention_analysis:
+		title: Retention analysis
+		no_records: "No records were found"
+		new_analysis: New analysis
+		preview_run: Precalculate number of users for analysis
+		analysis_name: Analysis name
+		state: State
+		together: Together
+		month: Month
+		payments_count: "Number of users with first subscription"
+		results_not_available: "Results are not accessible in current analysis state."
+		actions: Actions
+		created_at: Created at
+		started_at: Started at
+		finished_at: Finished at
+		schedule_computation: Schedule calculation
+		parameters: Parameters
+		results: Results
+		period_explanation: "PERIODS (31-day intervals after first subscription according to selected parameters)"
+		continue_method_explanation: "CONTINUE method - computation includes all subscriptions, even with after interruption."
+		analysis_was_scheduled: "Analysis was scheduled, results will appear in the table below."
+		first_subscription_month_count: "First subscription month / count"
+		back: Back to list
+		fields:
+			min_date_of_payment: "Include payments from (date)"
+			min_date_of_payment_desc: "If not selected, all payments are included."
+			previous_user_subscriptions: Previous user subscriptions
+			without_previous_subscription: Without previous subscriptions
+			with_previous_subscription_at_least_one_paid: With previous subscription - at least one paid
+			with_previous_subscription_all_unpaid: With previous subscription - all unpaid
+		errors:
+			long_execution_time: "Analysis hasn't finished in time limit %minutes% minutes. Please adjust analysis parameters."
+			unexpected_error: "Unexpected error has occured, error details were logged."
 
 	parsed_mails:
 		title: Processed payment emails

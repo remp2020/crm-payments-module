@@ -1,0 +1,119 @@
+{block #title}{_payments.admin.retention_analysis.title}{/block}
+
+{block #content}
+
+<style type="text/css">
+    .churn-color-100 {
+        background-color: rgba(248,104,106,1);
+    }
+    .churn-color-90 {
+        background-color: rgba(248,104,106,0.9);
+    }
+    .churn-color-80 {
+        background-color: rgba(248,104,106,0.8);
+    }
+    .churn-color-70 {
+        background-color: rgba(248,104,106,0.7);
+    }
+    .churn-color-60 {
+        background-color: rgba(248,104,106,0.6);
+    }
+    .churn-color-50 {
+        background-color: rgba(248,104,106,0.5);
+    }
+    .churn-color-40 {
+        background-color: rgba(248,104,106,0.4);
+    }
+    .churn-color-30 {
+        background-color: rgba(248,104,106,0.3);
+    }
+    .churn-color-20 {
+        background-color: rgba(248,104,106,0.2);
+    }
+    .churn-color-10 {
+        background-color: rgba(248,104,106,0.1);
+    }
+    .churn-color-0 {
+        background-color: rgba(248,104,106,0);
+    }
+</style>
+
+<div class="row">
+
+    <div class="col-md-12">
+        <a n:href="default"><i class="fa fa-angle-left"></i> {_payments.admin.retention_analysis.back}</a>
+        <h1>
+            {_payments.admin.retention_analysis.title} <small>[{$job->id}]</small>
+        </h1>
+    </div>
+
+    <div class="col-md-12 col-sm-12">
+        <ul class="list-group">
+            <li class="list-group-item"><b>{_payments.admin.retention_analysis.analysis_name}:</b> {$job->name}</li>
+            <li class="list-group-item"><b>{_payments.admin.retention_analysis.state}:</b>
+                {if $job->state == \Crm\PaymentsModule\Repository\RetentionAnalysisJobsRepository::STATE_STARTED}
+                    <span class="label label-primary">{$job->state}</span>
+                {elseif $job->state == \Crm\PaymentsModule\Repository\RetentionAnalysisJobsRepository::STATE_FINISHED}
+                    <span class="label label-success">{$job->state}</span>
+                {elseif $job->state == \Crm\PaymentsModule\Repository\RetentionAnalysisJobsRepository::STATE_FAILED}
+                    <span class="label label-danger">{$job->state}</span>
+                {else}
+                    <span class="label label-info">{$job->state}</span>
+                {/if}
+            </li>
+
+            <li class="list-group-item"><b>{_payments.admin.retention_analysis.created_at}:</b> {$job->created_at|userDate}</li>
+            <li class="list-group-item"><b>{_payments.admin.retention_analysis.started_at}:</b> {$job->started_at|userDate}</li>
+            <li class="list-group-item"><b>{_payments.admin.retention_analysis.finished_at}:</b> {$job->finished_at|userDate}</li>
+        </ul>
+    </div>
+
+    <div class="col-md-12">
+        <h2>{_payments.admin.retention_analysis.parameters}</h2>
+        {control disabledFilterForm}
+    </div>
+
+    <div class="col-md-12">
+        <h2>{_payments.admin.retention_analysis.results}</h2>
+
+
+        {if $job->state == \Crm\PaymentsModule\Repository\RetentionAnalysisJobsRepository::STATE_FINISHED}
+            <p style="font-weight: bold">{_payments.admin.retention_analysis.continue_method_explanation}</p>
+            <table class="table table-hover table-borderless">
+                <thead>
+                    <tr>
+                        <th rowspan="2" colspan="2">{_payments.admin.retention_analysis.first_subscription_month_count}</th>
+                        <th style="text-align: center" colspan="{$colsCount}">{_payments.admin.retention_analysis.period_explanation}</th>
+                    </tr>
+                    <tr>
+                        {for $i = 0; $i < $colsCount; $i++}
+                            <th>{$i}</th>
+                        {/for}
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr n:foreach="$tableRows as $row">
+                        <td>{$row['year']}-{$row['month']}</td>
+                        <td style="border-right: 4px solid #fff" class="{$row['fullPeriodCount']['color']}">{$row['fullPeriodCount']['value']}</td>
+
+                        <td n:foreach="$row['periods'] as $period" class="{$period['color']}">
+                            {$period['percentage']}
+                        </td>
+                    </tr>
+                </tbody>
+                <tfoot >
+                    <tr>
+                        <td style="border-top: 4px solid #fff">{_payments.admin.retention_analysis.together}</td>
+                        <td style="border-top: 4px solid #fff">{$allPeriodCounts}</td>
+                        <td style="border-top: 4px solid #fff" n:foreach="$periodNumberCounts as $periodNumberCount" class="{$periodNumberCount['color']}">
+                            {$periodNumberCount['value']}
+                        </td>
+                    </tr>
+                </tfoot>
+            </table>
+        {else}
+            <p>{_payments.admin.retention_analysis.results_not_available}</p>
+        {/if}
+    </div>
+</div>
+

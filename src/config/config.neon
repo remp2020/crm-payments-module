@@ -15,6 +15,7 @@ services:
 	recurrentPaymentsRepository: Crm\PaymentsModule\Repository\RecurrentPaymentsRepository
 	parsedMailLogsRepository: Crm\PaymentsModule\MailConfirmation\ParsedMailLogsRepository
 	paymentItemsRepository: Crm\PaymentsModule\Repository\PaymentItemsRepository
+	retentionAnalysisJobsRepository: Crm\PaymentsModule\Repository\RetentionAnalysisJobsRepository
 
 	- Crm\PaymentsModule\Forms\PaymentFormFactory
 	- Crm\PaymentsModule\Forms\PaymentGatewayFormFactory
@@ -22,6 +23,7 @@ services:
 	- Crm\PaymentsModule\PaymentsHistogramFactory
 	recurrentPaymentsResolver: Crm\PaymentsModule\RecurrentPaymentsResolver
 	- Crm\PaymentsModule\Forms\RecurrentPaymentFormFactory
+	- Crm\PaymentsModule\Forms\RetentionAnalysisFilterFormFactory
 	- Crm\PaymentsModule\PaymentProcessor
 	- Crm\PaymentsModule\RecurrentPaymentsProcessor
 	- Crm\PaymentsModule\Builder\ParsedMailLogsBuilder
@@ -82,6 +84,9 @@ services:
 	subscribersWithPaymentWidgetFactory:
 		class: Crm\PaymentsModule\Components\SubscribersWithPaymentWidgetFactory
 
+	retentionAnalysisJobHandler:
+		class: Crm\PaymentsModule\Hermes\RetentionAnalysisJobHandler
+
 	paymentCompleteRedirect:
 		class: Crm\PaymentsModule\Model\PaymentCompleteRedirectManager
 		setup:
@@ -109,3 +114,5 @@ services:
 	- Crm\PaymentsModule\DataProvider\PaymentFromVariableSymbolDataProvider
 	- Crm\PaymentsModule\DataProvider\SubscriptionsWithActiveUnchargedRecurrentEndingWithinPeriodDataProvider
 	- Crm\PaymentsModule\DataProvider\SubscriptionsWithoutExtensionEndingWithinPeriodDataProvider
+
+	- Crm\PaymentsModule\Retention\RetentionAnalysis
