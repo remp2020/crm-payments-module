@@ -32,7 +32,6 @@ class StopRecurrentPaymentApiHandler extends ApiHandler
         $data = $authorization->getAuthorizedData();
         if (!isset($data['token']) || !isset($data['token']->user) || empty($data['token']->user)) {
             $response = new JsonResponse([
-                'status' => 'error',
                 'message' => 'Cannot authorize user',
                 'code' => 'cannot_authorize_user',
             ]);
@@ -56,7 +55,6 @@ class StopRecurrentPaymentApiHandler extends ApiHandler
         $recurrentPayment = $this->recurrentPaymentsRepository->find($recurrentPaymentID);
         if (!$recurrentPayment) {
             $response = new JsonResponse([
-                'status' => 'error',
                 'message' => "Recurrent payment with ID [$recurrentPaymentID] not found.",
                 'code' => 'recurrent_payment_not_found'
             ]);
@@ -66,7 +64,6 @@ class StopRecurrentPaymentApiHandler extends ApiHandler
 
         if ($recurrentPayment->user_id !== $user->id) {
             $response = new JsonResponse([
-                'status' => 'error',
                 'message' => "User with [$user->id] doesn't have recurrent payment with ID [$recurrentPaymentID].",
                 'code' => 'recurrent_payment_not_found',
             ]);
@@ -77,7 +74,6 @@ class StopRecurrentPaymentApiHandler extends ApiHandler
         // check state; user can stop only active recurrent payments
         if ($recurrentPayment->state !== RecurrentPaymentsRepository::STATE_ACTIVE) {
             $response = new JsonResponse([
-                'status' => 'error',
                 'message' => "Only active recurrent payment can be stopped by user. Recurrent payment with ID [$recurrentPaymentID] is in state [$recurrentPayment->state].",
                 'code' => 'recurrent_payment_not_active'
             ]);
@@ -90,7 +86,6 @@ class StopRecurrentPaymentApiHandler extends ApiHandler
         if (!$stoppedRecurrentPayment) {
             Debugger::log("User is unable to stop recurrent payment with ID [$recurrentPaymentID].", Debugger::ERROR);
             $response = new JsonResponse([
-                'status' => 'error',
                 'message' => "Internal server error. Unable to stop recurrent payment ID [$recurrentPaymentID].",
                 'code' => 'internal_server_error'
             ]);

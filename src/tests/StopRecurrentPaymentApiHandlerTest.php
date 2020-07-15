@@ -99,7 +99,6 @@ class StopRecurrentPaymentApiHandlerTest extends PaymentsTestCase
         $this->assertEquals(JsonResponse::class, get_class($response));
         $this->assertEquals(Response::S404_NOT_FOUND, $response->getHttpCode());
         $payload = $response->getPayload();
-        $this->assertEquals('error', $payload['status']);
         $this->assertEquals('recurrent_payment_not_found', $payload['code']);
     }
 
@@ -124,7 +123,6 @@ class StopRecurrentPaymentApiHandlerTest extends PaymentsTestCase
         $this->assertEquals(JsonResponse::class, get_class($response));
         $this->assertEquals(Response::S409_CONFLICT, $response->getHttpCode());
         $payload = $response->getPayload();
-        $this->assertEquals('error', $payload['status']);
         $this->assertEquals('recurrent_payment_not_active', $payload['code']);
 
         // validate state in DB (to be sure) - should be unchanged; stopping failed
@@ -154,7 +152,6 @@ class StopRecurrentPaymentApiHandlerTest extends PaymentsTestCase
         $this->assertEquals(JsonResponse::class, get_class($response));
         $this->assertEquals(Response::S404_NOT_FOUND, $response->getHttpCode());
         $payload = $response->getPayload();
-        $this->assertEquals('error', $payload['status']);
         $this->assertEquals('recurrent_payment_not_found', $payload['code']);
 
         // validate state in DB (to be sure) - should be unchanged for both recurrent payments; stopping failed
