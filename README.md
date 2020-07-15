@@ -384,9 +384,73 @@ Response:
 
 ---
 
+#### POST `/api/v1/recurrent-payment/reactivate`
+
+API call to reactivate user's recurrent payment.
+
+Conditions to successfully reactivate recurrent payment:
+- RecurrentPayment has to be in `\Crm\PaymentsModule\Repository\RecurrentPaymentsRepository::STATE_USER_STOP` state.
+- Next charge of payment has to be in future _(>= now)_.
+
+Changes:
+- State of recurrent payment is set to `\Crm\PaymentsModule\Repository\RecurrentPaymentsRepository::STATE_ACTIVE`.
+
+##### *Headers:*
+
+| Name | Value | Required | Description |
+| --- |---| --- | --- |
+| Authorization | Bearer *String* | yes | User token. |
+
+##### *Payload params:*
+
+| Name | Value | Required | Description |
+| --- |---| --- | --- |
+| id | *Integer* | yes | RecurrentPayment ID. |
+
+##### *Example:*
+
+```shell
+curl -X POST 'http://crm.press/api/v1/recurrent-payment/reactivate' \
+--header 'Content-Type: application/json' \
+--header 'Authorization: Bearer XXX' \
+--data-raw '{
+    "id": 999999
+}'
+```
+
+Response:
+
+_On success HTTP status 200 OK is returned with recurrent payment's details._
+
+```json5
+{
+  "id": 999999,
+  "parent_payment_id": 1234567,
+  "charge_at": "2020-10-07T08:54:00+02:00", // charge is not changed when reactivating recurrent
+  "payment_gateway_code": "stripe_recurrent",
+  "subscription_type_code": "sample",
+  "state": "active", // on success, state is always set to `active`
+  "retries": 4
+}
+```
+
+In addition to API responses described at the beginning of [API documentation](#api-documentation) section:
+
+| Value | Description |
+| --- | --- |
+| 409 Conflict | Recurrent payment cannot be stopped by user _(reason is in error message)_ |
+
+---
+
 #### POST `/api/v1/recurrent-payment/stop`
 
-API call to stop user's recurrent payment. State of recurrent payment is set to `user_stop`. Nothing else is changed and user can reactivate recurrent payment.
+API call to stop user's recurrent payment.
+
+Conditions to successfully stop recurrent payment:
+- RecurrentPayment has to be in `\Crm\PaymentsModule\Repository\RecurrentPaymentsRepository::STATE_ACTIVE` state.
+
+Changes:
+- State of recurrent payment is set to `\Crm\PaymentsModule\Repository\RecurrentPaymentsRepository::STATE_USER_STOP`.
 
 ##### *Headers:*
 

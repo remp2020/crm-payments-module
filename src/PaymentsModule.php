@@ -261,6 +261,14 @@ class PaymentsModule extends CrmModule
 
         $apiRoutersContainer->attachRouter(
             new ApiRoute(
+                new ApiIdentifier('1', 'recurrent-payment', 'reactivate'),
+                \Crm\PaymentsModule\Api\ReactivateRecurrentPaymentApiHandler::class,
+                UserTokenAuthorization::class
+            )
+        );
+
+        $apiRoutersContainer->attachRouter(
+            new ApiRoute(
                 new ApiIdentifier('1', 'recurrent-payment', 'stop'),
                 \Crm\PaymentsModule\Api\StopRecurrentPaymentApiHandler::class,
                 UserTokenAuthorization::class

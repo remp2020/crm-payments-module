@@ -53,6 +53,7 @@ services:
 	- Crm\PaymentsModule\Commands\TatraBankaStatementMailConfirmationCommand
 	- Crm\PaymentsModule\Api\VariableSymbolApiHandler
 	- Crm\PaymentsModule\Api\ListRecurrentPaymentsApiHandler
+	- Crm\PaymentsModule\Api\ReactivateRecurrentPaymentApiHandler
 	- Crm\PaymentsModule\Api\StopRecurrentPaymentApiHandler
 	- Crm\PaymentsModule\MailConfirmation\CidGetterDownloader
 	variableSymbol:

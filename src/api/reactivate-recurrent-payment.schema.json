@@ -1,0 +1,13 @@
+{
+  "$id": "http://crm.press/schemas/reactivate-recurrent-payment.schema.json",
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "description": "Reactivate recurrent payment resource",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["id"],
+  "properties": {
+    "id": {
+      "type": "integer"
+    }
+  }
+}
