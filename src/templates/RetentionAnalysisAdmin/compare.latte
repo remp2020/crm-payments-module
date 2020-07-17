@@ -1,0 +1,44 @@
+{block #title}{_payments.admin.retention_analysis.analyses_comparison}{/block}
+
+{block #content}
+
+{include '_churn_styles.latte'}
+
+<div class="row">
+
+  <div class="col-md-12">
+    <a n:href="default"><i class="fa fa-angle-left"></i> {_payments.admin.retention_analysis.back}</a>
+    <h1>
+        {_payments.admin.retention_analysis.analyses_comparison}
+    </h1>
+  </div>
+
+  <div class="col-md-12">
+    <table class="table table-hover table-borderless">
+      <thead>
+      <tr>
+        <th>{_payments.admin.retention_analysis.analysis_name}</th>
+        <th>{_payments.admin.retention_analysis.number_of_subscribers}</th>
+        {for $i = 0; $i <= $lowestLastPeriodNumber; $i++}
+          <th>{_payments.admin.retention_analysis.period_number, ['period' => $i]}</th>
+        {/for}
+      </tr>
+      </thead>
+      <tbody>
+      <tr n:foreach="$jobs as $job">
+        <td>
+          <a n:href="show $job->id">#{$job->id} {$job->name}</a>
+        </td>
+        <td style="border-right: 4px solid #fff">{$comparison[$job->id]['total_count']}</td>
+        {for $i = 0; $i <= $lowestLastPeriodNumber; $i++}
+          <td class="{$comparison[$job->id]['periods'][$i]['color']}">
+            <span title="{_payments.admin.retention_analysis.period_sum_ratio_help, ['retention_count' => $comparison[$job->id]['periods'][$i]['retention_count'], 'users_count' => $comparison[$job->id]['periods'][$i]['users_count']]}">
+                {$comparison[$job->id]['periods'][$i]['percentage']}
+            </span>
+          </td>
+        {/for}
+      </tr>
+      </tbody>
+    </table>
+  </div>
+</div>

@@ -295,10 +295,17 @@ admin:
 		period_explanation: "PERIÓDA (31-dňové intervaly po prvom predplatnom podľa zadaného filtra)"
 		continue_method_explanation: "Metóda CONTINUE - do výpočtu sú zahrnuté všetky predplatné, aj po prerušení."
 		analysis_was_scheduled: "Analýza bola zadaná, výsledok sa objaví po dokončení v tabuľke."
-		first_subscription_month_count: "Mesiac prvého predplatného / počet"
+		first_subscription_month_count: "Mesiac prvého predplatného / počet predplatiteľov"
 		back: Späť na zoznam
 		incomplete_period_explanation: "Perióda nie je dokončená pre všetkých užívateľov, niektoré predplatné ešte môžu byť obnovené."
 		period_sum_ratio_help: "%retention_count% aktívnych predplatných z celkového počtu %users_count% užívateľov ktorí dosiahli danú periódu."
+		compare: Porovnať
+		add_to_comparison: Pridať do porovnania
+		clear_comparison: Zmazať výber
+		selected_analyses_to_compare: Zvolené analýzy na porovnanie
+		analyses_comparison: Porovnanie analýz
+		period_number: Perióda %period%
+		number_of_subscribers: Počet predplatiteľov
 		fields:
 			clear_date: Vynulovať dátum
 			segment: Segment

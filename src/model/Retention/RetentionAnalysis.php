@@ -131,7 +131,10 @@ SQL;
         }
 
         $this->retentionAnalysisJobsRepository->update($job, [
-            'results' => Json::encode(['retention' => $retention]),
+            'results' => Json::encode([
+                'retention' => $retention,
+                'version' => 1, // for future changes
+            ]),
             'finished_at' => new \DateTime(),
             'state' => RetentionAnalysisJobsRepository::STATE_FINISHED,
         ]);

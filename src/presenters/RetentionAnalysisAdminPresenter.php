@@ -20,6 +20,8 @@ use Tomaj\Hermes\Emitter;
 
 class RetentionAnalysisAdminPresenter extends AdminPresenter
 {
+    private const SESSION_SECTION = 'retention_analysis';
+
     /** @var DataProviderManager @inject */
     public $dataProviderManager;
 
@@ -58,6 +60,95 @@ class RetentionAnalysisAdminPresenter extends AdminPresenter
             $paginator->getLength(),
             $paginator->getOffset()
         );
+
+        $section = $this->getSession(self::SESSION_SECTION);
+        $jobIdsToCompare = $section->jobIdsToCompare ?? [];
+        if ($jobIdsToCompare) {
+            $this->template->jobsToCompare = $this->retentionAnalysisJobsRepository->getTable()->where(['id IN (?)' => $jobIdsToCompare])->fetchAll();
+        }
+    }
+
+    public function handleClearComparison()
+    {
+        $section = $this->getSession(self::SESSION_SECTION);
+        $section->jobIdsToCompare = [];
+        $this->redrawControl('comparisonList');
+    }
+
+    public function handleAddToComparison($jobId)
+    {
+        $job = $this->retentionAnalysisJobsRepository->find($jobId);
+        if (!$job) {
+            throw new \Exception("Job with ID#{$jobId} was not found");
+        }
+        if ($job->state !== RetentionAnalysisJobsRepository::STATE_FINISHED) {
+            throw new \Exception("Job with ID#{$jobId} is not finished yet");
+        }
+
+        $section = $this->getSession(self::SESSION_SECTION);
+        $section->jobIdsToCompare = $section->jobIdsToCompare ?? [];
+        if (!in_array($jobId, $section->jobIdsToCompare)) {
+            $section->jobIdsToCompare[] = $jobId;
+        }
+
+        $this->redrawControl('comparisonList');
+    }
+
+    public function renderCompare()
+    {
+        $section = $this->getSession(self::SESSION_SECTION);
+        if (!isset($section->jobIdsToCompare) || count($section->jobIdsToCompare) <= 1) {
+            $this->redirect('default');
+        }
+
+        $jobsToCompare = $this->retentionAnalysisJobsRepository->getTable()->where(['id IN (?)' => $section->jobIdsToCompare])->fetchAll();
+
+        $lowestLastPeriodNumber = null;
+
+        $comparison = [];
+
+        foreach ($jobsToCompare as $job) {
+            $results = Json::decode($job->results, Json::FORCE_ARRAY);
+            $retention = $results['retention'];
+            ksort($retention);
+
+            $periodNumberCounts = [];
+            foreach ($retention as $yearMonth => $periods) {
+                foreach ($periods as $periodNumber => $period) {
+                    if (!array_key_exists($periodNumber, $periodNumberCounts)) {
+                        $periodNumberCounts[$periodNumber] = [
+                            'retention_count' => 0,
+                            'users_count' => 0,
+                        ];
+                    }
+
+                    $periodNumberCounts[$periodNumber]['retention_count'] += $period['count'];
+                    $periodNumberCounts[$periodNumber]['users_count'] += $period['users_in_period'];
+                }
+            }
+            $totalCount = $periodNumberCounts[0]['users_count'];
+
+            $comparison[$job->id] = [
+                'total_count' => $totalCount,
+                'periods' => [],
+            ];
+
+            foreach ($periodNumberCounts as $periodNum => $values) {
+                $ratio = (float) $values['retention_count'] / $values['users_count'];
+                $values['color'] = 'churn-color-' . floor($ratio * 10) * 10;
+                $values['percentage'] = number_format($ratio * 100, 1, '.', '') . '%';
+                $comparison[$job->id]['periods'][$periodNum] = $values;
+            }
+
+            if ($lowestLastPeriodNumber) {
+                $lowestLastPeriodNumber = min($lowestLastPeriodNumber, array_key_last($periodNumberCounts));
+            } else {
+                $lowestLastPeriodNumber = array_key_last($periodNumberCounts);
+            }
+        }
+        $this->template->jobs = $jobsToCompare;
+        $this->template->comparison = $comparison;
+        $this->template->lowestLastPeriodNumber = $lowestLastPeriodNumber;
     }
 
     public function renderNew()

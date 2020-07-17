@@ -298,10 +298,17 @@ admin:
 		period_explanation: "PERIODS (31-day intervals after first subscription according to selected parameters)"
 		continue_method_explanation: "CONTINUE method - computation includes all subscriptions, even with after interruption."
 		analysis_was_scheduled: "Analysis was scheduled, results will appear in the table below."
-		first_subscription_month_count: "First subscription month / count"
+		first_subscription_month_count: "First subscription month / number of subscribers"
 		back: Back to list
 		incomplete_period_explanation: "Period is not completed for all users, some subscriptions may yet be renewed."
 		period_sum_ratio_help: "%retention_count% active subscriptions from %users_count% users reaching the given period."
+		compare: Compare
+		add_to_comparison: Add to comparison
+		clear_comparison: Clear selection
+		selected_analyses_to_compare: Selected analyses to compare
+		analyses_comparison: Analyses comparison
+		period_number: Period %period%
+		number_of_subscribers: Number of subscribers
 		fields:
 			clear_date: Clear date
 			segment: Segment
