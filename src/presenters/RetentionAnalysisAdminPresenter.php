@@ -63,6 +63,8 @@ class RetentionAnalysisAdminPresenter extends AdminPresenter
     public function renderNew()
     {
         if ($this->getParameter('submitted')) {
+            // Increase time limit for calculations
+            set_time_limit(120);
             $this->template->paymentCounts = $this->retentionAnalysis->precalculateMonthlyPaymentCounts($this->params);
         }
     }
@@ -75,43 +77,56 @@ class RetentionAnalysisAdminPresenter extends AdminPresenter
         }
         $this->template->job = $job;
 
-        if ($job->results) {
+        if ($job->state === RetentionAnalysisJobsRepository::STATE_FINISHED && $job->results) {
             $results = Json::decode($job->results, Json::FORCE_ARRAY);
-            ksort($results);
-            $colsCount = count($results[array_key_first($results)]) ?? 0;
+            $retention = $results['retention'];
+
+            ksort($retention);
+            $colsCount = count($retention[array_key_first($retention)]) ?? 0;
 
             $tableRows = [];
 
             $allPeriodCounts = 0;
             $maxPeriodCount = 0;
-            $periodNumberCounts = [];
+            $periodNumberValues = [];
 
-            foreach ($results as $yearMonth => $result) {
+            foreach ($retention as $yearMonth => $result) {
                 $tableRow = [];
                 [$tableRow['year'], $tableRow['month']] =  explode('-', $yearMonth);
-                $tableRow['fullPeriodCount'] = $fullPeriodCount = $result[array_key_first($result)];
+                $tableRow['fullPeriodCount'] = $fullPeriodCount = $result[array_key_first($result)]['count'] ?? 0;
                 $allPeriodCounts += $fullPeriodCount;
                 $maxPeriodCount = max($maxPeriodCount, $fullPeriodCount);
                 $tableRow['periods'] = [];
 
-                foreach ($result as $period => $periodCount) {
-                    $periodNumberCounts[$period] = ($periodNumberCounts[$period] ?? 0) + $periodCount;
-                    $ratio = (float) $periodCount/$fullPeriodCount;
+                foreach ($result as $periodNumber => $period) {
+                    $retentionCount = $period['count'];
+                    $usersCount = $period['users_in_period'];
+                    if (!array_key_exists($periodNumber, $periodNumberValues)) {
+                        $periodNumberValues[$periodNumber] = [
+                            'retention_count' => 0,
+                            'users_count' => 0,
+                        ];
+                    }
+                    $periodNumberValues[$periodNumber]['retention_count'] += $retentionCount;
+                    $periodNumberValues[$periodNumber]['users_count'] += $usersCount;
+
+                    $ratio = (float) $retentionCount/$period['users_in_period'];
                     $tableRow['periods'][] =  [
+                        'retention_count' => $retentionCount,
+                        'users_count' => $period['users_in_period'],
                         'color' => 'churn-color-' . floor($ratio * 10) * 10,
-                        'percentage' =>  number_format($ratio * 100, 1, '.', '') . '%'
+                        'percentage' =>  number_format($ratio * 100, 1, '.', '') . '%' . ($period['incomplete'] ?? false ? '*' : '')
                     ];
                 }
                 $tableRows[] = $tableRow;
             }
 
             $this->template->periodNumberCounts = [];
-            foreach ($periodNumberCounts as $periodNumberCount) {
-                $ratio = (float) $periodNumberCount / $allPeriodCounts;
-                $this->template->periodNumberCounts[] = [
-                    'color' => 'churn-color-' . floor($ratio * 10) * 10,
-                    'value' =>  $periodNumberCount,
-                ];
+            foreach ($periodNumberValues as $values) {
+                $ratio = (float) $values['retention_count'] / $values['users_count'];
+                $values['color'] = 'churn-color-' . floor($ratio * 10) * 10;
+                $values['percentage'] = number_format($ratio * 100, 1, '.', '') . '%';
+                $this->template->periodNumberCounts[] = $values;
             }
 
             foreach ($tableRows as $i => $tableRow) {
@@ -120,6 +135,7 @@ class RetentionAnalysisAdminPresenter extends AdminPresenter
                     'value' => $tableRow['fullPeriodCount'],
                     'color' => 'churn-color-' . floor($ratio * 10) * 10,
                 ];
+
                 $tableRows[$i] = $tableRow;
             }
 

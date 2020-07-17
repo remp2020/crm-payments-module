@@ -7,7 +7,6 @@ use Nette\Application\UI\Form;
 
 interface RetentionAnalysisDataProviderInterface extends DataProviderInterface
 {
-
     /**
      * Interface function provides a chance to add additional filtering parameters to retention analysis configuration.
      * Array $params has 'form' key, containing \Nette\Forms\Form object and 'inputParams' key, containing array of user-entered form parameters (e.g. to pre-fill default parameters).
@@ -18,7 +17,6 @@ interface RetentionAnalysisDataProviderInterface extends DataProviderInterface
      * @return Form
      */
     public function provide(array $params): Form;
-
 
     /**
      * The function should reflect user-entered values for custom inputs added in provide() function and add required conditions to retention analysis filtering.

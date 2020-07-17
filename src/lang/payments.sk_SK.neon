@@ -297,7 +297,11 @@ admin:
 		analysis_was_scheduled: "Analýza bola zadaná, výsledok sa objaví po dokončení v tabuľke."
 		first_subscription_month_count: "Mesiac prvého predplatného / počet"
 		back: Späť na zoznam
+		incomplete_period_explanation: "Perióda nie je dokončená pre všetkých užívateľov, niektoré predplatné ešte môžu byť obnovené."
+		period_sum_ratio_help: "%retention_count% aktívnych predplatných z celkového počtu %users_count% užívateľov ktorí dosiahli danú periódu."
 		fields:
+			clear_date: Vynulovať dátum
+			segment: Segment
 			min_date_of_payment: "Zahrnúť platby od (dátumu)"
 			min_date_of_payment_desc: "Ak nie je zvolené, zarhnuté sú všetky platby."
 			previous_user_subscriptions: Predchádzajúce predplatné používateľa

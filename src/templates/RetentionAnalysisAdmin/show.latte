@@ -95,9 +95,10 @@
                     <tr n:foreach="$tableRows as $row">
                         <td>{$row['year']}-{$row['month']}</td>
                         <td style="border-right: 4px solid #fff" class="{$row['fullPeriodCount']['color']}">{$row['fullPeriodCount']['value']}</td>
-
                         <td n:foreach="$row['periods'] as $period" class="{$period['color']}">
-                            {$period['percentage']}
+                            <span title="{_payments.admin.retention_analysis.period_sum_ratio_help, ['retention_count' => $period['retention_count'], 'users_count' => $period['users_count']]}">
+                                {$period['percentage']}
+                            </span>
                         </td>
                     </tr>
                 </tbody>
@@ -106,11 +107,16 @@
                         <td style="border-top: 4px solid #fff">{_payments.admin.retention_analysis.together}</td>
                         <td style="border-top: 4px solid #fff">{$allPeriodCounts}</td>
                         <td style="border-top: 4px solid #fff" n:foreach="$periodNumberCounts as $periodNumberCount" class="{$periodNumberCount['color']}">
-                            {$periodNumberCount['value']}
+                            <span style="text-decoration-line: underline; text-decoration-style: dashed; cursor: help"
+                                  title="{_payments.admin.retention_analysis.period_sum_ratio_help, ['retention_count' => $periodNumberCount['retention_count'], 'users_count' => $periodNumberCount['users_count']]}">
+                                {$periodNumberCount['percentage']}
+                            </span>
                         </td>
                     </tr>
                 </tfoot>
             </table>
+
+            <p><small>* {_payments.admin.retention_analysis.incomplete_period_explanation}</small></p>
         {else}
             <p>{_payments.admin.retention_analysis.results_not_available}</p>
         {/if}

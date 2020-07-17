@@ -300,7 +300,11 @@ admin:
 		analysis_was_scheduled: "Analysis was scheduled, results will appear in the table below."
 		first_subscription_month_count: "First subscription month / count"
 		back: Back to list
+		incomplete_period_explanation: "Period is not completed for all users, some subscriptions may yet be renewed."
+		period_sum_ratio_help: "%retention_count% active subscriptions from %users_count% users reaching the given period."
 		fields:
+			clear_date: Clear date
+			segment: Segment
 			min_date_of_payment: "Include payments from (date)"
 			min_date_of_payment_desc: "If not selected, all payments are included."
 			previous_user_subscriptions: Previous user subscriptions

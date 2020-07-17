@@ -5,6 +5,7 @@ namespace Crm\PaymentsModule\Forms;
 use Crm\ApplicationModule\DataProvider\DataProviderManager;
 use Crm\PaymentsModule\DataProvider\RetentionAnalysisDataProviderInterface;
 use Crm\PaymentsModule\Repository\PaymentsRepository;
+use Crm\SegmentModule\Repository\SegmentsRepository;
 use Nette\Application\UI\Form;
 use Nette\Localization\ITranslator;
 use Tomaj\Form\Renderer\BootstrapRenderer;
@@ -17,14 +18,18 @@ class RetentionAnalysisFilterFormFactory
 
     private $dataProviderManager;
 
+    private $segmentsRepository;
+
     public function __construct(
         PaymentsRepository $paymentsRepository,
         DataProviderManager $dataProviderManager,
+        SegmentsRepository $segmentsRepository,
         ITranslator $translator
     ) {
         $this->paymentsRepository = $paymentsRepository;
         $this->translator = $translator;
         $this->dataProviderManager = $dataProviderManager;
+        $this->segmentsRepository = $segmentsRepository;
     }
 
     public function create(array $inputParams, bool $disabled = false): Form
@@ -43,10 +48,17 @@ class RetentionAnalysisFilterFormFactory
             throw new \Exception('No payment, cannot render form');
         }
 
-        $form->addText('min_date_of_payment', 'payments.admin.retention_analysis.fields.min_date_of_payment')
+        $date = $form->addText('min_date_of_payment', 'payments.admin.retention_analysis.fields.min_date_of_payment')
             ->setAttribute('class', 'flatpickr')
             ->setOption('description', 'payments.admin.retention_analysis.fields.min_date_of_payment_desc')
             ->setDisabled($disabled);
+
+        if (!$disabled) {
+            $dateHtmlId = $date->getHtmlId();
+            $form->addButton('clear_date', 'payments.admin.retention_analysis.fields.clear_date')
+                ->setAttribute('class', 'btn btn-default')
+                ->setHtmlAttribute('onclick', "document.getElementById('{$dateHtmlId}')._flatpickr.clear()");
+        }
 
         $form->addSelect('previous_user_subscriptions', 'payments.admin.retention_analysis.fields.previous_user_subscriptions', [
             'without_previous_subscription' => $this->translator->translate('payments.admin.retention_analysis.fields.without_previous_subscription'),
@@ -55,6 +67,11 @@ class RetentionAnalysisFilterFormFactory
         ])
             ->setPrompt('--')
             ->setDisabled($disabled);
+
+        $form->addSelect('segment_code', 'payments.admin.retention_analysis.fields.segment', $this->segmentsRepository->all()->fetchPairs('code', 'name'))
+            ->setDisabled($disabled)
+            ->setPrompt('--')
+            ->getControlPrototype()->addAttributes(['class' => 'select2']);
 
         /** @var RetentionAnalysisDataProviderInterface[] $providers */
         $providers = $this->dataProviderManager->getProviders('payments.dataprovider.retention_analysis', RetentionAnalysisDataProviderInterface::class);
