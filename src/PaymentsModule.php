@@ -33,6 +33,7 @@ use Crm\PaymentsModule\DataProvider\CanDeleteAddressDataProvider;
 use Crm\PaymentsModule\DataProvider\PaymentFromVariableSymbolDataProvider;
 use Crm\PaymentsModule\DataProvider\SubscriptionsWithActiveUnchargedRecurrentEndingWithinPeriodDataProvider;
 use Crm\PaymentsModule\DataProvider\SubscriptionsWithoutExtensionEndingWithinPeriodDataProvider;
+use Crm\PaymentsModule\Events\CardExpiresThisMonthEvent;
 use Crm\PaymentsModule\MailConfirmation\ParsedMailLogsRepository;
 use Crm\PaymentsModule\Repository\PaymentsRepository;
 use Crm\PaymentsModule\Scenarios\PaymentStatusCriteria;
@@ -345,6 +346,7 @@ class PaymentsModule extends CrmModule
         $eventsStorage->register('recurrent_payment_fail', Events\RecurrentPaymentFailEvent::class);
         $eventsStorage->register('recurrent_payment_fail_try', Events\RecurrentPaymentFailTryEvent::class);
         $eventsStorage->register('recurrent_payment_renewed', Events\RecurrentPaymentRenewedEvent::class, true);
+        $eventsStorage->register('card_expires_this_month', CardExpiresThisMonthEvent::class);
     }
 
     public function cache(OutputInterface $output, array $tags = [])

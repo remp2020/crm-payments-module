@@ -2,9 +2,8 @@
 
 namespace Crm\PaymentsModule\Commands;
 
-use Crm\ApplicationModule\DataRow;
+use Crm\PaymentsModule\Events\CardExpiresThisMonthEvent;
 use Crm\PaymentsModule\Repository\RecurrentPaymentsRepository;
-use Crm\UsersModule\Events\NotificationEvent;
 use League\Event\Emitter;
 use Nette\Utils\DateTime;
 use Symfony\Component\Console\Command\Command;
@@ -58,10 +57,6 @@ class StopRecurrentPaymentsExpiresCommand extends Command
         foreach ($recurrentPayments as $recurrentPayment) {
             $output->writeln("Processing user #[{$recurrentPayment->user->id}] <info>{$recurrentPayment->user->public_name}</info>");
 
-            // v buducnosti by bolo fajn tu len emitovat event
-            // a posielanie emailu dat do email modulu
-            // a zrusenie recurentu bude nechat tu alebo dat inde
-
             $output->writeln("  * Stopping recurrent <info>{$recurrentPayment->id}</info>");
             $note = 'AutoStop on expired card';
             $this->recurrentPaymentsRepository->update($recurrentPayment, [
@@ -69,26 +64,13 @@ class StopRecurrentPaymentsExpiresCommand extends Command
                 'note' => $recurrentPayment->note ? $recurrentPayment->note . ' ' . $note : $note,
             ]);
 
-            $hasNewRecurrent = $this->recurrentPaymentsRepository->all()->where([
-                'user_id' => $recurrentPayment->user_id,
-                'cid != ?' => $recurrentPayment->cid,
-                'charge_at > ?' => $recurrentPayment->charge_at,
-                'status' => RecurrentPaymentsRepository::STATE_ACTIVE,
-            ])->count('*') > 0;
-
-            if ($hasNewRecurrent) {
-                $output->writeln("  * has new recurrent <info>{$recurrentPayment->user->public_name}</info>");
-            } else {
-                if (isset($recurrentPayment->user->email)) {
-                    $output->writeln("  * Sending email <info>{$recurrentPayment->user->email}</info>");
-                    $userRow = new DataRow([
-                        'email' => $recurrentPayment->user->email,
-                    ]);
-                    $this->emitter->emit(new NotificationEvent($this->emitter, $userRow, 'card_expires_this_month'));
-                } else {
-                    $output->writeln("  * Card expires this month, email not sent <info>{$recurrentPayment->user->public_name}</info>, userID: <info>{$recurrentPayment->user->id}</info>");
-                }
-            }
+            $hasUserNewRecurrent = $this->recurrentPaymentsRepository->all()->where([
+                    'user_id' => $recurrentPayment->user_id,
+                    'cid != ?' => $recurrentPayment->cid,
+                    'charge_at > ?' => $recurrentPayment->charge_at,
+                    'status' => RecurrentPaymentsRepository::STATE_ACTIVE,
+                ])->count('*') > 0;
+            $this->emitter->emit(new CardExpiresThisMonthEvent($recurrentPayment, $hasUserNewRecurrent));
         }
 
         $end = microtime(true);
