@@ -81,8 +81,12 @@ services:
 	- Crm\PaymentsModule\Seeders\ConfigsSeeder
 	- Crm\PaymentsModule\Seeders\PaymentGatewaysSeeder
 	- Crm\PaymentsModule\Seeders\SegmentsSeeder
+
+	# events
 	- Crm\PaymentsModule\Events\PaymentStatusChangeHandler
+	- Crm\PaymentsModule\Events\RecurrentPaymentCardExpiredEventHandler
 	- Crm\PaymentsModule\Events\SubscriptionPreUpdateHandler
+
 	subscribersWithPaymentWidgetFactory:
 		class: Crm\PaymentsModule\Components\SubscribersWithPaymentWidgetFactory
 

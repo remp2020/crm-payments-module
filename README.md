@@ -119,6 +119,8 @@ The flow of payment processing can be described with following diagram:
 
 ### Recurrent payments
 
+#### Initiating payment
+
 If the payment uses gateway that supports recurrent payment, the initial flow is usually the same as with the regular
 payments. The difference comes in during processing of successful initial payment.
 
@@ -134,6 +136,8 @@ information about each charge attempt for whole history of user charging includi
 This is all done on backend without system requiring any kind of user interaction. This block merely explains the
 flow and describes the terms so when displayed in CRM admin, the reader understands the displayed data.
 
+#### Automatic charges
+
 To charge the user, add `payments:charge` command to your scheduler. Command doesn't handle concurrent runs - that means
 that it's responsibility of your scheduler to prevent multiple overlapping instances of command running at the same time.
 Otherwise a user could be charged twice during the same period.
@@ -144,6 +148,34 @@ instance is still running. Following is an example snippet for *crontab* to run 
 ```sh
 */15 * * * * flock /tmp/payments_charge.lock /usr/bin/php /var/www/html/bin/command.php payments:charge
 ``` 
+
+#### Notifying expired cards
+
+If gateway supports it, CRM fetches expiration date for each `cid` (effectively credit card) used to execute recurring charges. Optionally, you can add command to your scheduler that automatically stops expired recurrent payments:
+
+```
+# stop recurrent payments with expired cards
+7 2 1 * * php /var/www/html/bin/command.php payments:stop_expired_recurrent_payments
+```
+
+When recurrent payment is stopped, [`Crm\PaymentsModule\Events\RecurrentPaymentCardExpiredEvent`](./src/events/RecurrentPaymentCardExpiredEvent.php) is emitted. By default, `PaymentsModule` checks if there's another active recurring payment for user. If there isn't, it sends `NotificationEvent` with `card_expires_this_month` template code.
+
+If you're not satisfied with the default implementation, you can remove the default handler by unregistering it in your module definition:
+
+```php
+class FooModule extends Crm\ApplicationModule\CrmModule
+{
+    // ...
+    public function registerEventHandlers(League\Event\Emitter $emitter)
+    {
+        $emitter->removeListener(
+            \Crm\PaymentsModule\Events\RecurrentPaymentCardExpiredEvent::class,
+            $this->getInstance(\Crm\PaymentsModule\Events\RecurrentPaymentCardExpiredEventHandler::class)
+        );
+        // ...
+    }
+}
+```  
 
 ### Implementing new gateway
 

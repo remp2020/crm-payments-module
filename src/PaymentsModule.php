@@ -356,6 +356,10 @@ class PaymentsModule extends CrmModule
             \Crm\SubscriptionsModule\Events\SubscriptionPreUpdateEvent::class,
             $this->getInstance(\Crm\PaymentsModule\Events\SubscriptionPreUpdateHandler::class)
         );
+        $emitter->addListener(
+            \Crm\PaymentsModule\Events\RecurrentPaymentCardExpiredEvent::class,
+            $this->getInstance(\Crm\PaymentsModule\Events\RecurrentPaymentCardExpiredEventHandler::class)
+        );
     }
 
     public function registerHermesHandlers(Dispatcher $dispatcher)
@@ -373,6 +377,7 @@ class PaymentsModule extends CrmModule
         $eventsStorage->register('recurrent_payment_fail', Events\RecurrentPaymentFailEvent::class);
         $eventsStorage->register('recurrent_payment_fail_try', Events\RecurrentPaymentFailTryEvent::class);
         $eventsStorage->register('recurrent_payment_renewed', Events\RecurrentPaymentRenewedEvent::class, true);
+        $eventsStorage->register('card_expires_this_month', Events\RecurrentPaymentCardExpiredEvent::class);
     }
 
     public function cache(OutputInterface $output, array $tags = [])
