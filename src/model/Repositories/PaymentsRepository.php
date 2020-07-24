@@ -312,9 +312,13 @@ class PaymentsRepository extends Repository
         return $this->getTable()->where(['user_id' => $userId])->order('created_at DESC');
     }
 
-    final public function userPaymentsWithRecurrent($userId)
+    /**
+     * @param int $userId
+     * @return \Nette\Database\Table\Selection
+     */
+    final public function userRefundPayments($userId)
     {
-        return $this->getTable()->where(['payments.user_id' => $userId])->order('created_at DESC');
+        return $this->userPayments($userId)->where('status', self::STATUS_REFUND);
     }
 
     /**

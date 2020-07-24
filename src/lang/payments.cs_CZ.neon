@@ -481,6 +481,7 @@ gateway:
 frontend:
 	my:
 		my_payments: Moje platby
+		refund_payments: Vrácené platby
 		payment_type: Způsob platby
 		payment_day: Dne
 		variable_symbol: Variabilní symbol
