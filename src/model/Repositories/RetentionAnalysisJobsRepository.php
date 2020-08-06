@@ -32,12 +32,20 @@ class RetentionAnalysisJobsRepository extends Repository
         ]);
     }
 
-    final public function setFailed(IRow $row, string $error)
+    final public function setFailed($jobId, string $error)
     {
-        $this->update($row, [
-            'state' => self::STATE_FAILED,
-            'results' => Json::encode(['error' => $error]),
-        ]);
+        $job = $this->find($jobId);
+
+        if ($job) {
+            if ($job->state !== self::STATE_FINISHED) {
+                $this->update($job, [
+                    'state' => self::STATE_FAILED,
+                    'results' => Json::encode(['error' => $error]),
+                ]);
+            }
+        } else {
+            throw new \InvalidArgumentException("Retention analysis job with ID #{$jobId} does not exist.");
+        }
     }
 
     final public function update(IRow &$row, $data)
