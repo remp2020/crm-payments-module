@@ -94,8 +94,7 @@ class RetentionAnalysisAdminPresenter extends AdminPresenter
         $this->redrawControl('comparisonList');
     }
 
-    // Not a signal since refresh of page would make signal run twice
-    public function renderRerunJob($jobId)
+    public function handleRerunJob($jobId)
     {
         $job = $this->retentionAnalysisJobsRepository->find($jobId);
         if (!$job) {
@@ -107,7 +106,6 @@ class RetentionAnalysisAdminPresenter extends AdminPresenter
         }
 
         $this->removeJobFromComparison($job->id);
-        $this->redrawControl('comparisonList');
 
         $this->retentionAnalysisJobsRepository->update($job, [
             'state' => RetentionAnalysisJobsRepository::STATE_CREATED,
@@ -120,7 +118,8 @@ class RetentionAnalysisAdminPresenter extends AdminPresenter
         ]));
 
         $this->flashMessage($this->translator->translate('payments.admin.retention_analysis.job_was_rerun'));
-        $this->redirect('default');
+
+        $this->redirect('this');
     }
 
     public function handleRemoveJob($jobId)
@@ -135,10 +134,11 @@ class RetentionAnalysisAdminPresenter extends AdminPresenter
         }
 
         $this->removeJobFromComparison($jobId);
-        $this->redrawControl('comparisonList');
 
         $this->retentionAnalysisJobsRepository->delete($job);
         $this->flashMessage($this->translator->translate('payments.admin.retention_analysis.job_removed'));
+
+        $this->redirect('this');
     }
 
     private function removeJobFromComparison($jobId)

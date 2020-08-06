@@ -75,7 +75,7 @@
                           <a n:href="addToComparison! $job->id" class="btn btn-sm btn-info" title="{_payments.admin.retention_analysis.add_to_comparison}"><i class="fa fa-exchange-alt"></i></a>
                       {/if}
                       {if $job->state == \Crm\PaymentsModule\Repository\RetentionAnalysisJobsRepository::STATE_FINISHED || $job->state == \Crm\PaymentsModule\Repository\RetentionAnalysisJobsRepository::STATE_FAILED}
-                          <a n:href="rerunJob $job->id" class="btn btn-sm btn-warning" title="{_payments.admin.retention_analysis.rerun_job}"><i class="fa fa-play"></i></a>
+                          <a n:href="rerunJob! $job->id" class="btn btn-sm btn-warning" title="{_payments.admin.retention_analysis.rerun_job}"><i class="fa fa-play"></i></a>
                           <a n:href="removeJob! $job->id" class="btn btn-sm btn-danger" title="{_payments.admin.retention_analysis.remove_job}"><i class="fa fa-trash"></i></a>
                       {/if}
                   </p>
