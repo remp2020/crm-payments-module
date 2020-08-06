@@ -309,6 +309,10 @@ admin:
 		analyses_comparison: Analyses comparison
 		period_number: Period %period%
 		number_of_subscribers: Number of subscribers
+		rerun_job: Re-run analysis
+		remove_job: Delete
+		job_removed: Analysis was deleted.
+		job_was_rerun: "Analysis was scheduled to run again, results will appear in the table below."
 		fields:
 			clear_date: Clear date
 			segment: Segment

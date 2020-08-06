@@ -306,6 +306,10 @@ admin:
 		analyses_comparison: Porovnanie analýz
 		period_number: Perióda %period%
 		number_of_subscribers: Počet predplatiteľov
+		rerun_job: Znova spustiť
+		remove_job: Zmazať
+		job_removed: "Analýza bola zmazaná."
+		job_was_rerun: "Analýza bola znova spustená, výsledok sa objaví po dokončení v tabuľke."
 		fields:
 			clear_date: Vynulovať dátum
 			segment: Segment

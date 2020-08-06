@@ -94,6 +94,64 @@ class RetentionAnalysisAdminPresenter extends AdminPresenter
         $this->redrawControl('comparisonList');
     }
 
+    // Not a signal since refresh of page would make signal run twice
+    public function renderRerunJob($jobId)
+    {
+        $job = $this->retentionAnalysisJobsRepository->find($jobId);
+        if (!$job) {
+            throw new \Exception("Job with ID#{$jobId} was not found");
+        }
+
+        if (!in_array($job->state, [RetentionAnalysisJobsRepository::STATE_FINISHED, RetentionAnalysisJobsRepository::STATE_FAILED], true)) {
+            throw new \Exception("Cannot rerun job ID#{$jobId} because it is not in FINISHED or FAILED state.");
+        }
+
+        $this->removeJobFromComparison($job->id);
+        $this->redrawControl('comparisonList');
+
+        $this->retentionAnalysisJobsRepository->update($job, [
+            'state' => RetentionAnalysisJobsRepository::STATE_CREATED,
+            'started_at' => null,
+            'finished_at' => null,
+        ]);
+
+        $this->hermesEmitter->emit(new HermesMessage('retention-analysis-job', [
+            'id' => $job->id
+        ]));
+
+        $this->flashMessage($this->translator->translate('payments.admin.retention_analysis.job_was_rerun'));
+        $this->redirect('default');
+    }
+
+    public function handleRemoveJob($jobId)
+    {
+        $job = $this->retentionAnalysisJobsRepository->find($jobId);
+        if (!$job) {
+            throw new \Exception("Job with ID#{$jobId} was not found");
+        }
+
+        if (!in_array($job->state, [RetentionAnalysisJobsRepository::STATE_FINISHED, RetentionAnalysisJobsRepository::STATE_FAILED], true)) {
+            throw new \Exception("Cannot delete job ID#{$jobId} because it is not in FINISHED or FAILED state.");
+        }
+
+        $this->removeJobFromComparison($jobId);
+        $this->redrawControl('comparisonList');
+
+        $this->retentionAnalysisJobsRepository->delete($job);
+        $this->flashMessage($this->translator->translate('payments.admin.retention_analysis.job_removed'));
+    }
+
+    private function removeJobFromComparison($jobId)
+    {
+        $section = $this->getSession(self::SESSION_SECTION);
+        $section->jobIdsToCompare = $section->jobIdsToCompare ?? [];
+
+        $foundIndex = array_search($jobId, $section->jobIdsToCompare, false);
+        if ($foundIndex !== false) {
+            unset($section->jobIdsToCompare[$foundIndex]);
+        }
+    }
+
     public function renderCompare()
     {
         $section = $this->getSession(self::SESSION_SECTION);
