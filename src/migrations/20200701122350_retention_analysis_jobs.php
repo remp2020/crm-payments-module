@@ -18,7 +18,7 @@ class RetentionAnalysisJobs extends AbstractMigration
             ])
             ->addColumn('name', 'string', ['null' => false])
             ->addColumn('params', 'text', ['null' => false])
-            ->addColumn('results', 'text', ['null' => true, 'limit' => 'TEXT_MEDIUM'])
+            ->addColumn('results', 'text', ['null' => true])
             ->addColumn('started_at', 'datetime', ['null' => true])
             ->addColumn('finished_at', 'datetime', ['null' => true])
             ->addColumn('updated_at', 'datetime', ['null' => false])
