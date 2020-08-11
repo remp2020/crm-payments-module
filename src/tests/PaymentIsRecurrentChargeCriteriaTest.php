@@ -2,7 +2,6 @@
 
 namespace Crm\PaymentsModule\Tests;
 
-use Crm\ApplicationModule\Selection;
 use Crm\ApplicationModule\Tests\DatabaseTestCase;
 use Crm\PaymentsModule\PaymentItem\PaymentItemContainer;
 use Crm\PaymentsModule\Repository\PaymentGatewaysRepository;
@@ -44,15 +43,15 @@ class PaymentIsRecurrentChargeCriteriaTest extends DatabaseTestCase
      */
     public function testIsRecurrentCharge(bool $isRecurrentCharge, bool $selectedValue, bool $expectedValue): void
     {
-        $selection = $this->prepareData($isRecurrentCharge);
+        [$paymentSelection, $paymentRow] = $this->prepareData($isRecurrentCharge);
 
         $criteria = new PaymentIsRecurrentChargeCriteria();
-        $criteria->addCondition($selection, PaymentIsRecurrentChargeCriteria::KEY, (object)['selection' => $selectedValue]);
+        $criteria->addCondition($paymentSelection, (object)['selection' => $selectedValue], $paymentRow);
 
         if ($expectedValue) {
-            $this->assertNotFalse($selection->fetch());
+            $this->assertNotFalse($paymentSelection->fetch());
         } else {
-            $this->assertFalse($selection->fetch());
+            $this->assertFalse($paymentSelection->fetch());
         }
     }
 
@@ -66,7 +65,7 @@ class PaymentIsRecurrentChargeCriteriaTest extends DatabaseTestCase
         ];
     }
 
-    private function prepareData(bool $isRecurrentCharge): Selection
+    private function prepareData(bool $isRecurrentCharge): array
     {
         /** @var UserManager $userManager */
         $userManager = $this->inject(UserManager::class);
@@ -106,7 +105,9 @@ class PaymentIsRecurrentChargeCriteriaTest extends DatabaseTestCase
             $isRecurrentCharge
         );
 
-        return $paymentsRepository->getTable()
+        $paymentSelection = $paymentsRepository->getTable()
             ->where(['payments.id' => $paymentRow->id]);
+
+        return [$paymentSelection, $paymentRow];
     }
 }
