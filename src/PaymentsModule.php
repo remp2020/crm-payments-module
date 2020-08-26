@@ -36,6 +36,7 @@ use Crm\PaymentsModule\DataProvider\RecurrentPaymentsClaimUserDataProvider;
 use Crm\PaymentsModule\DataProvider\SubscriptionsWithActiveUnchargedRecurrentEndingWithinPeriodDataProvider;
 use Crm\PaymentsModule\DataProvider\SubscriptionsWithoutExtensionEndingWithinPeriodDataProvider;
 use Crm\PaymentsModule\MailConfirmation\ParsedMailLogsRepository;
+use Crm\PaymentsModule\Repository\PaymentLogsRepository;
 use Crm\PaymentsModule\Repository\PaymentsRepository;
 use Crm\PaymentsModule\Scenarios\IsActiveRecurrentSubscriptionCriteria;
 use Crm\PaymentsModule\Scenarios\PaymentIsRecurrentChargeCriteria;
@@ -286,8 +287,8 @@ class PaymentsModule extends CrmModule
 
     public function registerCleanupFunction(CallbackManagerInterface $cleanUpManager)
     {
-        $cleanUpManager->add(function (Container $container) {
-            $paymentsLogsRepository = $container->getByType('Crm\PaymentsModule\Repository\PaymentLogsRepository');
+        $cleanUpManager->add(PaymentLogsRepository::class, function (Container $container) {
+            $paymentsLogsRepository = $container->getByType(PaymentLogsRepository::class);
             $paymentsLogsRepository->removeOldData();
         });
     }
