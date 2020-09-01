@@ -4,12 +4,13 @@ namespace Crm\PaymentsModule\Repository;
 
 use Crm\ApplicationModule\Repository;
 use Crm\PaymentsModule\VariableSymbolInterface;
+use Nette\Database\Table\ActiveRow;
 
 class VariableSymbol extends Repository implements VariableSymbolInterface
 {
     protected $tableName = 'variable_symbols';
 
-    public function getNew(): string
+    public function getNew(?ActiveRow $paymentGateway): string
     {
         do {
             $variableSymbol = $this->generateRandom();

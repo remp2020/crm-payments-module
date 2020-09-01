@@ -29,7 +29,7 @@ class VariableSymbolApiHandler extends ApiHandler
      */
     public function handle(ApiAuthorizationInterface $authorization)
     {
-        $response = new JsonResponse(['status' => 'ok', 'variable_symbol' => $this->variableSymbol->getNew()]);
+        $response = new JsonResponse(['status' => 'ok', 'variable_symbol' => $this->variableSymbol->getNew(null)]);
         $response->setHttpCode(Response::S200_OK);
 
         return $response;

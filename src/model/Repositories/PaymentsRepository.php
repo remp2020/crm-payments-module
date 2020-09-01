@@ -110,7 +110,7 @@ class PaymentsRepository extends Repository
             'status' => self::STATUS_FORM,
             'created_at' => new DateTime(),
             'modified_at' => new DateTime(),
-            'variable_symbol' => $variableSymbol ? $variableSymbol : $this->variableSymbol->getNew(),
+            'variable_symbol' => $variableSymbol ? $variableSymbol : $this->variableSymbol->getNew($paymentGateway),
             'ip' => Request::getIp(),
             'user_agent' => Request::getUserAgent(),
             'referer' => $referer,
