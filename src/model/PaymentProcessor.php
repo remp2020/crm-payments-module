@@ -94,7 +94,7 @@ class PaymentProcessor
             $this->paymentsRepository->updateStatus($payment, PaymentsRepository::STATUS_FAIL);
             $payment = $this->paymentsRepository->find($payment->id);
         } elseif ($result === null) {
-            // no action intentionally, not even log
+            $callback($payment, $gateway);
             return;
         }
 
