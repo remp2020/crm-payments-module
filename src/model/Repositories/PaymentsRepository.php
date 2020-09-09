@@ -309,7 +309,7 @@ class PaymentsRepository extends Repository
      */
     final public function userPayments($userId)
     {
-        return $this->getTable()->where(['user_id' => $userId])->order('created_at DESC');
+        return $this->getTable()->where(['payments.user_id' => $userId])->order('created_at DESC');
     }
 
     /**
