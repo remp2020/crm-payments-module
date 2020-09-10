@@ -229,7 +229,7 @@ class PaymentsRepository extends Repository
             $this->paymentItemsRepository->add($row, $paymentItemContainer);
         }
 
-        $values['modified_at'] = new DateTime();
+        $data['modified_at'] = new DateTime();
         return parent::update($row, $data);
     }
 

@@ -31,13 +31,15 @@ use Crm\PaymentsModule\Commands\TatraBankaStatementMailConfirmationCommand;
 use Crm\PaymentsModule\Commands\UpdateRecurrentPaymentsExpiresCommand;
 use Crm\PaymentsModule\DataProvider\CanDeleteAddressDataProvider;
 use Crm\PaymentsModule\DataProvider\PaymentFromVariableSymbolDataProvider;
+use Crm\PaymentsModule\DataProvider\PaymentsClaimUserDataProvider;
+use Crm\PaymentsModule\DataProvider\RecurrentPaymentsClaimUserDataProvider;
 use Crm\PaymentsModule\DataProvider\SubscriptionsWithActiveUnchargedRecurrentEndingWithinPeriodDataProvider;
 use Crm\PaymentsModule\DataProvider\SubscriptionsWithoutExtensionEndingWithinPeriodDataProvider;
 use Crm\PaymentsModule\MailConfirmation\ParsedMailLogsRepository;
 use Crm\PaymentsModule\Repository\PaymentsRepository;
+use Crm\PaymentsModule\Scenarios\IsActiveRecurrentSubscriptionCriteria;
 use Crm\PaymentsModule\Scenarios\PaymentIsRecurrentChargeCriteria;
 use Crm\PaymentsModule\Scenarios\PaymentStatusCriteria;
-use Crm\PaymentsModule\Scenarios\IsActiveRecurrentSubscriptionCriteria;
 use Crm\PaymentsModule\Seeders\ConfigsSeeder;
 use Crm\PaymentsModule\Seeders\PaymentGatewaysSeeder;
 use Crm\PaymentsModule\Seeders\SegmentsSeeder;
@@ -350,6 +352,14 @@ class PaymentsModule extends CrmModule
         $dataProviderManager->registerDataProvider(
             'users.dataprovider.address.can_delete',
             $this->getInstance(CanDeleteAddressDataProvider::class)
+        );
+        $dataProviderManager->registerDataProvider(
+            'users.dataprovider.claim_unclaimed_user',
+            $this->getInstance(PaymentsClaimUserDataProvider::class)
+        );
+        $dataProviderManager->registerDataProvider(
+            'users.dataprovider.claim_unclaimed_user',
+            $this->getInstance(RecurrentPaymentsClaimUserDataProvider::class)
         );
     }
 

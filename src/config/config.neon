@@ -74,6 +74,8 @@ services:
 	- Crm\PaymentsModule\User\PaymentsUserDataProvider
 	- Crm\PaymentsModule\User\RecurrentPaymentsUserDataProvider
 	- Crm\PaymentsModule\DataProvider\CanDeleteAddressDataProvider
+	- Crm\PaymentsModule\DataProvider\PaymentsClaimUserDataProvider
+	- Crm\PaymentsModule\DataProvider\RecurrentPaymentsClaimUserDataProvider
 	- Crm\PaymentsModule\Scenarios\PaymentStatusCriteria
 	- Crm\PaymentsModule\Scenarios\PaymentIsRecurrentChargeCriteria
 	- Crm\PaymentsModule\Scenarios\IsActiveRecurrentSubscriptionCriteria
