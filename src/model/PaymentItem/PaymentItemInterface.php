@@ -17,4 +17,8 @@ interface PaymentItemInterface
     public function count(): int;
 
     public function data(): array;
+
+    public function unitPriceWithoutVAT(): float;
+
+    public function totalPriceWithoutVAT(): float;
 }

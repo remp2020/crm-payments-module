@@ -42,7 +42,7 @@ class PaymentItemsRepository extends Repository
                 'count' => $item->count(),
                 'name' => $item->name(),
                 'amount' => $item->unitPrice(),
-                'amount_without_vat' => round($item->unitPrice() / (1 + ($item->vat()/100)), 2),
+                'amount_without_vat' => $item->unitPriceWithoutVAT(),
                 'vat' => $item->vat(),
                 'created_at' => new DateTime(),
                 'updated_at' => new DateTime(),
