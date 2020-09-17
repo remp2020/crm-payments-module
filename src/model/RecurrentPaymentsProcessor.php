@@ -40,18 +40,28 @@ class RecurrentPaymentsProcessor
         $this->emitter = $emitter;
     }
 
-    public function processChargedRecurrent($recurrentPayment, $resultCode, $resultMessage, $customChargeAmount = null)
-    {
-        $this->paymentsRepository->updateStatus($recurrentPayment->payment, PaymentsRepository::STATUS_PAID);
+    public function processChargedRecurrent(
+        $recurrentPayment,
+        $paymentStatus,
+        $resultCode,
+        $resultMessage,
+        $customChargeAmount = null,
+        \DateTime $chargeAt = null
+    ) {
+        $this->paymentsRepository->updateStatus($recurrentPayment->payment, $paymentStatus);
         $payment = $this->paymentsRepository->find($recurrentPayment->payment->id); // refresh to get fresh object
 
         $retries = explode(', ', $this->applicationConfig->get('recurrent_payment_charges'));
         $retries = count($retries);
 
+        if (!$chargeAt) {
+            $chargeAt = $this->recurrentPaymentsRepository->calculateChargeAt($payment);
+        }
+
         $this->recurrentPaymentsRepository->add(
             $recurrentPayment->cid,
             $payment,
-            $this->recurrentPaymentsRepository->calculateChargeAt($payment),
+            $chargeAt,
             $customChargeAmount,
             --$retries
         );

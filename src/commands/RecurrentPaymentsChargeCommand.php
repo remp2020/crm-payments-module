@@ -5,6 +5,7 @@ namespace Crm\PaymentsModule\Commands;
 use Crm\ApplicationModule\Config\ApplicationConfig;
 use Crm\PaymentsModule\GatewayFactory;
 use Crm\PaymentsModule\GatewayFail;
+use Crm\PaymentsModule\Gateways\ExternallyChargedRecurrentPaymentInterface;
 use Crm\PaymentsModule\Gateways\RecurrentPaymentInterface;
 use Crm\PaymentsModule\PaymentItem\DonationPaymentItem;
 use Crm\PaymentsModule\PaymentItem\PaymentItemContainer;
@@ -199,6 +200,7 @@ class RecurrentPaymentsChargeCommand extends Command
                 if ($payment->status === PaymentsRepository::STATUS_PAID) {
                     $this->recurrentPaymentsProcessor->processChargedRecurrent(
                         $recurrentPayment,
+                        $payment->status,
                         $gateway->getResultCode(),
                         $gateway->getResultMessage(),
                         $customChargeAmount
@@ -207,11 +209,19 @@ class RecurrentPaymentsChargeCommand extends Command
                     $result = $gateway->charge($payment, $recurrentPayment->cid);
                     switch ($result) {
                         case RecurrentPaymentInterface::CHARGE_OK:
+                            $paymentStatus = PaymentsRepository::STATUS_PAID;
+                            $chargeAt = null;
+                            if ($gateway instanceof ExternallyChargedRecurrentPaymentInterface) {
+                                $paymentStatus = $gateway->getChargedPaymentStatus();
+                                $chargeAt = $gateway->getLatestReceiptExpiration();
+                            }
                             $this->recurrentPaymentsProcessor->processChargedRecurrent(
                                 $recurrentPayment,
+                                $paymentStatus,
                                 $gateway->getResultCode(),
                                 $gateway->getResultMessage(),
-                                $customChargeAmount
+                                $customChargeAmount,
+                                $chargeAt
                             );
                             break;
                         case RecurrentPaymentInterface::CHARGE_PENDING:
