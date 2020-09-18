@@ -7,6 +7,8 @@ use Crm\ApplicationModule\Hermes\HermesMessage;
 use Crm\ApplicationModule\Repository;
 use Crm\ApplicationModule\Repository\AuditLogRepository;
 use Crm\PaymentsModule\Events\RecurrentPaymentRenewedEvent;
+use Crm\PaymentsModule\Events\RecurrentPaymentStoppedByAdminEvent;
+use Crm\PaymentsModule\Events\RecurrentPaymentStoppedByUserEvent;
 use Crm\PaymentsModule\Events\RecurrentPaymentStoppedEvent;
 use League\Event\Emitter;
 use Nette\Database\Context;
@@ -174,7 +176,7 @@ class RecurrentPaymentsRepository extends Repository
             return null;
         }
         $this->update($rp, ['state' => self::STATE_USER_STOP]);
-        $this->emitter->emit(new RecurrentPaymentStoppedEvent($rp));
+        $this->emitter->emit(new RecurrentPaymentStoppedByUserEvent($rp));
         return $rp;
     }
 
@@ -186,7 +188,7 @@ class RecurrentPaymentsRepository extends Repository
 
         foreach ($rps as $rp) {
             $this->update($rp, ['state' => self::STATE_USER_STOP]);
-            $this->emitter->emit(new RecurrentPaymentStoppedEvent($rp));
+            $this->emitter->emit(new RecurrentPaymentStoppedByUserEvent($rp));
         }
 
         return true;
@@ -199,7 +201,7 @@ class RecurrentPaymentsRepository extends Repository
             return null;
         }
         $this->update($rp, ['state' => self::STATE_ADMIN_STOP]);
-        $this->emitter->emit(new RecurrentPaymentStoppedEvent($rp));
+        $this->emitter->emit(new RecurrentPaymentStoppedByAdminEvent($rp));
         return $rp;
     }
 

@@ -5,7 +5,7 @@ namespace Crm\PaymentsModule\Events;
 use League\Event\AbstractEvent;
 use Nette\Database\Table\ActiveRow;
 
-class RecurrentPaymentStoppedEvent extends AbstractEvent
+class RecurrentPaymentStoppedByAdminEvent extends AbstractEvent
 {
     private $recurrentPayment;
 
