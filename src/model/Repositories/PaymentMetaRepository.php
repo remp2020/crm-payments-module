@@ -56,9 +56,22 @@ class PaymentMetaRepository extends Repository
     final public function exists(ActiveRow $payment, $key)
     {
         return $this->getTable()->where([
-            'payment_id' => $payment->id,
-            'key' => $key,
-        ])->count('*') > 0;
+                'payment_id' => $payment->id,
+                'key' => $key,
+            ])->count('*') > 0;
+    }
+
+    /**
+     * @param string $key
+     * @param string $value
+     * @return bool
+     */
+    final public function existsKeyValue(string $key, string $value): bool
+    {
+        return $this->getTable()->where([
+                'key' => $key,
+                'value' => $value
+            ])->count('*') > 0;
     }
 
     /**
@@ -85,9 +98,9 @@ class PaymentMetaRepository extends Repository
     final public function findAllByMeta(string $key, string $value)
     {
         return $this->getTable()->where([
-                'key' => $key,
-                'value' => $value
-            ])
+            'key' => $key,
+            'value' => $value
+        ])
             ->order('id DESC')
             ->fetchAll();
     }
@@ -99,8 +112,8 @@ class PaymentMetaRepository extends Repository
     final public function findByPaymentAndKey(ActiveRow $payment, string $key)
     {
         return $this->getTable()->where([
-                'payment_id' => $payment->id,
-                'key' => $key,
-            ])->fetch();
+            'payment_id' => $payment->id,
+            'key' => $key,
+        ])->fetch();
     }
 }

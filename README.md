@@ -529,8 +529,6 @@ In addition to API responses described at the beginning of [API documentation](#
 | --- | --- |
 | 409 Conflict | Recurrent payment cannot be stopped by user _(reason is in error message)_ |
 
----
-
 ## Components
 
 **ActualFreeSubscribersStatWidget**
