@@ -19,7 +19,7 @@ class PaymentChangeStatusEvent extends AbstractEvent
 
     public function isPaid()
     {
-        return $this->payment->status === PaymentsRepository::STATUS_PAID;
+        return in_array($this->payment->status, [PaymentsRepository::STATUS_PAID, PaymentsRepository::STATUS_PREPAID]);
     }
 
     public function getPayment()
