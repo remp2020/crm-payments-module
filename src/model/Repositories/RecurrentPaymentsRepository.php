@@ -199,6 +199,16 @@ class RecurrentPaymentsRepository extends Repository
         return $rp;
     }
 
+    final public function stoppedBySystem($id)
+    {
+        $rp = $this->find($id);
+        if ($rp == null) {
+            return null;
+        }
+        $this->update($rp, ['state' => self::STATE_SYSTEM_STOP]);
+        return $rp;
+    }
+
     final public function getChargableBefore($date)
     {
         return $this->getTable()
