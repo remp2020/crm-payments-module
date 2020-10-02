@@ -8,6 +8,7 @@ use Crm\PaymentsModule\Repository\PaymentGatewaysRepository;
 use Crm\PaymentsModule\Repository\PaymentMetaRepository;
 use Crm\PaymentsModule\Repository\PaymentsRepository;
 use Crm\PaymentsModule\Repository\RecurrentPaymentsRepository;
+use Crm\PaymentsModule\VariableSymbolInterface;
 use Crm\SubscriptionsModule\PaymentItem\SubscriptionTypePaymentItem;
 use Crm\SubscriptionsModule\Repository\SubscriptionTypesMetaRepository;
 use Crm\SubscriptionsModule\Repository\SubscriptionTypesRepository;
@@ -51,6 +52,7 @@ class PaymentsTestCase extends DatabaseTestCase
             RecurrentPaymentsRepository::class,
             SubscriptionTypesRepository::class,
             SubscriptionTypesMetaRepository::class,
+            VariableSymbolInterface::class
         ];
     }
 
