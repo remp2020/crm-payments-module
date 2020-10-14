@@ -154,6 +154,9 @@ class PaymentsRepository extends Repository
         }
 
         $this->emitter->emit(new NewPaymentEvent($payment));
+        $this->hermesEmitter->emit(new HermesMessage('new-payment', [
+            'payment_id' => $payment->id
+        ]));
         return $payment;
     }
 
@@ -260,6 +263,7 @@ class PaymentsRepository extends Repository
         $this->hermesEmitter->emit(new HermesMessage('payment-status-change', [
             'payment_id' => $payment->id,
             'sales_funnel_id' => $payment->sales_funnel_id ?? $salesFunnelId, // pass explicit sales_funnel_id if payment doesn't contain one
+            'send_email' => $sendEmail,
         ]));
 
         return $this->find($payment->id);

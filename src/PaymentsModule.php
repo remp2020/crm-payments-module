@@ -393,8 +393,8 @@ class PaymentsModule extends CrmModule
 
     public function registerEvents(EventsStorage $eventsStorage)
     {
-        $eventsStorage->register('new_payment', Events\NewPaymentEvent::class);
-        $eventsStorage->register('payment_change_status', Events\PaymentChangeStatusEvent::class);
+        $eventsStorage->register('new_payment', Events\NewPaymentEvent::class, true);
+        $eventsStorage->register('payment_change_status', Events\PaymentChangeStatusEvent::class, true);
         $eventsStorage->register('recurrent_payment_fail', Events\RecurrentPaymentFailEvent::class);
         $eventsStorage->register('recurrent_payment_fail_try', Events\RecurrentPaymentFailTryEvent::class);
         $eventsStorage->register('recurrent_payment_renewed', Events\RecurrentPaymentRenewedEvent::class, true);
