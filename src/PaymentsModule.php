@@ -39,6 +39,7 @@ use Crm\PaymentsModule\MailConfirmation\ParsedMailLogsRepository;
 use Crm\PaymentsModule\Repository\PaymentLogsRepository;
 use Crm\PaymentsModule\Repository\PaymentsRepository;
 use Crm\PaymentsModule\Scenarios\IsActiveRecurrentSubscriptionCriteria;
+use Crm\PaymentsModule\Scenarios\PaymentGatewayCriteria;
 use Crm\PaymentsModule\Scenarios\PaymentIsRecurrentChargeCriteria;
 use Crm\PaymentsModule\Scenarios\PaymentStatusCriteria;
 use Crm\PaymentsModule\Seeders\ConfigsSeeder;
@@ -326,6 +327,7 @@ class PaymentsModule extends CrmModule
     {
         $scenariosCriteriaStorage->register('payment', 'status', $this->getInstance(PaymentStatusCriteria::class));
         $scenariosCriteriaStorage->register('payment', PaymentIsRecurrentChargeCriteria::KEY, $this->getInstance(PaymentIsRecurrentChargeCriteria::class));
+        $scenariosCriteriaStorage->register('payment', PaymentGatewayCriteria::KEY, $this->getInstance(PaymentGatewayCriteria::class));
         $scenariosCriteriaStorage->register('subscription', IsActiveRecurrentSubscriptionCriteria::KEY, $this->getInstance(IsActiveRecurrentSubscriptionCriteria::class));
     }
 
