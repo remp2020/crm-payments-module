@@ -27,7 +27,7 @@ class PaymentGatewayCriteria implements ScenariosCriteriaInterface
 
     public function params(): array
     {
-        $pairs = $this->paymentGatewaysRepository->getAllVisible()->fetchPairs('id', 'name');
+        $pairs = $this->paymentGatewaysRepository->getAllVisible()->fetchPairs('code', 'name');
         return [
             new StringLabeledArrayParam(self::KEY, 'Payment gateway', $pairs),
         ];
@@ -35,7 +35,7 @@ class PaymentGatewayCriteria implements ScenariosCriteriaInterface
 
     public function addCondition(Selection $selection, $values, IRow $criterionItemRow): bool
     {
-        $selection->where('payments.payment_gateway_id IN (?)', $values->selection);
+        $selection->where('payment_gateway.code IN (?)', $values->selection);
         return true;
     }
 
