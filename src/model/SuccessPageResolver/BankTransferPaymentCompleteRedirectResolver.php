@@ -2,6 +2,7 @@
 
 namespace Crm\PaymentsModule;
 
+use Crm\PaymentsModule\Gateways\BankTransfer;
 use Crm\PaymentsModule\Model\PaymentCompleteRedirectResolver;
 use Nette\Database\Table\ActiveRow;
 
@@ -9,7 +10,7 @@ class BankTransferPaymentCompleteRedirectResolver implements PaymentCompleteRedi
 {
     public function wantsToRedirect(?ActiveRow $payment, string $status): bool
     {
-        if ($payment && $payment->payment_gateway->code === 'bank_transfer') {
+        if ($payment && $payment->payment_gateway->code === BankTransfer::GATEWAY_CODE) {
             return true;
         }
         return false;
@@ -17,7 +18,7 @@ class BankTransferPaymentCompleteRedirectResolver implements PaymentCompleteRedi
 
     public function redirectArgs(?ActiveRow $payment, string $status): array
     {
-        if (!$payment || $payment->payment_gateway->code !== 'bank_transfer') {
+        if (!$payment || $payment->payment_gateway->code !== BankTransfer::GATEWAY_CODE) {
             throw new \Exception('unhandled status when requesting redirectArgs (did you check wantsToRedirect first?): ' . $status);
         }
 
