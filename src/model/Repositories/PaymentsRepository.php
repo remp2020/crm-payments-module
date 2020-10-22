@@ -242,7 +242,7 @@ class PaymentsRepository extends Repository
             'status' => $status,
             'modified_at' => new DateTime()
         ];
-        if ($status == self::STATUS_PAID && !$payment->paid_at) {
+        if (in_array($status, [self::STATUS_PAID, self::STATUS_PREPAID]) && !$payment->paid_at) {
             $data['paid_at'] = new DateTime();
         }
         if ($note) {
@@ -252,8 +252,8 @@ class PaymentsRepository extends Repository
             $data['error_message'] = $errorMessage;
         }
 
-        if ($payment->status == static::STATUS_PAID && $data['status'] == static::STATUS_FAIL) {
-            Debugger::log("attempt to make change payment status from [paid] to [fail]");
+        if (in_array($payment->status, [self::STATUS_PAID, self::STATUS_PREPAID]) && $data['status'] == static::STATUS_FAIL) {
+            Debugger::log("attempt to make change payment status from [{$payment->status}] to [fail]");
             return false;
         }
 
