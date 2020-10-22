@@ -13,6 +13,11 @@ use Nette\Utils\DateTime;
 
 class DashboardPresenter extends AdminPresenter
 {
+    private const PAID_PAYMENT_STATUSES = [
+        PaymentsRepository::STATUS_PAID,
+        PaymentsRepository::STATUS_PREPAID,
+    ];
+
     /** @persistent */
     public $dateFrom;
 
@@ -68,7 +73,7 @@ class DashboardPresenter extends AdminPresenter
         $graphDataItem->setCriteria((new Criteria())
             ->setTableName('payments')
             ->setTimeField('paid_at')
-            ->setWhere("AND payments.status = 'paid' {$this->recurrentChargeWhere()}")
+            ->setWhere("{$this->paidPaymentStatusWhere()} {$this->recurrentChargeWhere()}")
             ->setGroupBy('payment_gateways.name')
             ->setJoin('LEFT JOIN payment_gateways ON payment_gateways.id = payments.payment_gateway_id')
             ->setSeries('payment_gateways.name')
@@ -89,7 +94,7 @@ class DashboardPresenter extends AdminPresenter
         $graphDataItem = new GraphDataItem();
         $graphDataItem->setCriteria((new Criteria())
             ->setTableName('payments')
-            ->setWhere("AND payments.status = 'paid' {$this->recurrentChargeWhere()}")
+            ->setWhere("{$this->paidPaymentStatusWhere()} {$this->recurrentChargeWhere()}")
             ->setValueField('sum(amount)')
             ->setTimeField('paid_at')
             ->setStart($this->dateFrom)
@@ -111,7 +116,7 @@ class DashboardPresenter extends AdminPresenter
         $graphDataItem = new GraphDataItem();
         $graphDataItem->setCriteria((new Criteria())
             ->setTableName('payments')
-            ->setWhere("AND payments.status = 'paid' {$this->recurrentChargeWhere()}")
+            ->setWhere("{$this->paidPaymentStatusWhere()} {$this->recurrentChargeWhere()}")
             ->setValueField('SUM(amount) / COUNT(*)')
             ->setTimeField('paid_at')
             ->setStart($this->dateFrom)
@@ -141,7 +146,7 @@ class DashboardPresenter extends AdminPresenter
             (new Criteria)->setTableName('payments')
                 ->setTimeField('created_at')
                 ->setJoin('JOIN users ON payments.user_id = users.id')
-                ->setWhere("AND payments.status = '" . PaymentsRepository::STATUS_PAID . "'")
+                ->setWhere("{$this->paidPaymentStatusWhere()}")
                 ->setGroupBy('users.source')
                 ->setSeries('users.source')
                 ->setValueField('count(*)')
@@ -164,7 +169,7 @@ class DashboardPresenter extends AdminPresenter
         $graphDataItem = new GraphDataItem();
         $graphDataItem->setCriteria((new Criteria())
             ->setTableName('payments')
-            ->setWhere("AND payments.status = 'paid' AND payments.recurrent_charge = 0 AND payments.payment_gateway_id IN (SELECT id FROM payment_gateways WHERE is_recurrent = 1)")
+            ->setWhere("{$this->paidPaymentStatusWhere()} AND payments.recurrent_charge = 0 AND payments.payment_gateway_id IN (SELECT id FROM payment_gateways WHERE is_recurrent = 1)")
             ->setGroupBy('payment_gateways.name')
             ->setJoin('LEFT JOIN payment_gateways ON payment_gateways.id = payments.payment_gateway_id')
             ->setSeries('payment_gateways.name')
@@ -179,7 +184,7 @@ class DashboardPresenter extends AdminPresenter
         $graphDataItem = new GraphDataItem();
         $graphDataItem->setCriteria((new Criteria())
             ->setTableName('payments')
-            ->setWhere("AND payments.status = 'paid' AND payments.recurrent_charge = 1 AND payments.payment_gateway_id IN (SELECT id FROM payment_gateways WHERE is_recurrent = 1)")
+            ->setWhere("{$this->paidPaymentStatusWhere()} AND payments.recurrent_charge = 1 AND payments.payment_gateway_id IN (SELECT id FROM payment_gateways WHERE is_recurrent = 1)")
             ->setGroupBy('payment_gateways.name')
             ->setJoin('LEFT JOIN payment_gateways ON payment_gateways.id = payments.payment_gateway_id')
             ->setSeries('payment_gateways.name')
@@ -229,7 +234,7 @@ class DashboardPresenter extends AdminPresenter
         $graphDataItem = new GraphDataItem();
         $graphDataItem->setCriteria((new Criteria())
             ->setTableName('payments')
-            ->setWhere("AND payments.status = 'paid' AND payments.additional_type = 'recurrent' {$this->recurrentChargeWhere()}")
+            ->setWhere("{$this->paidPaymentStatusWhere()} AND payments.additional_type = 'recurrent' {$this->recurrentChargeWhere()}")
             ->setValueField('SUM(additional_amount)')
             ->setTimeField('paid_at')
             ->setStart($this->dateFrom)
@@ -240,7 +245,7 @@ class DashboardPresenter extends AdminPresenter
         $graphDataItem = new GraphDataItem();
         $graphDataItem->setCriteria((new Criteria())
             ->setTableName('payments')
-            ->setWhere("AND payments.status = 'paid' AND payments.additional_type = 'single' {$this->recurrentChargeWhere()}")
+            ->setWhere("{$this->paidPaymentStatusWhere()} AND payments.additional_type = 'single' {$this->recurrentChargeWhere()}")
             ->setValueField('SUM(additional_amount)')
             ->setTimeField('paid_at')
             ->setStart($this->dateFrom)
@@ -295,6 +300,11 @@ class DashboardPresenter extends AdminPresenter
         }
 
         return $control;
+    }
+
+    private function paidPaymentStatusWhere(): string
+    {
+        return "AND payments.status IN ('". implode("','", self::PAID_PAYMENT_STATUSES) . "')";
     }
 
     private function recurrentChargeWhere()
