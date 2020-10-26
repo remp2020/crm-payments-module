@@ -9,6 +9,7 @@ use Crm\ApplicationModule\Repository\AuditLogRepository;
 use Crm\PaymentsModule\Events\RecurrentPaymentRenewedEvent;
 use Crm\PaymentsModule\Events\RecurrentPaymentStoppedByAdminEvent;
 use Crm\PaymentsModule\Events\RecurrentPaymentStoppedByUserEvent;
+use Exception;
 use League\Event\Emitter;
 use Nette\Database\Context;
 use Nette\Database\Table\IRow;
@@ -174,6 +175,10 @@ class RecurrentPaymentsRepository extends Repository
         if ($rp == null) {
             return null;
         }
+        if (!($this->canBeStopped($rp))) {
+            throw new Exception('Recurrent payment ID ' . $rp->id . ' cannot be stopped by user');
+        }
+
         $this->update($rp, ['state' => self::STATE_USER_STOP]);
         $this->emitter->emit(new RecurrentPaymentStoppedByUserEvent($rp));
         return $rp;
@@ -199,6 +204,10 @@ class RecurrentPaymentsRepository extends Repository
         if ($rp == null) {
             return null;
         }
+        if (!($this->canBeStopped($rp))) {
+            throw new Exception('Recurrent payment ID ' . $rp->id . ' cannot be stopped by admin');
+        }
+
         $this->update($rp, ['state' => self::STATE_ADMIN_STOP]);
         $this->emitter->emit(new RecurrentPaymentStoppedByAdminEvent($rp));
         return $rp;
@@ -349,5 +358,10 @@ class RecurrentPaymentsRepository extends Repository
             self::STATE_CHARGE_FAILED,
             self::STATE_SYSTEM_STOP,
         ];
+    }
+
+    final public function canBeStopped($recurrentPayment): bool
+    {
+        return $recurrentPayment->parent_payment->status !== PaymentsRepository::STATUS_PREPAID;
     }
 }

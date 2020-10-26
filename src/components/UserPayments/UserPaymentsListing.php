@@ -58,7 +58,7 @@ class UserPaymentsListing extends BaseWidget
             'paid_at > ?' => DateTime::from(strtotime('today 00:00')),
         ])->count('*');
         if ($todayPayments) {
-            $header .= ' <span class="label label-warning">' . $this->translator->translate('payments.admin.component.user_payments_listing.today') .'</span>';
+            $header .= ' <span class="label label-warning">' . $this->translator->translate('payments.admin.component.user_payments_listing.today') . '</span>';
         }
         return $header;
     }
@@ -86,6 +86,9 @@ class UserPaymentsListing extends BaseWidget
             ->order('id DESC, charge_at DESC');
         $this->template->recurrentPayments = $recurrentPayments;
         $this->template->totalRecurrentPayments = $recurrentPayments->count('*');
+        $this->template->canBeStopped = function ($recurrentPayment) {
+            return $this->recurrentPaymentsRepository->canBeStopped($recurrentPayment);
+        };
 
         $this->template->setFile(__DIR__ . '/' . $this->templateName);
         $this->template->render();

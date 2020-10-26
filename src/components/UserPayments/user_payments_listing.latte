@@ -201,11 +201,20 @@
         <td>{$recurrentPayment->status}</td>
         <td>
           {if $recurrentPayment->state == \Crm\PaymentsModule\Repository\RecurrentPaymentsRepository::STATE_ACTIVE && $recurrentPayment->status == NULL}
-            <a class="btn btn-primary"
-               href="{link StopRecurrentPayment! $recurrentPayment->id}"
-               onclick="return confirm({_"payments.admin.component.user_payments_listing.recurrent_profile.stop_recurrent_profile_confirm"})">
-              <i class="fa fa-ban"></i> {_"payments.admin.component.user_payments_listing.recurrent_profile.stop_recurrent_profile"}
-            </a>
+            {if $canBeStopped($recurrentPayment)}
+              <a class="btn btn-primary"
+                 href="{link StopRecurrentPayment! $recurrentPayment->id}"
+                 onclick="return confirm({_"payments.admin.component.user_payments_listing.recurrent_profile.stop_recurrent_profile_confirm"})">
+                <i class="fa fa-ban"></i> {_"payments.admin.component.user_payments_listing.recurrent_profile.stop_recurrent_profile"}
+              </a>
+            {else}
+              <span class="d-inline-block" tabindex="0">
+                <span class="btn btn-primary disabled">
+                  <i class="fa fa-ban"></i> {_"payments.admin.component.user_payments_listing.recurrent_profile.stop_recurrent_profile"}
+                </span>
+              </span>
+              {control simpleWidget 'payments.user_payments.listing.recurrent', $recurrentPayment}
+            {/if}
           {elseif $recurrentPayment->state == \Crm\PaymentsModule\Repository\RecurrentPaymentsRepository::STATE_USER_STOP}
             <span class="label label-info">{_"payments.admin.component.user_payments_listing.recurrent_profile.user_stop"}</span>
           {elseif $recurrentPayment->state == \Crm\PaymentsModule\Repository\RecurrentPaymentsRepository::STATE_ADMIN_STOP}

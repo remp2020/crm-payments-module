@@ -24,7 +24,7 @@
             </thead>
             <tbody>
             {foreach $payments as $payment}
-                <tr n:if="$payment->status == \Crm\PaymentsModule\Repository\PaymentsRepository::STATUS_PAID">
+                <tr n:if="in_array($payment->status, [\Crm\PaymentsModule\Repository\PaymentsRepository::STATUS_PAID, \Crm\PaymentsModule\Repository\PaymentsRepository::STATUS_PREPAID])">
                     <td>
                         {$payment->payment_gateway->name}
                     </td>
@@ -58,7 +58,16 @@
                                             </small>
                                         </div>
                                     {/if}
-                                    <a class="btn btn-sm btn-default" n:href="recurrentStop $recurrent->id">{_payments.frontend.my.stop_recurrent}</a>
+
+
+                                    {if $canBeStopped($recurrent)}
+                                      <a class="btn btn-sm btn-default" n:href="recurrentStop $recurrent->id">{_payments.frontend.my.stop_recurrent}</a>
+                                    {else}
+                                      <span class="d-inline-block" tabindex="0">
+                                        <span class="btn btn-sm btn-default disabled" style="pointer-events: none;">{_payments.frontend.my.stop_recurrent}</span>
+                                      </span>
+                                      {control simpleWidget 'frontend.payments.listing.recurrent', $recurrent}
+                                    {/if}
                                 {case \Crm\PaymentsModule\Repository\RecurrentPaymentsRepository::STATE_USER_STOP}
                                     <span class="label label-info">{_payments.frontend.my.user_stopped}</span>
                                     <span n:if="$recurrent->cid && $recurrent->charge_at > new \DateTime()">
