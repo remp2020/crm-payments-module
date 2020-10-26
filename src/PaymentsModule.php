@@ -42,6 +42,7 @@ use Crm\PaymentsModule\Scenarios\IsActiveRecurrentSubscriptionCriteria;
 use Crm\PaymentsModule\Scenarios\PaymentGatewayCriteria;
 use Crm\PaymentsModule\Scenarios\PaymentIsRecurrentChargeCriteria;
 use Crm\PaymentsModule\Scenarios\PaymentStatusCriteria;
+use Crm\PaymentsModule\Scenarios\RecurrentPaymentStateCriteria;
 use Crm\PaymentsModule\Seeders\ConfigsSeeder;
 use Crm\PaymentsModule\Seeders\PaymentGatewaysSeeder;
 use Crm\PaymentsModule\Seeders\SegmentsSeeder;
@@ -329,6 +330,7 @@ class PaymentsModule extends CrmModule
         $scenariosCriteriaStorage->register('payment', PaymentIsRecurrentChargeCriteria::KEY, $this->getInstance(PaymentIsRecurrentChargeCriteria::class));
         $scenariosCriteriaStorage->register('payment', PaymentGatewayCriteria::KEY, $this->getInstance(PaymentGatewayCriteria::class));
         $scenariosCriteriaStorage->register('subscription', IsActiveRecurrentSubscriptionCriteria::KEY, $this->getInstance(IsActiveRecurrentSubscriptionCriteria::class));
+        $scenariosCriteriaStorage->register('recurrent_payment', RecurrentPaymentStateCriteria::KEY, $this->getInstance(RecurrentPaymentStateCriteria::class));
     }
 
     public function registerSeeders(SeederManager $seederManager)
@@ -399,6 +401,7 @@ class PaymentsModule extends CrmModule
         $eventsStorage->register('recurrent_payment_fail_try', Events\RecurrentPaymentFailTryEvent::class);
         $eventsStorage->register('recurrent_payment_renewed', Events\RecurrentPaymentRenewedEvent::class, true);
         $eventsStorage->register('card_expires_this_month', Events\RecurrentPaymentCardExpiredEvent::class);
+        $eventsStorage->register('recurrent_payment_state_changed', Events\RecurrentPaymentStateChangedEvent::class, true);
     }
 
     public function cache(OutputInterface $output, array $tags = [])

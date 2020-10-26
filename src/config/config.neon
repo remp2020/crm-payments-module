@@ -86,6 +86,7 @@ services:
 	- Crm\PaymentsModule\Seeders\ConfigsSeeder
 	- Crm\PaymentsModule\Seeders\PaymentGatewaysSeeder
 	- Crm\PaymentsModule\Seeders\SegmentsSeeder
+	- Crm\PaymentsModule\Scenarios\RecurrentPaymentStateCriteria
 
 	# events
 	- Crm\PaymentsModule\Events\PaymentStatusChangeHandler

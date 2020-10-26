@@ -7,6 +7,7 @@ use Crm\ApplicationModule\Hermes\HermesMessage;
 use Crm\ApplicationModule\Repository;
 use Crm\ApplicationModule\Repository\AuditLogRepository;
 use Crm\PaymentsModule\Events\RecurrentPaymentRenewedEvent;
+use Crm\PaymentsModule\Events\RecurrentPaymentStateChangedEvent;
 use Crm\PaymentsModule\Events\RecurrentPaymentStoppedByAdminEvent;
 use Crm\PaymentsModule\Events\RecurrentPaymentStoppedByUserEvent;
 use Exception;
@@ -96,8 +97,22 @@ class RecurrentPaymentsRepository extends Repository
 
     final public function update(IRow &$row, $data)
     {
+        $fireEvent = false;
+        if (isset($data['state']) && $data['state'] !== $row->state) {
+            $fireEvent = true;
+        }
+
         $data['updated_at'] = new DateTime();
-        return parent::update($row, $data);
+        $result = parent::update($row, $data);
+
+        if ($fireEvent) {
+            $this->emitter->emit(new RecurrentPaymentStateChangedEvent($row));
+            $this->hermesEmitter->emit(new HermesMessage('recurrent-payment-state-changed', [
+                'recurrent_payment_id' => $row->id,
+            ]));
+        }
+
+        return $result;
     }
 
     final public function setCharged(IRow $recurrentPayment, $payment, $status, $approval)
