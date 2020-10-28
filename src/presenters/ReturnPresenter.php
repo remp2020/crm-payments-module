@@ -156,7 +156,7 @@ class ReturnPresenter extends FrontendPresenter
                 );
 
                 $this->resolveRedirect($payment, PaymentCompleteRedirectResolver::NOT_SETTLED);
-            } else {
+            } elseif ($payment->status === PaymentsRepository::STATUS_FAIL) {
                 $presenter->paymentLogsRepository->add(
                     'ERROR',
                     'Complete payment with unpaid payment',
