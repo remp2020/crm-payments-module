@@ -250,7 +250,7 @@ class RecurrentPaymentsRepository extends Repository
         if ($subscriptionType) {
             $where['subscription_type_id'] = $subscriptionType;
         }
-        if ($status && $problem == null) {
+        if ($status) {
             $where['status'] = $status;
         }
         if ($problem) {
