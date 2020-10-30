@@ -12,7 +12,7 @@ use Crm\PaymentsModule\Repository\PaymentsRepository;
 use Crm\SubscriptionsModule\PaymentItem\SubscriptionTypePaymentItem;
 use Crm\SubscriptionsModule\Repository\SubscriptionTypeItemMetaRepository;
 use Crm\SubscriptionsModule\Repository\SubscriptionTypesRepository;
-use Crm\SubscriptionsModule\Subscription\SubscriptionType;
+use Crm\SubscriptionsModule\Subscription\SubscriptionTypeHelper;
 use Crm\UsersModule\Repository\AddressesRepository;
 use Crm\UsersModule\Repository\UsersRepository;
 use Nette\Application\UI\Form;
@@ -45,6 +45,8 @@ class PaymentFormFactory
 
     private $translator;
 
+    private $subscriptionTypeHelper;
+
     public $onSave;
 
     public $onUpdate;
@@ -62,7 +64,8 @@ class PaymentFormFactory
         AddressesRepository $addressesRepository,
         DataProviderManager $dataProviderManager,
         ApplicationConfig $applicationConfig,
-        ITranslator $translator
+        ITranslator $translator,
+        SubscriptionTypeHelper $subscriptionTypeHelper
     ) {
         $this->paymentsRepository = $paymentsRepository;
         $this->paymentGatewaysRepository = $paymentGatewaysRepository;
@@ -73,6 +76,7 @@ class PaymentFormFactory
         $this->applicationConfig = $applicationConfig;
         $this->translator = $translator;
         $this->subscriptionTypeItemMetaRepository = $subscriptionTypeItemMetaRepository;
+        $this->subscriptionTypeHelper = $subscriptionTypeHelper;
     }
 
     /**
@@ -165,8 +169,8 @@ class PaymentFormFactory
         if (isset($payment->subscription_type)) {
             $subscriptionTypeOptions[] = $payment->subscription_type;
         }
-        $subscriptionTypes = SubscriptionType::getItems($subscriptionTypeOptions);
-        $subscriptionTypePairs = SubscriptionType::getPairs($subscriptionTypeOptions);
+        $subscriptionTypes = $this->subscriptionTypeHelper->getItems($subscriptionTypeOptions);
+        $subscriptionTypePairs = $this->subscriptionTypeHelper->getPairs($subscriptionTypeOptions, true);
 
         $form->addHidden('subscription_types', Json::encode($subscriptionTypes));
 

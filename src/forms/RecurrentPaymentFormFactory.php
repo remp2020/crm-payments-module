@@ -4,7 +4,7 @@ namespace Crm\PaymentsModule\Forms;
 
 use Crm\PaymentsModule\Repository\RecurrentPaymentsRepository;
 use Crm\SubscriptionsModule\Repository\SubscriptionTypesRepository;
-use Crm\SubscriptionsModule\Subscription\SubscriptionType;
+use Crm\SubscriptionsModule\Subscription\SubscriptionTypeHelper;
 use Nette\Application\UI\Form;
 use Nette\Localization\ITranslator;
 use Nette\Utils\DateTime;
@@ -18,16 +18,20 @@ class RecurrentPaymentFormFactory
 
     private $translator;
 
+    private $subscriptionTypeHelper;
+
     public $onUpdate;
 
     public function __construct(
         RecurrentPaymentsRepository $recurrentPaymentsRepository,
         SubscriptionTypesRepository $subscriptionTypesRepository,
-        ITranslator $translator
+        ITranslator $translator,
+        SubscriptionTypeHelper $subscriptionTypeHelper
     ) {
         $this->recurrentPaymentsRepository = $recurrentPaymentsRepository;
         $this->subscriptionTypesRepository = $subscriptionTypesRepository;
         $this->translator = $translator;
+        $this->subscriptionTypeHelper = $subscriptionTypeHelper;
     }
 
     public function create($recurrentPaymentId)
@@ -52,7 +56,7 @@ class RecurrentPaymentFormFactory
             ->setType('number')
             ->setAttribute('placeholder', 'payments.admin.component.recurrent_payment_form.retries.placeholder');
 
-        $subscriptionTypePairs = SubscriptionType::getPairs($this->subscriptionTypesRepository->getAllActive());
+        $subscriptionTypePairs = $this->subscriptionTypeHelper->getPairs($this->subscriptionTypesRepository->getAllActive(), true);
         $nextSubscriptionType = $form->addSelect(
             'next_subscription_type_id',
             'payments.admin.component.recurrent_payment_form.next_subscription_type_id.label',
