@@ -155,8 +155,12 @@ class PaymentFormFactory
 
         $form->addGroup('payments.form.payment.items');
 
-        $subscriptionTypes = SubscriptionType::getItems($this->subscriptionTypesRepository->getAllActive());
-        $subscriptionTypePairs = SubscriptionType::getPairs($this->subscriptionTypesRepository->getAllActive());
+        $subscriptionTypeOptions = $this->subscriptionTypesRepository->getAllActive()->fetchAll();
+        if (isset($payment->subscription_type)) {
+            $subscriptionTypeOptions[] = $payment->subscription_type;
+        }
+        $subscriptionTypes = SubscriptionType::getItems($subscriptionTypeOptions);
+        $subscriptionTypePairs = SubscriptionType::getPairs($subscriptionTypeOptions);
 
         $form->addHidden('subscription_types', Json::encode($subscriptionTypes));
 
