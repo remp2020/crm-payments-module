@@ -2,53 +2,23 @@
 
 namespace Crm\PaymentsModule\Components;
 
-use Crm\ApplicationModule\Widget\BaseWidget;
-use Crm\ApplicationModule\Widget\WidgetManager;
-use Crm\PaymentsModule\Repository\PaymentsRepository;
-use Crm\SegmentModule\Repository\SegmentsRepository;
+use Crm\SegmentsModule\Widget\DashboardSegmentValueBaseWidget;
 
 /**
- * This widget fetches number of free subscribers and renders line with
+ * This widget loads number of free subscribers and renders line with
  * label and resulting value.
  *
  * @package Crm\PaymentsModule\Components
  */
-class ActualFreeSubscribersStatWidget extends BaseWidget
+class ActualFreeSubscribersStatWidget extends DashboardSegmentValueBaseWidget
 {
-    const SEGMENT_CODE = 'active-subscription-without-payment';
-
-    private $templateName = 'actual_free_subscribers_stat_widget.latte';
-
-    private $paymentsRepository;
-
-    private $segmentsRepository;
-
-    public function __construct(
-        WidgetManager $widgetManager,
-        PaymentsRepository $paymentsRepository,
-        SegmentsRepository $segmentsRepository
-    ) {
-        parent::__construct($widgetManager);
-        $this->paymentsRepository = $paymentsRepository;
-        $this->segmentsRepository = $segmentsRepository;
+    public function segmentCode(): string
+    {
+        return 'active-subscribers-having-only-non-paid-subscriptions';
     }
 
-    public function identifier()
+    protected function templateName(): string
     {
-        return 'actualfreesubscribersstatwidget';
-    }
-
-    public function render()
-    {
-        if ($this->segmentsRepository->exists(self::SEGMENT_CODE)) {
-            $this->template->totalFreeSubscribersLink = $this->presenter->link(
-                ':Segment:StoredSegments:show',
-                $this->segmentsRepository->findByCode(self::SEGMENT_CODE)->id
-            );
-        }
-
-        $this->template->totalFreeSubscribers = $this->paymentsRepository->freeSubscribersCount(true);
-        $this->template->setFile(__DIR__ . DIRECTORY_SEPARATOR . $this->templateName);
-        $this->template->render();
+        return 'actual_free_subscribers_stat_widget.latte';
     }
 }

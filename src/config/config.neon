@@ -107,14 +107,14 @@ services:
 	paymentInvoiceProvider:
 		class: Crm\PaymentsModule\DataProvider\PaymentInvoiceProviderManager
 
+	- Crm\PaymentsModule\Retention\RetentionAnalysis
+
 	# widgets
 	- Crm\PaymentsModule\Components\AvgMonthPaymentWidget
 	- Crm\PaymentsModule\Components\AvgSubscriptionPaymentWidget
 	- Crm\PaymentsModule\Components\UserPaymentsListing
 	- Crm\PaymentsModule\Components\ParsedMailsFailedNotification
 	- Crm\PaymentsModule\Components\TotalAmountStatWidget
-	- Crm\PaymentsModule\Components\ActualPaidSubscribersStatWidget
-	- Crm\PaymentsModule\Components\ActualFreeSubscribersStatWidget
 	- Crm\PaymentsModule\Components\TodayAmountStatWidget
 	- Crm\PaymentsModule\Components\MonthAmountStatWidget
 	- Crm\PaymentsModule\Components\MonthToDateAmountStatWidget
@@ -128,4 +128,12 @@ services:
 	- Crm\PaymentsModule\DataProvider\SubscriptionsWithActiveUnchargedRecurrentEndingWithinPeriodDataProvider
 	- Crm\PaymentsModule\DataProvider\SubscriptionsWithoutExtensionEndingWithinPeriodDataProvider
 
-	- Crm\PaymentsModule\Retention\RetentionAnalysis
+	actualPaidSubscribersStatWidget:
+		class: Crm\PaymentsModule\Components\ActualPaidSubscribersStatWidget
+		setup:
+			- setOnTheFly(true, 5)
+
+	actualFreeSubscribersStatWidget:
+		class: Crm\PaymentsModule\Components\ActualFreeSubscribersStatWidget
+		setup:
+			- setOnTheFly(true, 5)

@@ -1,5 +1,8 @@
-<span class="badge">{$totalFreeSubscribers}</span>
-<a n:tag-if="isset($totalFreeSubscribersLink)" href="{$totalFreeSubscribersLink}">
-    {_"payments.admin.component.actual_free_subscribers_stat_widget.title"}
+{if !$wasCalculated}
+    <i class="fas fa-exclamation-triangle" style="color: red;" data-toggle="tooltip" data-original-title="{_segment.dashboard.warning}"></i>
+{/if}
+<span class="badge">{$count}</span>
+<a n:tag-if="isset($segmentLink)" href="{$segmentLink}">
+    {_payments.admin.component.actual_free_subscribers_stat_widget.title}
 </a>
-<i class="fa fa-question-circle" data-toggle="tooltip" data-original-title="{_"payments.admin.component.actual_free_subscribers_stat_widget.help"}"></i>
+<i class="fa fa-question-circle" data-toggle="tooltip" data-original-title="{_payments.admin.component.actual_free_subscribers_stat_widget.help}"></i>

@@ -436,26 +436,6 @@ class PaymentsRepository extends Repository
         return $callable();
     }
 
-    final public function paidSubscribersCount($allowCached = false, $forceCacheUpdate = false)
-    {
-        $callable = function () {
-            return $this->paidSubscribers()
-                ->select('COUNT(DISTINCT(subscriptions.user_id)) AS total')
-                ->fetch()->total;
-        };
-
-        if ($allowCached) {
-            return $this->cacheRepository->loadAndUpdate(
-                'paid_subscribers_count',
-                $callable,
-                \Nette\Utils\DateTime::from('-1 hour'),
-                $forceCacheUpdate
-            );
-        }
-
-        return $callable();
-    }
-
     final public function paidSubscribers()
     {
         return $this->database->table('subscriptions')
@@ -463,42 +443,6 @@ class PaymentsRepository extends Repository
             ->where('end_time > ?', $this->database::literal('NOW()'))
             ->where('is_paid = 1')
             ->where('user.active = 1');
-    }
-
-    final public function freeSubscribersCount($allowCached = false, $forceCacheUpdate = false)
-    {
-        $callable = function () {
-            return $this->freeSubscribers()
-                ->select('COUNT(DISTINCT(subscriptions.user_id)) AS total')
-                ->fetch()->total;
-        };
-
-        if ($allowCached) {
-            return $this->cacheRepository->loadAndUpdate(
-                'free_subscribers_count',
-                $callable,
-                \Nette\Utils\DateTime::from('-1 hour'),
-                $forceCacheUpdate
-            );
-        }
-
-        return $callable();
-    }
-
-    final public function freeSubscribers()
-    {
-        $freeSubscribers = $this->database->table('subscriptions')
-            ->where('start_time <= ?', $this->database::literal('NOW()'))
-            ->where('end_time > ?', $this->database::literal('NOW()'))
-            ->where('is_paid = 0')
-            ->where('user.active = 1');
-
-        $paidSubscribers = $this->paidSubscribers()->select('subscriptions.user_id');
-        if ($paidSubscribers->fetchAll()) {
-            $freeSubscribers->where('subscriptions.user_id NOT IN (?)', $paidSubscribers);
-        }
-
-        return $freeSubscribers;
     }
 
     /**

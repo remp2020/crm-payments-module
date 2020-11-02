@@ -2,53 +2,23 @@
 
 namespace Crm\PaymentsModule\Components;
 
-use Crm\ApplicationModule\Widget\BaseWidget;
-use Crm\ApplicationModule\Widget\WidgetManager;
-use Crm\PaymentsModule\Repository\PaymentsRepository;
-use Crm\SegmentModule\Repository\SegmentsRepository;
+use Crm\SegmentsModule\Widget\DashboardSegmentValueBaseWidget;
 
 /**
- * This widget fetches number of subscribers with payment and renders line with
+ * This widget loads number of subscribers with payment and renders line with
  * label and resulting value.
  *
  * @package Crm\PaymentsModule\Components
  */
-class ActualPaidSubscribersStatWidget extends BaseWidget
+class ActualPaidSubscribersStatWidget extends DashboardSegmentValueBaseWidget
 {
-    const SEGMENT_CODE = 'active-subscription-with-payment';
-
-    private $templateName = 'actual_paid_subscribers_stat_widget.latte';
-
-    private $paymentsRepository;
-
-    private $segmentsRepository;
-
-    public function __construct(
-        WidgetManager $widgetManager,
-        PaymentsRepository $paymentsRepository,
-        SegmentsRepository $segmentsRepository
-    ) {
-        parent::__construct($widgetManager);
-        $this->paymentsRepository = $paymentsRepository;
-        $this->segmentsRepository = $segmentsRepository;
+    public function segmentCode(): string
+    {
+        return 'active-subscribers-with-paid-subscriptions';
     }
 
-    public function identifier()
+    protected function templateName(): string
     {
-        return 'actualpaidsubscribersstatwidget';
-    }
-
-    public function render()
-    {
-        if ($this->segmentsRepository->exists(self::SEGMENT_CODE)) {
-            $this->template->totalPaidSubscribersLink = $this->presenter->link(
-                ':Segment:StoredSegments:show',
-                $this->segmentsRepository->findByCode(self::SEGMENT_CODE)->id
-            );
-        }
-
-        $this->template->totalPaidSubscribers = $this->paymentsRepository->paidSubscribersCount(true);
-        $this->template->setFile(__DIR__ . DIRECTORY_SEPARATOR . $this->templateName);
-        $this->template->render();
+        return 'actual_paid_subscribers_stat_widget.latte';
     }
 }
