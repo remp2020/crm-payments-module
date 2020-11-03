@@ -15,6 +15,7 @@ services:
 	recurrentPaymentsRepository: Crm\PaymentsModule\Repository\RecurrentPaymentsRepository
 	parsedMailLogsRepository: Crm\PaymentsModule\MailConfirmation\ParsedMailLogsRepository
 	paymentItemsRepository: Crm\PaymentsModule\Repository\PaymentItemsRepository
+	paymentItemMetaRepository: Crm\PaymentsModule\Repository\PaymentItemMetaRepository
 	retentionAnalysisJobsRepository: Crm\PaymentsModule\Repository\RetentionAnalysisJobsRepository
 
 	- Crm\PaymentsModule\Forms\PaymentFormFactory

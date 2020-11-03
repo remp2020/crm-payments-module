@@ -430,6 +430,7 @@ form:
 			nonzero: "Částka platby musí být nenulová, pravděpodobně nebyla vybrána žádná položka platby."
 			description: "Pozor: Částka je předvyplněna podle ceny vybraného typu předplatného. Chcete-li zadat inu částku zaškrněte <strong>vlastni cenu položek</strong> a částka se automaticky přepočítá podle ceny jednotlivých položek."
 		items: Položky platby
+		items_no_editable: "Platba obsahuje položky předplatného, které nelze upravit"
 		subscription_type_id:
 			label: Předplatné
 			prompt: Typ předplatného

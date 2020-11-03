@@ -79,6 +79,7 @@
                 item.find('input[data-tag="amount"]').val(items[i].amount);
                 item.find('input[data-tag="vat"]').val(items[i].vat);
                 item.find('input[data-tag="type"]').val(items[i].type);
+                item.find('input[data-tag="meta"]').val(items[i].meta);
                 domItems.append(item)
             }
 
@@ -134,7 +135,11 @@
             $('.payment-item').each(function () {
                 var item = {};
                 $(this).find('input').each(function () {
-                    item[$(this).data('tag')] = $(this).val().replace(',', '.');
+                    item[$(this).data('tag')] = $(this).val()
+
+                    if ($(this).data('tag') !== 'meta') {
+                        item[$(this).data('tag')] = item[$(this).data('tag')].replace(',', '.')
+                    }
                 });
                 items.push(item);
             });

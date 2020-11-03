@@ -20,4 +20,9 @@ class DonationPaymentItem implements PaymentItemInterface
     {
         return [];
     }
+
+    public function meta(): array
+    {
+        return [];
+    }
 }

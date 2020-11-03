@@ -10,6 +10,7 @@ use Crm\PaymentsModule\PaymentItem\PaymentItemContainer;
 use Crm\PaymentsModule\Repository\PaymentGatewaysRepository;
 use Crm\PaymentsModule\Repository\PaymentsRepository;
 use Crm\SubscriptionsModule\PaymentItem\SubscriptionTypePaymentItem;
+use Crm\SubscriptionsModule\Repository\SubscriptionTypeItemMetaRepository;
 use Crm\SubscriptionsModule\Repository\SubscriptionTypesRepository;
 use Crm\SubscriptionsModule\Subscription\SubscriptionType;
 use Crm\UsersModule\Repository\AddressesRepository;
@@ -50,10 +51,13 @@ class PaymentFormFactory
 
     private $onCallback;
 
+    private $subscriptionTypeItemMetaRepository;
+
     public function __construct(
         PaymentsRepository $paymentsRepository,
         PaymentGatewaysRepository $paymentGatewaysRepository,
         SubscriptionTypesRepository $subscriptionTypesRepository,
+        SubscriptionTypeItemMetaRepository $subscriptionTypeItemMetaRepository,
         UsersRepository $usersRepository,
         AddressesRepository $addressesRepository,
         DataProviderManager $dataProviderManager,
@@ -68,6 +72,7 @@ class PaymentFormFactory
         $this->dataProviderManager = $dataProviderManager;
         $this->applicationConfig = $applicationConfig;
         $this->translator = $translator;
+        $this->subscriptionTypeItemMetaRepository = $subscriptionTypeItemMetaRepository;
     }
 
     /**
@@ -95,6 +100,7 @@ class PaymentFormFactory
                     'name' => $item->name,
                     'vat' => $item->vat,
                     'type' => $item->type,
+                    'meta' => $item->related('payment_item_meta')->fetchPairs('key', 'value')
                 ];
                 // TODO: temporary solution until whole form is refactored and fields handled by dataproviders
                 if (array_key_exists('postal_fee_idx', $item)) {
@@ -393,12 +399,16 @@ class PaymentFormFactory
                 }
 
                 if ($subscriptionType && $item->type === SubscriptionTypePaymentItem::TYPE) {
+                    $meta = trim($item->meta, "\"");
+                    $meta = empty($meta) ? '[]' : $meta;
+
                     $paymentItem = new SubscriptionTypePaymentItem(
                         $subscriptionType->id,
                         $item->name,
                         $item->amount,
                         $item->vat,
-                        $item->count
+                        $item->count,
+                        Json::decode($meta, Json::FORCE_ARRAY)
                     );
                     $paymentItemContainer->addItem($paymentItem);
                 }

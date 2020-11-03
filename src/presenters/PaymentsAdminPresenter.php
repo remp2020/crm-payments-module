@@ -11,6 +11,7 @@ use Crm\PaymentsModule\DataProvider\AdminFilterFormDataProviderInterface;
 use Crm\PaymentsModule\Forms\PaymentFormFactory;
 use Crm\PaymentsModule\PaymentsHistogramFactory;
 use Crm\PaymentsModule\Repository\PaymentGatewaysRepository;
+use Crm\PaymentsModule\Repository\PaymentItemMetaRepository;
 use Crm\PaymentsModule\Repository\PaymentsRepository;
 use Crm\SubscriptionsModule\PaymentItem\SubscriptionTypePaymentItem;
 use Crm\SubscriptionsModule\Repository\SubscriptionTypesRepository;
@@ -23,6 +24,9 @@ class PaymentsAdminPresenter extends AdminPresenter
 {
     /** @var PaymentsRepository @inject */
     public $paymentsRepository;
+
+    /** @var PaymentItemMetaRepository @inject */
+    public $paymentItemMetaRepository;
 
     /** @var PaymentGatewaysRepository @inject */
     public $paymentGatewaysRepository;
@@ -236,6 +240,15 @@ class PaymentsAdminPresenter extends AdminPresenter
                 if ($item->type !== SubscriptionTypePaymentItem::TYPE) {
                     $allowEditPaymentItems = false;
                     break;
+                }
+
+                // TODO move to widget / dataprovider
+                if ($item->type === SubscriptionTypePaymentItem::TYPE) {
+                    if ($this->paymentItemMetaRepository->findByPaymentItemAndKey($item, 'revenue')->count('*')) {
+                        $allowEditPaymentItems = false;
+                        $this->flashMessage($this->translator->translate('payments.form.payment.items_no_editable'), 'warning');
+                        break;
+                    }
                 }
             }
         }

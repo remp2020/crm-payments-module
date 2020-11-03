@@ -78,6 +78,7 @@
                 item.find('input[data-tag="type"]').val(items[i].type).attr('disabled', paymentItemsDisabled);
                 item.find('input[data-tag="postal_fee_id"]').val(items[i].postal_fee_id).attr('disabled', paymentItemsDisabled);
                 item.find('input[data-tag="product_id"]').val(items[i].product_id).attr('disabled', paymentItemsDisabled);
+                item.find('input[data-tag="meta"]').val(JSON.stringify(items[i].meta)).attr('disabled', paymentItemsDisabled);
                 domItems.append(item)
             }
 
@@ -118,7 +119,11 @@
             $('.payment-item').each(function () {
                 var item = {};
                 $(this).find('input').each(function () {
-                    item[$(this).data('tag')] = $(this).val().replace(',', '.');
+                    item[$(this).data('tag')] = $(this).val()
+
+                    if ($(this).data('tag') !== 'meta') {
+                        item[$(this).data('tag')] = item[$(this).data('tag')].replace(',', '.')
+                    }
                 });
                 items.push(item);
             });

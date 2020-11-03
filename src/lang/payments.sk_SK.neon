@@ -435,6 +435,7 @@ form:
 			nonzero: "Suma platby musí byť nenulová, pravdepodobne nebola vybraná žiadna položka platby."
 			description: "Pozor: Suma je predvyplnená podľa ceny vybraného typu predplatného. Ak chcete zadať inú sumu, zaškrtnite <strong>vlastnú cenu položiek</strong> a suma sa automaticky prepočíta podľa ceny jednotlivých položiek."
 		items: Položky platby
+		items_no_editable: "Platba obsahuje položky predplatného, ktoré nie je možné upravovať"
 		subscription_type_id:
 			label: Predplatné
 			prompt: Typ predplatného

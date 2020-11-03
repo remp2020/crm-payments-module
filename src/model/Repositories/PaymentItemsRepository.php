@@ -3,9 +3,13 @@
 namespace Crm\PaymentsModule\Repository;
 
 use Crm\ApplicationModule\Config\ApplicationConfig;
+use Crm\ApplicationModule\DataProvider\DataProviderManager;
 use Crm\ApplicationModule\Repository;
+use Crm\PaymentsModule\DataProvider\CanUpdatePaymentItemDataProviderInterface;
+use Crm\PaymentsModule\Events\NewPaymentItemEvent;
 use Crm\PaymentsModule\PaymentItem\PaymentItemContainer;
 use Crm\PaymentsModule\PaymentItem\PaymentItemInterface;
+use Exception;
 use League\Event\Emitter;
 use Nette\Caching\IStorage;
 use Nette\Database\Context;
@@ -20,15 +24,23 @@ class PaymentItemsRepository extends Repository
 
     private $emitter;
 
+    private $paymentItemMetaRepository;
+
+    private $dataProviderManager;
+
     public function __construct(
         Context $database,
         ApplicationConfig $applicationConfig,
         Emitter $emitter,
-        IStorage $cacheStorage = null
+        IStorage $cacheStorage = null,
+        PaymentItemMetaRepository $paymentItemMetaRepository,
+        DataProviderManager $dataProviderManager
     ) {
         parent::__construct($database, $cacheStorage);
         $this->applicationConfig = $applicationConfig;
         $this->emitter = $emitter;
+        $this->paymentItemMetaRepository = $paymentItemMetaRepository;
+        $this->dataProviderManager = $dataProviderManager;
     }
 
     final public function add(IRow $payment, PaymentItemContainer $container): array
@@ -50,18 +62,39 @@ class PaymentItemsRepository extends Repository
             foreach ($item->data() as $key => $value) {
                 $data[$key] = $value;
             }
-            $rows[] = $this->insert($data);
+            $row = $this->insert($data);
+            $this->paymentItemMetaRepository->addMetas($row, $item->meta());
+
+            $this->emitter->emit(new NewPaymentItemEvent($row));
+
+            $rows[] = $row;
         }
         return $rows;
     }
 
-    final public function deleteByPayment(IRow $payment, $type = null)
+    public function update(IRow &$row, $data)
     {
+        if (!($this->canBeUpdated($row))) {
+            throw new Exception('Payment item ' . $row->id . ' cannot be updated');
+        }
+
+        $data['updated_at'] = new DateTime();
+        return parent::update($row, $data);
+    }
+
+    final public function deleteByPayment(IRow $payment)
+    {
+        // remove payment item meta
+        $paymentItemMetas = $this->paymentItemMetaRepository->getTable()
+            ->where(['payment_item.payment_id' => $payment->id])
+            ->fetchAll();
+        foreach ($paymentItemMetas as $paymentItemMeta) {
+            $this->paymentItemMetaRepository->delete($paymentItemMeta);
+        }
+
         $q = $this->getTable()
             ->where('payment_id', $payment->id);
-        if ($type) {
-            $q->where('type = ?', $type);
-        }
+
         return $q->delete();
     }
 
@@ -78,5 +111,18 @@ class PaymentItemsRepository extends Repository
     final public function getTypes(): array
     {
         return $this->getTable()->select('DISTINCT type')->fetchPairs('type', 'type');
+    }
+
+    private function canBeUpdated($paymentItem): bool
+    {
+        /** @var CanUpdatePaymentItemDataProviderInterface[] $providers */
+        $providers = $this->dataProviderManager->getProviders('payments.payment_items.update', CanUpdatePaymentItemDataProviderInterface::class);
+        foreach ($providers as $sorting => $provider) {
+            if (!($provider->provide(['paymentItem' => $paymentItem]))) {
+                return false;
+            }
+        }
+
+        return true;
     }
 }

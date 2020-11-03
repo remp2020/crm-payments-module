@@ -430,6 +430,7 @@ form:
 			nonzero: "Amount has to be greater than zero, there was probably no payment item selected."
 			description: "Note: Amount is calculated based on selected subscription type. If you want to use different amount, select <strong>custom item amounts</strong> and the payment amount will be recalculated based on prices of the items."
 		items: Payment items
+		items_no_editable: Payment contains subscription type items that can't be edited
 		subscription_type_id:
 			label: Subscription type
 			prompt: Subscription type
