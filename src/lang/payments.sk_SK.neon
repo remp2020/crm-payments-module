@@ -149,7 +149,8 @@ admin:
 			parsed_mail_logs:
 				title: "Spracované/potvrdené platby"
 				changed_to_paid: Stav zmenený na zaplatené
-				already_paid: Platba potvrdená
+				auto_new_payment: Automatická nová platba
+				already_paid: Pravdepodobne duplicitne zaplatené
 				different_amount: Iná čiastka
 				without_vs: Bez variabilného symbolu
 

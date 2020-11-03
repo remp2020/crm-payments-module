@@ -269,15 +269,17 @@
         </td>
         <td>
           {if $log->state == \Crm\PaymentsModule\MailConfirmation\ParsedMailLogsRepository::STATE_CHANGED_TO_PAID}
-            <span class="label label-primary">{_"payments.admin.component.user_payments_listing.parsed_mail_logs.changed_to_paid"}</span>
+            <span title="{$log->state}" class="label label-primary">{_"payments.admin.component.user_payments_listing.parsed_mail_logs.changed_to_paid"}</span>
+          {elseif $log->state == \Crm\PaymentsModule\MailConfirmation\ParsedMailLogsRepository::STATE_AUTO_NEW_PAYMENT}
+            <span title="{$log->state}" class="label label-primary">{_"payments.admin.component.user_payments_listing.parsed_mail_logs.auto_new_payment"}</span>
           {elseif $log->state == \Crm\PaymentsModule\MailConfirmation\ParsedMailLogsRepository::STATE_ALREADY_PAID}
-            <span class="label label-primary">{_"payments.admin.component.user_payments_listing.parsed_mail_logs.already_paid"}</span>
+            <span title="{$log->state}" class="label label-warning">{_"payments.admin.component.user_payments_listing.parsed_mail_logs.already_paid"}</span>
           {elseif $log->state == \Crm\PaymentsModule\MailConfirmation\ParsedMailLogsRepository::STATE_DIFFERENT_AMOUNT}
-            <span class="label label-danger">{_"payments.admin.component.user_payments_listing.parsed_mail_logs.different_amount"}</span>
+            <span title="{$log->state}" class="label label-danger">{_"payments.admin.component.user_payments_listing.parsed_mail_logs.different_amount"}</span>
           {elseif $log->state == \Crm\PaymentsModule\MailConfirmation\ParsedMailLogsRepository::STATE_WITHOUT_VS}
-            <span class="label label-warning">{_"payments.admin.component.user_payments_listing.parsed_mail_logs.without_vs"}</span>
+            <span title="{$log->state}" class="label label-warning">{_"payments.admin.component.user_payments_listing.parsed_mail_logs.without_vs"}</span>
           {else}
-            <span class="label label-default">{$log->state}</span>
+            <span title="{$log->state}" class="label label-default">{$log->state}</span>
           {/if}
         </td>
         <td><code>{$log->message}</code></td>

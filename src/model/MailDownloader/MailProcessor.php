@@ -99,6 +99,7 @@ class MailProcessor
         if ($payment->status == PaymentsRepository::STATUS_PAID && $payment->created_at < $olderPaymentThan) {
             $newPayment = $this->paymentsRepository->copyPayment($payment);
             $payment = $newPayment;
+            $this->log->setPayment($payment);
             $createdNewPayment = true;
         }
 
