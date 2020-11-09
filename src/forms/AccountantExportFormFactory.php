@@ -45,16 +45,17 @@ class AccountantExportFormFactory
             'payment_gateway',
             'payments.form.accountant_export.payment_gateway.label',
             $paymentGateways
-        )
-            ->setPrompt('--');
+        )->setPrompt('--')
+            ->getControlPrototype()->addAttributes(['class' => 'select2']);
+
 
         $statuses = $this->paymentsRepository->getStatusPairs();
         $form->addSelect(
             'status',
             'payments.form.accountant_export.status.label',
             $statuses
-        )
-            ->setPrompt('--');
+        )->setPrompt('--')
+            ->getControlPrototype()->addAttributes(['class' => 'select2']);
 
         $subscriptionTypes = $this->subscriptionTypesRepository->getAllActive()->fetchAll();
         $subscriptionTypesArray = [];
@@ -68,8 +69,8 @@ class AccountantExportFormFactory
             'subscription_type',
             'payments.form.accountant_export.subscription_type.label',
             $subscriptionTypesArray
-        )
-            ->setPrompt('--');
+        )->setPrompt('--')
+            ->getControlPrototype()->addAttributes(['class' => 'select2']);
 
         $last = new \DateTime();
         $last->setDate(2014, 12, 1);
@@ -77,7 +78,7 @@ class AccountantExportFormFactory
         $dates = [];
         $now = new \DateTime();
         while ($now > $last) {
-            $dates[$last->format('Y-m')] = $last->format('Y-m');
+            $dates[$last->format('Y-m')] = $last->format('F') . ' ' . $last->format('Y');
             $last->modify('+1 month');
         }
 
@@ -85,7 +86,7 @@ class AccountantExportFormFactory
             'month',
             'payments.form.accountant_export.month.label',
             $dates
-        );
+        )->getControlPrototype()->addAttributes(['class' => 'select2']);
 
         $form->setDefaults([
             'status' => PaymentsRepository::STATUS_PAID,

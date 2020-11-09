@@ -350,7 +350,7 @@ class PaymentsRepository extends Repository
             $where['subscription_type_id'] = $subscription_type;
         }
         if ($status) {
-            $where['status'] = $status;
+            $where['payments.status'] = $status;
         }
         if ($sales_funnel) {
             $where['sales_funnel_id'] = $sales_funnel;
