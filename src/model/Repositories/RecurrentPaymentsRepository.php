@@ -66,7 +66,7 @@ class RecurrentPaymentsRepository extends Repository
             'retries' => $retries,
             'user_id' => $payment->user->id,
             'parent_payment_id' => $payment->id,
-            'state' => 'active'
+            'state' => self::STATE_ACTIVE,
         ]);
     }
 
