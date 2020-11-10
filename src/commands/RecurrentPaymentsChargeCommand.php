@@ -261,7 +261,7 @@ class RecurrentPaymentsChargeCommand extends Command
             );
 
             $now = new DateTime();
-            $output->writeln("[{$now->format(DATE_RFC3339)}] Recurrent payment: #{$recurrentPayment->id} (<comment>user {$recurrentPayment->cid}</comment>)");
+            $output->writeln("[{$now->format(DATE_RFC3339)}] Recurrent payment: #{$recurrentPayment->id} (<comment>cid {$recurrentPayment->cid}</comment>)");
             $output->writeln("  * status: <info>{$gateway->getResultCode()}</info>");
             $output->writeln("  * message: {$gateway->getResultMessage()}");
         }
