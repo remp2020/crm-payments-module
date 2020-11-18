@@ -73,14 +73,11 @@ class RecurrentPaymentFormFactory
             ->setHtmlAttribute('readonly', 'readonly')
             ->setOption('description', 'payments.admin.component.recurrent_payment_form.custom_amount.description');
 
-        $form->addSelect('state', 'payments.admin.component.recurrent_payment_form.state.label', [
-            RecurrentPaymentsRepository::STATE_USER_STOP => RecurrentPaymentsRepository::STATE_USER_STOP,
-            RecurrentPaymentsRepository::STATE_ADMIN_STOP => RecurrentPaymentsRepository::STATE_ADMIN_STOP,
-            RecurrentPaymentsRepository::STATE_ACTIVE => RecurrentPaymentsRepository::STATE_ACTIVE,
-            RecurrentPaymentsRepository::STATE_CHARGED => RecurrentPaymentsRepository::STATE_CHARGED,
-            RecurrentPaymentsRepository::STATE_CHARGE_FAILED => RecurrentPaymentsRepository::STATE_CHARGE_FAILED,
-            RecurrentPaymentsRepository::STATE_SYSTEM_STOP => RecurrentPaymentsRepository::STATE_SYSTEM_STOP,
-        ])->setPrompt('payments.admin.component.recurrent_payment_form.state.prompt')
+        $states = $this->recurrentPaymentsRepository->getStates();
+        $states = array_combine($states, $states); // make array keys same as values
+
+        $form->addSelect('state', 'payments.admin.component.recurrent_payment_form.state.label', $states)
+            ->setPrompt('payments.admin.component.recurrent_payment_form.state.prompt')
             ->setRequired('payments.admin.component.recurrent_payment_form.state.required')
             ->setAttribute('placeholder', 'payments.admin.component.recurrent_payment_form.state.placeholder');
 
