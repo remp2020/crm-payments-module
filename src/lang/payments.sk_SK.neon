@@ -145,7 +145,7 @@ admin:
 				admin_stop: Zastavené na žiadosť
 				system_stop: "Neúspešné opakovanie, zastavená"
 				charged: Automaticky predĺžená
-				charge_failed: "Neúspešné opakovanie, opakovanie o 6h"
+				charge_failed: "Neúspešné opakovanie, naplánovaný ďalší pokus"
 			parsed_mail_logs:
 				title: "Spracované/potvrdené platby"
 				changed_to_paid: Stav zmenený na zaplatené
