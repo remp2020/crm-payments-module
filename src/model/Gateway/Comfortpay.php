@@ -123,22 +123,31 @@ class Comfortpay extends GatewayAbstract implements RecurrentPaymentInterface
         $this->gateway->setCertPath($this->applicationConfig->get('comfortpay_local_cert_path'));
         $this->gateway->setCertPass($this->applicationConfig->get('comfortpay_local_passphrase_path'));
 
+        $params = [
+            'amount' => $payment->amount,
+            'vs' => $payment->variable_symbol,
+            'ss' => '0308',
+            'currency' => $this->applicationConfig->get('currency'),
+            'referedCardId' => $token,
+            'transactionId' => $payment->id,
+            'transactionType' => Gateway::TRANSACTION_TYPE_PURCHASE,
+        ];
+
         try {
-            $request = $this->gateway->charge([
-                'amount' => $payment->amount,
-                'vs' => $payment->variable_symbol,
-                'ss' => '0308',
-                'currency' => $this->applicationConfig->get('currency'),
-                'referedCardId' => $token,
-                'transactionId' => $payment->id,
-                'transactionType' => Gateway::TRANSACTION_TYPE_PURCHASE,
-            ]);
+            $request = $this->gateway->charge($params);
             $this->response = $request->send();
         } catch (\Exception $exception) {
             $log = [
                 'exception' => get_class($exception),
                 'message' => $exception->getMessage(),
+                'params' => $params,
             ];
+            if ($exception instanceof \SoapFault) {
+                $log['soap_fault_name'] = $exception->faultname;
+                $log['soap_fault_code'] = $exception->faultcode;
+                $log['soap_fault_string'] = $exception->faultstring;
+                $log['soap_fault_actor'] = $exception->faultactor;
+            }
             if (isset($request)) {
                 $log['request'] = $request;
             }
