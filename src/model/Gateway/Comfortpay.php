@@ -143,10 +143,10 @@ class Comfortpay extends GatewayAbstract implements RecurrentPaymentInterface
                 'params' => $params,
             ];
             if ($exception instanceof \SoapFault) {
-                $log['soap_fault_name'] = $exception->faultname;
-                $log['soap_fault_code'] = $exception->faultcode;
-                $log['soap_fault_string'] = $exception->faultstring;
-                $log['soap_fault_actor'] = $exception->faultactor;
+                $log['soap_fault_name'] = $exception->faultname ?? null;
+                $log['soap_fault_code'] = $exception->faultcode ?? null;
+                $log['soap_fault_string'] = $exception->faultstring ?? null;
+                $log['soap_fault_actor'] = $exception->faultactor ?? null;
             }
             if (isset($request)) {
                 $log['request'] = $request;
