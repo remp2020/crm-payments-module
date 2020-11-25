@@ -3,6 +3,7 @@
 namespace Crm\PaymentsModule\MailConfirmation;
 
 use Crm\PaymentsModule\Builder\ParsedMailLogsBuilder;
+use Crm\PaymentsModule\Gateways\GatewayAbstract;
 use Crm\PaymentsModule\model\MailDownloader\MailProcessorException;
 use Crm\PaymentsModule\PaymentProcessor;
 use Crm\PaymentsModule\Repository\PaymentsRepository;
@@ -148,6 +149,7 @@ class MailProcessor
         $fields['VS'] = $vs;
         $fields['AC'] = $this->mailContent->getAc();
         $fields['RES'] = $this->mailContent->getRes();
+        $fields['RC'] = $this->mailContent->getRc();
 
         $payment = $this->getPayment($vs);
         if (!$skipCheck) {
@@ -179,7 +181,10 @@ class MailProcessor
             $_GET[$k] = $v;
         }
 
-        $this->paymentProcessor->complete($payment, function () {
+        $this->paymentProcessor->complete($payment, function ($payment, GatewayAbstract $gateway) {
+            if ($payment->status === PaymentsRepository::STATUS_PAID) {
+                $this->log->setState(ParsedMailLogsRepository::STATE_CHANGED_TO_PAID)->save();
+            }
         });
     }
 
