@@ -49,7 +49,7 @@ class RecurrentPaymentFormFactory
             ->setRequired('payments.admin.component.recurrent_payment_form.charge_at.required')
             ->setAttribute('placeholder', 'payments.admin.component.recurrent_payment_form.charge_at.placeholder')
             ->setAttribute('class', 'flatpickr')
-            ->setAttribute('flatpickr_datetime', "1");
+            ->setAttribute('flatpickr_datetime_seconds', "1");
 
         $form->addText('retries', 'payments.admin.component.recurrent_payment_form.retries.label')
             ->setRequired('payments.admin.component.recurrent_payment_form.retries.required')
