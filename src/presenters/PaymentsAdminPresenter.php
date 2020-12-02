@@ -18,7 +18,7 @@ use Crm\SubscriptionsModule\Repository\SubscriptionTypesRepository;
 use Crm\UsersModule\Repository\UsersRepository;
 use Nette\Application\BadRequestException;
 use Nette\Application\UI\Form;
-use Tomaj\Form\Renderer\BootstrapInlineRenderer;
+use Tomaj\Form\Renderer\BootstrapRenderer;
 
 class PaymentsAdminPresenter extends AdminPresenter
 {
@@ -48,6 +48,12 @@ class PaymentsAdminPresenter extends AdminPresenter
 
     /** @persistent */
     public $payment_gateway;
+
+    /** @persistent */
+    public $paid_at_from;
+
+    /** @persistent */
+    public $paid_at_to;
 
     /** @persistent */
     public $subscription_type;
@@ -112,6 +118,14 @@ class PaymentsAdminPresenter extends AdminPresenter
             $recurrentChargeValues[$this->recurrent_charge] ?? null
         );
 
+        if (isset($this->paid_at_from)) {
+            $payments->where('paid_at >= ?', $this->paid_at_from);
+        }
+
+        if (isset($this->paid_at_to)) {
+            $payments->where('paid_at < ?', $this->paid_at_to);
+        }
+
         $payments->order('created_at DESC')->order('id DESC');
         /** @var AdminFilterFormDataProviderInterface[] $providers */
         $providers = $this->dataProviderManager->getProviders('payments.dataprovider.list_filter_form', AdminFilterFormDataProviderInterface::class);
@@ -125,36 +139,35 @@ class PaymentsAdminPresenter extends AdminPresenter
     public function createComponentAdminFilterForm()
     {
         $form = new Form;
-        $form->setRenderer(new BootstrapInlineRenderer());
+        $form->setRenderer(new BootstrapRenderer());
         $form->setTranslator($this->translator);
+
+        $mainGroup = $form->addGroup('main')->setOption('label', null);
+        $collapseGroup = $form->addGroup('collapse', false)
+            ->setOption('container', 'div class="collapse"')
+            ->setOption('label', null)
+            ->setOption('id', 'formCollapse');
+
         $form->addText('text', 'payments.admin.component.admin_filter_form.variable_symbol.label')
             ->setAttribute('autofocus');
 
         $paymentGateways = $this->paymentGatewaysRepository->all()->fetchPairs('id', 'name');
-        $form->addSelect(
+        $paymentGateway = $form->addSelect(
             'payment_gateway',
             'payments.admin.component.admin_filter_form.payment_gateway.label',
             $paymentGateways
         )->setPrompt('--');
+        $paymentGateway->getControlPrototype()->addAttributes(['class' => 'select2']);
 
         $statuses = $this->paymentsRepository->getStatusPairs();
-        $form->addSelect(
+        $status = $form->addSelect(
             'status',
             'payments.admin.component.admin_filter_form.status.label',
             $statuses
         )->setPrompt('--');
+        $status->getControlPrototype()->addAttributes(['class' => 'select2']);
 
-        $donations = [
-            true => $this->translator->translate('payments.admin.component.admin_filter_form.donation.with_donation'),
-            false => $this->translator->translate('payments.admin.component.admin_filter_form.donation.without_donation'),
-        ];
-        $form->addSelect(
-            'donation',
-            'payments.admin.component.admin_filter_form.donation.label',
-            $donations
-        )->setPrompt('--');
-
-        $form->addSelect(
+        $recurrentCharge = $form->addSelect(
             'recurrent_charge',
             'payments.admin.component.admin_filter_form.recurrent_charge.label',
             [
@@ -163,6 +176,19 @@ class PaymentsAdminPresenter extends AdminPresenter
                 'manual' => $this->translator->translate('payments.admin.component.admin_filter_form.recurrent_charge.manual'),
             ]
         );
+        $recurrentCharge->getControlPrototype()->addAttributes(['class' => 'select2']);
+
+        $form->setCurrentGroup($collapseGroup);
+
+        $form->addText('paid_at_from', 'payments.admin.component.admin_filter_form.paid_at_from.label')
+            ->setAttribute('placeholder', 'payments.admin.component.admin_filter_form.paid_at_from.placeholder')
+            ->setAttribute('class', 'flatpickr')
+            ->setAttribute('flatpickr_datetime', "1");
+
+        $form->addText('paid_at_to', 'payments.admin.component.admin_filter_form.paid_at_to.label')
+            ->setAttribute('placeholder', 'payments.admin.component.admin_filter_form.paid_at_to.placeholder')
+            ->setAttribute('class', 'flatpickr')
+            ->setAttribute('flatpickr_datetime', "1");
 
         $subscriptionTypes = $this->subscriptionTypesRepository->getAllActive()->fetchPairs('id', 'name');
         $subscriptionType = $form->addSelect(
@@ -172,22 +198,42 @@ class PaymentsAdminPresenter extends AdminPresenter
         )->setPrompt('--');
         $subscriptionType->getControlPrototype()->addAttributes(['class' => 'select2']);
 
+        $donations = [
+            true => $this->translator->translate('payments.admin.component.admin_filter_form.donation.with_donation'),
+            false => $this->translator->translate('payments.admin.component.admin_filter_form.donation.without_donation'),
+        ];
+        $donation = $form->addSelect(
+            'donation',
+            'payments.admin.component.admin_filter_form.donation.label',
+            $donations
+        )->setPrompt('--');
+        $donation->getControlPrototype()->addAttributes(['class' => 'select2']);
+
         /** @var AdminFilterFormDataProviderInterface[] $providers */
         $providers = $this->dataProviderManager->getProviders('payments.dataprovider.list_filter_form', AdminFilterFormDataProviderInterface::class);
         foreach ($providers as $sorting => $provider) {
             $form = $provider->provide(['form' => $form, 'request' => $this->request]);
         }
 
-        $form->addSubmit('send', 'payments.admin.component.admin_filter_form.filter.label')
+        $form->setCurrentGroup($mainGroup);
+        $form->addSubmit('send', 'payments.admin.component.admin_filter_form.filter.send')
             ->getControlPrototype()
             ->setName('button')
-            ->setHtml('<i class="fa fa-filter"></i> ' . $this->translator->translate('payments.admin.component.admin_filter_form.filter.label'));
+            ->setHtml('<i class="fa fa-filter"></i> ' . $this->translator->translate('payments.admin.component.admin_filter_form.filter.send'));
         $presenter = $this;
 
         $form->addSubmit('cancel', 'payments.admin.component.admin_filter_form.filter.cancel')->onClick[] = function () use ($presenter, $form) {
             $emptyDefaults = array_fill_keys(array_keys((array) $form->getComponents()), null);
             $presenter->redirect('PaymentsAdmin:Default', $emptyDefaults);
         };
+
+        $form->addButton('more', 'payments.admin.component.admin_filter_form.filter.more')
+            ->setHtmlAttribute('data-toggle', 'collapse')
+            ->setHtmlAttribute('data-target', '#formCollapse')
+            ->setAttribute('class', 'btn btn-info')
+            ->getControlPrototype()
+            ->setName('button')
+            ->setHtml('<i class="fas fa-caret-down"></i> ' . $this->translator->translate('payments.admin.component.admin_filter_form.filter.more'));
 
         $form->onSuccess[] = [$this, 'adminFilterSubmited'];
         $form->setDefaults([
@@ -197,6 +243,8 @@ class PaymentsAdminPresenter extends AdminPresenter
             'status' => $this->status,
             'donation' => $this->donation,
             'recurrent_charge' => $this->recurrent_charge,
+            'paid_at_from' => $this->paid_at_from,
+            'paid_at_to' => $this->paid_at_to,
         ]);
         return $form;
     }

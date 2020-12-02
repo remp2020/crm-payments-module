@@ -172,9 +172,16 @@ admin:
 				manual: Manual
 			subscription_type:
 				label: Subscription type
+			paid_at_from:
+				label: Paid from
+				placeholder: e.g. 31.7.2020 15:30
+			paid_at_to:
+				label: Paid to
+				placeholder: e.g. 1.8.2020 15:30
 			filter:
-				label: Filter
+				send: Filter
 				cancel: Cancel filter
+				more: More options
 
 		recurrent_payment_form:
 			charge_at:

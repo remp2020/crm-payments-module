@@ -172,9 +172,16 @@ admin:
 				manual: Iba manuálne
 			subscription_type:
 				label: Typ predplatného
+			paid_at_from:
+				label: Dátum platby od
+				placeholder: napríklad 31.7.2020 15:30
+			paid_at_to:
+				label: Dátum platby do
+				placeholder: napríklad 1.8.2020 15:30
 			filter:
-				label: Filtruj
+				send: Filtruj
 				cancel: Zruš filter
+				more: Viac možností
 
 		recurrent_payment_form:
 			charge_at:
