@@ -69,6 +69,7 @@ class DashboardPresenter extends AdminPresenter
 
     public function createComponentGooglePaymentsStatsGraph(GoogleBarGraphGroupControlFactoryInterface $factory)
     {
+        $this->getSession()->close();
         $graphDataItem = new GraphDataItem();
         $graphDataItem->setCriteria((new Criteria())
             ->setTableName('payments')
@@ -91,6 +92,7 @@ class DashboardPresenter extends AdminPresenter
 
     public function createComponentGooglePaymentsAmountGraph(GoogleBarGraphGroupControlFactoryInterface $factory)
     {
+        $this->getSession()->close();
         $graphDataItem = new GraphDataItem();
         $graphDataItem->setCriteria((new Criteria())
             ->setTableName('payments')
@@ -111,7 +113,7 @@ class DashboardPresenter extends AdminPresenter
 
     public function createComponentGoogleArpuGraph(GoogleLineGraphGroupControlFactoryInterface $factory)
     {
-        $items = [];
+        $this->getSession()->close();
 
         $graphDataItem = new GraphDataItem();
         $graphDataItem->setCriteria((new Criteria())
@@ -140,6 +142,7 @@ class DashboardPresenter extends AdminPresenter
 
     public function createComponentGoogleUserActiveSubscribersRegistrationsSourceStatsGraph(GoogleBarGraphGroupControlFactoryInterface $factory)
     {
+        $this->getSession()->close();
         $graphDataItem = new GraphDataItem();
 
         $graphDataItem->setCriteria(
@@ -164,6 +167,7 @@ class DashboardPresenter extends AdminPresenter
 
     public function createComponentGoogleRecurrentPaymentsStatsGraph(GoogleBarGraphGroupControlFactoryInterface $factory)
     {
+        $this->getSession()->close();
         $items = [];
 
         $graphDataItem = new GraphDataItem();
@@ -209,6 +213,7 @@ class DashboardPresenter extends AdminPresenter
 
     public function createComponentGooglePaymentsRefundsGraph(GoogleBarGraphGroupControlFactoryInterface $factory)
     {
+        $this->getSession()->close();
         $graphDataItem = new GraphDataItem();
         $graphDataItem->setCriteria((new Criteria())
             ->setTableName('payments')
@@ -229,6 +234,7 @@ class DashboardPresenter extends AdminPresenter
 
     public function createComponentPaymentDonationsGraph(GoogleBarGraphGroupControlFactoryInterface $factory)
     {
+        $this->getSession()->close();
         $items = [];
 
         $graphDataItem = new GraphDataItem();
@@ -267,6 +273,7 @@ class DashboardPresenter extends AdminPresenter
 
     public function createComponentGoogleNewPayingUsersGraph(GoogleLineGraphGroupControlFactoryInterface $factory)
     {
+        $this->getSession()->close();
         $items = [];
 
         $graphDataItem = new GraphDataItem();
