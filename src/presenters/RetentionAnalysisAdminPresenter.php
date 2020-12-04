@@ -297,7 +297,7 @@ class RetentionAnalysisAdminPresenter extends AdminPresenter
     public function createComponentFilterForm(): Form
     {
         $form = $this->retentionAnalysisFilterFormFactory->create($this->params);
-        $form->onSuccess[] = [$this, 'filterSubmitted'];
+        $form->onSuccess[] = [$this, 'adminFilterSubmitted'];
         return $form;
     }
 
@@ -306,11 +306,6 @@ class RetentionAnalysisAdminPresenter extends AdminPresenter
         $job = $this->retentionAnalysisJobsRepository->find($this->params['job']);
         $inputParams = Json::decode($job->params, Json::FORCE_ARRAY);
         return $this->retentionAnalysisFilterFormFactory->create($inputParams, true);
-    }
-
-    public function filterSubmitted($form, $values)
-    {
-        $this->redirect('new', (array) $values);
     }
 
     public function createComponentScheduleComputationForm(): Form

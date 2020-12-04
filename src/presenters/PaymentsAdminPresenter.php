@@ -235,7 +235,7 @@ class PaymentsAdminPresenter extends AdminPresenter
             ->setName('button')
             ->setHtml('<i class="fas fa-caret-down"></i> ' . $this->translator->translate('payments.admin.component.admin_filter_form.filter.more'));
 
-        $form->onSuccess[] = [$this, 'adminFilterSubmited'];
+        $form->onSuccess[] = [$this, 'adminFilterSubmitted'];
         $form->setDefaults([
             'text' => $this->text,
             'payment_gateway' => $this->payment_gateway,
@@ -247,11 +247,6 @@ class PaymentsAdminPresenter extends AdminPresenter
             'paid_at_to' => $this->paid_at_to,
         ]);
         return $form;
-    }
-
-    public function adminFilterSubmited($form, $values)
-    {
-        $this->redirect($this->action, array_filter((array)$values));
     }
 
     public function actionChangeStatus()
