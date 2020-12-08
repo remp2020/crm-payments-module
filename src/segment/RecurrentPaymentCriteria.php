@@ -43,7 +43,7 @@ class RecurrentPaymentCriteria implements CriteriaInterface
             if ($params->boolean('active_recurrent')->isTrue()) {
                 $where[] = " recurrent_payments.id IS NOT NULL AND recurrent_payments.state = 'active' ";
             } elseif ($params->boolean('active_recurrent')->isFalse()) {
-                $where[] = ' recurrent_payments.id IS NULL';
+                $where[] = " recurrent_payments.id IS NULL OR users.id NOT IN (SELECT DISTINCT(recurrent_payments.user_id) FROM recurrent_payments WHERE recurrent_payments.state = 'active') ";
             }
         }
 
