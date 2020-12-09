@@ -4,10 +4,8 @@ namespace Crm\PaymentsModule\Events;
 
 use Crm\PaymentsModule\Repository\PaymentsRepository;
 use Crm\PaymentsModule\Repository\RecurrentPaymentsRepository;
-use Crm\SubscriptionsModule\Events\SubscriptionStartsEvent;
 use Crm\SubscriptionsModule\Repository\SubscriptionsRepository;
 use Crm\UsersModule\Repository\AddressesRepository;
-use DateTime;
 use League\Event\AbstractListener;
 use League\Event\Emitter;
 use League\Event\EventInterface;
@@ -114,15 +112,6 @@ class PaymentStatusChangeHandler extends AbstractListener
                 $this->paymentsRepository->update($payment, ['subscription_id' => $newSubscription]);
             }
         );
-
-        if ($subscription->end_time <= new DateTime()) {
-            $this->subscriptionsRepository->setExpired($subscription);
-        } elseif ($subscription->start_time <= new DateTime()) {
-            $this->subscriptionsRepository->update($subscription, ['internal_status' => SubscriptionsRepository::INTERNAL_STATUS_ACTIVE]);
-            $this->emitter->emit(new SubscriptionStartsEvent($subscription));
-        } else {
-            $this->subscriptionsRepository->update($subscription, ['internal_status' => SubscriptionsRepository::INTERNAL_STATUS_BEFORE_START]);
-        }
 
         return $subscription;
     }
