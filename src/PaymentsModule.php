@@ -105,6 +105,9 @@ class PaymentsModule extends CrmModule
         $menuItem = new MenuItem($this->translator->translate('payments.menu.retention_analysis'), ':Payments:RetentionAnalysisAdmin:', 'fa fa-chart-line', 670);
         $mainMenu->addChild($menuItem);
 
+        $menuItem = new MenuItem($this->translator->translate('payments.menu.exports'), ':Payments:ExportsAdmin:', 'fa fa-download', 680);
+        $mainMenu->addChild($menuItem);
+
         $menuContainer->attachMenuItem($mainMenu);
 
         // dashboard menu item
@@ -390,6 +393,11 @@ class PaymentsModule extends CrmModule
         $dispatcher->registerHandler(
             'retention-analysis-job',
             $this->getInstance(\Crm\PaymentsModule\Hermes\RetentionAnalysisJobHandler::class)
+        );
+
+        $dispatcher->registerHandler(
+            'export-payments',
+            $this->getInstance(\Crm\PaymentsModule\Hermes\ExportPaymentsHandler::class)
         );
     }
 

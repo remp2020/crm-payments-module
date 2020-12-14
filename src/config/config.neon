@@ -28,6 +28,7 @@ services:
 	- Crm\PaymentsModule\PaymentProcessor
 	- Crm\PaymentsModule\RecurrentPaymentsProcessor
 	- Crm\PaymentsModule\Builder\ParsedMailLogsBuilder
+	- Crm\PaymentsModule\AdminFilterFormData
 
 	- Crm\PaymentsModule\MailConfirmation\TatraBankaMailDownloader
 	- Crm\PaymentsModule\MailConfirmation\CsobMailDownloader
@@ -100,6 +101,9 @@ services:
 	retentionAnalysisJobHandler:
 		class: Crm\PaymentsModule\Hermes\RetentionAnalysisJobHandler
 
+	exportPaymentsHandler:
+		class: Crm\PaymentsModule\Hermes\ExportPaymentsHandler
+
 	paymentCompleteRedirect:
 		class: Crm\PaymentsModule\Model\PaymentCompleteRedirectManager
 		setup:
@@ -138,3 +142,8 @@ services:
 		class: Crm\PaymentsModule\Components\ActualFreeSubscribersStatWidget
 		setup:
 			- setOnTheFly(true, 5)
+
+	paymentsExportFileSystem: League\Flysystem\Filesystem(League\Flysystem\Adapter\Local('%appDir%/../content/exports'))
+	applicationMountManager:
+		setup:
+			- mountFilesystem(Crm\PaymentsModule\Models\FileSystem::EXPORTS_BUCKET_NAME, @paymentsExportFileSystem)

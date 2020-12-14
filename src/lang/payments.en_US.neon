@@ -7,6 +7,7 @@ menu:
 	recurrent_payments: Recurrent payments
 	duplicate_recurrent_payments: Duplicate recurrent payments
 	retention_analysis: Retention analysis
+	exports: Exports
 
 admin:
 	component:
@@ -380,6 +381,11 @@ admin:
 		vat_rate: VAT rate
 		enter_number_of_products: Enter number of products
 		count: Count
+		export:
+			label: Export
+			exported: 'Export added to queue and will be available in <a href="/payments/exports-admin/" class="link">exports</a>.'
+			modal_title: Payments export
+			modal_body: 'Export will contain <code>%payments_number%</code> payments and will be available in <a href="/payments/exports-admin/" class="link">exports</a>.'
 
 	report:
 		no_recurrent_charge:
@@ -395,6 +401,16 @@ admin:
 
 	address:
 		cant_delete: 'This address is used in payment: %payments%|This address is used in payments: %payments%'
+
+	exports:
+		title: Exports
+		created_at: Created at
+		file: File
+		actions: Actions
+		download: Download
+		delete: Delete
+		deleted: File was deleted
+		delete_error: Cannot delete file
 
 form:
 	payment_gateway:

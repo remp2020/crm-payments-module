@@ -6,6 +6,8 @@ use Crm\AdminModule\Presenters\AdminPresenter;
 use Crm\ApplicationModule\Components\Graphs\SmallBarGraphControlFactoryInterface;
 use Crm\ApplicationModule\Components\VisualPaginator;
 use Crm\ApplicationModule\DataProvider\DataProviderManager;
+use Crm\ApplicationModule\Hermes\HermesMessage;
+use Crm\PaymentsModule\AdminFilterFormData;
 use Crm\PaymentsModule\Components\ChangePaymentStatusFactoryInterface;
 use Crm\PaymentsModule\DataProvider\AdminFilterFormDataProviderInterface;
 use Crm\PaymentsModule\Forms\PaymentFormFactory;
@@ -19,6 +21,7 @@ use Crm\UsersModule\Repository\UsersRepository;
 use Nette\Application\BadRequestException;
 use Nette\Application\UI\Form;
 use Tomaj\Form\Renderer\BootstrapRenderer;
+use Tomaj\Hermes\Emitter;
 
 class PaymentsAdminPresenter extends AdminPresenter
 {
@@ -47,44 +50,37 @@ class PaymentsAdminPresenter extends AdminPresenter
     public $paymentsHistogramFactory;
 
     /** @persistent */
-    public $payment_gateway;
-
-    /** @persistent */
-    public $paid_at_from;
-
-    /** @persistent */
-    public $paid_at_to;
-
-    /** @persistent */
-    public $subscription_type;
-
-    /** @persistent */
-    public $status;
-
-    /** @persistent */
-    public $donation;
-
-    /** @persistent */
     public $month;
 
     /** @persistent */
-    public $recurrent_charge = 'all';
+    public $formData = [];
 
-    /** @persistent */
-    public $products = [];
+    private $adminFilterFormData;
 
-    /** @persistent */
-    public $sales_funnel = [];
+    private $hermesEmitter;
+
+
+    public function __construct(
+        AdminFilterFormData $adminFilterFormData,
+        Emitter $hermesEmitter
+    ) {
+        parent::__construct();
+        $this->adminFilterFormData = $adminFilterFormData;
+        $this->hermesEmitter = $hermesEmitter;
+    }
 
     public function startup()
     {
         parent::startup();
-        $this->month = isset($this->params['month']) ? $this->params['month'] : '';
+        $this->month = $this->params['month'] ?? '';
+        $this->adminFilterFormData->parse($this->formData);
     }
 
     public function renderDefault()
     {
-        $payments = $this->filteredPayments();
+        $payments = $this->adminFilterFormData->filteredPayments()
+            ->order('created_at DESC')
+            ->order('id DESC');
         $filteredCount = $payments->count('*');
 
         $vp = new VisualPaginator();
@@ -96,44 +92,6 @@ class PaymentsAdminPresenter extends AdminPresenter
         $this->template->filteredCount = $filteredCount;
         $this->template->payments = $payments->limit($paginator->getLength(), $paginator->getOffset());
         $this->template->totalPayments = $this->paymentsRepository->totalCount(true);
-    }
-
-    private function filteredPayments()
-    {
-        $recurrentChargeValues = [
-            'all' => null,
-            'recurrent' => true,
-            'manual' => false,
-        ];
-
-        $payments = $this->paymentsRepository->all(
-            $this->text,
-            $this->payment_gateway,
-            $this->subscription_type,
-            $this->status,
-            null,
-            null,
-            null,
-            $this->donation,
-            $recurrentChargeValues[$this->recurrent_charge] ?? null
-        );
-
-        if (isset($this->paid_at_from)) {
-            $payments->where('paid_at >= ?', $this->paid_at_from);
-        }
-
-        if (isset($this->paid_at_to)) {
-            $payments->where('paid_at < ?', $this->paid_at_to);
-        }
-
-        $payments->order('created_at DESC')->order('id DESC');
-        /** @var AdminFilterFormDataProviderInterface[] $providers */
-        $providers = $this->dataProviderManager->getProviders('payments.dataprovider.list_filter_form', AdminFilterFormDataProviderInterface::class);
-        foreach ($providers as $sorting => $provider) {
-            $payments = $provider->filter($payments, $this->request);
-        }
-
-        return $payments;
     }
 
     public function createComponentAdminFilterForm()
@@ -212,7 +170,7 @@ class PaymentsAdminPresenter extends AdminPresenter
         /** @var AdminFilterFormDataProviderInterface[] $providers */
         $providers = $this->dataProviderManager->getProviders('payments.dataprovider.list_filter_form', AdminFilterFormDataProviderInterface::class);
         foreach ($providers as $sorting => $provider) {
-            $form = $provider->provide(['form' => $form, 'request' => $this->request]);
+            $form = $provider->provide(['form' => $form, 'formData' => $this->formData]);
         }
 
         $form->setCurrentGroup($mainGroup);
@@ -224,7 +182,7 @@ class PaymentsAdminPresenter extends AdminPresenter
 
         $form->addSubmit('cancel', 'payments.admin.component.admin_filter_form.filter.cancel')->onClick[] = function () use ($presenter, $form) {
             $emptyDefaults = array_fill_keys(array_keys((array) $form->getComponents()), null);
-            $presenter->redirect('PaymentsAdmin:Default', $emptyDefaults);
+            $presenter->redirect('PaymentsAdmin:Default', ['formData' => $emptyDefaults]);
         };
 
         $form->addButton('more', 'payments.admin.component.admin_filter_form.filter.more')
@@ -236,17 +194,15 @@ class PaymentsAdminPresenter extends AdminPresenter
             ->setHtml('<i class="fas fa-caret-down"></i> ' . $this->translator->translate('payments.admin.component.admin_filter_form.filter.more'));
 
         $form->onSuccess[] = [$this, 'adminFilterSubmitted'];
-        $form->setDefaults([
-            'text' => $this->text,
-            'payment_gateway' => $this->payment_gateway,
-            'subscription_type' => $this->subscription_type,
-            'status' => $this->status,
-            'donation' => $this->donation,
-            'recurrent_charge' => $this->recurrent_charge,
-            'paid_at_from' => $this->paid_at_from,
-            'paid_at_to' => $this->paid_at_to,
-        ]);
+        $form->setDefaults($this->adminFilterFormData->getFormValues());
         return $form;
+    }
+
+    public function adminFilterSubmitted($form, $values)
+    {
+        $this->redirect($this->action, ['formData' => array_map(function ($item) {
+            return $item ?: null;
+        }, (array)$values)]);
     }
 
     public function actionChangeStatus()
@@ -257,11 +213,14 @@ class PaymentsAdminPresenter extends AdminPresenter
         $this->redirect(':Users:UsersAdmin:Show', $payment->user_id);
     }
 
-    public function renderExport()
+    public function handleExportPayments()
     {
-        $this->getHttpResponse()->addHeader('Content-Type', 'application/csv');
-        $this->getHttpResponse()->addHeader('Content-Disposition', 'attachment; filename=export.csv');
-        $this->template->payments = $this->filteredPayments();
+        $this->hermesEmitter->emit(new HermesMessage('export-payments', [
+            'form_data' => $this->formData,
+            'user_id' => $this->user->getId()
+        ]));
+
+        $this->flashMessage($this->translator->translate('payments.admin.payments.export.exported'));
     }
 
     public function renderEdit($id, $userId)

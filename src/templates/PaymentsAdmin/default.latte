@@ -44,6 +44,38 @@
     <hr>
   </div>
 
+  {if $filteredCount > 0}
+    <div class="col-md-12">
+      <a class="btn btn-primary pull-right" style="margin-bottom: 10px" tabindex="-1" href="#" data-toggle="modal" data-target="#export-payments"><i class="fa fa-download"></i> {_payments.admin.payments.export.label}</a>
+    </div>
+
+    <div class="modal fade" id="export-payments">
+      <div class="modal-dialog">
+        <div class="modal-content">
+          <div class="modal-header">
+            <button type="button" class="close" data-dismiss="modal" aria-label="{_"payments.admin.payments.close"}">
+              <span aria-hidden="true">&times;</span>
+            </button>
+            <h4 class="modal-title">{_"payments.admin.payments.export.modal_title"}</h4>
+          </div>
+          <div class="modal-body">
+            <p>
+              {_"payments.admin.payments.export.modal_body", [payments_number => $filteredCount]|noescape}
+            </p>
+          </div>
+          <div class="modal-footer">
+            <a href="#" type="button" class="" data-dismiss="modal" style="margin-right: 1em;">
+              {_"payments.admin.payments.close"}
+            </a>
+            <a href="{link exportPayments!}" type="button" class="btn btn-primary">
+              {_"payments.admin.payments.export.label"}
+            </a>
+          </div>
+        </div>
+      </div>
+    </div>
+  {/if}
+
 
   <div class="col-md-12">
     {if $filteredCount > 0}

@@ -7,6 +7,7 @@ menu:
 	recurrent_payments: Rekurentné platby
 	duplicate_recurrent_payments: Duplicitné rekurentné platby
 	retention_analysis: Analýza retencie
+	exports: Exporty
 
 admin:
 	component:
@@ -385,6 +386,11 @@ admin:
 		vat_rate: Sadzba DPH
 		enter_number_of_products: Zadajte počet kusov
 		count: Počet kusov
+		export:
+			label: Export
+			exported: 'Export pridaný do poradia a bude dostupný medzi <a href="/payments/exports-admin/" class="link">exportami</a>.'
+			modal_title: Export platieb
+			modal_body: 'Export bude obsahovať <code>%payments_number%</code> platieb a bude dostupný medzi <a href="/payments/exports-admin/" class="link">exportami</a>.'
 
 	report:
 		no_recurrent_charge:
@@ -400,6 +406,16 @@ admin:
 
 	address:
 		cant_delete: 'Táto adresa sa používa pri platbe: %payments%|Táto adresa sa používa pri platbách: %payments%'
+
+	exports:
+		title: Exporty
+		created_at: Čas vytvorenia
+		file: Súbor
+		actions: Akcie
+		download: Stiahnuť
+		delete: Zmazať
+		deleted: Súbor bol zmazaný
+		delete_error: Súbor nie je možné odstrániť
 
 form:
 	payment_gateway:
