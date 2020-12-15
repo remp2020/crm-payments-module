@@ -143,7 +143,14 @@ services:
 		setup:
 			- setOnTheFly(true, 5)
 
-	paymentsExportFileSystem: League\Flysystem\Filesystem(League\Flysystem\Adapter\Local('%appDir%/../content/exports'))
+	exportsAdapter:
+		class: League\Flysystem\Adapter\Local
+		arguments:
+			root: '%appDir%/../content/payments-exports'
+			permissions: [dir: [public: 0o777]]
+
+	paymentsExportFileSystem: League\Flysystem\Filesystem(@exportsAdapter)
+
 	applicationMountManager:
 		setup:
 			- mountFilesystem(Crm\PaymentsModule\Models\FileSystem::EXPORTS_BUCKET_NAME, @paymentsExportFileSystem)
