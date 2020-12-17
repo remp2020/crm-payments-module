@@ -541,7 +541,7 @@ frontend:
 		error: It's not possible to reinstantiate recurrent payment anymore.
 		error_create_new: "It's not possible to reinstantiate recurrent payment anymore. Please, create a new one"
 	banktransfer:
-		title: Information about your bank transfer payment
+		title: Details for standing order or bank transfer payment
 		amount: Amount
 		account_number: Account number
 		variable_symbol: Variable symbol

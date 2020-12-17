@@ -541,7 +541,7 @@ frontend:
 		error: 'Automatickou platbu není možné obnovit.'
 		error_create_new: 'Automatickou platbu není možné obnovit. Prosím vytvořte novou.'
 	banktransfer:
-		title: Údaje pro vaši platbu bankovním převodem
+		title: Údaje pro trvalý příkaz nebo platbu převodem
 		amount: Částka
 		account_number: Číslo účtu
 		variable_symbol: Variabilní symbol
