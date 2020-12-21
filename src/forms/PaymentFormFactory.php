@@ -97,21 +97,21 @@ class PaymentFormFactory
             $payment = $this->paymentsRepository->find($paymentId);
             $defaults = $payment->toArray();
             $items = [];
-            foreach ($payment->related('payment_items')->fetchAll() as $item) {
+            foreach ($payment->related('payment_items')->fetchAll() as $paymentItem) {
                 $item = [
-                    'amount' => $item->amount,
-                    'count' => $item->count,
-                    'name' => $item->name,
-                    'vat' => $item->vat,
-                    'type' => $item->type,
-                    'meta' => $item->related('payment_item_meta')->fetchPairs('key', 'value')
+                    'amount' => $paymentItem->amount,
+                    'count' => $paymentItem->count,
+                    'name' => $paymentItem->name,
+                    'vat' => $paymentItem->vat,
+                    'type' => $paymentItem->type,
+                    'meta' => $paymentItem->related('payment_item_meta')->fetchPairs('key', 'value')
                 ];
                 // TODO: temporary solution until whole form is refactored and fields handled by dataproviders
-                if (array_key_exists('postal_fee_idx', $item)) {
-                    $item['postal_fee_idx'] = $item->postal_fee_id;
+                if (isset($paymentItem->postal_fee_id)) {
+                    $item['postal_fee_id'] = $paymentItem->postal_fee_id;
                 }
-                if (array_key_exists('product_idx', $item)) {
-                    $item['product_idx'] = $item->product_id;
+                if (isset($paymentItem->product_id)) {
+                    $item['product_id'] = $paymentItem->product_id;
                 }
                 $items[] = $item;
             }
