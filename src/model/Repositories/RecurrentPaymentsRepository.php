@@ -387,4 +387,23 @@ class RecurrentPaymentsRepository extends Repository
     {
         return $recurrentPayment->parent_payment->status !== PaymentsRepository::STATUS_PREPAID;
     }
+
+    final public function latestSuccessfulRecurrentPayment($recurrentPayment)
+    {
+        $parentPayment = $recurrentPayment->parent_payment;
+        if (!$parentPayment) {
+            return null;
+        }
+
+        if (in_array($parentPayment->status, [PaymentsRepository::STATUS_PAID, PaymentsRepository::STATUS_PREPAID])) {
+            return $recurrentPayment;
+        }
+
+        $previousRecurrentCharge = $this->findByPayment($parentPayment);
+        if (!$previousRecurrentCharge) {
+            return null;
+        }
+        
+        return $this->latestSuccessfulRecurrentPayment($previousRecurrentCharge);
+    }
 }
