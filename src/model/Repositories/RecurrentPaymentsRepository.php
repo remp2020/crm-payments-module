@@ -70,9 +70,13 @@ class RecurrentPaymentsRepository extends Repository
         ]);
     }
 
-    final public function createFromPayment(IRow $payment, string $recurrentToken): ?IRow
-    {
-        if ($payment->status !== PaymentsRepository::STATUS_PAID) {
+    final public function createFromPayment(
+        IRow $payment,
+        string $recurrentToken,
+        ?\DateTime $chargeAt = null,
+        ?float $customChargeAmount = null
+    ): ?IRow {
+        if (!in_array($payment->status, [PaymentsRepository::STATUS_PAID, PaymentsRepository::STATUS_PREPAID], true)) {
             Debugger::log("Could not create recurrent payment from payment [{$payment->id}], invalid payment status: [{$payment->status}]");
             return null;
         }
@@ -86,11 +90,15 @@ class RecurrentPaymentsRepository extends Repository
         $retries = explode(', ', $this->applicationConfig->get('recurrent_payment_charges'));
         $retries = count((array)$retries);
 
+        if (!$chargeAt) {
+            $chargeAt = $this->calculateChargeAt($payment);
+        }
+
         return $this->add(
             $recurrentToken,
             $payment,
-            $this->calculateChargeAt($payment),
-            null,
+            $chargeAt,
+            $customChargeAmount,
             --$retries
         );
     }

@@ -51,19 +51,11 @@ class RecurrentPaymentsProcessor
         $this->paymentsRepository->updateStatus($recurrentPayment->payment, $paymentStatus);
         $payment = $this->paymentsRepository->find($recurrentPayment->payment->id); // refresh to get fresh object
 
-        $retries = explode(', ', $this->applicationConfig->get('recurrent_payment_charges'));
-        $retries = count($retries);
-
-        if (!$chargeAt) {
-            $chargeAt = $this->recurrentPaymentsRepository->calculateChargeAt($payment);
-        }
-
-        $this->recurrentPaymentsRepository->add(
-            $recurrentPayment->cid,
+        $this->recurrentPaymentsRepository->createFromPayment(
             $payment,
+            $recurrentPayment->cid,
             $chargeAt,
-            $customChargeAmount,
-            --$retries
+            $customChargeAmount
         );
 
         $this->recurrentPaymentsRepository->setCharged($recurrentPayment, $payment, $resultCode, $resultMessage);
@@ -186,16 +178,7 @@ class RecurrentPaymentsProcessor
 
         // Refresh model to load subscription details
         $payment = $this->paymentsRepository->find($payment->id);
-
-        $retries = explode(', ', $this->applicationConfig->get('recurrent_payment_charges'));
-        $retries = count($retries);
-        $this->recurrentPaymentsRepository->add(
-            $cid,
-            $payment,
-            $this->recurrentPaymentsRepository->calculateChargeAt($payment),
-            null,
-            --$retries
-        );
+        $this->recurrentPaymentsRepository->createFromPayment($payment, $cid);
 
         return true;
     }
