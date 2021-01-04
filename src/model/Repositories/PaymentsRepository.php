@@ -503,7 +503,7 @@ class PaymentsRepository extends Repository
         return $this->database->table('subscriptions')
             ->where(':payments.id IS NOT NULL')
             ->where(':payments:recurrent_payments(parent_payment_id).status IS NULL')
-            ->where(':payments:recurrent_payments(parent_payment_id).retries > ?', 3)
+            ->where(':payments:recurrent_payments(parent_payment_id).retries > ?', 0)
             ->where(':payments:recurrent_payments(parent_payment_id).state = ?', 'active')
             ->where('next_subscription_id IS NULL')
             ->where('end_time >= ?', $startTime)
@@ -581,7 +581,7 @@ LEFT JOIN payments ON subscriptions.id = payments.subscription_id
 LEFT JOIN recurrent_payments ON payments.id = recurrent_payments.parent_payment_id 
 WHERE payments.id IS NOT NULL AND 
 recurrent_payments.status IS NULL AND
-recurrent_payments.retries > 3 AND 
+recurrent_payments.retries > 0 AND 
 recurrent_payments.state = 'active' AND
 next_subscription_id IS NULL AND 
 end_time >= ? AND 
