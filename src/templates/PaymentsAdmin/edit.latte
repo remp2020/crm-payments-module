@@ -119,10 +119,11 @@
             $('.payment-item').each(function () {
                 var item = {};
                 $(this).find('input').each(function () {
-                    item[$(this).data('tag')] = $(this).val()
-
-                    if ($(this).data('tag') !== 'meta') {
-                        item[$(this).data('tag')] = item[$(this).data('tag')].replace(',', '.')
+                    if ($(this).data('tag') === 'meta') {
+                        // Meta already contains stringified JSON, therefore parse it first before serialization (to avoid double encoding)
+                        item[$(this).data('tag')] = JSON.parse($(this).val());
+                    } else {
+                        item[$(this).data('tag')] = $(this).val().replace(',', '.')
                     }
                 });
                 items.push(item);
