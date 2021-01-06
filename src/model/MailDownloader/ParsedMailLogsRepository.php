@@ -14,6 +14,7 @@ class ParsedMailLogsRepository extends Repository
 {
     const STATE_WITHOUT_VS = 'without_vs';
     const STATE_ALREADY_PAID = 'already_paid';
+    const STATE_DUPLICATED_PAYMENT = 'duplicated_payment';
     const STATE_CHANGED_TO_PAID = 'changed_to_paid';
     const STATE_PAYMENT_NOT_FOUND = 'payment_not_found';
     const STATE_DIFFERENT_AMOUNT = 'different_amount';

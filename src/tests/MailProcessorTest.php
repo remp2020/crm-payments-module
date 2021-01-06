@@ -3,10 +3,10 @@
 namespace Crm\PaymentsModule\Tests;
 
 use Crm\PaymentsModule\MailConfirmation\MailProcessor;
-use Tomaj\BankMailsParser\MailContent;
 use Crm\PaymentsModule\MailConfirmation\ParsedMailLogsRepository;
 use Crm\PaymentsModule\Repository\PaymentsRepository;
 use DateTime;
+use Tomaj\BankMailsParser\MailContent;
 
 class MailProcessorTest extends PaymentsTestCase
 {
@@ -49,7 +49,7 @@ class MailProcessorTest extends PaymentsTestCase
         $mailContent->setVs('7492857611');
 
         $result = $this->mailProcessor->processMail($mailContent, new TestOutput());
-        $this->assertTrue($result);
+        $this->assertFalse($result);
 
         $log = $this->parsedMailLogsRepository->lastLog();
         $this->assertEquals(ParsedMailLogsRepository::STATE_DIFFERENT_AMOUNT, $log->state);
@@ -142,5 +142,35 @@ class MailProcessorTest extends PaymentsTestCase
         $this->assertNotEquals($newPayment->id, $payment->id);
         $this->assertEquals($newPayment->variable_symbol, $payment->variable_symbol);
         $this->assertEquals(PaymentsRepository::STATUS_PAID, $newPayment->status);
+    }
+
+    public function testDuplicatedPaymentByUser()
+    {
+        // mock first payment confirmation
+        $payment = $this->createPayment('7492851612');
+        $this->paymentsRepository->update($payment, array(
+            'amount' => 10.4,
+            'status' => PaymentsRepository::STATUS_PAID,
+            'created_at' => new DateTime('2 days ago'),
+        ));
+        $this->parsedMailLogsRepository->insert([
+            'created_at' => new DateTime('2 days ago'),
+            'delivered_at' => new DateTime('2 days ago'),
+            'variable_symbol' => $payment->variable_symbol,
+            'amount' => $payment->amount,
+            'state' => ParsedMailLogsRepository::STATE_CHANGED_TO_PAID,
+        ]);
+
+        // user for some reason paid again 2 days later
+        $mailContent = new MailContent();
+        $mailContent->setAmount($payment->amount);
+        $mailContent->setTransactionDate(time());
+        $mailContent->setVs($payment->variable_symbol);
+
+        $result = $this->mailProcessor->processMail($mailContent, new TestOutput());
+        $this->assertFalse($result);
+
+        $log = $this->parsedMailLogsRepository->lastLog();
+        $this->assertEquals(ParsedMailLogsRepository::STATE_DUPLICATED_PAYMENT, $log->state);
     }
 }

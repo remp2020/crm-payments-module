@@ -150,7 +150,8 @@ admin:
 			parsed_mail_logs:
 				title: "Processed/confirmed payments"
 				changed_to_paid: Status changed to paid
-				already_paid: Probably duplicate payment
+				already_paid: Payment was already paid
+				duplicated_payment: Probably duplicate payment
 				auto_new_payment: Auto new payment
 				different_amount: Different amount
 				without_vs: Without variable symbol

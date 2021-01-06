@@ -151,7 +151,8 @@ admin:
 				title: "Zpracované/potvrzené platby"
 				changed_to_paid: Stav změněn na zaplaceno
 				auto_new_payment: Automatická nová platba
-				already_paid: Pravděpodobně duplicitně zaplaceno
+				already_paid: Platba již byla potvrzena
+				duplicated_payment: Pravděpodobně duplicitně zaplaceno
 				different_amount: Jiná částka
 				without_vs: Bez variabilního symbolu
 

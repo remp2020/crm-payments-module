@@ -5,6 +5,8 @@ namespace Crm\PaymentsModule\Tests;
 use Crm\ApplicationModule\Tests\DatabaseTestCase;
 use Crm\PaymentsModule\PaymentItem\PaymentItemContainer;
 use Crm\PaymentsModule\Repository\PaymentGatewaysRepository;
+use Crm\PaymentsModule\Repository\PaymentItemMetaRepository;
+use Crm\PaymentsModule\Repository\PaymentItemsRepository;
 use Crm\PaymentsModule\Repository\PaymentMetaRepository;
 use Crm\PaymentsModule\Repository\PaymentsRepository;
 use Crm\PaymentsModule\Repository\RecurrentPaymentsRepository;
@@ -48,6 +50,8 @@ class PaymentsTestCase extends DatabaseTestCase
             AccessTokensRepository::class,
             PaymentsRepository::class,
             PaymentMetaRepository::class,
+            PaymentItemsRepository::class,
+            PaymentItemMetaRepository::class,
             PaymentGatewaysRepository::class,
             RecurrentPaymentsRepository::class,
             SubscriptionTypesRepository::class,

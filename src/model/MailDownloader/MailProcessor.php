@@ -4,27 +4,25 @@ namespace Crm\PaymentsModule\MailConfirmation;
 
 use Crm\PaymentsModule\Builder\ParsedMailLogsBuilder;
 use Crm\PaymentsModule\Gateways\GatewayAbstract;
-use Crm\PaymentsModule\model\MailDownloader\MailProcessorException;
 use Crm\PaymentsModule\PaymentProcessor;
 use Crm\PaymentsModule\Repository\PaymentsRepository;
 use DateInterval;
+use Nette\Database\Table\ActiveRow;
 use Nette\Utils\DateTime;
 use Symfony\Component\Console\Output\OutputInterface;
 use Tomaj\BankMailsParser\MailContent;
 
 class MailProcessor
 {
-    /** @var PaymentsRepository */
     private $paymentsRepository;
 
-    /** @var PaymentProcessor */
     private $paymentProcessor;
 
-    /** @var ParsedMailLogsBuilder */
     private $parsedMailLogsBuilder;
 
-    /** @var  ParsedMailLogsBuilder */
-    private $log;
+    private $logBuilder;
+
+    private $parsedMailLogsRepository;
 
     /** @var  MailContent */
     private $mailContent;
@@ -35,11 +33,13 @@ class MailProcessor
     public function __construct(
         PaymentsRepository $paymentsRepository,
         PaymentProcessor $paymentProcessor,
-        ParsedMailLogsBuilder $parsedMailLogsBuilder
+        ParsedMailLogsBuilder $parsedMailLogsBuilder,
+        ParsedMailLogsRepository $parsedMailLogsRepository
     ) {
         $this->paymentsRepository = $paymentsRepository;
         $this->paymentProcessor = $paymentProcessor;
         $this->parsedMailLogsBuilder = $parsedMailLogsBuilder;
+        $this->parsedMailLogsRepository = $parsedMailLogsRepository;
     }
 
     public function processMail(MailContent $mailContent, OutputInterface $output, $skipCheck = false)
@@ -47,22 +47,17 @@ class MailProcessor
         $this->mailContent = $mailContent;
         $this->output = $output;
 
-        try {
-            if ($this->mailContent->getSign() == null) {
-                $transactionDatetime = new DateTime('@' . $this->mailContent->getTransactionDate());
-                $this->log = $this->parsedMailLogsBuilder->createNew()
-                    ->setDeliveredAt($transactionDatetime);
-                $this->processBankAccountMovements();
-            } else {
-                $transactionDatetime = DateTime::createFromFormat('dmYHis', $this->mailContent->getTransactionDate());
-                $this->log = $this->parsedMailLogsBuilder->createNew()
-                    ->setDeliveredAt($transactionDatetime);
-                $this->processCardMovements($skipCheck);
-            }
-            return true;
-        } catch (MailProcessorException $e) {
-            return false;
+        if ($this->mailContent->getSign() == null) {
+            $transactionDatetime = new DateTime('@' . $this->mailContent->getTransactionDate());
+            $this->logBuilder = $this->parsedMailLogsBuilder->createNew()
+                ->setDeliveredAt($transactionDatetime);
+            return $this->processBankAccountMovements();
         }
+
+        $transactionDatetime = DateTime::createFromFormat('dmYHis', $this->mailContent->getTransactionDate());
+        $this->logBuilder = $this->parsedMailLogsBuilder->createNew()
+            ->setDeliveredAt($transactionDatetime);
+        return $this->processCardMovements($skipCheck);
     }
 
     private function processBankAccountMovements()
@@ -75,36 +70,59 @@ class MailProcessor
         $this->output->writeln(" * Parsed email <info>{$transactionDate->format('d.m.Y H:i')}</info>");
         $this->output->writeln("    -> VS - <info>{$this->mailContent->getVS()}</info> {$this->mailContent->getAmount()} {$this->mailContent->getCurrency()}");
 
-        $this->log
+        $this->logBuilder
             ->setMessage($this->mailContent->getReceiverMessage())
             ->setAmount($this->mailContent->getAmount());
 
         $vs = $this->getVs();
-
+        if (!$vs) {
+            return false;
+        }
         $payment = $this->getPayment($vs);
+        if (!$payment) {
+            return false;
+        }
 
         if ($payment->amount != $this->mailContent->getAmount()) {
-            $this->log->setState(ParsedMailLogsRepository::STATE_DIFFERENT_AMOUNT)
+            $this->logBuilder
+                ->setState(ParsedMailLogsRepository::STATE_DIFFERENT_AMOUNT)
                 ->save();
         }
 
         // we will not approve payment when amount in email (real payment) is lower than payment (in db)
         if ($payment->amount > $this->mailContent->getAmount()) {
-            return true;
+            return false;
         }
 
-        $olderPaymentThan = (clone $transactionDate)->sub(new DateInterval('P10D'));
+        $newPaymentThreshold = (clone $transactionDate)->sub(new DateInterval('P10D'));
 
         $createdNewPayment = false;
 
-        if ($payment->status == PaymentsRepository::STATUS_PAID && $payment->created_at < $olderPaymentThan) {
+        if ($payment->status == PaymentsRepository::STATUS_PAID && $payment->created_at < $newPaymentThreshold) {
             $newPayment = $this->paymentsRepository->copyPayment($payment);
             $payment = $newPayment;
-            $this->log->setPayment($payment);
+            $this->logBuilder->setPayment($payment);
             $createdNewPayment = true;
         }
 
-        $this->checkPaymentStatus($payment);
+        $duplicatedPaymentCheck = $this->parsedMailLogsRepository
+            ->findByVariableSymbols([$payment->variable_symbol])
+            ->where('state = ?', ParsedMailLogsRepository::STATE_CHANGED_TO_PAID)
+            ->where('created_at >= ?', $newPaymentThreshold)
+            ->count('*');
+        if ($duplicatedPaymentCheck > 0) {
+            $this->logBuilder
+                ->setState(ParsedMailLogsRepository::STATE_DUPLICATED_PAYMENT)
+                ->save();
+            return false;
+        }
+
+        if ($payment->status == PaymentsRepository::STATUS_PAID) {
+            $this->logBuilder
+                ->setState(ParsedMailLogsRepository::STATE_ALREADY_PAID)
+                ->save();
+            return false;
+        }
 
         if (in_array($payment->status, [PaymentsRepository::STATUS_FORM, PaymentsRepository::STATUS_FAIL, PaymentsRepository::STATUS_TIMEOUT])) {
             $this->paymentsRepository->updateStatus($payment, PaymentsRepository::STATUS_PAID, true);
@@ -113,8 +131,10 @@ class MailProcessor
             if ($createdNewPayment) {
                 $state = ParsedMailLogsRepository::STATE_AUTO_NEW_PAYMENT;
             }
-            $this->log->setState($state)->save();
+            $this->logBuilder->setState($state)->save();
         }
+
+        return true;
     }
 
     private function processCardMovements($skipCheck)
@@ -125,19 +145,22 @@ class MailProcessor
         $this->output->writeln("    -> VS - <info>{$this->mailContent->getVS()}</info> {$this->mailContent->getAmount()} {$this->mailContent->getCurrency()}");
         $fields = [''];
 
-        $this->log
+        $this->logBuilder
             ->setMessage($this->mailContent->getReceiverMessage())
             ->setAmount($this->mailContent->getAmount());
 
         $vs = $this->getVs();
+        if (!$vs) {
+            return false;
+        }
 
         $sign = $this->mailContent->getSign();
 
         if (!$sign) {
             $this->output->writeln("    -> missing sign");
-            $this->log->setState(ParsedMailLogsRepository::STATE_NO_SIGN);
-            $this->log->save();
-            throw new MailProcessorException(ParsedMailLogsRepository::STATE_NO_SIGN);
+            $this->logBuilder->setState(ParsedMailLogsRepository::STATE_NO_SIGN);
+            $this->logBuilder->save();
+            return false;
         }
         $fields['SIGN'] = $sign;
         $fields['HMAC'] = $sign;
@@ -152,14 +175,23 @@ class MailProcessor
         $fields['RC'] = $this->mailContent->getRc();
 
         $payment = $this->getPayment($vs);
-        if (!$skipCheck) {
-            $this->checkPaymentStatus($payment);
+        if (!$payment) {
+            return false;
+        }
+        if (!$skipCheck && $payment->status == PaymentsRepository::STATUS_PAID) {
+            $this->logBuilder->setState(ParsedMailLogsRepository::STATE_ALREADY_PAID)->save();
+            return false;
         }
 
-        if ($this->mailContent->getRes() != 'OK') {
-            $this->paymentsRepository->updateStatus($payment, PaymentsRepository::STATUS_FAIL, false, "non-OK RES mail param: {$this->mailContent->getRes()}");
+        if ($this->mailContent->getRes() !== 'OK') {
+            $this->paymentsRepository->updateStatus(
+                $payment,
+                PaymentsRepository::STATUS_FAIL,
+                false,
+                "non-OK RES mail param: {$this->mailContent->getRes()}"
+            );
             $this->output->writeln("    -> Payment has non-OK result, setting failed");
-            return;
+            return true;
         }
 
         $cid = $this->mailContent->getCid();
@@ -168,7 +200,7 @@ class MailProcessor
             // halt the processing, not a comfortpay confirmation email
             // we receive both cardpay and comfortpay notifications for payment at the same time
             $this->output->writeln("    -> Payment's [{$payment->id}] gateway is recurrent but CID was not received [{$cid}], halting");
-            return;
+            return false;
         }
 
         if ($cid) {
@@ -183,12 +215,14 @@ class MailProcessor
 
         $this->paymentProcessor->complete($payment, function ($payment, GatewayAbstract $gateway) {
             if ($payment->status === PaymentsRepository::STATUS_PAID) {
-                $this->log->setState(ParsedMailLogsRepository::STATE_CHANGED_TO_PAID)->save();
+                $this->logBuilder->setState(ParsedMailLogsRepository::STATE_CHANGED_TO_PAID)->save();
             }
         });
+
+        return true;
     }
 
-    private function getVs()
+    private function getVs(): ?string
     {
         $vs = $this->mailContent->getVs();
         if (!$vs) {
@@ -199,32 +233,24 @@ class MailProcessor
             }
         }
         if (!$vs) {
-            $this->log->setState(ParsedMailLogsRepository::STATE_WITHOUT_VS);
-            $this->log->save();
-            throw new MailProcessorException(ParsedMailLogsRepository::STATE_WITHOUT_VS);
+            $this->logBuilder->setState(ParsedMailLogsRepository::STATE_WITHOUT_VS);
+            $this->logBuilder->save();
+            return null;
         }
-        $this->log->setVariableSymbol($vs);
+        $this->logBuilder->setVariableSymbol($vs);
         return $vs;
     }
 
-    private function getPayment($vs)
+    private function getPayment($vs): ?ActiveRow
     {
         $payment = $this->paymentsRepository->findLastByVS($vs);
         if (!$payment) {
-            $this->log->setState(ParsedMailLogsRepository::STATE_PAYMENT_NOT_FOUND)
+            $this->logBuilder
+                ->setState(ParsedMailLogsRepository::STATE_PAYMENT_NOT_FOUND)
                 ->save();
-            throw new MailProcessorException(ParsedMailLogsRepository::STATE_PAYMENT_NOT_FOUND);
+            return null;
         }
-        $this->log->setPayment($payment);
+        $this->logBuilder->setPayment($payment);
         return $payment;
-    }
-
-    private function checkPaymentStatus($payment)
-    {
-        if ($payment->status == PaymentsRepository::STATUS_PAID) {
-            $this->log->setState(ParsedMailLogsRepository::STATE_ALREADY_PAID)
-                ->save();
-            throw new MailProcessorException(ParsedMailLogsRepository::STATE_ALREADY_PAID);
-        }
     }
 }
