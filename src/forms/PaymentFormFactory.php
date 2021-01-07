@@ -405,7 +405,7 @@ class PaymentFormFactory
                 if ($subscriptionType && $item->type === SubscriptionTypePaymentItem::TYPE) {
                     $meta = [];
                     if ($meta) {
-                        if (is_string($meta)) {
+                        if (is_string($item->meta)) {
                             $meta = trim($item->meta, "\"");
                             $meta = Json::decode($meta, Json::FORCE_ARRAY);
                         } else {
