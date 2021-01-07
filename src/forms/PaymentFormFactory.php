@@ -403,8 +403,15 @@ class PaymentFormFactory
                 }
 
                 if ($subscriptionType && $item->type === SubscriptionTypePaymentItem::TYPE) {
-                    $meta = trim($item->meta, "\"");
-                    $meta = empty($meta) ? '[]' : $meta;
+                    $meta = [];
+                    if ($meta) {
+                        if (is_string($meta)) {
+                            $meta = trim($item->meta, "\"");
+                            $meta = Json::decode($meta, Json::FORCE_ARRAY);
+                        } else {
+                            $meta = $item->meta;
+                        }
+                    }
 
                     $paymentItem = new SubscriptionTypePaymentItem(
                         $subscriptionType->id,
@@ -412,7 +419,7 @@ class PaymentFormFactory
                         $item->amount,
                         $item->vat,
                         $item->count,
-                        Json::decode($meta, Json::FORCE_ARRAY)
+                        $meta
                     );
                     $paymentItemContainer->addItem($paymentItem);
                 }
