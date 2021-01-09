@@ -142,11 +142,11 @@ class RetentionAnalysisAdminPresenter extends AdminPresenter
     private function removeJobFromComparison($jobId)
     {
         $section = $this->getSession(self::SESSION_SECTION);
-        $section->jobIdsToCompare = $section->jobIdsToCompare ?? [];
-
-        $foundIndex = array_search($jobId, $section->jobIdsToCompare, false);
-        if ($foundIndex !== false) {
-            unset($section->jobIdsToCompare[$foundIndex]);
+        if (isset($section->jobIdsToCompare)) {
+            $foundIndex = array_search($jobId, $section->jobIdsToCompare, false);
+            if ($foundIndex !== false) {
+                unset($section->jobIdsToCompare[$foundIndex]);
+            }
         }
     }
 
