@@ -101,7 +101,7 @@ class ReactivateRecurrentPaymentApiHandler extends ApiHandler
         }
 
         // reactivate recurrent payment
-        $reactivatedRecurrentPayment = $this->recurrentPaymentsRepository->reactiveByUser($recurrentPaymentID, $user->id);
+        $reactivatedRecurrentPayment = $this->recurrentPaymentsRepository->reactivateByUser($recurrentPaymentID, $user->id);
         if (!$reactivatedRecurrentPayment) {
             Debugger::log("User is unable to reactivate recurrent payment with ID [$recurrentPaymentID].", Debugger::ERROR);
             $response = new JsonResponse([

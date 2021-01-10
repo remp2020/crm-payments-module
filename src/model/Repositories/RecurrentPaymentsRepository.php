@@ -182,13 +182,18 @@ class RecurrentPaymentsRepository extends Repository
             ->where(['user_id' => $userId]);
     }
 
-    final public function reactiveByUser($id, $userId)
+    final public function reactivateByUser($id, $userId)
     {
         $rp = $this->getTable()->where(['user_id' => $userId, 'id' => $id])->fetch();
         if ($rp == null) {
             return null;
         }
-        $this->update($rp, ['state' => self::STATE_ACTIVE]);
+        $this->update($rp, [
+            'state' => self::STATE_ACTIVE,
+            'payment_id' => null,
+            'status' => null,
+            'approval' => null,
+        ]);
         return $rp;
     }
 

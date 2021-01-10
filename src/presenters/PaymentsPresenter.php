@@ -53,7 +53,7 @@ class PaymentsPresenter extends FrontendPresenter
             $this->flashMessage($this->translator->translate('payments.frontend.reactivate.error_create_new'), 'error');
             $this->redirect('my');
         }
-        $this->recurrentPaymentsRepository->reactiveByUser($recurrent->id, $this->getUser()->id);
+        $this->recurrentPaymentsRepository->reactivateByUser($recurrent->id, $this->getUser()->id);
         $this->flashMessage($this->translator->translate('payments.frontend.reactivate.success'));
         $this->redirect('my');
     }
