@@ -156,6 +156,8 @@ class PaymentsAdminPresenter extends AdminPresenter
         )->setPrompt('--');
         $subscriptionType->getControlPrototype()->addAttributes(['class' => 'select2']);
 
+        $form->addText('referer', 'payments.admin.component.admin_filter_form.referer.label');
+
         $donations = [
             true => $this->translator->translate('payments.admin.component.admin_filter_form.donation.with_donation'),
             false => $this->translator->translate('payments.admin.component.admin_filter_form.donation.without_donation'),

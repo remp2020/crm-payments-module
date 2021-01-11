@@ -327,20 +327,21 @@ class PaymentsRepository extends Repository
 
     /**
      * @param string $text
-     * @param int $payment_gateway
-     * @param int $subscription_type
-     * @param string $status
-     * @param string|\DateTime $start
-     * @param string|\DateTime $end
-     * @param int $sales_funnel
-     * @param bool $donation
-     * @param bool $recurrentCharge
+     * @param null $payment_gateway
+     * @param null $subscription_type
+     * @param null $status
+     * @param null $start
+     * @param null $end
+     * @param null $sales_funnel
+     * @param null $donation
+     * @param null $recurrentCharge
+     * @param null $referer
      * @return Selection
      */
-    final public function all($text = '', $payment_gateway = null, $subscription_type = null, $status = null, $start = null, $end = null, $sales_funnel = null, $donation = null, $recurrentCharge = null)
+    final public function all($text = '', $payment_gateway = null, $subscription_type = null, $status = null, $start = null, $end = null, $sales_funnel = null, $donation = null, $recurrentCharge = null, $referer = null)
     {
         $where = [];
-        if ($text != '') {
+        if ($text !== null && $text !== '') {
             $where['variable_symbol LIKE ? OR note LIKE ?'] = ["%{$text}%", "%{$text}%"];
         }
         if ($payment_gateway) {
@@ -371,6 +372,10 @@ class PaymentsRepository extends Repository
         if ($recurrentCharge !== null) {
             $where['recurrent_charge'] = $recurrentCharge;
         }
+        if ($referer) {
+            $where['referer LIKE ?'] = "%{$referer}%";
+        }
+
         return $this->getTable()->where($where);
     }
 

@@ -180,6 +180,8 @@ admin:
 			paid_at_to:
 				label: Paid to
 				placeholder: e.g. 1.8.2020 15:30
+			referer:
+				label: Referer
 			filter:
 				send: Filter
 				cancel: Cancel filter

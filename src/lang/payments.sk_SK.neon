@@ -180,6 +180,8 @@ admin:
 			paid_at_to:
 				label: Dátum platby do
 				placeholder: napríklad 1.8.2020 15:30
+			referer:
+				label: Referer
 			filter:
 				send: Filtruj
 				cancel: Zruš filter
