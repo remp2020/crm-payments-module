@@ -183,7 +183,7 @@ admin:
 			referer:
 				label: Referer
 			filter:
-				send: Filtruj
+				send: Filter
 				cancel: Zruš filter
 				more: Viac možností
 

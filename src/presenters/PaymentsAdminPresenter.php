@@ -105,6 +105,7 @@ class PaymentsAdminPresenter extends AdminPresenter
             ->setOption('container', 'div class="collapse"')
             ->setOption('label', null)
             ->setOption('id', 'formCollapse');
+        $buttonGroup = $form->addGroup('button', false)->setOption('label', null);
 
         $form->addText('text', 'payments.admin.component.admin_filter_form.variable_symbol.label')
             ->setAttribute('autofocus');
@@ -170,12 +171,13 @@ class PaymentsAdminPresenter extends AdminPresenter
         $donation->getControlPrototype()->addAttributes(['class' => 'select2']);
 
         /** @var AdminFilterFormDataProviderInterface[] $providers */
-        $providers = $this->dataProviderManager->getProviders('payments.dataprovider.list_filter_form', AdminFilterFormDataProviderInterface::class);
+        $providers = $this->dataProviderManager->getProviders('payments.dataprovider.payments_filter_form', AdminFilterFormDataProviderInterface::class);
         foreach ($providers as $sorting => $provider) {
             $form = $provider->provide(['form' => $form, 'formData' => $this->formData]);
         }
 
-        $form->setCurrentGroup($mainGroup);
+        $form->setCurrentGroup($buttonGroup);
+
         $form->addSubmit('send', 'payments.admin.component.admin_filter_form.filter.send')
             ->getControlPrototype()
             ->setName('button')

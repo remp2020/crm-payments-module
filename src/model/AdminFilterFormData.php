@@ -52,7 +52,7 @@ class AdminFilterFormData
         }
 
         /** @var AdminFilterFormDataProviderInterface[] $providers */
-        $providers = $this->dataProviderManager->getProviders('payments.dataprovider.list_filter_form', AdminFilterFormDataProviderInterface::class);
+        $providers = $this->dataProviderManager->getProviders('payments.dataprovider.payments_filter_form', AdminFilterFormDataProviderInterface::class);
         foreach ($providers as $sorting => $provider) {
             $payments = $provider->filter($payments, $this->formData);
         }
