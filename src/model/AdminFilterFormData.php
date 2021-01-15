@@ -6,6 +6,7 @@ namespace Crm\PaymentsModule;
 use Crm\ApplicationModule\DataProvider\DataProviderManager;
 use Crm\PaymentsModule\DataProvider\AdminFilterFormDataProviderInterface;
 use Crm\PaymentsModule\Repository\PaymentsRepository;
+use Nette\Utils\DateTime;
 
 class AdminFilterFormData
 {
@@ -44,11 +45,11 @@ class AdminFilterFormData
         );
 
         if ($this->getPaidAtFrom()) {
-            $payments->where('paid_at >= ?', $this->getPaidAtFrom());
+            $payments->where('paid_at >= ?', DateTime::from($this->getPaidAtFrom()));
         }
 
         if ($this->getPaidAtTo()) {
-            $payments->where('paid_at < ?', $this->getPaidAtTo());
+            $payments->where('paid_at < ?', DateTime::from($this->getPaidAtTo()));
         }
 
         /** @var AdminFilterFormDataProviderInterface[] $providers */
