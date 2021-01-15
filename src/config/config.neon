@@ -79,6 +79,7 @@ services:
 	- Crm\PaymentsModule\DataProvider\PaymentsClaimUserDataProvider
 	- Crm\PaymentsModule\DataProvider\RecurrentPaymentsClaimUserDataProvider
 	- Crm\PaymentsModule\Scenarios\PaymentStatusCriteria
+	- Crm\PaymentsModule\Scenarios\RecurrentPaymentStatusCriteria
 	- Crm\PaymentsModule\Scenarios\PaymentIsRecurrentChargeCriteria
 	- Crm\PaymentsModule\Scenarios\IsActiveRecurrentSubscriptionCriteria
 	- Crm\PaymentsModule\Scenarios\PaymentGatewayCriteria
