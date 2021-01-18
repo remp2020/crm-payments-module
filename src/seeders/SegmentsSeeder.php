@@ -28,7 +28,7 @@ class SegmentsSeeder implements ISeeder
     {
         $this->output = $output;
 
-        $group = $this->segmentGroupsRepository->load('Default group');
+        $group = $this->segmentGroupsRepository->findByCode('default-group');
 
         // ------------------------------------------------
 
