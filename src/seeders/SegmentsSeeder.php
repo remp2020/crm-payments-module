@@ -5,10 +5,13 @@ namespace Crm\PaymentsModule\Seeders;
 use Crm\ApplicationModule\Seeders\ISeeder;
 use Crm\SegmentModule\Repository\SegmentGroupsRepository;
 use Crm\SegmentModule\Repository\SegmentsRepository;
+use Crm\SegmentModule\Seeders\SegmentsTrait;
 use Symfony\Component\Console\Output\OutputInterface;
 
 class SegmentsSeeder implements ISeeder
 {
+    use SegmentsTrait;
+
     private $segmentsRepository;
 
     private $segmentGroupsRepository;
@@ -28,7 +31,7 @@ class SegmentsSeeder implements ISeeder
     {
         $this->output = $output;
 
-        $group = $this->segmentGroupsRepository->findByCode('default-group');
+        $group = $this->loadDefaultSegmentGroup($output);
 
         // ------------------------------------------------
 
