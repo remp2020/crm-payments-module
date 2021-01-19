@@ -450,15 +450,18 @@ class PaymentsRepository extends Repository
             ->where('user.active = 1');
     }
 
+
     /**
      * @param DateTime $from
      * @param DateTime $to
+     * @param array    $paidStatus
+     *
      * @return \Crm\ApplicationModule\Selection
      */
-    final public function paidBetween(DateTime $from, DateTime $to)
+    final public function paidBetween(DateTime $from, DateTime $to, array $paidStatus = [self::STATUS_PAID])
     {
         return $this->getTable()->where([
-            'status' => self::STATUS_PAID,
+            'status IN (?)' => $paidStatus,
             'paid_at > ?' => $from,
             'paid_at < ?' => $to,
         ]);

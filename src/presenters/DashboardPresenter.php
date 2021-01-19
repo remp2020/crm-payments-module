@@ -13,7 +13,7 @@ use Nette\Utils\DateTime;
 
 class DashboardPresenter extends AdminPresenter
 {
-    private const PAID_PAYMENT_STATUSES = [
+    const PAID_PAYMENT_STATUSES = [
         PaymentsRepository::STATUS_PAID,
         PaymentsRepository::STATUS_PREPAID,
     ];
