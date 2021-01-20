@@ -270,6 +270,7 @@ class RecurrentPaymentsChargeCommand extends Command
         $duration = $end - $start;
 
         $output->writeln('');
+        $output->writeln('EndDate: ' . (new DateTime())->format(DATE_RFC3339));
         $output->writeln('<info>All done. Took ' . round($duration, 2) . ' sec.</info>');
         $output->writeln('');
 
