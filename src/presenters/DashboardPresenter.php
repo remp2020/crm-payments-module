@@ -149,7 +149,7 @@ class DashboardPresenter extends AdminPresenter
             (new Criteria)->setTableName('payments')
                 ->setTimeField('created_at')
                 ->setJoin('JOIN users ON payments.user_id = users.id')
-                ->setWhere("{$this->paidPaymentStatusWhere()}")
+                ->setWhere("{$this->paidPaymentStatusWhere()} {$this->recurrentChargeWhere()}")
                 ->setGroupBy('users.source')
                 ->setSeries('users.source')
                 ->setValueField('count(*)')
@@ -309,12 +309,12 @@ class DashboardPresenter extends AdminPresenter
         return $control;
     }
 
-    private function paidPaymentStatusWhere(): string
+    public function paidPaymentStatusWhere(): string
     {
         return "AND payments.status IN ('". implode("','", self::PAID_PAYMENT_STATUSES) . "')";
     }
 
-    private function recurrentChargeWhere()
+    public function recurrentChargeWhere()
     {
         $where = "";
         if ($this->recurrentCharge === 'recurrent') {
