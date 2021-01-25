@@ -6,6 +6,7 @@ use Crm\ApplicationModule\Seeders\ISeeder;
 use Crm\SegmentModule\Repository\SegmentGroupsRepository;
 use Crm\SegmentModule\Repository\SegmentsRepository;
 use Crm\SegmentModule\Seeders\SegmentsTrait;
+use Nette\Utils\DateTime;
 use Symfony\Component\Console\Output\OutputInterface;
 
 class SegmentsSeeder implements ISeeder
@@ -15,9 +16,6 @@ class SegmentsSeeder implements ISeeder
     private $segmentsRepository;
 
     private $segmentGroupsRepository;
-
-    /** @var OutputInterface */
-    private $output;
 
     public function __construct(
         SegmentsRepository $segmentsRepository,
@@ -29,17 +27,18 @@ class SegmentsSeeder implements ISeeder
 
     public function seed(OutputInterface $output)
     {
-        $this->output = $output;
-
-        $group = $this->loadDefaultSegmentGroup($output);
+        $tableName = 'users';
+        $fields = 'users.id,users.email,users.first_name,users.last_name,subscriptions.type,subscriptions.note';
 
         // ------------------------------------------------
 
         $segmentCode = 'active-subscribers-with-paid-subscriptions';
-        $segmentName = 'Active subscribers with paid subscriptions';
-        $tableName = 'users';
-        $fields = 'users.id,users.email,users.first_name,users.last_name,subscriptions.type,subscriptions.note';
-        $query = <<<SQL
+        $now = new DateTime();
+        $segment = $this->seedSegment(
+            $output,
+            'Active subscribers with paid subscriptions',
+            $segmentCode,
+            <<<SQL
 SELECT %fields%
 FROM %table%
 
@@ -53,9 +52,15 @@ WHERE %where%
   AND %table%.active=1
 
 GROUP BY %table%.id
-SQL;
-        $segmentCreated = $this->seedSegment($segmentCode, $segmentName, $tableName, $query, $fields, $group);
-        if ($segmentCreated) {
+SQL
+            ,
+            null,
+            $tableName,
+            $fields
+        );
+
+        // check if segment existed before this seed (compare formatted datetimes because DB entry doesn't have milliseconds)
+        if ($now->format('Y-m-d H:i:s') <= $segment->created_at->format('Y-m-d H:i:s')) {
             // Ad-hoc copy values of segment 'active-subscription-with-payment' into 'active-subscribers-with-paid-subscriptions'
             // This is done because the new segment is a logical follow-up of the segment previously seeded in this seeder and we want to keep the history
             $sql = <<<SQL
@@ -65,15 +70,18 @@ INSERT INTO segments_values (`date`, `value`, `segment_id`)
   JOIN segments ON segments.id = segments_values.segment_id AND segments.code = 'active-subscription-with-payment'
 SQL;
             $this->segmentsRepository->getDatabase()->query($sql);
+            $output->writeln("    * segment values copied from old version of segment <info>active-subscription-with-payment</info> to new <info>{$segmentCode}</info>");
         }
 
         // ------------------------------------------------
 
         $segmentCode = 'active-subscribers-having-only-non-paid-subscriptions';
-        $segmentName = 'Active subscribers having only non-paid subscriptions';
-        $tableName = 'users';
-        $fields = 'users.id,users.email,users.first_name,users.last_name,subscriptions.type,subscriptions.note';
-        $query = <<<SQL
+        $now = new DateTime();
+        $segment = $this->seedSegment(
+            $output,
+            'Active subscribers having only non-paid subscriptions',
+            $segmentCode,
+            <<<SQL
 SELECT %fields%
 FROM %table%
 
@@ -88,10 +96,18 @@ WHERE %where%
 GROUP BY %table%.id
 
 HAVING SUM(subscriptions.is_paid) = 0
-/* HAVING SUM value is 0 only in case when given user has exactly 0 paid subscriptions (otherwise > 0, therefore not matching the condition) */ 
-SQL;
-        $segmentCreated = $this->seedSegment($segmentCode, $segmentName, $tableName, $query, $fields, $group);
-        if ($segmentCreated) {
+/* HAVING SUM value is 0 only in case when given user has exactly 0 paid subscriptions (otherwise > 0, therefore not matching the condition) */
+SQL
+            ,
+            null,
+            $tableName,
+            $fields
+        );
+
+        // check if segment existed before this seed (compare formatted datetimes because DB entry doesn't have milliseconds)
+        if ($now->format('Y-m-d H:i:s') <= $segment->created_at->format('Y-m-d H:i:s')) {
+            // Ad-hoc copy values of segment 'active-subscription-without-payment' into 'active-subscribers-with-paid-subscriptions'
+            // This is done because the new segment is a logical follow-up of the segment previously seeded in this seeder and we want to keep the history
             $sql = <<<SQL
 INSERT INTO segments_values (`date`, `value`, `segment_id`)
   SELECT `date`, `value`, (SELECT id FROM segments WHERE code = '$segmentCode')
@@ -99,26 +115,7 @@ INSERT INTO segments_values (`date`, `value`, `segment_id`)
   JOIN segments ON segments.id = segments_values.segment_id AND segments.code = 'active-subscription-without-payment'
 SQL;
             $this->segmentsRepository->getDatabase()->query($sql);
+            $output->writeln("    * segment values copied from old version of segment <info>active-subscribers-with-paid-subscriptions</info> to new <info>{$segmentCode}</info>");
         }
-    }
-
-    private function seedSegment($segmentCode, $segmentName, $tableName, $query, $fields, $group): bool
-    {
-        if (!$this->segmentsRepository->findByCode($segmentCode)) {
-            $this->segmentsRepository->add(
-                $segmentName,
-                1,
-                $segmentCode,
-                $tableName,
-                $fields,
-                $query,
-                $group
-            );
-            $this->output->writeln("  <comment>* segment <info>{$segmentCode}</info> created</comment>");
-            return true;
-        }
-
-        $this->output->writeln("  * segment <info>{$segmentCode}</info> exists");
-        return false;
     }
 }
