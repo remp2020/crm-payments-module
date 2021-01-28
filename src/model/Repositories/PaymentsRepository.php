@@ -454,14 +454,13 @@ class PaymentsRepository extends Repository
     /**
      * @param DateTime $from
      * @param DateTime $to
-     * @param array    $paidStatus
      *
      * @return \Crm\ApplicationModule\Selection
      */
-    final public function paidBetween(DateTime $from, DateTime $to, array $paidStatus = [self::STATUS_PAID])
+    final public function paidBetween(DateTime $from, DateTime $to)
     {
         return $this->getTable()->where([
-            'status IN (?)' => $paidStatus,
+            'status IN (?)' => [self::STATUS_PAID, self::STATUS_PREPAID],
             'paid_at > ?' => $from,
             'paid_at < ?' => $to,
         ]);
