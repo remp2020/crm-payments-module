@@ -2,7 +2,7 @@
 
 namespace Crm\PaymentsModule\Scenarios;
 
-use Crm\ApplicationModule\Criteria\Params\BooleanParam;
+use Crm\ApplicationModule\Criteria\ScenarioParams\BooleanParam;
 use Crm\ApplicationModule\Criteria\ScenariosCriteriaInterface;
 use Crm\PaymentsModule\Repository\RecurrentPaymentsRepository;
 use Nette\Database\Table\IRow;

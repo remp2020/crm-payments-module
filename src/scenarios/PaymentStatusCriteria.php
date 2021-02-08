@@ -2,7 +2,7 @@
 
 namespace Crm\PaymentsModule\Scenarios;
 
-use Crm\ApplicationModule\Criteria\Params\StringLabeledArrayParam;
+use Crm\ApplicationModule\Criteria\ScenarioParams\StringLabeledArrayParam;
 use Crm\ApplicationModule\Criteria\ScenariosCriteriaInterface;
 use Crm\PaymentsModule\Repository\PaymentsRepository;
 use Nette\Database\Table\IRow;
