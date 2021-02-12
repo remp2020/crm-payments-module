@@ -6,10 +6,14 @@ use Crm\AdminModule\Components\DateFilterFormFactory;
 use Crm\AdminModule\Presenters\AdminPresenter;
 use Crm\ApplicationModule\Components\Graphs\GoogleBarGraphGroupControlFactoryInterface;
 use Crm\ApplicationModule\Components\Graphs\GoogleLineGraphGroupControlFactoryInterface;
+use Crm\ApplicationModule\DataProvider\DataProviderManager;
 use Crm\ApplicationModule\Graphs\Criteria;
 use Crm\ApplicationModule\Graphs\GraphDataItem;
+use Crm\PaymentsModule\DataProvider\PaymentItemTypesFilterDataProviderInterface;
+use Crm\PaymentsModule\Repository\PaymentItemsRepository;
 use Crm\PaymentsModule\Repository\PaymentsRepository;
 use Nette\Utils\DateTime;
+use Nette\Utils\Json;
 
 class DashboardPresenter extends AdminPresenter
 {
@@ -17,6 +21,9 @@ class DashboardPresenter extends AdminPresenter
         PaymentsRepository::STATUS_PAID,
         PaymentsRepository::STATUS_PREPAID,
     ];
+
+    /** @var PaymentItemsRepository @inject */
+    public $paymentItemsRepository;
 
     /** @persistent */
     public $dateFrom;
@@ -27,11 +34,43 @@ class DashboardPresenter extends AdminPresenter
     /** @persistent */
     public $recurrentCharge;
 
+    /** @persistent */
+    public $paymentItemTypes;
+
+    private $dataProviderManager;
+
+    private $availablePaymentItemTypesFilter = [];
+
+    private $defaultPaymentItemTypesFilter = [];
+
+    public function __construct(
+        DataProviderManager $dataProviderManager
+    ) {
+        parent::__construct();
+        $this->dataProviderManager = $dataProviderManager;
+    }
+
     public function startup()
     {
         parent::startup();
+        $this->getPaymentItemTypes();
         $this->dateFrom = $this->dateFrom ?? DateTime::from('-2 months')->format('Y-m-d');
         $this->dateTo = $this->dateTo ?? DateTime::from('today')->format('Y-m-d');
+        $this->paymentItemTypes = $this->paymentItemTypes ?? Json::encode($this->defaultPaymentItemTypesFilter);
+    }
+
+    private function getPaymentItemTypes(): void
+    {
+        $filters = ['paymentItemTypes' => [], 'paymentItemTypesDefaultFilter' => []];
+
+        /** @var PaymentItemTypesFilterDataProviderInterface $providers */
+        $providers = $this->dataProviderManager->getProviders('payments.dataprovider.dashboard', PaymentItemTypesFilterDataProviderInterface::class);
+        foreach ($providers as $sorting => $provider) {
+            $filters = $provider->provide($filters);
+        }
+
+        $this->availablePaymentItemTypesFilter = $filters['paymentItemTypes'];
+        $this->defaultPaymentItemTypesFilter = $filters['paymentItemTypesDefaultFilter'];
     }
 
     public function renderDefault()
@@ -44,7 +83,12 @@ class DashboardPresenter extends AdminPresenter
             'recurrentCharge' => $this->recurrentCharge,
             'dateFrom' => $this->dateFrom,
             'dateTo' => $this->dateTo,
+            'paymentItemTypes' => $this->paymentItemTypes
         ];
+    }
+
+    public function renderDetailed()
+    {
     }
 
     public function createComponentDateFilterForm(DateFilterFormFactory $dateFilterFormFactory)
@@ -56,12 +100,40 @@ class DashboardPresenter extends AdminPresenter
             'recurrent' => $this->translator->translate('payments.admin.dashboard.recurrent_charge.recurrent'),
             'manual' => $this->translator->translate('payments.admin.dashboard.recurrent_charge.manual'),
         ]);
-        $form[DateFilterFormFactory::OPTIONAL]->setDefaults(['recurrent_charge' => $this->recurrentCharge]);
+
+        if (!empty($this->availablePaymentItemTypesFilter)) {
+            $form[DateFilterFormFactory::OPTIONAL]
+                ->addMultiSelect(
+                    'payment_item_types',
+                    'payments.admin.dashboard.payment_item_types.label',
+                    $this->availablePaymentItemTypesFilter
+                )
+                ->getControlPrototype()->addAttributes(['class' => 'select2'])->setAttribute('style', 'min-width:200px');
+        }
+
+        $form[DateFilterFormFactory::OPTIONAL]->setDefaults([
+            'recurrent_charge' => $this->recurrentCharge,
+            'payment_item_types' => Json::decode($this->paymentItemTypes)
+        ]);
 
         $form->onSuccess[] = function ($form, $values) {
             $this->dateFrom = $values['date_from'];
             $this->dateTo = $values['date_to'];
-            $this->recurrentCharge = $values['optional']['recurrent_charge'];
+            $this->recurrentCharge = $values[DateFilterFormFactory::OPTIONAL]['recurrent_charge'];
+            $this->paymentItemTypes = Json::encode($values[DateFilterFormFactory::OPTIONAL]['payment_item_types'] ?? null);
+            $this->redirect($this->action);
+        };
+        return $form;
+    }
+
+    public function createComponentSimpleDateFilterForm(DateFilterFormFactory $dateFilterFormFactory)
+    {
+        $form = $dateFilterFormFactory->create($this->dateFrom, $this->dateTo);
+        $form->setTranslator($this->translator);
+
+        $form->onSuccess[] = function ($form, $values) {
+            $this->dateFrom = $values['date_from'];
+            $this->dateTo = $values['date_to'];
             $this->redirect($this->action);
         };
         return $form;
@@ -74,16 +146,16 @@ class DashboardPresenter extends AdminPresenter
         $graphDataItem->setCriteria((new Criteria())
             ->setTableName('payments')
             ->setTimeField('paid_at')
-            ->setWhere("{$this->paidPaymentStatusWhere()} {$this->recurrentChargeWhere()}")
+            ->setWhere("{$this->paidPaymentStatusWhere()} {$this->recurrentChargeWhere()} {$this->paymentItemTypesWhere()}")
             ->setGroupBy('payment_gateways.name')
-            ->setJoin('LEFT JOIN payment_gateways ON payment_gateways.id = payments.payment_gateway_id')
+            ->setJoin('LEFT JOIN payment_gateways ON payment_gateways.id = payments.payment_gateway_id JOIN payment_items ON payment_items.payment_id = payments.id')
             ->setSeries('payment_gateways.name')
-            ->setValueField('count(*)')
+            ->setValueField('COUNT(DISTINCT payments.id)')
             ->setStart($this->dateFrom)
             ->setEnd($this->dateTo));
 
         $control = $factory->create();
-        $control->setGraphTitle($this->translator->translate('dashboard.payments.gateways.title') . ' *')
+        $control->setGraphTitle($this->translator->translate('dashboard.payments.gateways.title'))
             ->setGraphHelp($this->translator->translate('dashboard.payments.gateways.tooltip'))
             ->addGraphDataItem($graphDataItem);
 
@@ -96,15 +168,16 @@ class DashboardPresenter extends AdminPresenter
         $graphDataItem = new GraphDataItem();
         $graphDataItem->setCriteria((new Criteria())
             ->setTableName('payments')
-            ->setWhere("{$this->paidPaymentStatusWhere()} {$this->recurrentChargeWhere()}")
-            ->setValueField('sum(amount)')
+            ->setJoin('JOIN payment_items ON payment_items.payment_id = payments.id')
+            ->setWhere("{$this->paidPaymentStatusWhere()} {$this->recurrentChargeWhere()} {$this->paymentItemTypesWhere()}")
+            ->setValueField('sum(payment_items.count * payment_items.amount)')
             ->setTimeField('paid_at')
             ->setStart($this->dateFrom)
             ->setEnd($this->dateTo));
         $graphDataItem->setName($this->translator->translate('dashboard.money.title'));
 
         $control = $factory->create();
-        $control->setGraphTitle($this->translator->translate('dashboard.money.title') . ' *')
+        $control->setGraphTitle($this->translator->translate('dashboard.money.title'))
             ->setGraphHelp($this->translator->translate('dashboard.money.tooltip'))
             ->addGraphDataItem($graphDataItem);
 
@@ -118,8 +191,9 @@ class DashboardPresenter extends AdminPresenter
         $graphDataItem = new GraphDataItem();
         $graphDataItem->setCriteria((new Criteria())
             ->setTableName('payments')
-            ->setWhere("{$this->paidPaymentStatusWhere()} {$this->recurrentChargeWhere()}")
-            ->setValueField('SUM(amount) / COUNT(*)')
+            ->setJoin('JOIN payment_items ON payment_items.payment_id = payments.id')
+            ->setWhere("{$this->paidPaymentStatusWhere()} {$this->recurrentChargeWhere()} {$this->paymentItemTypesWhere()}")
+            ->setValueField('SUM(payment_items.count * payment_items.amount) / COUNT(DISTINCT payments.id)')
             ->setTimeField('paid_at')
             ->setStart($this->dateFrom)
             ->setEnd($this->dateTo));
@@ -134,8 +208,8 @@ class DashboardPresenter extends AdminPresenter
 
         $control = $factory->create();
         $control = $control->addGraphDataItem($graphDataItem)
-            ->setGraphTitle($this->translator->translate($titleTransKey) . ' *')
-            ->setGraphHelp($this->translator->translate($helpTransKey) . ' *');
+            ->setGraphTitle($this->translator->translate($titleTransKey))
+            ->setGraphHelp($this->translator->translate($helpTransKey));
 
         return $control;
     }
@@ -148,11 +222,11 @@ class DashboardPresenter extends AdminPresenter
         $graphDataItem->setCriteria(
             (new Criteria)->setTableName('payments')
                 ->setTimeField('created_at')
-                ->setJoin('JOIN users ON payments.user_id = users.id')
-                ->setWhere("{$this->paidPaymentStatusWhere()} {$this->recurrentChargeWhere()}")
+                ->setJoin('JOIN users ON payments.user_id = users.id JOIN payment_items ON payment_items.payment_id = payments.id')
+                ->setWhere("{$this->paidPaymentStatusWhere()} {$this->recurrentChargeWhere()} {$this->paymentItemTypesWhere()}")
                 ->setGroupBy('users.source')
                 ->setSeries('users.source')
-                ->setValueField('count(*)')
+                ->setValueField('count(DISTINCT payments.id)')
                 ->setStart(DateTime::from($this->dateFrom))
                 ->setEnd(DateTime::from($this->dateTo))
         );
@@ -217,15 +291,16 @@ class DashboardPresenter extends AdminPresenter
         $graphDataItem = new GraphDataItem();
         $graphDataItem->setCriteria((new Criteria())
             ->setTableName('payments')
-            ->setWhere("AND payments.status = 'refund' {$this->recurrentChargeWhere()}")
-            ->setValueField('SUM(amount)')
+            ->setJoin('JOIN payment_items ON payment_items.payment_id = payments.id')
+            ->setWhere("AND payments.status = 'refund' {$this->recurrentChargeWhere()} {$this->paymentItemTypesWhere()}")
+            ->setValueField('SUM(payment_items.count * payment_items.amount)')
             ->setTimeField('modified_at')
             ->setStart($this->dateFrom)
             ->setEnd($this->dateTo));
         $graphDataItem->setName($this->translator->translate('dashboard.payments.refunds.title'));
 
         $control = $factory->create();
-        $control->setGraphTitle($this->translator->translate('dashboard.payments.refunds.title') . ' *')
+        $control->setGraphTitle($this->translator->translate('dashboard.payments.refunds.title'))
             ->setGraphHelp($this->translator->translate('dashboard.payments.refunds.tooltip'))
             ->addGraphDataItem($graphDataItem);
 
@@ -240,7 +315,7 @@ class DashboardPresenter extends AdminPresenter
         $graphDataItem = new GraphDataItem();
         $graphDataItem->setCriteria((new Criteria())
             ->setTableName('payments')
-            ->setWhere("{$this->paidPaymentStatusWhere()} AND payments.additional_type = 'recurrent' {$this->recurrentChargeWhere()}")
+            ->setWhere("{$this->paidPaymentStatusWhere()} AND payments.additional_type = 'recurrent'")
             ->setValueField('SUM(additional_amount)')
             ->setTimeField('paid_at')
             ->setStart($this->dateFrom)
@@ -251,7 +326,7 @@ class DashboardPresenter extends AdminPresenter
         $graphDataItem = new GraphDataItem();
         $graphDataItem->setCriteria((new Criteria())
             ->setTableName('payments')
-            ->setWhere("{$this->paidPaymentStatusWhere()} AND payments.additional_type = 'single' {$this->recurrentChargeWhere()}")
+            ->setWhere("{$this->paidPaymentStatusWhere()} AND payments.additional_type = 'single'")
             ->setValueField('SUM(additional_amount)')
             ->setTimeField('paid_at')
             ->setStart($this->dateFrom)
@@ -260,7 +335,7 @@ class DashboardPresenter extends AdminPresenter
         $items[] = $graphDataItem;
 
         $control = $factory->create();
-        $control->setGraphTitle($this->translator->translate('dashboard.payments.donations.title') . ' *')
+        $control->setGraphTitle($this->translator->translate('dashboard.payments.donations.title'))
             ->setGraphHelp($this->translator->translate('dashboard.payments.donations.tooltip'))
             ->setYLabel('');
 
@@ -311,7 +386,7 @@ class DashboardPresenter extends AdminPresenter
 
     public function paidPaymentStatusWhere(): string
     {
-        return "AND payments.status IN ('". implode("','", self::PAID_PAYMENT_STATUSES) . "')";
+        return "AND payments.status IN ('" . implode("','", self::PAID_PAYMENT_STATUSES) . "')";
     }
 
     public function recurrentChargeWhere()
@@ -323,5 +398,27 @@ class DashboardPresenter extends AdminPresenter
             $where = 'AND payments.recurrent_charge = 0';
         }
         return $where;
+    }
+
+    public function paymentItemTypesWhere(): string
+    {
+        $selectedTypes = Json::decode($this->paymentItemTypes);
+        if (empty($selectedTypes)) {
+            return "";
+        }
+
+        $filter = [];
+         /** @var PaymentItemTypesFilterDataProviderInterface $providers */
+        $providers = $this->dataProviderManager->getProviders('payments.dataprovider.dashboard', PaymentItemTypesFilterDataProviderInterface::class);
+        foreach ($providers as $sorting => $provider) {
+            $filter[] = $provider->filter($selectedTypes);
+        }
+
+        $filter = array_filter($filter);
+        if (empty($filter)) {
+            return "";
+        }
+
+        return "AND (" . implode(" OR ", $filter) . ")";
     }
 }

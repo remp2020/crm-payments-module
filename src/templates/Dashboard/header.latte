@@ -5,7 +5,11 @@
 			<li role="presentation" n:class="$presenter->isLinkCurrent('default') ? active"><a n:href="default">{_payments.admin.stats.menu.general}</a></li>
 
 			{if $user->isAllowed('Payments:Dashboard', 'arpu')}
-			<li role="presentation" n:class="$presenter->isLinkCurrent('arpu') ? active"><a n:href="arpu">{_payments.admin.stats.menu.arpu}</a></li>
+				<li role="presentation" n:class="$presenter->isLinkCurrent('arpu') ? active"><a n:href="arpu">{_payments.admin.stats.menu.arpu}</a></li>
+			{/if}
+
+			{if $user->isAllowed('Payments:Dashboard', 'arpu')}
+				<li role="presentation" n:class="$presenter->isLinkCurrent('detailed') ? active"><a n:href="detailed">{_payments.admin.stats.menu.detailed}</a></li>
 			{/if}
 		</ul>
 	</div>

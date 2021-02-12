@@ -133,6 +133,7 @@ services:
 	- Crm\PaymentsModule\DataProvider\PaymentFromVariableSymbolDataProvider
 	- Crm\PaymentsModule\DataProvider\SubscriptionsWithActiveUnchargedRecurrentEndingWithinPeriodDataProvider
 	- Crm\PaymentsModule\DataProvider\SubscriptionsWithoutExtensionEndingWithinPeriodDataProvider
+	- Crm\PaymentsModule\DataProvider\PaymentItemTypesFilterDataProvider
 
 	actualPaidSubscribersStatWidget:
 		class: Crm\PaymentsModule\Components\ActualPaidSubscribersStatWidget

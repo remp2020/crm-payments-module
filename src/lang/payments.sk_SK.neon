@@ -234,6 +234,7 @@ admin:
 		menu:
 			general: Všeobecné
 			arpu: ARPU
+			detailed: Podrobné
 
 	payment_gateways:
 		title: Platobné brány
@@ -341,6 +342,8 @@ admin:
 			all: Všetky
 			recurrent: Iba automaticky obnovené
 			manual: Iba manuálne
+		payment_item_types:
+			label: Typ položky
 		arpu: ARPU - Priemerný výnos na používateľa
 
 	parsed_mails:

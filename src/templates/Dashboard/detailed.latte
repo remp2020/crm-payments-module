@@ -6,7 +6,7 @@
 
 <div class="row text-center">
     <div class="col-md-12">
-        {control dateFilterForm}
+        {control simpleDateFilterForm}
     </div>
 </div>
 
@@ -14,24 +14,20 @@
 
 <div class="row">
     <div class="col-md-12">
-        {control googleUserActiveSubscribersRegistrationsSourceStatsGraph}
+        {control googleNewPayingUsersGraph}
     </div>
 </div>
 
 <div class="row">
     <div class="col-md-12">
-        {control googlePaymentsStatsGraph}
+        {control googleRecurrentPaymentsStatsGraph}
     </div>
 </div>
 
 <div class="row">
     <div class="col-md-12">
-        {control googlePaymentsAmountGraph}
+        {control paymentDonationsGraph}
     </div>
 </div>
 
-<div class="row">
-    <div class="col-md-12">
-        {control googlePaymentsRefundsGraph}
-    </div>
-</div>
+{control simpleWidget 'payments.dashboard.detailed'}

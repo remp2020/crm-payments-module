@@ -229,6 +229,7 @@ admin:
 		menu:
 			general: General
 			arpu: ARPU
+			detailed: Detailed
 
 	payment_gateways:
 		title: Payment gateways
@@ -287,6 +288,8 @@ admin:
 			all: All
 			recurrent: Only charged automatically
 			manual: Only manual
+		payment_item_types:
+			label: Payment item type
 		arpu: "ARPU - Average revenue per user"
 
 	retention_analysis:

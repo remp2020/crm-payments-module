@@ -371,6 +371,10 @@ class PaymentsModule extends CrmModule
             'users.dataprovider.claim_unclaimed_user',
             $this->getInstance(RecurrentPaymentsClaimUserDataProvider::class)
         );
+        $dataProviderManager->registerDataProvider(
+            'payments.dataprovider.dashboard',
+            $this->getInstance(\Crm\PaymentsModule\DataProvider\PaymentItemTypesFilterDataProvider::class)
+        );
     }
 
     public function registerEventHandlers(Emitter $emitter)
