@@ -338,7 +338,7 @@ admin:
 
 	dashboard:
 		recurrent_charge:
-			label: Automatické obnovenie *
+			label: Automatické obnovenie
 			all: Všetky
 			recurrent: Iba automaticky obnovené
 			manual: Iba manuálne
