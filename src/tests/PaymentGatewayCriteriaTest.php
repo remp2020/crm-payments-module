@@ -50,12 +50,20 @@ class PaymentGatewayCriteriaTest extends DatabaseTestCase
     {
         [$userRow, $paymentRow] = $this->prepareData('user1@example.com', 'free');
         $q = $this->paymentsRepository->getTable()->where('payments.id = ?', $paymentRow->id);
-        $this->assertTrue($this->paymentGatewayCriteria->addCondition($q, (object)['selection' => ['bank_transfer']], $paymentRow));
+        $this->assertTrue($this->paymentGatewayCriteria->addConditions(
+            $q,
+            [PaymentGatewayCriteria::KEY => (object)['selection' => ['bank_transfer']]],
+            $paymentRow
+        ));
         $this->assertFalse($q->fetch());
 
         [$userRow, $paymentRow] = $this->prepareData('user2@example.com', 'bank_transfer');
         $q = $this->paymentsRepository->getTable()->where('payments.id = ?', $paymentRow->id);
-        $this->assertTrue($this->paymentGatewayCriteria->addCondition($q, (object)['selection' => ['bank_transfer']], $paymentRow));
+        $this->assertTrue($this->paymentGatewayCriteria->addConditions(
+            $q,
+            [PaymentGatewayCriteria::KEY => (object)['selection' => ['bank_transfer']]],
+            $paymentRow
+        ));
         $this->assertNotFalse($q->fetch());
     }
 

@@ -67,8 +67,9 @@ class RecurrentPaymentStatusCriteriaTest extends DatabaseTestCase
 
         $recurrentPaymentStateCriteria = new RecurrentPaymentStatusCriteria($this->recurrentPaymentsRepository);
 
+        $values = (object)['selection' => ['01']];
         $this->assertTrue(
-            $recurrentPaymentStateCriteria->addCondition($recurrentPaymentSelection, (object)['selection' => ['01']], $recurrentPaymentRow)
+            $recurrentPaymentStateCriteria->addConditions($recurrentPaymentSelection, [RecurrentPaymentStatusCriteria::KEY => $values], $recurrentPaymentRow)
         );
         $this->assertNotFalse($recurrentPaymentSelection->fetch());
     }
@@ -79,14 +80,15 @@ class RecurrentPaymentStatusCriteriaTest extends DatabaseTestCase
 
         $recurrentPaymentStateCriteria = new RecurrentPaymentStatusCriteria($this->recurrentPaymentsRepository);
 
+        $values = (object)['selection' => [
+            '01',
+            '02',
+            '03',
+        ]];
         $this->assertTrue(
-            $recurrentPaymentStateCriteria->addCondition(
+            $recurrentPaymentStateCriteria->addConditions(
                 $recurrentPaymentSelection,
-                (object)['selection' => [
-                    '01',
-                    '02',
-                    '03',
-                ]],
+                [RecurrentPaymentStatusCriteria::KEY => $values],
                 $recurrentPaymentRow
             )
         );
@@ -99,8 +101,9 @@ class RecurrentPaymentStatusCriteriaTest extends DatabaseTestCase
 
         $recurrentPaymentStateCriteria = new RecurrentPaymentStateCriteria($this->recurrentPaymentsRepository);
 
+        $values = (object)['selection' => ['02']];
         $this->assertTrue(
-            $recurrentPaymentStateCriteria->addCondition($recurrentPaymentSelection, (object)['selection' => ['02']], $recurrentPaymentRow)
+            $recurrentPaymentStateCriteria->addConditions($recurrentPaymentSelection, [RecurrentPaymentStateCriteria::KEY => $values], $recurrentPaymentRow)
         );
         $this->assertFalse($recurrentPaymentSelection->fetch());
     }
@@ -111,14 +114,15 @@ class RecurrentPaymentStatusCriteriaTest extends DatabaseTestCase
 
         $recurrentPaymentStateCriteria = new RecurrentPaymentStateCriteria($this->recurrentPaymentsRepository);
 
+        $values = (object)['selection' => [
+            '02',
+            '03',
+            '04',
+        ]];
         $this->assertTrue(
-            $recurrentPaymentStateCriteria->addCondition(
+            $recurrentPaymentStateCriteria->addConditions(
                 $recurrentPaymentSelection,
-                (object)['selection' => [
-                    '02',
-                    '03',
-                    '04',
-                ]],
+                [RecurrentPaymentStateCriteria::KEY => $values],
                 $recurrentPaymentRow
             )
         );

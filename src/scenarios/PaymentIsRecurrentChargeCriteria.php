@@ -18,8 +18,10 @@ class PaymentIsRecurrentChargeCriteria implements ScenariosCriteriaInterface
         ];
     }
 
-    public function addCondition(Selection $selection, $values, IRow $criterionItemRow): bool
+    public function addConditions(Selection $selection, array $paramValues, IRow $criterionItemRow): bool
     {
+        $values = $paramValues[self::KEY];
+
         $selection->where('payments.recurrent_charge = ?', $values->selection);
 
         return true;

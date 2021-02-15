@@ -46,7 +46,8 @@ class PaymentIsRecurrentChargeCriteriaTest extends DatabaseTestCase
         [$paymentSelection, $paymentRow] = $this->prepareData($isRecurrentCharge);
 
         $criteria = new PaymentIsRecurrentChargeCriteria();
-        $criteria->addCondition($paymentSelection, (object)['selection' => $selectedValue], $paymentRow);
+        $values = (object)['selection' => $selectedValue];
+        $criteria->addConditions($paymentSelection, [PaymentIsRecurrentChargeCriteria::KEY => $values], $paymentRow);
 
         if ($expectedValue) {
             $this->assertNotFalse($paymentSelection->fetch());

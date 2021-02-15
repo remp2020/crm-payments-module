@@ -65,8 +65,10 @@ class IsActiveRecurrentSubscriptionCriteriaTest extends DatabaseTestCase
         [$subscriptionSelection, $subscriptionRow] = $this->prepareData(true, false);
 
         $isActiveRecurrentSubscriptionCriteria = new IsActiveRecurrentSubscriptionCriteria($this->recurrentPaymentsRepository);
+
+        $values = (object)['selection' => true];
         $this->assertTrue(
-            $isActiveRecurrentSubscriptionCriteria->addCondition($subscriptionSelection, (object)['selection' => true], $subscriptionRow)
+            $isActiveRecurrentSubscriptionCriteria->addConditions($subscriptionSelection, ['is_active_recurrent_subscription' => $values], $subscriptionRow)
         );
 
         $this->assertNotFalse($subscriptionSelection->fetch());
@@ -78,8 +80,9 @@ class IsActiveRecurrentSubscriptionCriteriaTest extends DatabaseTestCase
 
         $isActiveRecurrentSubscriptionCriteria = new IsActiveRecurrentSubscriptionCriteria($this->recurrentPaymentsRepository);
 
+        $values = (object)['selection' => true];
         $this->assertFalse(
-            $isActiveRecurrentSubscriptionCriteria->addCondition($subscriptionSelection, (object)['selection' => true], $subscriptionRow)
+            $isActiveRecurrentSubscriptionCriteria->addConditions($subscriptionSelection, ['is_active_recurrent_subscription' => $values], $subscriptionRow)
         );
     }
 
@@ -89,8 +92,9 @@ class IsActiveRecurrentSubscriptionCriteriaTest extends DatabaseTestCase
 
         $isActiveRecurrentSubscriptionCriteria = new IsActiveRecurrentSubscriptionCriteria($this->recurrentPaymentsRepository);
 
+        $values = (object)['selection' => true];
         $this->assertFalse(
-            $isActiveRecurrentSubscriptionCriteria->addCondition($subscriptionSelection, (object)['selection' => true], $subscriptionRow)
+            $isActiveRecurrentSubscriptionCriteria->addConditions($subscriptionSelection, ['is_active_recurrent_subscription' => $values], $subscriptionRow)
         );
     }
 
@@ -100,8 +104,9 @@ class IsActiveRecurrentSubscriptionCriteriaTest extends DatabaseTestCase
 
         $isActiveRecurrentSubscriptionCriteria = new IsActiveRecurrentSubscriptionCriteria($this->recurrentPaymentsRepository);
 
+        $values = (object)['selection' => false];
         $this->assertFalse(
-            $isActiveRecurrentSubscriptionCriteria->addCondition($subscriptionSelection, (object)['selection' => false], $subscriptionRow)
+            $isActiveRecurrentSubscriptionCriteria->addConditions($subscriptionSelection, ['is_active_recurrent_subscription' => $values], $subscriptionRow)
         );
     }
 
@@ -110,8 +115,9 @@ class IsActiveRecurrentSubscriptionCriteriaTest extends DatabaseTestCase
         [$subscriptionSelection, $subscriptionRow] = $this->prepareData(true, true);
 
         $isActiveRecurrentSubscriptionCriteria = new IsActiveRecurrentSubscriptionCriteria($this->recurrentPaymentsRepository);
+        $values = (object)['selection' => false];
         $this->assertTrue(
-            $isActiveRecurrentSubscriptionCriteria->addCondition($subscriptionSelection, (object)['selection' => false], $subscriptionRow)
+            $isActiveRecurrentSubscriptionCriteria->addConditions($subscriptionSelection, ['is_active_recurrent_subscription' => $values], $subscriptionRow)
         );
 
         $this->assertNotFalse($subscriptionSelection->fetch());
@@ -123,8 +129,9 @@ class IsActiveRecurrentSubscriptionCriteriaTest extends DatabaseTestCase
 
         $isActiveRecurrentSubscriptionCriteria = new IsActiveRecurrentSubscriptionCriteria($this->recurrentPaymentsRepository);
 
+        $values = (object)['selection' => false];
         $this->assertTrue(
-            $isActiveRecurrentSubscriptionCriteria->addCondition($subscriptionSelection, (object)['selection' => false], $subscriptionRow)
+            $isActiveRecurrentSubscriptionCriteria->addConditions($subscriptionSelection, ['is_active_recurrent_subscription' => $values], $subscriptionRow)
         );
 
         $this->assertNotFalse($subscriptionSelection->fetch());

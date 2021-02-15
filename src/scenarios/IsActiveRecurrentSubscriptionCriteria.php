@@ -26,8 +26,10 @@ class IsActiveRecurrentSubscriptionCriteria implements ScenariosCriteriaInterfac
         ];
     }
 
-    public function addCondition(Selection $selection, $values, IRow $subscriptionRow): bool
+    public function addConditions(Selection $selection, array $paramValues, IRow $subscriptionRow): bool
     {
+        $values = $paramValues[self::KEY];
+
         $isActiveRecurrentSubscriptionCondition = $subscriptionRow &&
             $subscriptionRow->is_recurrent &&
             !$this->recurrentPaymentsRepository->isStoppedBySubscription($subscriptionRow);
