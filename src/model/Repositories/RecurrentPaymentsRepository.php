@@ -6,6 +6,7 @@ use Crm\ApplicationModule\Config\ApplicationConfig;
 use Crm\ApplicationModule\Hermes\HermesMessage;
 use Crm\ApplicationModule\Repository;
 use Crm\ApplicationModule\Repository\AuditLogRepository;
+use Crm\PaymentsModule\Events\RecurrentPaymentCreatedEvent;
 use Crm\PaymentsModule\Events\RecurrentPaymentRenewedEvent;
 use Crm\PaymentsModule\Events\RecurrentPaymentStateChangedEvent;
 use Crm\PaymentsModule\Events\RecurrentPaymentStoppedByAdminEvent;
@@ -94,13 +95,16 @@ class RecurrentPaymentsRepository extends Repository
             $chargeAt = $this->calculateChargeAt($payment);
         }
 
-        return $this->add(
+        $recurrentPayment = $this->add(
             $recurrentToken,
             $payment,
             $chargeAt,
             $customChargeAmount,
             --$retries
         );
+
+        $this->emitter->emit(new RecurrentPaymentCreatedEvent($recurrentPayment));
+        return $recurrentPayment;
     }
 
     final public function update(IRow &$row, $data)
