@@ -1,0 +1,8 @@
+<div style="display:flex;">
+    <div style="flex-shrink: 0; flex-basis: content; flex-grow: 0">
+        {_dashboard.payments.donations_sum.title} <i class="fa fa-question-circle" data-toggle="tooltip" data-original-title="{_dashboard.payments.donations_sum.tooltip, ['start' => date('d.m.Y H:i:s', strtotime('first day of last month 00:00')), 'end' => date('d.m.Y H:i:s', strtotime('-1 month'))]}."></i>
+    </div>
+    <div style="text-align: right; flex-basis: max-content; flex-shrink: 1; flex-grow: 1">
+        {$thisMonthAmount|diffPrice:$lastMonthDayAmount:0|noescape}
+    </div>
+</div>
