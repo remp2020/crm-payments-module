@@ -518,6 +518,12 @@ form:
 			label: Adresa
 		send: Ulož
 
+	subscription_form:
+		start_time:
+			after_payment:
+				description: "Předplatné musí začít po datu potvrzení platby:: %payment_paid%."
+				error: "Začátek předplatného je před datem potvrzení platby."
+
 gateway:
 	recurrent: automatické obnovování
 

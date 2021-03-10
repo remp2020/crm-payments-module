@@ -33,6 +33,7 @@ use Crm\PaymentsModule\DataProvider\CanDeleteAddressDataProvider;
 use Crm\PaymentsModule\DataProvider\PaymentFromVariableSymbolDataProvider;
 use Crm\PaymentsModule\DataProvider\PaymentsClaimUserDataProvider;
 use Crm\PaymentsModule\DataProvider\RecurrentPaymentsClaimUserDataProvider;
+use Crm\PaymentsModule\DataProvider\SubscriptionFormDataProvider;
 use Crm\PaymentsModule\DataProvider\SubscriptionsWithActiveUnchargedRecurrentEndingWithinPeriodDataProvider;
 use Crm\PaymentsModule\DataProvider\SubscriptionsWithoutExtensionEndingWithinPeriodDataProvider;
 use Crm\PaymentsModule\MailConfirmation\ParsedMailLogsRepository;
@@ -47,6 +48,7 @@ use Crm\PaymentsModule\Scenarios\RecurrentPaymentStatusCriteria;
 use Crm\PaymentsModule\Seeders\ConfigsSeeder;
 use Crm\PaymentsModule\Seeders\PaymentGatewaysSeeder;
 use Crm\PaymentsModule\Seeders\SegmentsSeeder;
+use Crm\SubscriptionsModule\DataProvider\SubscriptionFormDataProviderInterface;
 use Crm\UsersModule\Auth\UserTokenAuthorization;
 use Kdyby\Translation\Translator;
 use League\Event\Emitter;
@@ -374,6 +376,11 @@ class PaymentsModule extends CrmModule
         $dataProviderManager->registerDataProvider(
             'payments.dataprovider.dashboard',
             $this->getInstance(\Crm\PaymentsModule\DataProvider\PaymentItemTypesFilterDataProvider::class)
+        );
+
+        $dataProviderManager->registerDataProvider(
+            SubscriptionFormDataProviderInterface::PATH,
+            $this->getInstance(SubscriptionFormDataProvider::class)
         );
     }
 
