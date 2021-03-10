@@ -4,19 +4,27 @@ namespace Crm\PaymentsModule\Presenters;
 
 use Crm\AdminModule\Presenters\AdminPresenter;
 use Crm\ApplicationModule\Components\VisualPaginator;
+use Crm\ApplicationModule\DataProvider\DataProviderManager;
 use Crm\ApplicationModule\Models\ApplicationMountManager;
-use Crm\PaymentsModule\Models\FileSystem;
 use League\Flysystem\FileNotFoundException;
 use Nette\Application\Responses\CallbackResponse;
+use Nette\Application\UI\Form;
+use Tomaj\Form\Renderer\BootstrapInlineRenderer;
 
 class ExportsAdminPresenter extends AdminPresenter
 {
     /** @var ApplicationMountManager @inject */
-    public $adminMountManager;
+    public $applicationMountManager;
+
+    /** @var DataProviderManager @inject */
+    public $dataProviderManager;
+
+    /** @persistent */
+    public $file_system;
 
     public function renderDefault()
     {
-        $exports = $this->adminMountManager->getListContents(FileSystem::EXPORTS_BUCKET_NAME);
+        $exports = $this->getExports();
         $fileCount = count($exports);
 
         $vp = new VisualPaginator();
@@ -29,10 +37,53 @@ class ExportsAdminPresenter extends AdminPresenter
         $this->template->exports = array_slice($exports, $paginator->getOffset(), $paginator->getLength());
     }
 
+    private function getExports(): array
+    {
+        if (isset($this->file_system)) {
+            return $this->applicationMountManager->getListContents($this->file_system);
+        }
+
+        return $this->applicationMountManager->getContentsForGroup('payments');
+    }
+
+    public function createComponentExportsAdminForm()
+    {
+        $form = new Form;
+        $form->setRenderer(new BootstrapInlineRenderer());
+        $form->setTranslator($this->translator);
+
+        $buckets = $this->applicationMountManager->getBucketsForGroup('payments');
+        $form->addSelect(
+            'file_system',
+            'payments.admin.component.exports_admin_form.file_system.label',
+            array_combine($buckets, $buckets)
+        )
+            ->setPrompt('--')
+            ->getControlPrototype()->addAttributes(['class' => 'select2']);
+
+        $form->addSubmit('send', 'payments.admin.component.exports_admin_form.filter.send')
+            ->getControlPrototype()
+            ->setName('button')
+            ->setHtml('<i class="fa fa-filter"></i> ' . $this->translator->translate('payments.admin.component.exports_admin_form.filter.send'));
+        $presenter = $this;
+
+        $form->addSubmit('cancel', 'payments.admin.component.exports_admin_form.filter.cancel')->onClick[] = function () use ($presenter, $form) {
+            $emptyDefaults = array_fill_keys(array_keys((array) $form->getComponents()), null);
+            $presenter->redirect('ExportsAdmin:Default', $emptyDefaults);
+        };
+
+        $form->onSuccess[] = [$this, 'adminFilterSubmitted'];
+        $form->setDefaults([
+            'file_system' => $this->file_system
+        ]);
+
+        return $form;
+    }
+
     public function handleDownloadExport($bucket, $fileName)
     {
-        $path = $this->adminMountManager->getFilePath($bucket, $fileName);
-        $exists = $this->adminMountManager->has($path);
+        $path = $this->applicationMountManager->getFilePath($bucket, $fileName);
+        $exists = $this->applicationMountManager->has($path);
         if (!$exists) {
             throw new \Exception('Missing payments export with path ' . $path);
         }
@@ -42,21 +93,21 @@ class ExportsAdminPresenter extends AdminPresenter
         $this->getHttpResponse()->addHeader('Content-Disposition', "attachment; filename=" . $fileName);
 
         $response = new CallbackResponse(function () use ($path) {
-            echo $this->adminMountManager->read($path);
+            echo $this->applicationMountManager->read($path);
         });
         $this->sendResponse($response);
     }
 
     public function handleDeleteExport($bucket, $fileName)
     {
-        $path = $this->adminMountManager->getFilePath($bucket, $fileName);
-        $exists = $this->adminMountManager->has($path);
+        $path = $this->applicationMountManager->getFilePath($bucket, $fileName);
+        $exists = $this->applicationMountManager->has($path);
         if (!$exists) {
             throw new \Exception('Missing payments export with path ' . $path);
         }
 
         try {
-            $isDeleted = $this->adminMountManager->delete($path);
+            $isDeleted = $this->applicationMountManager->delete($path);
             if ($isDeleted) {
                 $this->flashMessage($this->translator->translate('payments.admin.exports.deleted'));
             } else {

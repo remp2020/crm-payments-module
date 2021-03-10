@@ -4,5 +4,5 @@ namespace Crm\PaymentsModule\Models;
 
 class FileSystem
 {
-    public const EXPORTS_BUCKET_NAME = 'payments-exports';
+    public const PAYMENTS_EXPORTS_BUCKET_NAME = 'payments-exports';
 }

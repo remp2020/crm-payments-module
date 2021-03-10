@@ -211,6 +211,13 @@ admin:
 				label: Note
 			save: Save
 
+		exports_admin_form:
+			file_system:
+				label: Directory
+			filter:
+				send: Filter
+				cancel: Cancel filter
+
 	donation: Donation
 
 	arpu:
@@ -412,6 +419,7 @@ admin:
 		title: Exports
 		created_at: Created at
 		file: File
+		filesystem: Directory
 		actions: Actions
 		download: Download
 		delete: Delete

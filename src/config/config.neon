@@ -104,8 +104,7 @@ services:
 	retentionAnalysisJobHandler:
 		class: Crm\PaymentsModule\Hermes\RetentionAnalysisJobHandler
 
-	exportPaymentsHandler:
-		class: Crm\PaymentsModule\Hermes\ExportPaymentsHandler
+	- Crm\PaymentsModule\Hermes\ExportPaymentsHandler
 
 	paymentCompleteRedirect:
 		class: Crm\PaymentsModule\Model\PaymentCompleteRedirectManager
@@ -147,14 +146,13 @@ services:
 		setup:
 			- setOnTheFly(true, 5)
 
-	exportsAdapter:
+	paymentsExportsAdapter:
 		class: League\Flysystem\Adapter\Local
 		arguments:
 			root: '%appDir%/../content/payments-exports'
 			permissions: [dir: [public: 0o777]]
-
-	paymentsExportFileSystem: League\Flysystem\Filesystem(@exportsAdapter)
+	paymentsExportFileSystem: League\Flysystem\Filesystem(@paymentsExportsAdapter)
 
 	applicationMountManager:
 		setup:
-			- mountFilesystem(Crm\PaymentsModule\Models\FileSystem::EXPORTS_BUCKET_NAME, @paymentsExportFileSystem)
+			- mountFilesystem(Crm\PaymentsModule\Models\FileSystem::PAYMENTS_EXPORTS_BUCKET_NAME, @paymentsExportFileSystem, 'payments')

@@ -211,6 +211,13 @@ admin:
 				label: Poznámka
 			save: Ulož
 
+		exports_admin_form:
+			file_system:
+				label: Zložka
+			filter:
+				send: Filter
+				cancel: Zruš filter
+
 	donation: Dar k predplatnému
 
 	arpu:
@@ -417,6 +424,7 @@ admin:
 		title: Exporty
 		created_at: Čas vytvorenia
 		file: Súbor
+		filesystem: Zložka
 		actions: Akcie
 		download: Stiahnuť
 		delete: Zmazať

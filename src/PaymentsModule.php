@@ -400,7 +400,6 @@ class PaymentsModule extends CrmModule
             'retention-analysis-job',
             $this->getInstance(\Crm\PaymentsModule\Hermes\RetentionAnalysisJobHandler::class)
         );
-
         $dispatcher->registerHandler(
             'export-payments',
             $this->getInstance(\Crm\PaymentsModule\Hermes\ExportPaymentsHandler::class)

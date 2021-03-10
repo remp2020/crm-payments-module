@@ -31,7 +31,7 @@ class ExportPaymentsHandler implements HandlerInterface
         $payload = $message->getPayload();
         $this->adminFilterFormData->parse($payload['form_data']);
 
-        $fileName = 'payments--export-' . date('y-m-d-H-i-') . Random::generate(6) . '.csv';
+        $fileName = 'payments_export_' . date('y-m-d-H-i-') . Random::generate(6) . '.csv';
 
         $tmpFile = tmpfile();
 
@@ -88,7 +88,7 @@ class ExportPaymentsHandler implements HandlerInterface
         }
 
         try {
-            $filePath = $this->adminMountManager->getFilePath(FileSystem::EXPORTS_BUCKET_NAME, $fileName);
+            $filePath = $this->adminMountManager->getFilePath(FileSystem::PAYMENTS_EXPORTS_BUCKET_NAME, $fileName);
             $this->adminMountManager->writeStream($filePath, $tmpFile);
         } catch (\Exception $e) {
             Debugger::log($e, Debugger::EXCEPTION);

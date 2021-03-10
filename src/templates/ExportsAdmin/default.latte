@@ -3,12 +3,18 @@
 {block #content}
 
  <div class="row">
-
   <div class="col-md-12">
     <h1>
 		{_payments.admin.exports.title}
     </h1>
   </div>
+
+
+   <div class="col-md-12">
+     <hr>
+    {control exportsAdminForm}
+     <hr>
+   </div>
 
   <div class="col-md-12">
     {if $fileCount > 0}
@@ -17,20 +23,22 @@
 		  <tr>
 			  <th>{_payments.admin.exports.created_at}</th>
 			  <th>{_payments.admin.exports.file}</th>
+        <th>{_payments.admin.exports.filesystem}</th>
 			  <th>{_payments.admin.exports.actions}</th>
 		  </tr>
 	    </thead>
         <tbody>
           {foreach $exports as $export}
-		    <tr>
-		      <td>{date_timestamp_set(new Datetime(), $export['timestamp'])|userDate}</td>
-		      <td><a href="{link downloadExport! $export['filesystem'], $export['basename']}">{$export['basename']}</a> <span class="label label-default">{$export['size']|bytes}</span></td>
-		      <td>
-            <a href="{link downloadExport! $export['filesystem'], $export['basename']}" class="btn btn-sm btn-info" title="{_payments.admin.exports.download}"><i class="fa fa-download"></i></a>
-            <a href="{link deleteExport! $export['filesystem'], $export['basename']}" class="btn btn-sm btn-danger" title="{_payments.admin.exports.delete}"><i class="fa fa-trash"></i></a>
-          </td>
-		    </tr>
-	      {/foreach}
+            <tr>
+              <td>{date_timestamp_set(new Datetime(), $export['timestamp'])|userDate}</td>
+              <td><a href="{link downloadExport! $export['filesystem'], $export['basename']}">{$export['basename']}</a> <span class="label label-default">{$export['size']|bytes}</span></td>
+              <td>{$export['filesystem']}</td>
+              <td>
+                <a href="{link downloadExport! $export['filesystem'], $export['basename']}" class="btn btn-sm btn-info" title="{_payments.admin.exports.download}"><i class="fa fa-download"></i></a>
+                <a href="{link deleteExport! $export['filesystem'], $export['basename']}" class="btn btn-sm btn-danger" title="{_payments.admin.exports.delete}"><i class="fa fa-trash"></i></a>
+              </td>
+            </tr>
+	        {/foreach}
         </tbody>
       </table>
 
