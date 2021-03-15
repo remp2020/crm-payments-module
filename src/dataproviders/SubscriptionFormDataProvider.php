@@ -48,7 +48,7 @@ class SubscriptionFormDataProvider implements SubscriptionFormDataProviderInterf
         $form = $params['form'];
 
         // if no subscription is attached to form, new subscription without payment is being created; nothing to do
-        $subscriptionId = $form->getComponent('subscription_id');
+        $subscriptionId = $form->getComponent('subscription_id', false);
         if ($subscriptionId === null) {
             return $form;
         }
