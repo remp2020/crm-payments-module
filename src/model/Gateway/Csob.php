@@ -38,7 +38,7 @@ class Csob extends GatewayAbstract
         $this->gateway->setTestMode(!($this->applicationConfig->get('csob_mode') === 'live'));
         $this->gateway->setClosePayment(true);
         $this->gateway->setOneClickPayment(false);
-        $this->gateway->setOneClickPaymentCheckbox($this->gateway::ONECLICK_PAYMENT_CHECKBOX_HIDDEN_UNCHECKED);
+        $this->gateway->setOneClickPaymentCheckbox(Gateway::ONECLICK_PAYMENT_CHECKBOX_HIDDEN_UNCHECKED);
         $this->gateway->setDisplayOmnibox(false);
         $this->gateway->setCurrency('CZK'); // TODO: replace with system currency once implemented
         $this->gateway->setLanguage('CZ');
