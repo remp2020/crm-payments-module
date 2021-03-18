@@ -21,7 +21,7 @@ class ParsedEmailsPopulator extends AbstractPopulator
             }
 
             $data = [
-                'variable_symbol' => $payment ? $payment->variable_symbol : $this->faker->randomNumber(10),
+                'variable_symbol' => $payment ? $payment->variable_symbol : $this->faker->numerify('##########'),
                 'delivered_at' => $this->faker->dateTimeBetween('-1 years'),
                 'created_at' => $this->faker->dateTimeBetween('-1 years'),
                 'amount' => $this->faker->randomNumber(4),

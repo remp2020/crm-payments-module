@@ -19,7 +19,7 @@ class PaymentsPopulator extends AbstractPopulator
         for ($i = 0; $i < $this->count; $i++) {
             $user = $this->getRecord('users');
             $data = [
-                'variable_symbol' => $this->faker->randomNumber(10),
+                'variable_symbol' => $this->faker->numerify('##########'),
                 'user_id' => $user->id,
                 'created_at' => $this->faker->dateTimeBetween('-1 years'),
                 'modified_at' => $this->faker->dateTimeBetween('-1 years'),
@@ -52,7 +52,7 @@ class PaymentsPopulator extends AbstractPopulator
             $payment = $payments->insert($data);
             if ($payment->payment_gateway->is_recurrent) {
                 $recurrentPaymentData = [
-                    'cid' => $this->faker->randomNumber(10),
+                    'cid' => $this->faker->creditCardNumber(),
                     'created_at' => $this->faker->dateTimeBetween('-1 years'),
                     'payment_gateway_id' => 2,
                     'charge_at' => $this->faker->dateTimeBetween('-1 months'),
