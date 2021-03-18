@@ -16,6 +16,7 @@ use Crm\SubscriptionsModule\Repository\SubscriptionTypesMetaRepository;
 use Crm\SubscriptionsModule\Repository\SubscriptionTypesRepository;
 use Crm\SubscriptionsModule\Seeders\SubscriptionExtensionMethodsSeeder;
 use Crm\SubscriptionsModule\Seeders\SubscriptionLengthMethodSeeder;
+use Crm\SubscriptionsModule\Seeders\SubscriptionTypeNamesSeeder;
 use Crm\UsersModule\Repository\AccessTokensRepository;
 use Nette\DI\Container;
 
@@ -41,6 +42,7 @@ class PaymentsTestCase extends DatabaseTestCase
         return [
             SubscriptionExtensionMethodsSeeder::class,
             SubscriptionLengthMethodSeeder::class,
+            SubscriptionTypeNamesSeeder::class,
         ];
     }
 
@@ -69,34 +71,6 @@ class PaymentsTestCase extends DatabaseTestCase
         $this->paymentsRepository = $this->getRepository(PaymentsRepository::class);
         $this->paymentGatewaysRepository = $this->getRepository(PaymentGatewaysRepository::class);
         $this->recurrentPaymentsRepository = $this->getRepository(RecurrentPaymentsRepository::class);
-
-        $database = $this->container->getByType('Nette\Database\Context');
-        $database->query('SET foreign_key_checks = 0;');
-        $database->query('DELETE FROM parsed_mail_logs');
-        $database->query('DELETE FROM subscriptions');
-        $database->query("UPDATE payments SET subscription_id=NULL");
-        $database->query('DELETE FROM recurrent_payments');
-        $database->query('DELETE FROM payment_items');
-        $database->query('DELETE FROM payments');
-        $database->query('DELETE FROM users');
-        $database->query('DELETE FROM subscription_types');
-        $database->query('DELETE FROM payment_gateways');
-        $database->query('SET foreign_key_checks = 1;');
-    }
-
-    public function tearDown(): void
-    {
-        $database = $this->container->getByType('Nette\Database\Context');
-        $database->query('SET foreign_key_checks = 0;');
-        $database->query('DELETE FROM parsed_mail_logs');
-        $database->query("UPDATE payments SET subscription_id=NULL");
-        $database->query('DELETE FROM recurrent_payments');
-        $database->query('DELETE FROM subscriptions');
-        $database->query('DELETE FROM payment_items');
-        $database->query('DELETE FROM payments');
-        $database->query('DELETE FROM subscription_types');
-        $database->query('DELETE FROM payment_gateways');
-        $database->query('SET foreign_key_checks = 1;');
     }
 
     protected function createPayment($variableSymbol)
