@@ -2,6 +2,7 @@
 
 namespace Crm\PaymentsModule;
 
+use Crm\PaymentsModule\Gateways\AuthorizationInterface;
 use Crm\PaymentsModule\Repository\PaymentLogsRepository;
 use Crm\PaymentsModule\Repository\PaymentsRepository;
 use Crm\PaymentsModule\Repository\RecurrentPaymentsRepository;
@@ -77,7 +78,11 @@ class PaymentProcessor
 
         $result = $gateway->complete($payment);
         if ($result === true) {
-            $this->paymentsRepository->updateStatus($payment, PaymentsRepository::STATUS_PAID, true);
+            $status = PaymentsRepository::STATUS_PAID;
+            if ($gateway instanceof AuthorizationInterface) {
+                $status = PaymentsRepository::STATUS_AUTHORIZED;
+            }
+            $this->paymentsRepository->updateStatus($payment, $status, true);
             $payment = $this->paymentsRepository->find($payment->id);
 
             if ((boolean)$payment->payment_gateway->is_recurrent) {

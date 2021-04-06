@@ -22,6 +22,7 @@ class PaymentsPresenter extends FrontendPresenter
         RecurrentPaymentsResolver $recurrentPaymentsResolver
     ) {
         parent::__construct();
+
         $this->paymentsRepository = $paymentsRepository;
         $this->recurrentPaymentsRepository = $recurrentPaymentsRepository;
         $this->recurrentPaymentsResolver = $recurrentPaymentsResolver;

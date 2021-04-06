@@ -55,6 +55,7 @@ services:
 	- Crm\PaymentsModule\Commands\SingleChargeCommand
 	- Crm\PaymentsModule\Commands\SkCsobMailConfirmationCommand
 	- Crm\PaymentsModule\Commands\TatraBankaStatementMailConfirmationCommand
+	- Crm\PaymentsModule\Commands\CancelAuthorizationCommand
 	- Crm\PaymentsModule\Api\VariableSymbolApiHandler
 	- Crm\PaymentsModule\Api\ListRecurrentPaymentsApiHandler
 	- Crm\PaymentsModule\Api\ReactivateRecurrentPaymentApiHandler
@@ -72,6 +73,7 @@ services:
 	- Crm\PaymentsModule\Gateways\Free
 	- Crm\PaymentsModule\Gateways\Csob
 	- Crm\PaymentsModule\Gateways\CsobOneClick
+	- Crm\PaymentsModule\Gateways\CardPayAuthorization
 	- Crm\PaymentsModule\Segment\PaymentCriteria
 	- Crm\PaymentsModule\Segment\PaymentCountsCriteria
 	- Crm\PaymentsModule\Segment\RecurrentPaymentCriteria
@@ -110,6 +112,7 @@ services:
 		class: Crm\PaymentsModule\Model\PaymentCompleteRedirectManager
 		setup:
 			- registerRedirectResolver(Crm\PaymentsModule\BankTransferPaymentCompleteRedirectResolver(), 10)
+			- registerRedirectResolver(Crm\PaymentsModule\Models\RedirectResolver\AuthorizationPaymentCompleteRedirectResolver(), 600)
 
 	paymentInvoiceProvider:
 		class: Crm\PaymentsModule\DataProvider\PaymentInvoiceProviderManager

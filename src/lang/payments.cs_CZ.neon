@@ -578,6 +578,9 @@ frontend:
 		title: Platba předfakturou
 		form_title: 'Pro dokončení objednávky prosím vyplňte fakturační údaje'
 		thank_you: 'Děkujeme za vaši objednávku, předfakturu Vám zašleme do 3 pracovních dnů e-mailem.'
+	add_card:
+		success: "Přidání karty bylo úspěšné. Platba vytvořená pro potřeby ověření karty Vám bude brzy vrácena."
+		error: "Neúspěšný pokus o přidání karty. Zkuste to prosím znovu."
 
 
 config:

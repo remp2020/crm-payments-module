@@ -18,6 +18,7 @@ use Crm\ApplicationModule\SeederManager;
 use Crm\ApplicationModule\User\UserDataRegistrator;
 use Crm\ApplicationModule\Widget\WidgetManagerInterface;
 use Crm\PaymentsModule\Commands\CalculateAveragesCommand;
+use Crm\PaymentsModule\Commands\CancelAuthorizationCommand;
 use Crm\PaymentsModule\Commands\CidGetterCommand;
 use Crm\PaymentsModule\Commands\CsobMailConfirmationCommand;
 use Crm\PaymentsModule\Commands\LastPaymentsCheckCommand;
@@ -256,6 +257,7 @@ class PaymentsModule extends CrmModule
         $commandsContainer->registerCommand($this->getInstance(SingleChargeCommand::class));
         $commandsContainer->registerCommand($this->getInstance(SkCsobMailConfirmationCommand::class));
         $commandsContainer->registerCommand($this->getInstance(TatraBankaStatementMailConfirmationCommand::class));
+        $commandsContainer->registerCommand($this->getInstance(CancelAuthorizationCommand::class));
     }
 
     public function registerApiCalls(ApiRoutersContainerInterface $apiRoutersContainer)

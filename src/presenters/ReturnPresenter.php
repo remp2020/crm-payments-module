@@ -147,6 +147,15 @@ class ReturnPresenter extends FrontendPresenter
                 );
 
                 $this->resolveRedirect($payment, PaymentCompleteRedirectResolver::PAID);
+            } elseif ($payment->status === PaymentsRepository::STATUS_AUTHORIZED) {
+                $presenter->paymentLogsRepository->add(
+                    'OK',
+                    "Redirecting to success url with vs '{$payment->variable_symbol}'",
+                    $presenter->request->getUrl(),
+                    $payment->id
+                );
+
+                $this->resolveRedirect($payment, PaymentCompleteRedirectResolver::PAID);
             } elseif ($gateway->isNotSettled()) {
                 $presenter->paymentLogsRepository->add(
                     'ERROR',

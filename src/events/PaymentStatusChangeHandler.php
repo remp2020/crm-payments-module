@@ -11,6 +11,8 @@ use League\Event\Emitter;
 use League\Event\EventInterface;
 use Nette\Database\Table\ActiveRow;
 use Nette\Database\Table\IRow;
+use Tracy\Debugger;
+use Tracy\ILogger;
 
 class PaymentStatusChangeHandler extends AbstractListener
 {
@@ -46,6 +48,10 @@ class PaymentStatusChangeHandler extends AbstractListener
 
         if (in_array($payment->status, [PaymentsRepository::STATUS_REFUND])) {
             $this->stopRecurrentPayment($payment);
+        }
+
+        if ($payment->status === PaymentsRepository::STATUS_AUTHORIZED) {
+            $this->changeRecurrentPaymentCid($payment);
         }
 
         if ($payment->subscription_id) {
@@ -125,6 +131,34 @@ class PaymentStatusChangeHandler extends AbstractListener
 
         $this->recurrentPaymentsRepository->update($recurrent, [
             'state' => RecurrentPaymentsRepository::STATE_SYSTEM_STOP
+        ]);
+    }
+
+    private function changeRecurrentPaymentCid(ActiveRow $payment)
+    {
+        $newCid = $payment->related('payment_meta')
+            ->where('key', 'card_id')
+            ->fetchField('value');
+
+        $recurrentPaymentIdToUpdate = $payment->related('payment_meta')
+            ->where('key', 'recurrent_payment_id_to_update_cid')
+            ->fetchField('value');
+
+        if (!$newCid || !$recurrentPaymentIdToUpdate) {
+            return;
+        }
+
+        $recurrentPaymentRow = $this->recurrentPaymentsRepository->find($recurrentPaymentIdToUpdate);
+        if (!$recurrentPaymentRow) {
+            Debugger::log("No related recurrent payment found for payment: {$payment->id} with meta `recurrent_payment_id_to_update_cid`: {$recurrentPaymentIdToUpdate}", ILogger::ERROR);
+            return;
+        }
+
+        $note = "Changed CID from: {$recurrentPaymentRow->cid} to: $newCid";
+        $this->recurrentPaymentsRepository->update($recurrentPaymentRow, [
+            'cid' => $newCid,
+            'expires_at' => null,
+            'note' => $recurrentPaymentRow->note ? $recurrentPaymentRow->note . ' ' . $note : $note,
         ]);
     }
 }

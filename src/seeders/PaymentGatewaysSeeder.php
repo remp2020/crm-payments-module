@@ -3,6 +3,7 @@
 namespace Crm\PaymentsModule\Seeders;
 
 use Crm\ApplicationModule\Seeders\ISeeder;
+use Crm\PaymentsModule\Gateways\CardPayAuthorization;
 use Crm\PaymentsModule\Repository\PaymentGatewaysRepository;
 use Symfony\Component\Console\Output\OutputInterface;
 
@@ -126,6 +127,18 @@ class PaymentGatewaysSeeder implements ISeeder
             $output->writeln('  <comment>* payment gateway <info>Free</info> created</comment>');
         } else {
             $output->writeln('  * payment gateway <info>Free</info> exists');
+        }
+
+        if (!$this->paymentGatewaysRepository->exists(CardPayAuthorization::GATEWAY_CODE)) {
+            $this->paymentGatewaysRepository->add(
+                'CardPay Authorization',
+                CardPayAuthorization::GATEWAY_CODE,
+                25,
+                false
+            );
+            $output->writeln('  <comment>* payment gateway <info>CardPay Authorization</info> created</comment>');
+        } else {
+            $output->writeln('  * payment gateway <info>CardPay Authorization</info> exists');
         }
     }
 }

@@ -578,6 +578,9 @@ frontend:
 		title: Proforma invoice payment
 		form_title: 'Please fill up your invoice details to complete the order'
 		thank_you: 'Thank you for the order, the invoice will be sent to your email within 3 working days.'
+	add_card:
+		success: "Add card was successful. Payment created for the card verification will be refunded soon."
+		error: "Failed to add card. Please try again."
 
 config:
 	category: Payments
