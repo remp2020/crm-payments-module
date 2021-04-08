@@ -173,6 +173,7 @@ class MailProcessor
         $fields['AC'] = $this->mailContent->getAc();
         $fields['RES'] = $this->mailContent->getRes();
         $fields['RC'] = $this->mailContent->getRc();
+        $fields['TXN'] = $this->mailContent->getTxn();
 
         $payment = $this->getPayment($vs);
         if (!$payment) {

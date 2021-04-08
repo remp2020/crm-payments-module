@@ -59,5 +59,7 @@ class CancelAuthorizationCommand extends Command
                 Debugger::log($exception->getMessage(), ILogger::ERROR);
             }
         }
+
+        return 0;
     }
 }

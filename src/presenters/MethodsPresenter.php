@@ -62,12 +62,12 @@ class MethodsPresenter extends FrontendPresenter
 
         $userRow = $this->userManager->loadUser($this->getUser());
         if ($recurrentPaymentId !== null) {
-            $recurrentPaymentRow = $this->recurrentPaymentsRepository->userRecurrentPayments($userRow->id)
+            $recurrentPaymentRow = $this->recurrentPaymentsRepository->getUserActiveRecurrentPayments($userRow->id)
                 ->where('id', $recurrentPaymentId)
                 ->fetch();
 
             if (!$recurrentPaymentRow) {
-                throw new BadRequestException("Recurrent payment with id not found: {$recurrentPaymentId} for user: {$userRow->id}");
+                throw new BadRequestException("Active recurrent payment with id not found: {$recurrentPaymentId} for user: {$userRow->id}");
             }
         }
 

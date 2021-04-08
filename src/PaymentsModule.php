@@ -222,6 +222,10 @@ class PaymentsModule extends CrmModule
             $this->getInstance(\Crm\PaymentsModule\Components\DonationPaymentItemsListWidget::class)
         );
         $widgetManager->registerWidget(
+            'payments.admin.payment_item_listing',
+            $this->getInstance(\Crm\PaymentsModule\Components\AuthorizationPaymentItemListWidget::class)
+        );
+        $widgetManager->registerWidget(
             'payments.admin.payment_source_listing',
             $this->getInstance(\Crm\PaymentsModule\Components\DeviceUserListingWidget::class)
         );
