@@ -18,6 +18,7 @@ use Crm\SubscriptionsModule\Seeders\SubscriptionExtensionMethodsSeeder;
 use Crm\SubscriptionsModule\Seeders\SubscriptionLengthMethodSeeder;
 use Crm\SubscriptionsModule\Seeders\SubscriptionTypeNamesSeeder;
 use Crm\UsersModule\Repository\AccessTokensRepository;
+use Crm\UsersModule\Repository\UsersRepository;
 use Nette\DI\Container;
 
 class PaymentsTestCase extends DatabaseTestCase
@@ -58,7 +59,8 @@ class PaymentsTestCase extends DatabaseTestCase
             RecurrentPaymentsRepository::class,
             SubscriptionTypesRepository::class,
             SubscriptionTypesMetaRepository::class,
-            VariableSymbolInterface::class
+            VariableSymbolInterface::class,
+            UsersRepository::class,
         ];
     }
 
