@@ -66,8 +66,8 @@
                                       <span class="d-inline-block" tabindex="0">
                                         <span class="btn btn-sm btn-default disabled" style="pointer-events: none;">{_payments.frontend.my.stop_recurrent}</span>
                                       </span>
-                                      {control simpleWidget 'frontend.payments.listing.recurrent', $recurrent}
                                     {/if}
+                                    {control simpleWidget 'frontend.payments.listing.recurrent', $recurrent}
                                 {case \Crm\PaymentsModule\Repository\RecurrentPaymentsRepository::STATE_USER_STOP}
                                     <span class="label label-info">{_payments.frontend.my.user_stopped}</span>
                                     <span n:if="$recurrent->cid && $recurrent->charge_at > new \DateTime()">
