@@ -397,7 +397,7 @@ class PaymentFormFactory
                 if ($payment && $item->type !== SubscriptionTypePaymentItem::TYPE) {
                     $allowEditPaymentItems = false;
                 }
-                if ($item->amount == 0) {
+                if ($item->amount == 0 || $item->count == 0) {
                     continue;
                 }
                 if ($item->amount < 0) {
@@ -406,12 +406,12 @@ class PaymentFormFactory
 
                 if ($subscriptionType && $item->type === SubscriptionTypePaymentItem::TYPE) {
                     $meta = [];
-                    if ($meta) {
+                    if ($item->meta) {
                         if (is_string($item->meta)) {
                             $meta = trim($item->meta, "\"");
                             $meta = Json::decode($meta, Json::FORCE_ARRAY);
                         } else {
-                            $meta = $item->meta;
+                            $meta = (array) $item->meta;
                         }
                     }
 
