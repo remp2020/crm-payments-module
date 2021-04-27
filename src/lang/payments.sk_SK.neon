@@ -431,6 +431,10 @@ admin:
 		deleted: Súbor bol zmazaný
 		delete_error: Súbor nie je možné odstrániť
 
+	scenarios:
+		donation_amount:
+			label: Darovaná suma
+
 form:
 	payment_gateway:
 		name:

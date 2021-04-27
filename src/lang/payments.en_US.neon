@@ -426,6 +426,10 @@ admin:
 		deleted: File was deleted
 		delete_error: Cannot delete file
 
+	scenarios:
+		donation_amount:
+			label: Darovaná suma
+
 form:
 	payment_gateway:
 		name:
