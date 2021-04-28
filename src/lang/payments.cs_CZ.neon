@@ -427,6 +427,8 @@ admin:
 		delete_error: Soubor nelze odstranit
 
 	scenarios:
+		payment_has_subscription:
+			label: Platba má přiřazené předplatné
 		donation_amount:
 			label: Darovaná suma
 

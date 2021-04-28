@@ -432,6 +432,8 @@ admin:
 		delete_error: Súbor nie je možné odstrániť
 
 	scenarios:
+		payment_has_subscription:
+			label: Platba má priradené predplatné
 		donation_amount:
 			label: Darovaná suma
 

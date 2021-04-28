@@ -427,6 +427,8 @@ admin:
 		delete_error: Cannot delete file
 
 	scenarios:
+		payment_has_subscription:
+			label: The payment has an associated subscription
 		donation_amount:
 			label: Darovaná suma
 
