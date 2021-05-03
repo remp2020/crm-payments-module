@@ -212,7 +212,11 @@ class PaymentsAdminPresenter extends AdminPresenter
     public function actionChangeStatus()
     {
         $payment = $this->paymentsRepository->find($this->params['payment']);
-        $this->paymentsRepository->updateStatus($payment, $this->params['status']);
+        if ($this->params['status'] === PaymentsRepository::STATUS_REFUND) {
+            $this->paymentsRepository->updateStatus($payment, $this->params['status'], true);
+        } else {
+            $this->paymentsRepository->updateStatus($payment, $this->params['status']);
+        }
         $this->flashMessage($this->translator->translate('payments.admin.payments.updated'));
         $this->redirect(':Users:UsersAdmin:Show', $payment->user_id);
     }
