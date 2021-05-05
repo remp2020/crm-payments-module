@@ -34,6 +34,9 @@ class PaymentsRecurrentAdminPresenter extends AdminPresenter
     /** @persistent */
     public $problem;
 
+    /**
+     * @admin-access-level read
+     */
     public function renderDefault()
     {
         $recurrentPayments = $this->recurrentPaymentsRepository->all(
@@ -120,6 +123,9 @@ class PaymentsRecurrentAdminPresenter extends AdminPresenter
         return $control;
     }
 
+    /**
+     * @admin-access-level write
+     */
     public function renderEdit($id)
     {
         $recurrentPayment = $this->recurrentPaymentsRepository->find($id);
@@ -141,6 +147,9 @@ class PaymentsRecurrentAdminPresenter extends AdminPresenter
         return $factory->create();
     }
 
+    /**
+     * @admin-access-level read
+     */
     public function renderDuplicates()
     {
     }

@@ -46,6 +46,9 @@ class RetentionAnalysisAdminPresenter extends AdminPresenter
     /** @var Emitter @inject */
     public $hermesEmitter;
 
+    /**
+     * @admin-access-level read
+     */
     public function renderDefault()
     {
         $jobs = $this->retentionAnalysisJobsRepository->all();
@@ -68,6 +71,9 @@ class RetentionAnalysisAdminPresenter extends AdminPresenter
         }
     }
 
+    /**
+     * @admin-access-level read
+     */
     public function handleClearComparison()
     {
         $section = $this->getSession(self::SESSION_SECTION);
@@ -75,6 +81,9 @@ class RetentionAnalysisAdminPresenter extends AdminPresenter
         $this->redrawControl('comparisonList');
     }
 
+    /**
+     * @admin-access-level read
+     */
     public function handleAddToComparison($jobId)
     {
         $job = $this->retentionAnalysisJobsRepository->find($jobId);
@@ -94,6 +103,9 @@ class RetentionAnalysisAdminPresenter extends AdminPresenter
         $this->redrawControl('comparisonList');
     }
 
+    /**
+     * @admin-access-level write
+     */
     public function handleRerunJob($jobId)
     {
         $job = $this->retentionAnalysisJobsRepository->find($jobId);
@@ -122,6 +134,9 @@ class RetentionAnalysisAdminPresenter extends AdminPresenter
         $this->redirect('this');
     }
 
+    /**
+     * @admin-access-level write
+     */
     public function handleRemoveJob($jobId)
     {
         $job = $this->retentionAnalysisJobsRepository->find($jobId);
@@ -152,6 +167,9 @@ class RetentionAnalysisAdminPresenter extends AdminPresenter
         }
     }
 
+    /**
+     * @admin-access-level read
+     */
     public function renderCompare()
     {
         $section = $this->getSession(self::SESSION_SECTION);
@@ -209,6 +227,9 @@ class RetentionAnalysisAdminPresenter extends AdminPresenter
         $this->template->lowestLastPeriodNumber = $lowestLastPeriodNumber;
     }
 
+    /**
+     * @admin-access-level write
+     */
     public function renderNew()
     {
         if ($this->getParameter('submitted')) {
@@ -218,6 +239,9 @@ class RetentionAnalysisAdminPresenter extends AdminPresenter
         }
     }
 
+    /**
+     * @admin-access-level read
+     */
     public function renderShow($job)
     {
         $job = $this->retentionAnalysisJobsRepository->find($job);

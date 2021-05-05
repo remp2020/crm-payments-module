@@ -22,6 +22,9 @@ class PaymentGatewaysAdminPresenter extends AdminPresenter
     /** @var PaymentGatewayFormFactory @inject */
     public $factory;
 
+    /**
+     * @admin-access-level read
+     */
     public function renderDefault()
     {
         $paymentGateways = $this->filteredGateways();
@@ -34,6 +37,9 @@ class PaymentGatewaysAdminPresenter extends AdminPresenter
         return $this->paymentGatewaysRepository->all($this->text)->order('sorting ASC');
     }
 
+    /**
+     * @admin-access-level read
+     */
     public function renderShow($id)
     {
         $paymentGateway = $this->paymentGatewaysRepository->find($id);
@@ -43,6 +49,9 @@ class PaymentGatewaysAdminPresenter extends AdminPresenter
         $this->template->type = $paymentGateway;
     }
 
+    /**
+     * @admin-access-level write
+     */
     public function renderEdit($id)
     {
         $paymentGateway = $this->paymentGatewaysRepository->find($id);

@@ -19,6 +19,9 @@ class ParsedMailsPresenter extends AdminPresenter
     /** @persistent */
     public $state;
 
+    /**
+     * @admin-access-level read
+     */
     public function renderDefault()
     {
         $logs = $this->parsedMailLogsRepository->all($this->vs, $this->state);
