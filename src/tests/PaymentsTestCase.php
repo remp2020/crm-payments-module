@@ -10,6 +10,7 @@ use Crm\PaymentsModule\Repository\PaymentItemsRepository;
 use Crm\PaymentsModule\Repository\PaymentMetaRepository;
 use Crm\PaymentsModule\Repository\PaymentsRepository;
 use Crm\PaymentsModule\Repository\RecurrentPaymentsRepository;
+use Crm\PaymentsModule\Seeders\PaymentGatewaysSeeder;
 use Crm\PaymentsModule\VariableSymbolInterface;
 use Crm\SubscriptionsModule\PaymentItem\SubscriptionTypePaymentItem;
 use Crm\SubscriptionsModule\Repository\SubscriptionTypesMetaRepository;
@@ -44,6 +45,7 @@ class PaymentsTestCase extends DatabaseTestCase
             SubscriptionExtensionMethodsSeeder::class,
             SubscriptionLengthMethodSeeder::class,
             SubscriptionTypeNamesSeeder::class,
+            PaymentGatewaysSeeder::class,
         ];
     }
 
