@@ -4,6 +4,8 @@ namespace Crm\PaymentsModule\Repository;
 
 use Crm\ApplicationModule\Cache\CacheRepository;
 use Crm\ApplicationModule\Hermes\HermesMessage;
+use Crm\ApplicationModule\RedisClientFactory;
+use Crm\ApplicationModule\RedisClientTrait;
 use Crm\ApplicationModule\Repository;
 use Crm\ApplicationModule\Repository\AuditLogRepository;
 use Crm\ApplicationModule\Request;
@@ -13,18 +15,19 @@ use Crm\PaymentsModule\PaymentItem\PaymentItemContainer;
 use Crm\PaymentsModule\VariableSymbolInterface;
 use Crm\PaymentsModule\VariableSymbolVariant;
 use Crm\SubscriptionsModule\Repository\SubscriptionsRepository;
-use Crm\SubscriptionsModule\Repository\SubscriptionTypesRepository;
 use DateTime;
 use League\Event\Emitter;
+use malkusch\lock\mutex\PredisMutex;
 use Nette\Database\Context;
 use Nette\Database\Table\ActiveRow;
 use Nette\Database\Table\IRow;
 use Nette\Database\Table\Selection;
-use Nette\Localization\ITranslator;
 use Tracy\Debugger;
 
 class PaymentsRepository extends Repository
 {
+    use RedisClientTrait;
+
     const STATUS_FORM = 'form';
     const STATUS_PAID = 'paid';
     const STATUS_FAIL = 'fail';
@@ -38,13 +41,7 @@ class PaymentsRepository extends Repository
 
     private $variableSymbol;
 
-    private $subscriptionTypesRepository;
-
     private $subscriptionsRepository;
-
-    private $paymentGatewaysRepository;
-
-    private $recurrentPaymentsRepository;
 
     private $paymentItemsRepository;
 
@@ -54,38 +51,30 @@ class PaymentsRepository extends Repository
 
     private $paymentMetaRepository;
 
-    private $translator;
-
     private $cacheRepository;
 
     public function __construct(
         Context $database,
         VariableSymbolInterface $variableSymbol,
-        SubscriptionTypesRepository $subscriptionTypesRepository,
         SubscriptionsRepository $subscriptionsRepository,
-        PaymentGatewaysRepository $paymentGatewaysRepository,
-        RecurrentPaymentsRepository $recurrentPaymentsRepository,
         PaymentItemsRepository $paymentItemsRepository,
         Emitter $emitter,
         AuditLogRepository $auditLogRepository,
         \Tomaj\Hermes\Emitter $hermesEmitter,
         PaymentMetaRepository $paymentMetaRepository,
-        ITranslator $translator,
-        CacheRepository $cacheRepository
+        CacheRepository $cacheRepository,
+        RedisClientFactory $redisClientFactory
     ) {
         parent::__construct($database);
         $this->variableSymbol = $variableSymbol;
-        $this->subscriptionTypesRepository = $subscriptionTypesRepository;
         $this->subscriptionsRepository = $subscriptionsRepository;
-        $this->paymentGatewaysRepository = $paymentGatewaysRepository;
-        $this->recurrentPaymentsRepository = $recurrentPaymentsRepository;
         $this->paymentItemsRepository = $paymentItemsRepository;
         $this->emitter = $emitter;
         $this->auditLogRepository = $auditLogRepository;
         $this->hermesEmitter = $hermesEmitter;
         $this->paymentMetaRepository = $paymentMetaRepository;
-        $this->translator = $translator;
         $this->cacheRepository = $cacheRepository;
+        $this->redisClientFactory = $redisClientFactory;
     }
 
     final public function add(
@@ -239,35 +228,47 @@ class PaymentsRepository extends Repository
 
     final public function updateStatus(ActiveRow $payment, $status, $sendEmail = false, $note = null, $errorMessage = null, $salesFunnelId = null)
     {
-        $data = [
-            'status' => $status,
-            'modified_at' => new DateTime()
-        ];
-        if (in_array($status, [self::STATUS_PAID, self::STATUS_PREPAID, self::STATUS_AUTHORIZED]) && !$payment->paid_at) {
-            $data['paid_at'] = new DateTime();
-        }
-        if ($note) {
-            $data['note'] = $note;
-        }
-        if ($errorMessage) {
-            $data['error_message'] = $errorMessage;
-        }
+        // Updates of payment status may come from multiple sources simultaneously,
+        // therefore we avoid running this code in parallel using mutex
+        $mutex = new PredisMutex([$this->redis()], 'payments_repository_update_status_' . $payment->id, 5);
+        $updated = $mutex->synchronized(function () use ($payment, $status, $sendEmail, $note, $errorMessage, $salesFunnelId) {
+            // refresh payment since it may be stalled (because of waiting for mutex)
+            $payment = $this->find($payment->id);
+            $data = [
+                'status' => $status,
+                'modified_at' => new DateTime()
+            ];
+            if (in_array($status, [self::STATUS_PAID, self::STATUS_PREPAID, self::STATUS_AUTHORIZED]) && !$payment->paid_at) {
+                $data['paid_at'] = new DateTime();
+            }
+            if ($note) {
+                $data['note'] = $note;
+            }
+            if ($errorMessage) {
+                $data['error_message'] = $errorMessage;
+            }
 
-        if (in_array($payment->status, [self::STATUS_PAID, self::STATUS_PREPAID, self::STATUS_AUTHORIZED]) && $data['status'] == static::STATUS_FAIL) {
-            Debugger::log("attempt to make change payment status from [{$payment->status}] to [fail]");
-            return false;
+            if (in_array($payment->status, [self::STATUS_PAID, self::STATUS_PREPAID, self::STATUS_AUTHORIZED]) && $data['status'] == static::STATUS_FAIL) {
+                Debugger::log("attempt to make change payment status from [{$payment->status}] to [fail]");
+                return false;
+            }
+
+            parent::update($payment, $data);
+
+            $this->emitter->emit(new PaymentChangeStatusEvent($payment, $sendEmail));
+            $this->hermesEmitter->emit(new HermesMessage('payment-status-change', [
+                'payment_id' => $payment->id,
+                'sales_funnel_id' => $payment->sales_funnel_id ?? $salesFunnelId, // pass explicit sales_funnel_id if payment doesn't contain one
+                'send_email' => $sendEmail,
+            ]));
+
+            return true;
+        });
+
+        if ($updated) {
+            return $this->find($payment->id);
         }
-
-        parent::update($payment, $data);
-
-        $this->emitter->emit(new PaymentChangeStatusEvent($payment, $sendEmail));
-        $this->hermesEmitter->emit(new HermesMessage('payment-status-change', [
-            'payment_id' => $payment->id,
-            'sales_funnel_id' => $payment->sales_funnel_id ?? $salesFunnelId, // pass explicit sales_funnel_id if payment doesn't contain one
-            'send_email' => $sendEmail,
-        ]));
-
-        return $this->find($payment->id);
+        return false;
     }
 
     /**
