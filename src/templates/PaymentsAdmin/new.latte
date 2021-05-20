@@ -1,5 +1,14 @@
 {block #title}{_payments.admin.payments.new}{/block}
 
+{block head}
+    <style>
+        .variable_symbol_generate.disabled {
+            pointer-events: none;
+            opacity: 0.5;
+        }
+    </style>
+{/block}
+
 {block #content}
 
 <div class="row">
@@ -27,7 +36,6 @@
 {/block}
 
 {block scripts}
-
     <script type="text/javascript">
         $('.variable_symbol_generate').click(function(event) {
             event.preventDefault();
@@ -130,6 +138,14 @@
             });
         }
 
+        var $paymentGateway = $('#' + {$control[paymentForm][payment_gateway_id]->htmlId});
+        var $vsGenerate = $('.variable_symbol_generate');
+        $paymentGateway.on('change', function () {
+            $('#frm-paymentForm-variable_symbol').val('');
+            var selectedValue = $paymentGateway.find(":selected").attr("value");
+            $vsGenerate.toggleClass('disabled', !selectedValue);
+        });
+
         function serializeItems() {
             var items = [];
             $('.payment-item').each(function () {
@@ -147,7 +163,6 @@
             return JSON.stringify(items);
         }
     </script>
-
 {/block}
 
 {define onProductChangeCallback}

@@ -450,6 +450,7 @@ form:
 			label: Pořadí
 		save:
 			label: Ulož
+		required: Musí být zadána platební brána
 
 	accountant_export:
 		payment_gateway:

@@ -133,6 +133,13 @@ class PaymentFormFactory
 
         $form->addGroup('');
 
+        $paymentGateways = $this->paymentGatewaysRepository->all()->fetchPairs('id', 'name');
+        if ($payment) {
+            $paymentGateways[$payment->payment_gateway_id] = $payment->payment_gateway->name;
+        }
+        $form->addSelect('payment_gateway_id', 'payments.form.payment.payment_gateway_id.label', $paymentGateways)
+            ->setRequired('payments.form.payment_gateway.required');
+
         $variableSymbol = $form->addText('variable_symbol', 'payments.form.payment.variable_symbol.label')
             ->setRequired('payments.form.payment.variable_symbol.required')
             ->setAttribute('placeholder', 'payments.form.payment.variable_symbol.placeholder');
@@ -209,17 +216,11 @@ class PaymentFormFactory
 
         $form->addGroup('payments.form.payment.general_settings');
 
-        $paymentGateways = $this->paymentGatewaysRepository->all()->fetchPairs('id', 'name');
-        if ($payment) {
-            $paymentGateways[$payment->payment_gateway_id] = $payment->payment_gateway->name;
-        }
-        $form->addSelect('payment_gateway_id', 'payments.form.payment.payment_gateway_id.label', $paymentGateways);
-
         $statusPairs = $this->paymentsRepository->getStatusPairs();
         if ($payment && !isset($statusPairs[$payment->status])) {
             $statusPairs[$payment->status] = $payment->status;
         }
-        $status = $form->addSelect('status', 'payments.form.payment.status.label', $statusPairs);
+        $status = $form->addSelect('status', 'payments.form.payment.status.label', $this->paymentsRepository->getStatusPairs());
 
         $paidAt = $form->addText('paid_at', 'payments.form.payment.paid_at.label')
             ->setAttribute('placeholder', 'payments.form.payment.paid_at.placeholder');

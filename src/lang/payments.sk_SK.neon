@@ -455,6 +455,7 @@ form:
 			label: Poradie
 		save:
 			label: Ulož
+		required: Musí byť zadaná platobná brána
 
 	accountant_export:
 		payment_gateway:

@@ -450,6 +450,7 @@ form:
 			label: Sorting
 		save:
 			label: Save
+		required: Payment gateway is required
 
 	accountant_export:
 		payment_gateway:
