@@ -2,10 +2,12 @@
 
 namespace Crm\PaymentsModule\Commands;
 
+use Crm\ApplicationModule\Commands\DecoratedCommandTrait;
 use Crm\PaymentsModule\GatewayFactory;
 use Crm\PaymentsModule\Gateways\RecurrentPaymentInterface;
 use Crm\PaymentsModule\Repository\PaymentGatewaysRepository;
 use Crm\PaymentsModule\Repository\RecurrentPaymentsRepository;
+use Nette\Utils\DateTime;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
@@ -13,6 +15,8 @@ use Symfony\Component\Console\Output\OutputInterface;
 
 class UpdateRecurrentPaymentsExpiresCommand extends Command
 {
+    use DecoratedCommandTrait;
+
     private $recurrentPaymentsRepository;
 
     private $gatewayFactory;
@@ -45,6 +49,18 @@ class UpdateRecurrentPaymentsExpiresCommand extends Command
                 null,
                 InputOption::VALUE_REQUIRED,
                 'Payment gateway code to check use. If not specified, all recurring gateways are checked.'
+            )
+            ->addOption(
+                'all',
+                null,
+                InputOption::VALUE_NONE,
+                'Update all recurrent payments not only without expires_at.'
+            )
+            ->addOption(
+                'charge_before',
+                null,
+                InputOption::VALUE_REQUIRED,
+                'Update only recurrent payments that are in future and before date in this option.'
             );
     }
 
@@ -52,22 +68,27 @@ class UpdateRecurrentPaymentsExpiresCommand extends Command
     {
         $start = microtime(true);
 
-        $output->writeln('');
-        $output->writeln('<info>***** Recurrent Payment *****</info>');
-        $output->writeln('');
-
         $limit = null;
         if ($input->getOption('limit')) {
-            $limit = intval($input->getOption('limit'));
+            $limit = (int)$input->getOption('limit');
         }
 
         $recurrentPayments = $this->recurrentPaymentsRepository->all()
             ->select('payment_gateway.code, cid')
             ->where([
-                'expires_at' => null,
                 'state' => RecurrentPaymentsRepository::STATE_ACTIVE,
             ])
             ->group('payment_gateway.code, cid');
+
+        if (!$input->getOption('all')) {
+            $recurrentPayments->where(['expires_at' => null]);
+        }
+
+        if ($input->getOption('charge_before')) {
+            $chargeBefore = new DateTime($input->getOption('charge_before'));
+            $recurrentPayments->where('charge_at >= NOW()')
+                ->where('charge_at < ?', $chargeBefore);
+        }
 
         if ($code = $input->getOption('gateway')) {
             $gateway = $this->paymentGatewaysRepository->findByCode($code);
@@ -91,7 +112,7 @@ class UpdateRecurrentPaymentsExpiresCommand extends Command
             $output->writeln('<info>No cards.</info>');
         }
 
-        $output->writeln("Processing <comment>{$recurrentPayments->count()}</comment>/<info>{$totalCount}</info> CIDs without expiration");
+        $output->writeln("Processing <comment>{$recurrentPayments->count()}</comment>/<info>{$totalCount}</info> CIDs");
 
         foreach ($gateways as $code => $cids) {
             $gateway = $this->gatewayFactory->getGateway($code);
@@ -100,18 +121,42 @@ class UpdateRecurrentPaymentsExpiresCommand extends Command
             }
             $paymentGateway = $this->paymentGatewaysRepository->findByCode($code);
 
-            $output->writeln("Checking <comment>{$paymentGateway->name}</comment> expirations:");
-
             try {
                 $result = $gateway->checkExpire(array_values($cids));
                 foreach ($result as $token => $expire) {
                     $cidRecurrentPayments = $this->recurrentPaymentsRepository->getTable()->where(['cid' => $token]);
+
+                    $previousExpiration = null;
+                    $updated = false;
+
                     foreach ($cidRecurrentPayments as $cidPayment) {
+                        if ($cidPayment->expires_at == $expire) {
+                            continue;
+                        }
+                        if (!$previousExpiration && $cidPayment->expires_at) {
+                            $previousExpiration = $cidPayment->expires_at;
+                        }
                         $this->recurrentPaymentsRepository->update($cidPayment, [
                             'expires_at' => $expire
                         ]);
+                        $updated = true;
                     }
-                    $output->writeln('  * CID: ' . $token . ' (expires at: ' . $expire->format('Y-m-d H:i:s') . ')</info>');
+
+                    if ($updated) {
+                        $output->writeln(sprintf(
+                            '  * %s CID <comment>%s</comment> expires at %s %s',
+                            $paymentGateway->name,
+                            $token,
+                            $expire->format('Y-m-d'),
+                            $previousExpiration ? "(previously {$previousExpiration->format('Y-m-d')})" : ''
+                        ));
+                    } else {
+                        $output->writeln(sprintf(
+                            '  * %s CID <comment>%s</comment> skipped, no change in expiration',
+                            $paymentGateway->name,
+                            $token,
+                        ));
+                    }
                 }
             } catch (\Exception $e) {
                 $output->writeln("  * <error>Error {$e->getMessage()}</error>");
