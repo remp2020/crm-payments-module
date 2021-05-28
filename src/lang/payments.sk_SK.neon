@@ -333,6 +333,7 @@ admin:
 		fields:
 			clear_date: Vynulovať dátum
 			segment: Segment
+			user_source: "Zdroj (Používateľ)"
 			min_date_of_payment: "Zahrnúť platby od (dátumu)"
 			min_date_of_payment_desc: "Ak nie je zvolené, zarhnuté sú všetky platby."
 			previous_user_subscriptions: Predchádzajúce predplatné používateľa

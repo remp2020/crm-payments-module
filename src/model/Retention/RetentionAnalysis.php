@@ -185,6 +185,11 @@ SQL;
             $joins[] = "JOIN ({$segment->query()}) segment_users ON payments.user_id = segment_users.id";
         }
 
+        if (isset($inputParams['user_source'])) {
+            $joins[] = "JOIN users ON payments.user_id = users.id";
+            $wheres[] = sprintf("users.source = '%s'", $inputParams['user_source']);
+        }
+
         $joins = implode(' ', $joins);
         $wheres = implode(' AND ', $wheres);
 

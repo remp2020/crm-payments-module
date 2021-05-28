@@ -328,6 +328,7 @@ admin:
 		fields:
 			clear_date: Vynulovat datum
 			segment: Segment
+			user_source: "Zdroj (Uživatel)"
 			min_date_of_payment: "Zahrnout platby od (data)"
 			min_date_of_payment_desc: "Pokud není zvoleno, zarhnuté jsou všechny platby."
 			previous_user_subscriptions: Předchozí předplatné uživatele

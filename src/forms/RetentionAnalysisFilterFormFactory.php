@@ -6,6 +6,7 @@ use Crm\ApplicationModule\DataProvider\DataProviderManager;
 use Crm\PaymentsModule\DataProvider\RetentionAnalysisDataProviderInterface;
 use Crm\PaymentsModule\Repository\PaymentsRepository;
 use Crm\SegmentModule\Repository\SegmentsRepository;
+use Crm\UsersModule\Repository\UsersRepository;
 use Nette\Application\UI\Form;
 use Nette\Localization\ITranslator;
 use Tomaj\Form\Renderer\BootstrapRenderer;
@@ -20,16 +21,20 @@ class RetentionAnalysisFilterFormFactory
 
     private $segmentsRepository;
 
+    private $usersRepository;
+
     public function __construct(
         PaymentsRepository $paymentsRepository,
         DataProviderManager $dataProviderManager,
         SegmentsRepository $segmentsRepository,
+        UsersRepository $usersRepository,
         ITranslator $translator
     ) {
         $this->paymentsRepository = $paymentsRepository;
         $this->translator = $translator;
         $this->dataProviderManager = $dataProviderManager;
         $this->segmentsRepository = $segmentsRepository;
+        $this->usersRepository = $usersRepository;
     }
 
     public function create(array $inputParams, bool $disabled = false): Form
@@ -69,8 +74,13 @@ class RetentionAnalysisFilterFormFactory
             ->setDisabled($disabled);
 
         $form->addSelect('segment_code', 'payments.admin.retention_analysis.fields.segment', $this->segmentsRepository->all()->fetchPairs('code', 'name'))
-            ->setDisabled($disabled)
             ->setPrompt('--')
+            ->setDisabled($disabled)
+            ->getControlPrototype()->addAttributes(['class' => 'select2']);
+
+        $form->addSelect('user_source', 'payments.admin.retention_analysis.fields.user_source', $this->usersRepository->getUserSources())
+            ->setPrompt('--')
+            ->setDisabled($disabled)
             ->getControlPrototype()->addAttributes(['class' => 'select2']);
 
         /** @var RetentionAnalysisDataProviderInterface[] $providers */

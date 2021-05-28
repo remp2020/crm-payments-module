@@ -338,6 +338,7 @@ admin:
 		fields:
 			clear_date: Clear date
 			segment: Segment
+			user_source: "Source (User)"
 			min_date_of_payment: "Include payments from (date)"
 			min_date_of_payment_desc: "If not selected, all payments are included."
 			previous_user_subscriptions: Previous user subscriptions
