@@ -230,7 +230,7 @@ class PaymentsRepository extends Repository
     {
         // Updates of payment status may come from multiple sources simultaneously,
         // therefore we avoid running this code in parallel using mutex
-        $mutex = new PredisMutex([$this->redis()], 'payments_repository_update_status_' . $payment->id, 5);
+        $mutex = new PredisMutex([$this->redis()], 'payments_repository_update_status_' . $payment->id, 10);
         $updated = $mutex->synchronized(function () use ($payment, $status, $sendEmail, $note, $errorMessage, $salesFunnelId) {
             // refresh payment since it may be stalled (because of waiting for mutex)
             $payment = $this->find($payment->id);
