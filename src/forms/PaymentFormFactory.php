@@ -215,7 +215,11 @@ class PaymentFormFactory
         }
         $form->addSelect('payment_gateway_id', 'payments.form.payment.payment_gateway_id.label', $paymentGateways);
 
-        $status = $form->addSelect('status', 'payments.form.payment.status.label', $this->paymentsRepository->getStatusPairs());
+        $statusPairs = $this->paymentsRepository->getStatusPairs();
+        if ($payment && !isset($statusPairs[$payment->status])) {
+            $statusPairs[$payment->status] = $payment->status;
+        }
+        $status = $form->addSelect('status', 'payments.form.payment.status.label', $statusPairs);
 
         $paidAt = $form->addText('paid_at', 'payments.form.payment.paid_at.label')
             ->setAttribute('placeholder', 'payments.form.payment.paid_at.placeholder');
