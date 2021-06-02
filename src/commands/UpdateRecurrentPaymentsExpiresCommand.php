@@ -124,7 +124,8 @@ class UpdateRecurrentPaymentsExpiresCommand extends Command
             try {
                 $result = $gateway->checkExpire(array_values($cids));
                 foreach ($result as $token => $expire) {
-                    $cidRecurrentPayments = $this->recurrentPaymentsRepository->getTable()->where(['cid' => $token]);
+                    $cidRecurrentPayments = $this->recurrentPaymentsRepository->getTable()
+                        ->where(['cid' => (string) $token]);
 
                     $previousExpiration = null;
                     $updated = false;

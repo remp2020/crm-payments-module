@@ -93,7 +93,7 @@ class SingleChargeCommand extends Command
         }
 
         $recurrentPayment = $this->recurrentPaymentsRepository->getTable()
-            ->where(['cid' => $cid])
+            ->where(['cid' => (string) $cid])
             ->order('created_at DESC')
             ->limit(1)
             ->fetch();
