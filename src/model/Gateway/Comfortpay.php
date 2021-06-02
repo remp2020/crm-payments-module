@@ -97,20 +97,24 @@ class Comfortpay extends GatewayAbstract implements RecurrentPaymentInterface
         $this->gateway->setCertPath($this->applicationConfig->get('comfortpay_local_cert_path'));
         $this->gateway->setCertPass($this->applicationConfig->get('comfortpay_local_passphrase_path'));
 
-        $this->response = $this->gateway->listOfExpirePerId(
-            ['cardIds' => $tokens]
-        )->send();
-
-        if (!$this->response->isSuccessful()) {
-            throw new CannotCheckExpiration();
-        }
-
         $response = [];
-        foreach ($this->response->getData() as $card) {
-            $month = substr($card['date'], 0, 2);
-            $year = substr($card['date'], 2, 2);
 
-            $response[$card['id']] = DateTime::from(strtotime("$year-$month-01 00:00 next month"));
+        // chunk requests to 1000 cards, max allowed limit allowed by Comfortpay
+        foreach (array_chunk($tokens, 1000) as $chunk) {
+            $this->response = $this->gateway->listOfExpirePerId(
+                ['cardIds' => $chunk]
+            )->send();
+
+            if (!$this->response->isSuccessful()) {
+                throw new CannotCheckExpiration();
+            }
+
+            foreach ($this->response->getData() as $card) {
+                $month = substr($card['date'], 0, 2);
+                $year = substr($card['date'], 2, 2);
+
+                $response[$card['id']] = DateTime::from(strtotime("$year-$month-01 00:00 next month"));
+            }
         }
 
         return $response;
