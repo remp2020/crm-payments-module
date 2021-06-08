@@ -8,7 +8,7 @@ use Crm\SegmentModule\Repository\SegmentsValuesRepository;
 
 class SubscribersWithPaymentWidgetFactory
 {
-    const DEFAULT_SEGMENT = 'active-subscription-with-payment';
+    const DEFAULT_SEGMENT = 'active-subscribers-with-paid-subscriptions';
 
     protected $widgetManager;
 
