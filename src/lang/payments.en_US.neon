@@ -452,17 +452,6 @@ form:
 			label: Save
 		required: Payment gateway is required
 
-	accountant_export:
-		payment_gateway:
-			label: Payment gateway
-		status:
-			label: Payment status
-		subscription_type:
-			label: Subscription type
-		month:
-			label: Month
-		export: Export
-
 	payment:
 		variable_symbol:
 			label: Variable symbol

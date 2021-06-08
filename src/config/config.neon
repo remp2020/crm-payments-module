@@ -20,7 +20,6 @@ services:
 
 	- Crm\PaymentsModule\Forms\PaymentFormFactory
 	- Crm\PaymentsModule\Forms\PaymentGatewayFormFactory
-	- Crm\PaymentsModule\Forms\AccountantExportFormFactory
 	- Crm\PaymentsModule\PaymentsHistogramFactory
 	recurrentPaymentsResolver: Crm\PaymentsModule\RecurrentPaymentsResolver
 	- Crm\PaymentsModule\Forms\RecurrentPaymentFormFactory

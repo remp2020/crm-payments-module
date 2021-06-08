@@ -452,17 +452,6 @@ form:
 			label: Ulož
 		required: Musí být zadána platební brána
 
-	accountant_export:
-		payment_gateway:
-			label: Platební brána
-		status:
-			label: Stav platby
-		subscription_type:
-			label: Typ předplatného
-		month:
-			label: Měsíc
-		export: Export
-
 	payment:
 		variable_symbol:
 			label: Variabilní symbol
