@@ -304,6 +304,7 @@ class PaymentsModule extends CrmModule
     public function registerCleanupFunction(CallbackManagerInterface $cleanUpManager)
     {
         $cleanUpManager->add(PaymentLogsRepository::class, function (Container $container) {
+            /** @var PaymentLogsRepository $paymentsLogsRepository */
             $paymentsLogsRepository = $container->getByType(PaymentLogsRepository::class);
             $paymentsLogsRepository->removeOldData();
         });

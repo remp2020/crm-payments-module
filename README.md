@@ -27,6 +27,18 @@ Add following commands to your scheduler (e.g. *crontab*) and change the path to
 04 04 * * * /usr/bin/php /var/www/html/bin/command.php payments:calculate_averages
 ```
 
+### Configuration
+
+#### Data retention configuration
+
+You can configure time before which `application:cleanup` deletes old repository data and column which it uses by using (in your project configuration file):
+
+```neon
+paymentLogsRepository:
+	setup:
+		- setRetentionThreshold('-2 months', 'created_at')
+```
+
 ### Scheduled commands
 
 For payment module to work correctly, please add execution of following commands to your scheduler. Example displays
