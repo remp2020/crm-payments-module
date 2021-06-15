@@ -1,4 +1,17 @@
 <template id="payment-items-template">
+    <script>
+        $('input[data-tag=amount]').on('input', function () {
+            var currentValue = parseFloat($(this).val().replace(',', '.'));
+            if (isNaN(currentValue)) {
+                return;
+            }
+            var decimalNumber = Math.trunc(currentValue * 100) / 100
+            if (decimalNumber !== currentValue) {
+                $(this).val(decimalNumber)
+            }
+        });
+    </script>
+
     <div class="form-group">
         <div class="col-sm-3 control-label"></div>
         <div class="col-sm-9">
