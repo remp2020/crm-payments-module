@@ -146,7 +146,7 @@ class PaymentsRepository extends Repository
         $this->emitter->emit(new NewPaymentEvent($payment));
         $this->hermesEmitter->emit(new HermesMessage('new-payment', [
             'payment_id' => $payment->id
-        ]));
+        ]), HermesMessage::PRIORITY_HIGH);
         return $payment;
     }
 
@@ -260,7 +260,7 @@ class PaymentsRepository extends Repository
                 'payment_id' => $payment->id,
                 'sales_funnel_id' => $payment->sales_funnel_id ?? $salesFunnelId, // pass explicit sales_funnel_id if payment doesn't contain one
                 'send_email' => $sendEmail,
-            ]));
+            ]), HermesMessage::PRIORITY_HIGH);
 
             return true;
         });

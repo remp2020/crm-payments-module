@@ -226,7 +226,7 @@ class PaymentsAdminPresenter extends AdminPresenter
         $this->hermesEmitter->emit(new HermesMessage('export-payments', [
             'form_data' => $this->formData,
             'user_id' => $this->user->getId()
-        ]));
+        ]), HermesMessage::PRIORITY_LOW);
 
         $this->flashMessage($this->translator->translate('payments.admin.payments.export.exported'));
     }

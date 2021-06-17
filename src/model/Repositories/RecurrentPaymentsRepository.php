@@ -121,7 +121,7 @@ class RecurrentPaymentsRepository extends Repository
             $this->emitter->emit(new RecurrentPaymentStateChangedEvent($row));
             $this->hermesEmitter->emit(new HermesMessage('recurrent-payment-state-changed', [
                 'recurrent_payment_id' => $row->id,
-            ]));
+            ]), HermesMessage::PRIORITY_HIGH);
         }
 
         return $result;
@@ -145,7 +145,7 @@ class RecurrentPaymentsRepository extends Repository
             $this->emitter->emit(new RecurrentPaymentRenewedEvent($recurrentPayment));
             $this->hermesEmitter->emit(new HermesMessage('recurrent-payment-renewed', [
                 'recurrent_payment_id' => $recurrentPayment->id,
-            ]));
+            ]), HermesMessage::PRIORITY_HIGH);
         }
     }
 

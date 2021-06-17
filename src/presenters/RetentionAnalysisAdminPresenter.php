@@ -115,7 +115,7 @@ class RetentionAnalysisAdminPresenter extends AdminPresenter
 
         $this->hermesEmitter->emit(new HermesMessage('retention-analysis-job', [
             'id' => $job->id
-        ]));
+        ]), HermesMessage::PRIORITY_LOW);
 
         $this->flashMessage($this->translator->translate('payments.admin.retention_analysis.job_was_rerun'));
 
@@ -333,7 +333,7 @@ class RetentionAnalysisAdminPresenter extends AdminPresenter
         $job = $this->retentionAnalysisJobsRepository->add($values['name'], Json::encode($params));
         $this->hermesEmitter->emit(new HermesMessage('retention-analysis-job', [
             'id' => $job->id
-        ]));
+        ]), HermesMessage::PRIORITY_LOW);
 
         $this->flashMessage($this->translator->translate('payments.admin.retention_analysis.analysis_was_scheduled'));
         $this->redirect('default');
