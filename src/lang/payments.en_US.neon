@@ -545,6 +545,7 @@ frontend:
 			last_try: Previous attempt
 			next_try: Next attempt
 		no_payments: You have no payments
+		no_refunds: You have no refunds
 		buy_offer: You can buy the subscription to get access to content.
 		next_recurrent_payment: "You have recurrent payment enabled. Your next payment with amount of <strong>%charge_amount%</strong> will occur on <strong>%charge_date%</strong>."
 	recurrent_stop:

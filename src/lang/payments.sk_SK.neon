@@ -550,6 +550,7 @@ frontend:
 			last_try: Predchádzajúci pokus
 			next_try: Nasledujúci pokus
 		no_payments: Nemáte žiadne platby
+		no_refunds: Nemáte žiadne vrátené platby
 		buy_offer: Môžete si predplatné zakúpiť a získať tak prístup ku obsahu.
 		next_recurrent_payment: "Máte zapnuté automatické obnovovanie predplatného, najbližšia platba v hodnote <strong>%charge_amount%</strong> prebehne <strong>%charge_date%</strong>."
 	recurrent_stop:

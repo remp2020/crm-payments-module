@@ -2,37 +2,45 @@
     <h1 n:block=title>{_payments.frontend.my.refund_payments}</h1>
 </div>
 
-<div class="table-responsive">
-    <table class="table table-striped">
-        <thead>
-        <tr>
-            <th>{_payments.frontend.my.payment_type}</th>
-            <th>{_payments.frontend.my.payment_day}</th>
-            <th>{_payments.frontend.my.variable_symbol}</th>
-            <th>{_payments.frontend.my.price}</th>
-            <th>{_payments.frontend.my.receipts}</th>
-        </tr>
-        </thead>
-        <tbody>
-        {foreach $payments as $payment}
+{if $payments->count('*') > 0}
+    <div class="table-responsive">
+        <table class="table table-striped">
+            <thead>
             <tr>
-                <td>
-                    {$payment->payment_gateway->name}
-                </td>
-                <td>
-                    {$payment->paid_at|userDate:true}
-                </td>
-                <td>
-                    {$payment->variable_symbol}
-                </td>
-                <td>
-                    {$payment->amount|price}
-                </td>
-                <td>
-                    {control simpleWidget 'frontend.payments.refund.receipts', $payment}
-                </td>
+                <th>{_payments.frontend.my.payment_type}</th>
+                <th>{_payments.frontend.my.payment_day}</th>
+                <th>{_payments.frontend.my.variable_symbol}</th>
+                <th>{_payments.frontend.my.price}</th>
+                <th>{_payments.frontend.my.receipts}</th>
             </tr>
-        {/foreach}
-        </tbody>
-    </table>
-</div>
+            </thead>
+            <tbody>
+            {foreach $payments as $payment}
+                <tr>
+                    <td>
+                        {$payment->payment_gateway->name}
+                    </td>
+                    <td>
+                        {$payment->paid_at|userDate:true}
+                    </td>
+                    <td>
+                        {$payment->variable_symbol}
+                    </td>
+                    <td>
+                        {$payment->amount|price}
+                    </td>
+                    <td>
+                        {control simpleWidget 'frontend.payments.refund.receipts', $payment}
+                    </td>
+                </tr>
+            {/foreach}
+            </tbody>
+        </table>
+    </div>
+{else}
+    <blockquote>
+        <p class="lead">
+            {_payments.frontend.my.no_refunds}
+        </p>
+    </blockquote>
+{/if}
