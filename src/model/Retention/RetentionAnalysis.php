@@ -6,7 +6,7 @@ use Crm\ApplicationModule\DataProvider\DataProviderManager;
 use Crm\PaymentsModule\DataProvider\RetentionAnalysisDataProviderInterface;
 use Crm\PaymentsModule\Repository\PaymentsRepository;
 use Crm\PaymentsModule\Repository\RetentionAnalysisJobsRepository;
-use Crm\SegmentModule\SegmentFactory;
+use Crm\SegmentModule\SegmentFactoryInterface;
 use Crm\SubscriptionsModule\Repository\SubscriptionsRepository;
 use Nette\Database\Table\ActiveRow;
 use Nette\Utils\DateTime;
@@ -31,7 +31,7 @@ class RetentionAnalysis
         SubscriptionsRepository $subscriptionsRepository,
         RetentionAnalysisJobsRepository $retentionAnalysisJobsRepository,
         DataProviderManager $dataProviderManager,
-        SegmentFactory $segmentFactory
+        SegmentFactoryInterface $segmentFactory
     ) {
         $this->paymentsRepository = $paymentsRepository;
         $this->dataProviderManager = $dataProviderManager;
