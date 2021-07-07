@@ -2,6 +2,7 @@
 
 namespace Crm\PaymentsModule\DataProvider;
 
+use Crm\InvoicesModule\PaymentNotInvoiceableException;
 use Nette\Database\Table\ActiveRow;
 use Tracy\Debugger;
 
@@ -38,6 +39,9 @@ class PaymentInvoiceProviderManager
         foreach ($this->getProviders() as $provider) {
             try {
                 $attachment = $provider->provide($payment);
+            } catch (PaymentNotInvoiceableException $e) {
+                // do nothing, no invoice attachment; exception may be raised for valid payments that are not invoiceable
+                continue;
             } catch (\Exception $e) {
                 Debugger::log($e, Debugger::ERROR);
                 continue;
