@@ -13,9 +13,9 @@ class ExpandUserAgentColumn extends AbstractMigration
 
     public function down()
     {
-        //$this->output->writeln('<error>Data rollback is risky. See migration class for details. Nothing done.</error>');
-        //// remove return if you are 100% sure you know what you are doing
-        //return;
+        $this->output->writeln('<error>Data rollback is risky. See migration class for details. Nothing done.</error>');
+        // remove return if you are 100% sure you know what you are doing
+        return;
 
         // ensure we have only 255 chars long user_agents
         $this->execute(<<<SQL
