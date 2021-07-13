@@ -228,7 +228,7 @@ class PaymentsAdminPresenter extends AdminPresenter
     }
 
     /**
-     * @admin-access-level read
+     * @admin-access-level write
      */
     public function handleExportPayments()
     {
