@@ -78,7 +78,10 @@ class RecurrentPaymentsRepository extends Repository
         ?float $customChargeAmount = null
     ): ?IRow {
         if (!in_array($payment->status, [PaymentsRepository::STATUS_PAID, PaymentsRepository::STATUS_PREPAID], true)) {
-            Debugger::log("Could not create recurrent payment from payment [{$payment->id}], invalid payment status: [{$payment->status}]");
+            Debugger::log(
+                "Could not create recurrent payment from payment [{$payment->id}], invalid payment status: [{$payment->status}]",
+                Debugger::ERROR
+            );
             return null;
         }
 
@@ -92,7 +95,12 @@ class RecurrentPaymentsRepository extends Repository
         $retries = count((array)$retries);
 
         if (!$chargeAt) {
-            $chargeAt = $this->calculateChargeAt($payment);
+            try {
+                $chargeAt = $this->calculateChargeAt($payment);
+            } catch (\Exception $e) {
+                Debugger::log($e, Debugger::ERROR);
+                return null;
+            }
         }
 
         $recurrentPayment = $this->add(
@@ -346,12 +354,22 @@ class RecurrentPaymentsRepository extends Repository
             ->fetchAll();
     }
 
+    /**
+     * @throws Exception If calculated next charge at date is invalid (before subscription's start date / in past)
+     */
     final public function calculateChargeAt($payment)
     {
         $subscriptionType = $payment->subscription_type;
         $subscription = $payment->subscription;
 
         $endTime = clone $subscription->end_time;
+
+        if ($endTime <= new DateTime()) {
+            throw new Exception(
+                "Calculated next charge of recurrent payment would be in the past." .
+                " Check payment [{$payment->id}] and subscription [{$subscription->id}]."
+            );
+        }
 
         $chargeBefore = null;
         if (!$chargeBefore) {
@@ -371,7 +389,16 @@ class RecurrentPaymentsRepository extends Repository
         if ($chargeBefore) {
             $newEndTime = (clone $endTime)->sub(new \DateInterval("PT{$chargeBefore}H"));
             if ($newEndTime < $subscription->start_time) {
-                Debugger::log("Calculated next charge of recurrent payment would be sooner than subscription start time. Check subscription: " . $subscription->id, Debugger::WARNING);
+                throw new Exception(
+                    "Calculated next charge of recurrent payment would be before subscription's start time." .
+                    " Check payment [{$payment->id}] and subscription [{$subscription->id}]."
+                );
+            }
+            if ($newEndTime <= new DateTime()) {
+                throw new Exception(
+                    "Calculated next charge of recurrent payment would be in the past." .
+                    " Check payment [{$payment->id}] and subscription [{$subscription->id}]."
+                );
             }
             $endTime = $newEndTime;
         }
@@ -412,7 +439,7 @@ class RecurrentPaymentsRepository extends Repository
         if (!$previousRecurrentCharge) {
             return null;
         }
-        
+
         return $this->latestSuccessfulRecurrentPayment($previousRecurrentCharge);
     }
 }
