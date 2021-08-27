@@ -111,7 +111,7 @@ class PaymentsAdminPresenter extends AdminPresenter
         $buttonGroup = $form->addGroup('button', false)->setOption('label', null);
 
         $form->addText('text', 'payments.admin.component.admin_filter_form.variable_symbol.label')
-            ->setAttribute('autofocus');
+            ->setHtmlAttribute('autofocus');
 
         $paymentGateways = $this->paymentGatewaysRepository->all()->fetchPairs('id', 'name');
         $paymentGateway = $form->addSelect(
@@ -143,14 +143,14 @@ class PaymentsAdminPresenter extends AdminPresenter
         $form->setCurrentGroup($collapseGroup);
 
         $form->addText('paid_at_from', 'payments.admin.component.admin_filter_form.paid_at_from.label')
-            ->setAttribute('placeholder', 'payments.admin.component.admin_filter_form.paid_at_from.placeholder')
-            ->setAttribute('class', 'flatpickr')
-            ->setAttribute('flatpickr_datetime', "1");
+            ->setHtmlAttribute('placeholder', 'payments.admin.component.admin_filter_form.paid_at_from.placeholder')
+            ->setHtmlAttribute('class', 'flatpickr')
+            ->setHtmlAttribute('flatpickr_datetime', "1");
 
         $form->addText('paid_at_to', 'payments.admin.component.admin_filter_form.paid_at_to.label')
-            ->setAttribute('placeholder', 'payments.admin.component.admin_filter_form.paid_at_to.placeholder')
-            ->setAttribute('class', 'flatpickr')
-            ->setAttribute('flatpickr_datetime', "1");
+            ->setHtmlAttribute('placeholder', 'payments.admin.component.admin_filter_form.paid_at_to.placeholder')
+            ->setHtmlAttribute('class', 'flatpickr')
+            ->setHtmlAttribute('flatpickr_datetime', "1");
 
         $subscriptionTypes = $this->subscriptionTypesRepository->getAllActive()->fetchPairs('id', 'name');
         $subscriptionType = $form->addSelect(
@@ -195,7 +195,7 @@ class PaymentsAdminPresenter extends AdminPresenter
         $form->addButton('more', 'payments.admin.component.admin_filter_form.filter.more')
             ->setHtmlAttribute('data-toggle', 'collapse')
             ->setHtmlAttribute('data-target', '#formCollapse')
-            ->setAttribute('class', 'btn btn-info')
+            ->setHtmlAttribute('class', 'btn btn-info')
             ->getControlPrototype()
             ->setName('button')
             ->setHtml('<i class="fas fa-caret-down"></i> ' . $this->translator->translate('payments.admin.component.admin_filter_form.filter.more'));

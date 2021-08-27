@@ -45,7 +45,7 @@ class ParsedMailsPresenter extends AdminPresenter
         $form->setTranslator($this->translator);
 
         $form->addText('vs', 'payments.admin.parsed_mails.variable_symbol.label')
-            ->setAttribute('autofocus');
+            ->setHtmlAttribute('autofocus');
 
         $states = [
             ParsedMailLogsRepository::STATE_WITHOUT_VS => ParsedMailLogsRepository::STATE_WITHOUT_VS,

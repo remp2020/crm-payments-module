@@ -54,14 +54,14 @@ class RetentionAnalysisFilterFormFactory
         }
 
         $date = $form->addText('min_date_of_payment', 'payments.admin.retention_analysis.fields.min_date_of_payment')
-            ->setAttribute('class', 'flatpickr')
+            ->setHtmlAttribute('class', 'flatpickr')
             ->setOption('description', 'payments.admin.retention_analysis.fields.min_date_of_payment_desc')
             ->setDisabled($disabled);
 
         if (!$disabled) {
             $dateHtmlId = $date->getHtmlId();
             $form->addButton('clear_date', 'payments.admin.retention_analysis.fields.clear_date')
-                ->setAttribute('class', 'btn btn-default')
+                ->setHtmlAttribute('class', 'btn btn-default')
                 ->setHtmlAttribute('onclick', "document.getElementById('{$dateHtmlId}')._flatpickr.clear()");
         }
 

@@ -47,14 +47,14 @@ class RecurrentPaymentFormFactory
 
         $form->addText('charge_at', 'payments.admin.component.recurrent_payment_form.charge_at.label')
             ->setRequired('payments.admin.component.recurrent_payment_form.charge_at.required')
-            ->setAttribute('placeholder', 'payments.admin.component.recurrent_payment_form.charge_at.placeholder')
-            ->setAttribute('class', 'flatpickr')
-            ->setAttribute('flatpickr_datetime_seconds', "1");
+            ->setHtmlAttribute('placeholder', 'payments.admin.component.recurrent_payment_form.charge_at.placeholder')
+            ->setHtmlAttribute('class', 'flatpickr')
+            ->setHtmlAttribute('flatpickr_datetime_seconds', "1");
 
         $form->addText('retries', 'payments.admin.component.recurrent_payment_form.retries.label')
             ->setRequired('payments.admin.component.recurrent_payment_form.retries.required')
-            ->setType('number')
-            ->setAttribute('placeholder', 'payments.admin.component.recurrent_payment_form.retries.placeholder');
+            ->setHtmlType('number')
+            ->setHtmlAttribute('placeholder', 'payments.admin.component.recurrent_payment_form.retries.placeholder');
 
         $subscriptionTypePairs = $this->subscriptionTypeHelper->getPairs($this->subscriptionTypesRepository->getAllActive(), true);
         $nextSubscriptionType = $form->addSelect(
@@ -79,10 +79,10 @@ class RecurrentPaymentFormFactory
         $form->addSelect('state', 'payments.admin.component.recurrent_payment_form.state.label', $states)
             ->setPrompt('payments.admin.component.recurrent_payment_form.state.prompt')
             ->setRequired('payments.admin.component.recurrent_payment_form.state.required')
-            ->setAttribute('placeholder', 'payments.admin.component.recurrent_payment_form.state.placeholder');
+            ->setHtmlAttribute('placeholder', 'payments.admin.component.recurrent_payment_form.state.placeholder');
 
         $form->addText('note', 'payments.admin.component.recurrent_payment_form.note.label')
-            ->setAttribute('placeholder', '');
+            ->setHtmlAttribute('placeholder', '');
 
         $form->addHidden('id', $recurrentPaymentId);
 

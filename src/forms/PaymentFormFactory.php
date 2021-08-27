@@ -142,7 +142,7 @@ class PaymentFormFactory
 
         $variableSymbol = $form->addText('variable_symbol', 'payments.form.payment.variable_symbol.label')
             ->setRequired('payments.form.payment.variable_symbol.required')
-            ->setAttribute('placeholder', 'payments.form.payment.variable_symbol.placeholder');
+            ->setHtmlAttribute('placeholder', 'payments.form.payment.variable_symbol.placeholder');
 
         if (!$paymentId) {
             $variableSymbol->setOption(
@@ -160,7 +160,7 @@ class PaymentFormFactory
 
         $form->addText('amount', 'payments.form.payment.amount.label')
             ->setRequired('payments.form.payment.amount.required')
-            ->setAttribute('readonly', 'readonly')
+            ->setHtmlAttribute('readonly', 'readonly')
             ->addRule(Form::MIN, 'payments.form.payment.amount.nonzero', 0.01)
             ->setOption(
                 'description',
@@ -201,10 +201,10 @@ class PaymentFormFactory
         }
 
         if ($payment) {
-            $subscriptionType->setAttribute('readonly', 'readonly');
+            $subscriptionType->setHtmlAttribute('readonly', 'readonly');
         } else {
             $form->addText('additional_amount', 'payments.form.payment.additional_amount.label')
-                ->setAttribute('placeholder', 'payments.form.payment.additional_amount.placeholder');
+                ->setHtmlAttribute('placeholder', 'payments.form.payment.additional_amount.placeholder');
 
             $form->addSelect('additional_type', 'payments.form.payment.additional_type.label', [
                 'single' => $this->translator->translate('payments.form.payment.additional_type.single'),
@@ -223,7 +223,7 @@ class PaymentFormFactory
         $status = $form->addSelect('status', 'payments.form.payment.status.label', $this->paymentsRepository->getStatusPairs());
 
         $paidAt = $form->addText('paid_at', 'payments.form.payment.paid_at.label')
-            ->setAttribute('placeholder', 'payments.form.payment.paid_at.placeholder');
+            ->setHtmlAttribute('placeholder', 'payments.form.payment.paid_at.placeholder');
         $paidAt->setOption('id', 'paid-at');
         $paidAt->addConditionOn($status, Form::EQUAL, PaymentsRepository::STATUS_PAID)
             ->setRequired('payments.form.payment.paid_at.required');
@@ -244,9 +244,9 @@ class PaymentFormFactory
         $manualSubscription->addCondition(Form::EQUAL, self::MANUAL_SUBSCRIPTION_START_END)->toggle('subscription-end-at');
 
         $subscriptionStartAt = $form->addText('subscription_start_at', 'payments.form.payment.subscription_start_at.label')
-            ->setAttribute('placeholder', 'payments.form.payment.subscription_start_at.placeholder')
-            ->setAttribute('class', 'flatpickr')
-            ->setAttribute('flatpickr_datetime', "1")
+            ->setHtmlAttribute('placeholder', 'payments.form.payment.subscription_start_at.placeholder')
+            ->setHtmlAttribute('class', 'flatpickr')
+            ->setHtmlAttribute('flatpickr_datetime', "1")
             ->setOption('id', 'subscription-start-at')
             ->setOption('description', 'payments.form.payment.subscription_start_at.description')
             ->setRequired(false)
@@ -265,9 +265,9 @@ class PaymentFormFactory
             ->setRequired(true);
 
         $subscriptionEndAt = $form->addText('subscription_end_at', 'payments.form.payment.subscription_end_at.label')
-            ->setAttribute('placeholder', 'payments.form.payment.subscription_end_at.placeholder')
-            ->setAttribute('class', 'flatpickr')
-            ->setAttribute('flatpickr_datetime', "1")
+            ->setHtmlAttribute('placeholder', 'payments.form.payment.subscription_end_at.placeholder')
+            ->setHtmlAttribute('class', 'flatpickr')
+            ->setHtmlAttribute('flatpickr_datetime', "1")
             ->setOption('id', 'subscription-end-at')
             ->setOption('description', 'payments.form.payment.subscription_end_at.description')
             ->setRequired(false)
@@ -285,22 +285,22 @@ class PaymentFormFactory
         // allow change of manual subscription start & end dates only for 'form' payments
         if ($payment && $payment->status !== 'form') {
             $manualSubscription
-                ->setAttribute('readonly', 'readonly')
+                ->setHtmlAttribute('readonly', 'readonly')
                 ->setDisabled();
             $subscriptionStartAt
-                ->setAttribute('readonly', 'readonly')
+                ->setHtmlAttribute('readonly', 'readonly')
                 ->setDisabled();
             $subscriptionEndAt
-                ->setAttribute('readonly', 'readonly')
+                ->setHtmlAttribute('readonly', 'readonly')
                 ->setDisabled();
         }
 
         $form->addTextArea('note', 'payments.form.payment.note.label')
-            ->setAttribute('placeholder', 'payments.form.payment.note.placeholder')
+            ->setHtmlAttribute('placeholder', 'payments.form.payment.note.placeholder')
             ->getControlPrototype()->addAttributes(['class' => 'autosize']);
 
         $form->addText('referer', 'payments.form.payment.referer.label')
-            ->setAttribute('placeholder', 'payments.form.payment.referer.placeholder');
+            ->setHtmlAttribute('placeholder', 'payments.form.payment.referer.placeholder');
 
         $addresses = $this->addressesRepository->addressesSelect($user, false);
         if (count($addresses) > 0) {

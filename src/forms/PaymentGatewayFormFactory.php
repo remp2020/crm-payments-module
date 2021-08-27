@@ -45,10 +45,10 @@ class PaymentGatewayFormFactory
 
         $form->addText('name', 'payments.form.payment_gateway.name.label')
             ->setRequired('payments.form.payment_gateway.name.required')
-            ->setAttribute('placeholder', 'payments.form.payment_gateway.name.placeholder');
+            ->setHtmlAttribute('placeholder', 'payments.form.payment_gateway.name.placeholder');
 
         $form->addText('code', 'payments.form.payment_gateway.code.label')
-            ->setAttribute('placeholder', 'payments.form.payment_gateway.code.placeholder')
+            ->setHtmlAttribute('placeholder', 'payments.form.payment_gateway.code.placeholder')
             ->setDisabled();
 
         $form->addCheckbox('visible', 'payments.form.payment_gateway.visible.label');
