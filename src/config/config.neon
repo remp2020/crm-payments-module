@@ -4,7 +4,7 @@ services:
 			- addModule(Crm\PaymentsModule\PaymentsModule())
 
 	gatewayFactory:
-		class: Crm\PaymentsModule\GatewayFactory
+		factory: Crm\PaymentsModule\GatewayFactory
 		setup:
 			- registerGateway('bank_transfer', Crm\PaymentsModule\Gateways\BankTransfer)
 
@@ -63,7 +63,7 @@ services:
 	- Crm\PaymentsModule\Api\StopRecurrentPaymentApiHandler
 	- Crm\PaymentsModule\MailConfirmation\CidGetterDownloader
 	variableSymbol:
-		class: Crm\PaymentsModule\Repository\VariableSymbol
+		factory: Crm\PaymentsModule\Repository\VariableSymbol
 	- Crm\PaymentsModule\Commands\CalculateAveragesCommand
 	- Crm\PaymentsModule\Gateways\Paypal
 	- Crm\PaymentsModule\Gateways\PaypalReference
@@ -105,21 +105,21 @@ services:
 	- Crm\PaymentsModule\Events\SubscriptionMovedHandler
 
 	subscribersWithPaymentWidgetFactory:
-		class: Crm\PaymentsModule\Components\SubscribersWithPaymentWidgetFactory
+		factory: Crm\PaymentsModule\Components\SubscribersWithPaymentWidgetFactory
 
 	retentionAnalysisJobHandler:
-		class: Crm\PaymentsModule\Hermes\RetentionAnalysisJobHandler
+		factory: Crm\PaymentsModule\Hermes\RetentionAnalysisJobHandler
 
 	- Crm\PaymentsModule\Hermes\ExportPaymentsHandler
 
 	paymentCompleteRedirect:
-		class: Crm\PaymentsModule\Model\PaymentCompleteRedirectManager
+		factory: Crm\PaymentsModule\Model\PaymentCompleteRedirectManager
 		setup:
 			- registerRedirectResolver(Crm\PaymentsModule\BankTransferPaymentCompleteRedirectResolver(), 10)
 			- registerRedirectResolver(Crm\PaymentsModule\Models\RedirectResolver\AuthorizationPaymentCompleteRedirectResolver(), 600)
 
 	paymentInvoiceProvider:
-		class: Crm\PaymentsModule\DataProvider\PaymentInvoiceProviderManager
+		factory: Crm\PaymentsModule\DataProvider\PaymentInvoiceProviderManager
 
 	- Crm\PaymentsModule\Retention\RetentionAnalysis
 
@@ -145,17 +145,17 @@ services:
 	- Crm\PaymentsModule\DataProvider\SubscriptionFormDataProvider
 
 	actualPaidSubscribersStatWidget:
-		class: Crm\PaymentsModule\Components\ActualPaidSubscribersStatWidget
+		factory: Crm\PaymentsModule\Components\ActualPaidSubscribersStatWidget
 		setup:
 			- setOnTheFly(true, 5)
 
 	actualFreeSubscribersStatWidget:
-		class: Crm\PaymentsModule\Components\ActualFreeSubscribersStatWidget
+		factory: Crm\PaymentsModule\Components\ActualFreeSubscribersStatWidget
 		setup:
 			- setOnTheFly(true, 5)
 
 	paymentsExportsAdapter:
-		class: League\Flysystem\Adapter\Local
+		factory: League\Flysystem\Adapter\Local
 		arguments:
 			root: '%appDir%/../content/payments-exports'
 			permissions: [dir: [public: 0o777]]
