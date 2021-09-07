@@ -200,6 +200,7 @@ class PaymentsRepository extends Repository
                 'vat' => $paymentItem->vat,
                 'count' => $paymentItem->count,
                 'type' => $paymentItem->type,
+                'meta' => $paymentItem->related('payment_item_meta')->fetchPairs('key', 'value'),
             ];
         }
         return $items;
