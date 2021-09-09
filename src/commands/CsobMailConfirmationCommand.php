@@ -35,7 +35,7 @@ class CsobMailConfirmationCommand extends Command
             return $this->markMailProcessed($mailContents, $output);
         });
 
-        return 0;
+        return Command::SUCCESS;
     }
 
     private function markMailProcessed(array $mailContents, OutputInterface $output)

@@ -58,6 +58,6 @@ class RecurrentPaymentsCardCheck extends Command
         $output->writeln('<info>All done. Took ' . round($duration, 2) . ' sec.</info>');
         $output->writeln('');
 
-        return 0;
+        return Command::SUCCESS;
     }
 }

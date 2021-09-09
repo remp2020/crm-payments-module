@@ -94,7 +94,7 @@ class UpdateRecurrentPaymentsExpiresCommand extends Command
             $gateway = $this->paymentGatewaysRepository->findByCode($code);
             if (!$gateway) {
                 $output->writeln("<error>ERROR: gateway <info>{$code}</info> doesn't exist:</error>");
-                return 1;
+                return Command::FAILURE;
             }
             $recurrentPayments->where(['payment_gateway_id' => $gateway->id]);
         }
@@ -173,6 +173,6 @@ class UpdateRecurrentPaymentsExpiresCommand extends Command
         $output->writeln('<info>All done. Took ' . round($duration, 2) . ' sec.</info>');
         $output->writeln('');
 
-        return 0;
+        return Command::SUCCESS;
     }
 }

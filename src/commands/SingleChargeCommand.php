@@ -67,36 +67,36 @@ class SingleChargeCommand extends Command
     protected function execute(InputInterface $input, OutputInterface $output)
     {
         $cid = $input->getOption('cid');
-        if (!$cid) {
-            $output->writeln("<error>ERROR</error>: recurrent payment with cid <info>{$cid}</info> doesn't exist.");
-            return;
-        }
-        $amount = filter_var($input->getOption('amount'), FILTER_VALIDATE_FLOAT);
-        if ($amount <= 0) {
-            $output->writeln("<error>ERROR</error>: specified amount <info>{$amount}</info> has to be greater than zero.");
-            return;
-        }
-        $description = $input->getOption('description');
-        if (!$description) {
-            $output->writeln("<error>ERROR</error>: description has to be entered.");
-            return;
-        }
-        $subscriptionTypeCode = $input->getOption('subscription_type_code');
-        if (!$subscriptionTypeCode) {
-            $output->writeln("<error>ERROR</error>: subscription type code has to be entered.");
-            return;
-        }
-        $subscriptionType = $this->subscriptionTypesRepository->findByCode($subscriptionTypeCode);
-        if (!$subscriptionType) {
-            $output->writeln("<error>ERROR</error>: subscription type with code <info>{$subscriptionTypeCode}</info> doesn't exist.");
-            return;
-        }
-
         $recurrentPayment = $this->recurrentPaymentsRepository->getTable()
             ->where(['cid' => (string) $cid])
             ->order('created_at DESC')
             ->limit(1)
             ->fetch();
+        if (!$recurrentPayment) {
+            $output->writeln("<error>ERROR</error>: recurrent payment with cid <info>{$cid}</info> doesn't exist.");
+            return Command::FAILURE;
+        }
+
+        $amount = filter_var($input->getOption('amount'), FILTER_VALIDATE_FLOAT);
+        if ($amount <= 0) {
+            $output->writeln("<error>ERROR</error>: specified amount <info>{$amount}</info> has to be greater than zero.");
+            return Command::FAILURE;
+        }
+        $description = $input->getOption('description');
+        if (!$description) {
+            $output->writeln("<error>ERROR</error>: description has to be entered.");
+            return Command::FAILURE;
+        }
+        $subscriptionTypeCode = $input->getOption('subscription_type_code');
+        if (!$subscriptionTypeCode) {
+            $output->writeln("<error>ERROR</error>: subscription type code has to be entered.");
+            return Command::FAILURE;
+        }
+        $subscriptionType = $this->subscriptionTypesRepository->findByCode($subscriptionTypeCode);
+        if (!$subscriptionType) {
+            $output->writeln("<error>ERROR</error>: subscription type with code <info>{$subscriptionTypeCode}</info> doesn't exist.");
+            return Command::FAILURE;
+        }
 
         $paymentItemContainer = new PaymentItemContainer();
         $containerItems = SubscriptionTypePaymentItem::fromSubscriptionType($subscriptionType);
@@ -106,7 +106,7 @@ class SingleChargeCommand extends Command
             $paymentItemContainer->addItems($containerItems);
         } else {
             $output->writeln("<error>ERROR</error>: unable to determine VAT, provided subscription type has multiple payment items; please provide subscription type with one item");
-            return;
+            return Command::FAILURE;
         }
 
         $payment = $this->paymentsRepository->add(
@@ -129,5 +129,7 @@ class SingleChargeCommand extends Command
         $gateway = $this->gatewayFactory->getGateway($recurrentPayment->payment_gateway->code);
         $gateway->charge($payment, $recurrentPayment->cid);
         $this->paymentsRepository->updateStatus($payment, PaymentsRepository::STATUS_PAID);
+
+        return Command::SUCCESS;
     }
 }
