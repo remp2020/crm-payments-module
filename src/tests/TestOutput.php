@@ -7,6 +7,12 @@ use Symfony\Component\Console\Formatter\OutputFormatterInterface;
 
 class TestOutput implements OutputInterface
 {
+    private $decorated;
+
+    private $formatter;
+
+    private $level;
+
     public function write($messages, $newline = false, $type = self::OUTPUT_NORMAL)
     {
 //        echo $messages;
@@ -18,26 +24,32 @@ class TestOutput implements OutputInterface
     }
     public function setVerbosity($level)
     {
+        $this->level = $level;
     }
 
     public function getVerbosity()
     {
+        return $this->level;
     }
 
     public function setDecorated($decorated)
     {
+        $this->decorated = $decorated;
     }
 
     public function isDecorated()
     {
+        return $this->decorated;
     }
 
     public function setFormatter(OutputFormatterInterface $formatter)
     {
+        $this->formatter = $formatter;
     }
 
     public function getFormatter()
     {
+        return $this->formatter;
     }
 
     public function isQuiet()
