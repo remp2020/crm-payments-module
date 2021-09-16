@@ -82,7 +82,7 @@ class PaymentGatewaysRepository extends Repository
 
     final public function update(IRow &$row, $data)
     {
-        $values['modified_at'] = new DateTime();
+        $data['modified_at'] = new DateTime();
         parent::update($row, $data);
     }
 }
