@@ -663,4 +663,36 @@ SQL;
         return $this->getTable()
             ->where('sales_funnel.url_key', $urlKey);
     }
+
+    /**
+     * @param IRow $subscription
+     * @param array $includeSubscriptionTypeIds
+     * @return ActiveRow[]
+     */
+    public function followingSubscriptions(IRow $subscription, array $includeSubscriptionTypeIds = []): array
+    {
+        $currentSubscription = $subscription;
+        $includeSubscriptionTypeIds[] = $subscription->subscription_type_id;
+
+        $followingSubscriptions = [];
+        while (true) {
+            $followingPayment = $this->getTable()
+                ->where([
+                    'payments.user_id' => $currentSubscription->user_id,
+                    'subscription.start_time' => $currentSubscription->end_time,
+                    'subscription.subscription_type_id' => $includeSubscriptionTypeIds,
+                ])
+                ->where('subscription.start_time > ?', $currentSubscription->start_time)
+                ->fetch();
+
+            if (!$followingPayment) {
+                break;
+            }
+
+            $followingSubscriptions[] = $followingPayment->subscription;
+            $currentSubscription = $followingPayment->subscription;
+        }
+
+        return $followingSubscriptions;
+    }
 }

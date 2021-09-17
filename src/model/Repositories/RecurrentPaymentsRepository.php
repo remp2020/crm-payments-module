@@ -4,6 +4,7 @@ namespace Crm\PaymentsModule\Repository;
 
 use Crm\ApplicationModule\Config\ApplicationConfig;
 use Crm\ApplicationModule\Hermes\HermesMessage;
+use Crm\ApplicationModule\NowTrait;
 use Crm\ApplicationModule\Repository;
 use Crm\ApplicationModule\Repository\AuditLogRepository;
 use Crm\PaymentsModule\Events\RecurrentPaymentCreatedEvent;
@@ -15,11 +16,12 @@ use Exception;
 use League\Event\Emitter;
 use Nette\Database\Context;
 use Nette\Database\Table\IRow;
-use Nette\Utils\DateTime;
 use Tracy\Debugger;
 
 class RecurrentPaymentsRepository extends Repository
 {
+    use NowTrait;
+
     protected $tableName = 'recurrent_payments';
 
     protected $auditLogExcluded = [
@@ -58,8 +60,8 @@ class RecurrentPaymentsRepository extends Repository
     {
         return $this->insert([
             'cid' => $cid,
-            'created_at' => new DateTime(),
-            'updated_at' => new DateTime(),
+            'created_at' => $this->getNow(),
+            'updated_at' => $this->getNow(),
             'charge_at' => $chargeAt,
             'payment_gateway_id' => $payment->payment_gateway->id,
             'subscription_type_id' => $payment->subscription_type_id,
@@ -122,7 +124,7 @@ class RecurrentPaymentsRepository extends Repository
             $fireEvent = true;
         }
 
-        $data['updated_at'] = new DateTime();
+        $data['updated_at'] = $this->getNow();
         $result = parent::update($row, $data);
 
         if ($fireEvent) {
@@ -163,7 +165,7 @@ class RecurrentPaymentsRepository extends Repository
             ->where('status IS NULL')
             ->where('retries >= 0')
             ->where('state = "active"')
-            ->where(['charge_at <= ?' => DateTime::from(strtotime('+15 minutes'))])
+            ->where(['charge_at <= ?' => $this->getNow()->modify('+15 minutes')])
             ->order('RAND()');
     }
 
@@ -309,7 +311,13 @@ class RecurrentPaymentsRepository extends Repository
         }
         if ($recurrent->state == self::STATE_CHARGE_FAILED) {
             // najdeme najnovsi rekurent s tymto cid a zistime ci je stopnuty
-            $newRecurrent = $this->getTable()->where(['cid' => $recurrent->cid, 'charge_at > ' => $recurrent->charge_at])->order('charge_at DESC')->limit(1)->fetch();
+            $newRecurrent = $this->getTable()->where([
+                    'cid' => $recurrent->cid,
+                    'charge_at > ' => $recurrent->charge_at,
+                ])
+                ->order('charge_at DESC')
+                ->limit(1)
+                ->fetch();
             if ($newRecurrent && in_array($newRecurrent->state, [self::STATE_SYSTEM_STOP, self::STATE_USER_STOP, self::STATE_ADMIN_STOP])) {
                 return true;
             }
@@ -347,7 +355,7 @@ class RecurrentPaymentsRepository extends Repository
         return $this->getTable()
             ->select('COUNT(*) AS payments')
             ->select('user_id')
-            ->where('charge_at > ?', new \DateTime())
+            ->where('charge_at > ?', $this->getNow())
             ->where('state = ?', 'active')
             ->group('user_id')
             ->having('payments > 1')
@@ -364,7 +372,7 @@ class RecurrentPaymentsRepository extends Repository
 
         $endTime = clone $subscription->end_time;
 
-        if ($endTime <= new DateTime()) {
+        if ($endTime <= $this->getNow()) {
             throw new Exception(
                 "Calculated next charge of recurrent payment would be in the past." .
                 " Check payment [{$payment->id}] and subscription [{$subscription->id}]."
@@ -394,7 +402,7 @@ class RecurrentPaymentsRepository extends Repository
                     " Check payment [{$payment->id}] and subscription [{$subscription->id}]."
                 );
             }
-            if ($newEndTime <= new DateTime()) {
+            if ($newEndTime <= $this->getNow()) {
                 throw new Exception(
                     "Calculated next charge of recurrent payment would be in the past." .
                     " Check payment [{$payment->id}] and subscription [{$subscription->id}]."
