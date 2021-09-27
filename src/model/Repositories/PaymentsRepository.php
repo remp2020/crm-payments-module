@@ -53,6 +53,8 @@ class PaymentsRepository extends Repository
 
     private $cacheRepository;
 
+    private $paymentItemMetaRepository;
+
     public function __construct(
         Context $database,
         VariableSymbolInterface $variableSymbol,
@@ -63,7 +65,8 @@ class PaymentsRepository extends Repository
         \Tomaj\Hermes\Emitter $hermesEmitter,
         PaymentMetaRepository $paymentMetaRepository,
         CacheRepository $cacheRepository,
-        RedisClientFactory $redisClientFactory
+        RedisClientFactory $redisClientFactory,
+        PaymentItemMetaRepository $paymentItemMetaRepository
     ) {
         parent::__construct($database);
         $this->variableSymbol = $variableSymbol;
@@ -75,6 +78,7 @@ class PaymentsRepository extends Repository
         $this->paymentMetaRepository = $paymentMetaRepository;
         $this->cacheRepository = $cacheRepository;
         $this->redisClientFactory = $redisClientFactory;
+        $this->paymentItemMetaRepository = $paymentItemMetaRepository;
     }
 
     final public function add(
@@ -184,7 +188,10 @@ class PaymentsRepository extends Repository
             $paymentItemArray = $paymentItem->toArray();
             $paymentItemArray['payment_id'] = $newPayment->id;
             unset($paymentItemArray['id']);
-            $this->paymentItemsRepository->getTable()->insert($paymentItemArray);
+            $newPaymentItem = $this->paymentItemsRepository->getTable()->insert($paymentItemArray);
+
+            $newPaymentItemMetaArray = $paymentItem->related('payment_item_meta')->fetchPairs('key', 'value');
+            $this->paymentItemMetaRepository->addMetas($newPaymentItem, $newPaymentItemMetaArray);
         }
 
         return $newPayment;
