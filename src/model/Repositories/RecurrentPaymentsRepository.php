@@ -271,7 +271,7 @@ class RecurrentPaymentsRepository extends Repository
             ->where('charge_at < ?', $date);
     }
 
-    final public function all($problem = null, $subscriptionType = null, $status = null)
+    final public function all($problem = null, $subscriptionType = null, $status = null, string $cid = null)
     {
         $where = [];
         if ($subscriptionType) {
@@ -282,6 +282,9 @@ class RecurrentPaymentsRepository extends Repository
         }
         if ($problem) {
             $where['state'] = [self::STATE_SYSTEM_STOP, self::STATE_CHARGE_FAILED];
+        }
+        if ($cid) {
+            $where['cid'] = $cid;
         }
         return $this->getTable()->where($where)->order('recurrent_payments.charge_at DESC, recurrent_payments.created_at DESC');
     }

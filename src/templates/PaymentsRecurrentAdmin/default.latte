@@ -37,6 +37,7 @@
         <thead>
             <tr>
                 <th>ID</th>
+                <th>{_payments.admin.payments_recurrent.cid}</th>
                 <th>{_payments.admin.payments_recurrent.charge_at}</th>
                 <th>{_payments.admin.payments_recurrent.created_at}</th>
                 <th>{_payments.admin.payments_recurrent.subscription_type}</th>
@@ -51,6 +52,7 @@
           {foreach $recurrentPayments as $recurrentPayment}
 		    <tr>
 		      <td>#{$recurrentPayment->id}</td>
+              <td><code class="muted">{$recurrentPayment->cid}</code></td>
 		      <td>{$recurrentPayment->charge_at|userDate}</td>
 		      <td>{$recurrentPayment->created_at|userDate}</td>
 		      <td>{$recurrentPayment->subscription_type->name}</td>

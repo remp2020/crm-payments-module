@@ -263,6 +263,7 @@ admin:
 
 	payments_recurrent:
 		title: Rekurentní platby
+		cid: CID
 		charge_at: Čas obnovení
 		created_at: Čas vytvoření
 		subscription_type: Typ předplatného
@@ -278,6 +279,8 @@ admin:
 		duplicates: Duplicitní rekurentní platby
 
 		admin_filter_form:
+			cid:
+				label: CID
 			status:
 				label: Stav platby
 			problem:

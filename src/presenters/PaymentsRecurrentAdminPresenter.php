@@ -34,6 +34,9 @@ class PaymentsRecurrentAdminPresenter extends AdminPresenter
     /** @persistent */
     public $problem;
 
+    /** @persistent */
+    public $cid;
+
     /**
      * @admin-access-level read
      */
@@ -42,7 +45,8 @@ class PaymentsRecurrentAdminPresenter extends AdminPresenter
         $recurrentPayments = $this->recurrentPaymentsRepository->all(
             $this->problem,
             $this->subscription_type,
-            $this->status
+            $this->status,
+            $this->cid
         );
         $vp = new VisualPaginator();
         $this->addComponent($vp, 'vp');
@@ -63,22 +67,26 @@ class PaymentsRecurrentAdminPresenter extends AdminPresenter
         $form->setRenderer(new BootstrapInlineRenderer());
         $form->setTranslator($this->translator);
 
+        $form->addText('cid', 'payments.admin.payments_recurrent.admin_filter_form.cid.label');
+
         $statuses = $this->recurrentPaymentsRepository->getStatusPairs();
         $form->addSelect('status', 'payments.admin.payments_recurrent.admin_filter_form.status.label', $statuses)
             ->setPrompt('--');
-        $form->addCheckbox('problem', 'payments.admin.payments_recurrent.admin_filter_form.problem.label');
 
         $subscriptionTypes = $this->subscriptionTypesRepository->getAllActive()->fetchPairs('id', 'name');
         $form->addselect('subscription_type', 'payments.admin.payments_recurrent.admin_filter_form.subscription_type.label', $subscriptionTypes)
             ->setPrompt('--');
 
+        $form->addCheckbox('problem', 'payments.admin.payments_recurrent.admin_filter_form.problem.label');
+
         $form->addSubmit('send', 'payments.admin.payments_recurrent.admin_filter_form.send')
             ->getControlPrototype()
             ->setName('button')
             ->setHtml('<i class="fa fa-filter"></i> ' . $this->translator->translate('payments.admin.payments_recurrent.admin_filter_form.send'));
-        $presenter = $this;
-        $form->addSubmit('cancel', 'payments.admin.payments_recurrent.admin_filter_form.cancel')->onClick[] = function () use ($presenter) {
-            $presenter->redirect('default', ['text' => '']);
+
+        $form->addSubmit('cancel', 'payments.admin.payments_recurrent.admin_filter_form.cancel')->onClick[] = function () use ($form) {
+            $emptyDefaults = array_fill_keys(array_keys((array) $form->getComponents()), null);
+            $this->redirect('default', $emptyDefaults);
         };
 
         $form->onSuccess[] = [$this, 'adminFilterSubmited'];
@@ -86,6 +94,7 @@ class PaymentsRecurrentAdminPresenter extends AdminPresenter
             'subscription_type' => $this->subscription_type,
             'status' => $this->status,
             'problem' => $this->problem,
+            'cid' => $this->cid,
         ]);
         return $form;
     }
@@ -96,6 +105,7 @@ class PaymentsRecurrentAdminPresenter extends AdminPresenter
             'problem' => $values['problem'],
             'subscription_type' => $values['subscription_type'],
             'status' => $values['status'],
+            'cid' => $values['cid'],
         ]);
     }
 
