@@ -5,7 +5,7 @@ namespace Crm\PaymentsModule\Repository;
 use Crm\ApplicationModule\Repository;
 use Crm\PaymentsModule\GatewayFactory;
 use DateTime;
-use Nette\Caching\IStorage;
+use Nette\Caching\Storage;
 use Nette\Database\Context;
 use Nette\Database\Table\IRow;
 use Nette\Database\Table\Selection;
@@ -19,7 +19,7 @@ class PaymentGatewaysRepository extends Repository
     public function __construct(
         Context $database,
         GatewayFactory $gatewayFactory,
-        IStorage $cacheStorage = null
+        Storage $cacheStorage = null
     ) {
         parent::__construct($database, $cacheStorage);
         $this->gatewayFactory = $gatewayFactory;

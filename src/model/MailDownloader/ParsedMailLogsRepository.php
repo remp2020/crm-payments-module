@@ -6,7 +6,7 @@ use Crm\ApplicationModule\Cache\CacheRepository;
 use Crm\ApplicationModule\Repository;
 use Crm\PaymentsModule\Repository\PaymentsRepository;
 use Crm\PaymentsModule\VariableSymbolVariant;
-use Nette\Caching\IStorage;
+use Nette\Caching\Storage;
 use Nette\Database\Context;
 use Nette\Utils\Json;
 
@@ -32,7 +32,7 @@ class ParsedMailLogsRepository extends Repository
         Context $database,
         PaymentsRepository $paymentsRepository,
         CacheRepository $cacheRepository,
-        IStorage $cacheStorage = null
+        Storage $cacheStorage = null
     ) {
         parent::__construct($database, $cacheStorage);
         $this->paymentsRepository = $paymentsRepository;
