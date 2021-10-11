@@ -17,7 +17,7 @@ use Crm\PaymentsModule\VariableSymbolVariant;
 use Crm\SubscriptionsModule\Repository\SubscriptionsRepository;
 use DateTime;
 use League\Event\Emitter;
-use Nette\Database\Context;
+use Nette\Database\Explorer;
 use Nette\Database\Table\ActiveRow;
 use Nette\Database\Table\IRow;
 use Nette\Database\Table\Selection;
@@ -56,7 +56,7 @@ class PaymentsRepository extends Repository
     private $paymentItemMetaRepository;
 
     public function __construct(
-        Context $database,
+        Explorer $database,
         VariableSymbolInterface $variableSymbol,
         SubscriptionsRepository $subscriptionsRepository,
         PaymentItemsRepository $paymentItemsRepository,

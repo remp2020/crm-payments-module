@@ -14,7 +14,7 @@ use Crm\PaymentsModule\Events\RecurrentPaymentStoppedByAdminEvent;
 use Crm\PaymentsModule\Events\RecurrentPaymentStoppedByUserEvent;
 use Exception;
 use League\Event\Emitter;
-use Nette\Database\Context;
+use Nette\Database\Explorer;
 use Nette\Database\Table\IRow;
 use Tracy\Debugger;
 
@@ -43,7 +43,7 @@ class RecurrentPaymentsRepository extends Repository
     private $hermesEmitter;
 
     public function __construct(
-        Context $database,
+        Explorer $database,
         AuditLogRepository $auditLogRepository,
         Emitter $emitter,
         ApplicationConfig $applicationConfig,

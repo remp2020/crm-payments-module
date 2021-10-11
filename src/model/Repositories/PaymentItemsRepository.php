@@ -12,7 +12,7 @@ use Crm\PaymentsModule\PaymentItem\PaymentItemInterface;
 use Exception;
 use League\Event\Emitter;
 use Nette\Caching\Storage;
-use Nette\Database\Context;
+use Nette\Database\Explorer;
 use Nette\Database\Table\IRow;
 use Nette\Utils\DateTime;
 
@@ -29,7 +29,7 @@ class PaymentItemsRepository extends Repository
     private $dataProviderManager;
 
     public function __construct(
-        Context $database,
+        Explorer $database,
         ApplicationConfig $applicationConfig,
         Emitter $emitter,
         Storage $cacheStorage = null,
