@@ -2,9 +2,9 @@
 
 namespace Crm\PaymentsModule\Api;
 
+use Crm\ApiModule\Api\ApiHandler;
 use Crm\ApiModule\Api\JsonResponse;
 use Crm\ApiModule\Authorization\ApiAuthorizationInterface;
-use Crm\ApiModule\Api\ApiHandler;
 use Crm\PaymentsModule\VariableSymbolInterface;
 use Nette\Http\Response;
 

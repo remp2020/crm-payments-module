@@ -2,11 +2,11 @@
 
 namespace Crm\PaymentsModule\Presenters;
 
+use Crm\AdminModule\Presenters\AdminPresenter;
 use Crm\ApplicationModule\Components\Graphs\GoogleLineGraphGroupControlFactoryInterface;
 use Crm\ApplicationModule\Components\Graphs\InlineBarGraph;
 use Crm\ApplicationModule\Graphs\Criteria;
 use Crm\ApplicationModule\Graphs\GraphDataItem;
-use Crm\AdminModule\Presenters\AdminPresenter;
 use Crm\PaymentsModule\Components\LastPaymentsControlFactoryInterface;
 use Crm\PaymentsModule\Forms\PaymentGatewayFormFactory;
 use Crm\PaymentsModule\Repository\PaymentGatewaysRepository;

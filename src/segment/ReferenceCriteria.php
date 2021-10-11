@@ -2,8 +2,8 @@
 
 namespace Crm\PaymentsModule\Segment;
 
-use Crm\SegmentModule\Params\ParamsBag;
 use Crm\ApplicationModule\Criteria\CriteriaInterface;
+use Crm\SegmentModule\Params\ParamsBag;
 use Crm\SegmentModule\Params\StringParam;
 
 class ReferenceCriteria implements CriteriaInterface

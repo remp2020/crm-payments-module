@@ -2,9 +2,9 @@
 
 namespace Crm\PaymentsModule\Segment;
 
+use Crm\ApplicationModule\Criteria\CriteriaInterface;
 use Crm\PaymentsModule\Repository\PaymentsRepository;
 use Crm\SegmentModule\Params\ParamsBag;
-use Crm\ApplicationModule\Criteria\CriteriaInterface;
 use Crm\SegmentModule\Params\StringArrayParam;
 
 class StatusCriteria implements CriteriaInterface

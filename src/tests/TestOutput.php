@@ -2,8 +2,8 @@
 
 namespace Crm\PaymentsModule\Tests;
 
-use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Formatter\OutputFormatterInterface;
+use Symfony\Component\Console\Output\OutputInterface;
 
 class TestOutput implements OutputInterface
 {

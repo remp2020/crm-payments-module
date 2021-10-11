@@ -2,11 +2,11 @@
 
 namespace Crm\PaymentsModule\Components;
 
-use Crm\SegmentModule\Repository\SegmentsRepository;
-use DateTime;
 use Crm\ApplicationModule\Widget\BaseWidget;
 use Crm\ApplicationModule\Widget\WidgetManager;
+use Crm\SegmentModule\Repository\SegmentsRepository;
 use Crm\SegmentModule\Repository\SegmentsValuesRepository;
+use DateTime;
 
 /**
  * This widget takes segment code and date modifier and than fetches subscribers value

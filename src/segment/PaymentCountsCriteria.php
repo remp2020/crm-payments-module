@@ -2,8 +2,8 @@
 
 namespace Crm\PaymentsModule\Segment;
 
-use Crm\PaymentsModule\Repository\PaymentsRepository;
 use Crm\ApplicationModule\Criteria\CriteriaInterface;
+use Crm\PaymentsModule\Repository\PaymentsRepository;
 use Crm\SegmentModule\Criteria\Fields;
 use Crm\SegmentModule\Params\NumberParam;
 use Crm\SegmentModule\Params\ParamsBag;

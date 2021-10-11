@@ -17,12 +17,12 @@ use Crm\PaymentsModule\VariableSymbolVariant;
 use Crm\SubscriptionsModule\Repository\SubscriptionsRepository;
 use DateTime;
 use League\Event\Emitter;
-use malkusch\lock\mutex\PredisMutex;
 use Nette\Database\Context;
 use Nette\Database\Table\ActiveRow;
 use Nette\Database\Table\IRow;
 use Nette\Database\Table\Selection;
 use Tracy\Debugger;
+use malkusch\lock\mutex\PredisMutex;
 
 class PaymentsRepository extends Repository
 {
