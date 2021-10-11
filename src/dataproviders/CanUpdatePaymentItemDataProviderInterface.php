@@ -8,9 +8,7 @@ use Nette\Database\Table\IRow;
 interface CanUpdatePaymentItemDataProviderInterface extends DataProviderInterface
 {
     /**
-     * @param array $params {
-     *   @type IRow $paymentItem
-     * }
+     * @param array{paymentItem: IRow} $params
      */
     public function provide(array $params);
 }
