@@ -35,7 +35,7 @@ class TatraBankaMailConfirmationCommand extends Command
             return $this->markMailProcessed($mailContent, $output);
         });
 
-        return 0;
+        return Command::SUCCESS;
     }
 
     private function markMailProcessed($mailContent, $output)

@@ -142,6 +142,30 @@ class MailProcessorTest extends PaymentsTestCase
         $this->assertNotEquals($newPayment->id, $payment->id);
         $this->assertEquals($newPayment->variable_symbol, $payment->variable_symbol);
         $this->assertEquals(PaymentsRepository::STATUS_PAID, $newPayment->status);
+
+        foreach ($payment->related('payment_items') as $paymentItem) {
+            $newPaymentItem = $newPayment->related('payment_items')->where('name', $paymentItem->name)->fetch();
+
+            $paymentItemArray = $paymentItem->toArray();
+            $newPaymentItemArray = $newPaymentItem->toArray();
+            unset(
+                $paymentItemArray['id'],
+                $paymentItemArray['payment_id'],
+                $paymentItemArray['created_at'],
+                $paymentItemArray['updated_at'],
+                $newPaymentItemArray['id'],
+                $newPaymentItemArray['payment_id'],
+                $newPaymentItemArray['created_at'],
+                $newPaymentItemArray['updated_at']
+            );
+
+            $this->assertEqualsCanonicalizing($paymentItemArray, $newPaymentItemArray);
+
+            $paymentItemMeta = $paymentItem->related('payment_item_meta')->fetchPairs('key', 'value');
+            $newPaymentItemMeta = $newPaymentItem->related('payment_item_meta')->fetchPairs('key', 'value');
+
+            $this->assertEqualsCanonicalizing($paymentItemMeta, $newPaymentItemMeta);
+        }
     }
 
     public function testDuplicatedPaymentByUser()

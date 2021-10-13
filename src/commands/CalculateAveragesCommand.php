@@ -5,6 +5,7 @@ namespace Crm\PaymentsModule\Commands;
 use Crm\PaymentsModule\Repository\PaymentsRepository;
 use Crm\SubscriptionsModule\PaymentItem\SubscriptionTypePaymentItem;
 use Nette\Database\Context;
+use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 
@@ -13,7 +14,7 @@ use Symfony\Component\Console\Output\OutputInterface;
  *
  * These meta data are mainly used by admin widget TotalUserPayments.
  */
-class CalculateAveragesCommand extends \Symfony\Component\Console\Command\Command
+class CalculateAveragesCommand extends Command
 {
     private $database;
 
@@ -122,6 +123,6 @@ SQL
 SQL
         );
 
-        return 0;
+        return Command::SUCCESS;
     }
 }

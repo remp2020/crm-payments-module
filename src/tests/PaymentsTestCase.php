@@ -3,6 +3,7 @@
 namespace Crm\PaymentsModule\Tests;
 
 use Crm\ApplicationModule\Tests\DatabaseTestCase;
+use Crm\PaymentsModule\MailConfirmation\ParsedMailLogsRepository;
 use Crm\PaymentsModule\PaymentItem\PaymentItemContainer;
 use Crm\PaymentsModule\Repository\PaymentGatewaysRepository;
 use Crm\PaymentsModule\Repository\PaymentItemMetaRepository;
@@ -13,6 +14,7 @@ use Crm\PaymentsModule\Repository\RecurrentPaymentsRepository;
 use Crm\PaymentsModule\Seeders\PaymentGatewaysSeeder;
 use Crm\PaymentsModule\VariableSymbolInterface;
 use Crm\SubscriptionsModule\PaymentItem\SubscriptionTypePaymentItem;
+use Crm\SubscriptionsModule\Repository\SubscriptionTypeItemsRepository;
 use Crm\SubscriptionsModule\Repository\SubscriptionTypesMetaRepository;
 use Crm\SubscriptionsModule\Repository\SubscriptionTypesRepository;
 use Crm\SubscriptionsModule\Seeders\SubscriptionExtensionMethodsSeeder;
@@ -61,8 +63,10 @@ class PaymentsTestCase extends DatabaseTestCase
             RecurrentPaymentsRepository::class,
             SubscriptionTypesRepository::class,
             SubscriptionTypesMetaRepository::class,
+            SubscriptionTypeItemsRepository::class,
             VariableSymbolInterface::class,
             UsersRepository::class,
+            ParsedMailLogsRepository::class
         ];
     }
 

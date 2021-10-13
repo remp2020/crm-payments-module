@@ -47,7 +47,7 @@ class CidGetterCommand extends Command
             return $this->markMailProcessed($mailContent, $output);
         }, $input->getArgument('variable_symbol'));
 
-        return 0;
+        return Command::SUCCESS;
     }
 
     private function markMailProcessed($mailContent, $output)

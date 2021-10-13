@@ -53,6 +53,8 @@ class PaymentsRepository extends Repository
 
     private $cacheRepository;
 
+    private $paymentItemMetaRepository;
+
     public function __construct(
         Context $database,
         VariableSymbolInterface $variableSymbol,
@@ -63,7 +65,8 @@ class PaymentsRepository extends Repository
         \Tomaj\Hermes\Emitter $hermesEmitter,
         PaymentMetaRepository $paymentMetaRepository,
         CacheRepository $cacheRepository,
-        RedisClientFactory $redisClientFactory
+        RedisClientFactory $redisClientFactory,
+        PaymentItemMetaRepository $paymentItemMetaRepository
     ) {
         parent::__construct($database);
         $this->variableSymbol = $variableSymbol;
@@ -75,6 +78,7 @@ class PaymentsRepository extends Repository
         $this->paymentMetaRepository = $paymentMetaRepository;
         $this->cacheRepository = $cacheRepository;
         $this->redisClientFactory = $redisClientFactory;
+        $this->paymentItemMetaRepository = $paymentItemMetaRepository;
     }
 
     final public function add(
@@ -146,7 +150,7 @@ class PaymentsRepository extends Repository
         $this->emitter->emit(new NewPaymentEvent($payment));
         $this->hermesEmitter->emit(new HermesMessage('new-payment', [
             'payment_id' => $payment->id
-        ]));
+        ]), HermesMessage::PRIORITY_HIGH);
         return $payment;
     }
 
@@ -184,7 +188,10 @@ class PaymentsRepository extends Repository
             $paymentItemArray = $paymentItem->toArray();
             $paymentItemArray['payment_id'] = $newPayment->id;
             unset($paymentItemArray['id']);
-            $this->paymentItemsRepository->getTable()->insert($paymentItemArray);
+            $newPaymentItem = $this->paymentItemsRepository->getTable()->insert($paymentItemArray);
+
+            $newPaymentItemMetaArray = $paymentItem->related('payment_item_meta')->fetchPairs('key', 'value');
+            $this->paymentItemMetaRepository->addMetas($newPaymentItem, $newPaymentItemMetaArray);
         }
 
         return $newPayment;
@@ -200,6 +207,7 @@ class PaymentsRepository extends Repository
                 'vat' => $paymentItem->vat,
                 'count' => $paymentItem->count,
                 'type' => $paymentItem->type,
+                'meta' => $paymentItem->related('payment_item_meta')->fetchPairs('key', 'value'),
             ];
         }
         return $items;
@@ -260,7 +268,7 @@ class PaymentsRepository extends Repository
                 'payment_id' => $payment->id,
                 'sales_funnel_id' => $payment->sales_funnel_id ?? $salesFunnelId, // pass explicit sales_funnel_id if payment doesn't contain one
                 'send_email' => $sendEmail,
-            ]));
+            ]), HermesMessage::PRIORITY_HIGH);
 
             return true;
         });
@@ -654,5 +662,37 @@ SQL;
     {
         return $this->getTable()
             ->where('sales_funnel.url_key', $urlKey);
+    }
+
+    /**
+     * @param IRow $subscription
+     * @param array $includeSubscriptionTypeIds
+     * @return ActiveRow[]
+     */
+    public function followingSubscriptions(IRow $subscription, array $includeSubscriptionTypeIds = []): array
+    {
+        $currentSubscription = $subscription;
+        $includeSubscriptionTypeIds[] = $subscription->subscription_type_id;
+
+        $followingSubscriptions = [];
+        while (true) {
+            $followingPayment = $this->getTable()
+                ->where([
+                    'payments.user_id' => $currentSubscription->user_id,
+                    'subscription.start_time' => $currentSubscription->end_time,
+                    'subscription.subscription_type_id' => $includeSubscriptionTypeIds,
+                ])
+                ->where('subscription.start_time > ?', $currentSubscription->start_time)
+                ->fetch();
+
+            if (!$followingPayment) {
+                break;
+            }
+
+            $followingSubscriptions[] = $followingPayment->subscription;
+            $currentSubscription = $followingPayment->subscription;
+        }
+
+        return $followingSubscriptions;
     }
 }

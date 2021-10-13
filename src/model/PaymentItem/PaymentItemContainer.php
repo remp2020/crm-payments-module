@@ -52,4 +52,13 @@ class PaymentItemContainer
         }
         return $price;
     }
+
+    public function totalPriceWithoutVAT(): float
+    {
+        $priceWithoutVAT = 0;
+        foreach ($this->items() as $item) {
+            $priceWithoutVAT += $item->totalPriceWithoutVAT();
+        }
+        return $priceWithoutVAT;
+    }
 }

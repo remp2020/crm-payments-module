@@ -410,6 +410,10 @@ class PaymentsModule extends CrmModule
             \Crm\PaymentsModule\Events\RecurrentPaymentCardExpiredEvent::class,
             $this->getInstance(\Crm\PaymentsModule\Events\RecurrentPaymentCardExpiredEventHandler::class)
         );
+        $emitter->addListener(
+            \Crm\SubscriptionsModule\Events\SubscriptionMovedEvent::class,
+            $this->getInstance(\Crm\PaymentsModule\Events\SubscriptionMovedHandler::class)
+        );
     }
 
     public function registerHermesHandlers(Dispatcher $dispatcher)

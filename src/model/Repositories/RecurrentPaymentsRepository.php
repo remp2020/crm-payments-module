@@ -4,6 +4,7 @@ namespace Crm\PaymentsModule\Repository;
 
 use Crm\ApplicationModule\Config\ApplicationConfig;
 use Crm\ApplicationModule\Hermes\HermesMessage;
+use Crm\ApplicationModule\NowTrait;
 use Crm\ApplicationModule\Repository;
 use Crm\ApplicationModule\Repository\AuditLogRepository;
 use Crm\PaymentsModule\Events\RecurrentPaymentCreatedEvent;
@@ -15,11 +16,12 @@ use Exception;
 use League\Event\Emitter;
 use Nette\Database\Context;
 use Nette\Database\Table\IRow;
-use Nette\Utils\DateTime;
 use Tracy\Debugger;
 
 class RecurrentPaymentsRepository extends Repository
 {
+    use NowTrait;
+
     protected $tableName = 'recurrent_payments';
 
     protected $auditLogExcluded = [
@@ -58,8 +60,8 @@ class RecurrentPaymentsRepository extends Repository
     {
         return $this->insert([
             'cid' => $cid,
-            'created_at' => new DateTime(),
-            'updated_at' => new DateTime(),
+            'created_at' => $this->getNow(),
+            'updated_at' => $this->getNow(),
             'charge_at' => $chargeAt,
             'payment_gateway_id' => $payment->payment_gateway->id,
             'subscription_type_id' => $payment->subscription_type_id,
@@ -78,7 +80,10 @@ class RecurrentPaymentsRepository extends Repository
         ?float $customChargeAmount = null
     ): ?IRow {
         if (!in_array($payment->status, [PaymentsRepository::STATUS_PAID, PaymentsRepository::STATUS_PREPAID], true)) {
-            Debugger::log("Could not create recurrent payment from payment [{$payment->id}], invalid payment status: [{$payment->status}]");
+            Debugger::log(
+                "Could not create recurrent payment from payment [{$payment->id}], invalid payment status: [{$payment->status}]",
+                Debugger::ERROR
+            );
             return null;
         }
 
@@ -92,7 +97,12 @@ class RecurrentPaymentsRepository extends Repository
         $retries = count((array)$retries);
 
         if (!$chargeAt) {
-            $chargeAt = $this->calculateChargeAt($payment);
+            try {
+                $chargeAt = $this->calculateChargeAt($payment);
+            } catch (\Exception $e) {
+                Debugger::log($e, Debugger::ERROR);
+                return null;
+            }
         }
 
         $recurrentPayment = $this->add(
@@ -114,14 +124,14 @@ class RecurrentPaymentsRepository extends Repository
             $fireEvent = true;
         }
 
-        $data['updated_at'] = new DateTime();
+        $data['updated_at'] = $this->getNow();
         $result = parent::update($row, $data);
 
         if ($fireEvent) {
             $this->emitter->emit(new RecurrentPaymentStateChangedEvent($row));
             $this->hermesEmitter->emit(new HermesMessage('recurrent-payment-state-changed', [
                 'recurrent_payment_id' => $row->id,
-            ]));
+            ]), HermesMessage::PRIORITY_HIGH);
         }
 
         return $result;
@@ -145,7 +155,7 @@ class RecurrentPaymentsRepository extends Repository
             $this->emitter->emit(new RecurrentPaymentRenewedEvent($recurrentPayment));
             $this->hermesEmitter->emit(new HermesMessage('recurrent-payment-renewed', [
                 'recurrent_payment_id' => $recurrentPayment->id,
-            ]));
+            ]), HermesMessage::PRIORITY_HIGH);
         }
     }
 
@@ -155,7 +165,7 @@ class RecurrentPaymentsRepository extends Repository
             ->where('status IS NULL')
             ->where('retries >= 0')
             ->where('state = "active"')
-            ->where(['charge_at <= ?' => DateTime::from(strtotime('+15 minutes'))])
+            ->where(['charge_at <= ?' => $this->getNow()->modify('+15 minutes')])
             ->order('RAND()');
     }
 
@@ -261,7 +271,7 @@ class RecurrentPaymentsRepository extends Repository
             ->where('charge_at < ?', $date);
     }
 
-    final public function all($problem = null, $subscriptionType = null, $status = null)
+    final public function all($problem = null, $subscriptionType = null, $status = null, string $cid = null)
     {
         $where = [];
         if ($subscriptionType) {
@@ -272,6 +282,9 @@ class RecurrentPaymentsRepository extends Repository
         }
         if ($problem) {
             $where['state'] = [self::STATE_SYSTEM_STOP, self::STATE_CHARGE_FAILED];
+        }
+        if ($cid) {
+            $where['cid'] = $cid;
         }
         return $this->getTable()->where($where)->order('recurrent_payments.charge_at DESC, recurrent_payments.created_at DESC');
     }
@@ -301,7 +314,13 @@ class RecurrentPaymentsRepository extends Repository
         }
         if ($recurrent->state == self::STATE_CHARGE_FAILED) {
             // najdeme najnovsi rekurent s tymto cid a zistime ci je stopnuty
-            $newRecurrent = $this->getTable()->where(['cid' => $recurrent->cid, 'charge_at > ' => $recurrent->charge_at])->order('charge_at DESC')->limit(1)->fetch();
+            $newRecurrent = $this->getTable()->where([
+                    'cid' => $recurrent->cid,
+                    'charge_at > ' => $recurrent->charge_at,
+                ])
+                ->order('charge_at DESC')
+                ->limit(1)
+                ->fetch();
             if ($newRecurrent && in_array($newRecurrent->state, [self::STATE_SYSTEM_STOP, self::STATE_USER_STOP, self::STATE_ADMIN_STOP])) {
                 return true;
             }
@@ -339,19 +358,29 @@ class RecurrentPaymentsRepository extends Repository
         return $this->getTable()
             ->select('COUNT(*) AS payments')
             ->select('user_id')
-            ->where('charge_at > ?', new \DateTime())
+            ->where('charge_at > ?', $this->getNow())
             ->where('state = ?', 'active')
             ->group('user_id')
             ->having('payments > 1')
             ->fetchAll();
     }
 
+    /**
+     * @throws Exception If calculated next charge at date is invalid (before subscription's start date / in past)
+     */
     final public function calculateChargeAt($payment)
     {
         $subscriptionType = $payment->subscription_type;
         $subscription = $payment->subscription;
 
         $endTime = clone $subscription->end_time;
+
+        if ($endTime <= $this->getNow()) {
+            throw new Exception(
+                "Calculated next charge of recurrent payment would be in the past." .
+                " Check payment [{$payment->id}] and subscription [{$subscription->id}]."
+            );
+        }
 
         $chargeBefore = null;
         if (!$chargeBefore) {
@@ -371,7 +400,16 @@ class RecurrentPaymentsRepository extends Repository
         if ($chargeBefore) {
             $newEndTime = (clone $endTime)->sub(new \DateInterval("PT{$chargeBefore}H"));
             if ($newEndTime < $subscription->start_time) {
-                Debugger::log("Calculated next charge of recurrent payment would be sooner than subscription start time. Check subscription: " . $subscription->id, Debugger::WARNING);
+                throw new Exception(
+                    "Calculated next charge of recurrent payment would be before subscription's start time." .
+                    " Check payment [{$payment->id}] and subscription [{$subscription->id}]."
+                );
+            }
+            if ($newEndTime <= $this->getNow()) {
+                throw new Exception(
+                    "Calculated next charge of recurrent payment would be in the past." .
+                    " Check payment [{$payment->id}] and subscription [{$subscription->id}]."
+                );
             }
             $endTime = $newEndTime;
         }
@@ -412,7 +450,7 @@ class RecurrentPaymentsRepository extends Repository
         if (!$previousRecurrentCharge) {
             return null;
         }
-        
+
         return $this->latestSuccessfulRecurrentPayment($previousRecurrentCharge);
     }
 }

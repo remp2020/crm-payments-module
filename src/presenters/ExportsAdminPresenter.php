@@ -22,6 +22,9 @@ class ExportsAdminPresenter extends AdminPresenter
     /** @persistent */
     public $file_system;
 
+    /**
+     * @admin-access-level read
+     */
     public function renderDefault()
     {
         $exports = $this->getExports();
@@ -80,6 +83,9 @@ class ExportsAdminPresenter extends AdminPresenter
         return $form;
     }
 
+    /**
+     * @admin-access-level read
+     */
     public function handleDownloadExport($bucket, $fileName)
     {
         $path = $this->applicationMountManager->getFilePath($bucket, $fileName);
@@ -98,6 +104,9 @@ class ExportsAdminPresenter extends AdminPresenter
         $this->sendResponse($response);
     }
 
+    /**
+     * @admin-access-level write
+     */
     public function handleDeleteExport($bucket, $fileName)
     {
         $path = $this->applicationMountManager->getFilePath($bucket, $fileName);

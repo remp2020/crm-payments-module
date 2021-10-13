@@ -73,10 +73,16 @@ class DashboardPresenter extends AdminPresenter
         $this->defaultPaymentItemTypesFilter = $filters['paymentItemTypesDefaultFilter'];
     }
 
+    /**
+     * @admin-access-level read
+     */
     public function renderDefault()
     {
     }
 
+    /**
+     * @admin-access-level read
+     */
     public function renderArpu()
     {
         $this->template->graphParams = [
@@ -87,6 +93,9 @@ class DashboardPresenter extends AdminPresenter
         ];
     }
 
+    /**
+     * @admin-access-level read
+     */
     public function renderDetailed()
     {
     }

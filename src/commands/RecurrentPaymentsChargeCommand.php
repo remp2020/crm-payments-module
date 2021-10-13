@@ -115,7 +115,7 @@ class RecurrentPaymentsChargeCommand extends Command
                 $additionalAmount = 0;
                 $additionalType = null;
                 $parentPayment = $recurrentPayment->parent_payment;
-                if ($parentPayment && $parentPayment->additional_type == 'recurrent') {
+                if ($parentPayment && $parentPayment->additional_type === 'recurrent') {
                     $additionalType = 'recurrent';
                     $additionalAmount = $parentPayment->additional_amount;
                 }
@@ -136,8 +136,9 @@ class RecurrentPaymentsChargeCommand extends Command
                         // Possible solution should be to add `recurrent` field to payment_items
                         // and copy only this items with recurrent flag
                         // for now this should be ok because we are not selling recurring products
-                        if ($item['name'] == $this->translator->translate('payments.admin.donation')
-                            && $item['amount'] === $parentPayment->additional_amount) {
+                        if ($item['amount'] === $parentPayment->additional_amount &&
+                            $item['name'] === $this->translator->translate('payments.admin.donation')
+                        ) {
                             continue;
                         }
 
@@ -146,8 +147,23 @@ class RecurrentPaymentsChargeCommand extends Command
                             $item['name'],
                             $item['amount'],
                             $item['vat'],
-                            $item['count']
+                            $item['count'],
+                            $item['meta']
                         ));
+
+                        // In case of subscription type VAT change, parent payment would copy incorrect VAT rates
+                        // into the new payment items. If we see a change in a total price without VAT, we don't
+                        // copy the items anymore (the price with VAT was already checked in IF above).
+
+                        $subscriptionTypePaymentItemContainer = new PaymentItemContainer();
+                        $subscriptionTypePaymentItemContainer
+                            ->addItems(SubscriptionTypePaymentItem::fromSubscriptionType($subscriptionType));
+
+                        if (round($paymentItemContainer->totalPriceWithoutVAT(), 2) !==
+                            round($subscriptionTypePaymentItemContainer->totalPriceWithoutVAT(), 2)
+                        ) {
+                            $paymentItemContainer = $subscriptionTypePaymentItemContainer;
+                        }
                     }
                 } elseif (!$customChargeAmount) {
                     // if subscription type changed, load the items from new subscription type
@@ -274,7 +290,7 @@ class RecurrentPaymentsChargeCommand extends Command
         $output->writeln('<info>All done. Took ' . round($duration, 2) . ' sec.</info>');
         $output->writeln('');
 
-        return 0;
+        return Command::SUCCESS;
     }
 
     public function getSubscriptionTypeItemsForCustomChargeAmount($subscriptionType, $customChargeAmount)

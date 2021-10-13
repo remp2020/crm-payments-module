@@ -70,9 +70,10 @@ abstract class GatewayAbstract implements PaymentInterface
         } elseif ($this->response->isRedirect()) {
             if ($allowRedirect) {
                 $this->response->redirect();
-            } else {
-                return $this->response->getRedirectUrl();
+                exit;
             }
+
+            return $this->response->getRedirectUrl();
         } else {
             throw new CannotProcessPayment($this->response->getMessage());
         }

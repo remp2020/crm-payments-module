@@ -76,6 +76,9 @@ class PaymentsAdminPresenter extends AdminPresenter
         $this->adminFilterFormData->parse($this->formData);
     }
 
+    /**
+     * @admin-access-level read
+     */
     public function renderDefault()
     {
         $payments = $this->adminFilterFormData->filteredPayments()
@@ -209,6 +212,9 @@ class PaymentsAdminPresenter extends AdminPresenter
         }, (array)$values)]);
     }
 
+    /**
+     * @admin-access-level write
+     */
     public function actionChangeStatus()
     {
         $payment = $this->paymentsRepository->find($this->params['payment']);
@@ -221,16 +227,22 @@ class PaymentsAdminPresenter extends AdminPresenter
         $this->redirect(':Users:UsersAdmin:Show', $payment->user_id);
     }
 
+    /**
+     * @admin-access-level write
+     */
     public function handleExportPayments()
     {
         $this->hermesEmitter->emit(new HermesMessage('export-payments', [
             'form_data' => $this->formData,
             'user_id' => $this->user->getId()
-        ]));
+        ]), HermesMessage::PRIORITY_LOW);
 
         $this->flashMessage($this->translator->translate('payments.admin.payments.export.exported'));
     }
 
+    /**
+     * @admin-access-level write
+     */
     public function renderEdit($id, $userId)
     {
         $payment = $this->paymentsRepository->find($id);
@@ -266,6 +278,9 @@ class PaymentsAdminPresenter extends AdminPresenter
         $this->template->allowEditPaymentItems = $allowEditPaymentItems;
     }
 
+    /**
+     * @admin-access-level write
+     */
     public function renderNew($userId)
     {
         $user = $this->usersRepository->find($userId);
