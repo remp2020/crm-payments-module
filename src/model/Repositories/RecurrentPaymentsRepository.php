@@ -382,10 +382,7 @@ class RecurrentPaymentsRepository extends Repository
             );
         }
 
-        $chargeBefore = null;
-        if (!$chargeBefore) {
-            $chargeBefore = $subscriptionType->recurrent_charge_before;
-        }
+        $chargeBefore = $subscriptionType->recurrent_charge_before;
         if (!$chargeBefore) {
             $configSetting = $this->applicationConfig->get('recurrent_charge_before');
             if ($configSetting !== null && $configSetting !== '') {
