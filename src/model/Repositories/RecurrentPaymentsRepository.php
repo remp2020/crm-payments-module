@@ -383,7 +383,7 @@ class RecurrentPaymentsRepository extends Repository
         }
 
         $chargeBefore = $subscriptionType->recurrent_charge_before;
-        if (!$chargeBefore) {
+        if ($chargeBefore === null) {
             $configSetting = $this->applicationConfig->get('recurrent_charge_before');
             if ($configSetting !== null && $configSetting !== '') {
                 $validatedSetting = filter_var($configSetting, FILTER_VALIDATE_INT);
