@@ -15,7 +15,7 @@ use Crm\PaymentsModule\Events\RecurrentPaymentStoppedByUserEvent;
 use Exception;
 use League\Event\Emitter;
 use Nette\Database\Explorer;
-use Nette\Database\Table\IRow;
+use Nette\Database\Table\ActiveRow;
 use Tracy\Debugger;
 
 class RecurrentPaymentsRepository extends Repository
@@ -74,11 +74,11 @@ class RecurrentPaymentsRepository extends Repository
     }
 
     final public function createFromPayment(
-        IRow $payment,
+        ActiveRow $payment,
         string $recurrentToken,
         ?\DateTime $chargeAt = null,
         ?float $customChargeAmount = null
-    ): ?IRow {
+    ): ?ActiveRow {
         if (!in_array($payment->status, [PaymentsRepository::STATUS_PAID, PaymentsRepository::STATUS_PREPAID], true)) {
             Debugger::log(
                 "Could not create recurrent payment from payment [{$payment->id}], invalid payment status: [{$payment->status}]",
@@ -117,7 +117,7 @@ class RecurrentPaymentsRepository extends Repository
         return $recurrentPayment;
     }
 
-    final public function update(IRow &$row, $data)
+    final public function update(ActiveRow &$row, $data)
     {
         $fireEvent = false;
         if (isset($data['state']) && $data['state'] !== $row->state) {
@@ -137,7 +137,7 @@ class RecurrentPaymentsRepository extends Repository
         return $result;
     }
 
-    final public function setCharged(IRow $recurrentPayment, $payment, $status, $approval)
+    final public function setCharged(ActiveRow $recurrentPayment, $payment, $status, $approval)
     {
         $fireEvent = true;
         if ($recurrentPayment->state === self::STATE_CHARGED) {
@@ -294,7 +294,7 @@ class RecurrentPaymentsRepository extends Repository
         return $this->getTable()->select('status')->group('status')->fetchPairs('status', 'status');
     }
 
-    final public function isStoppedBySubscription(IRow $subscription)
+    final public function isStoppedBySubscription(ActiveRow $subscription)
     {
         $payment = $this->database->table('payments')->where(['subscription_id' => $subscription->id])->limit(1)->fetch();
         if ($payment) {
@@ -333,17 +333,17 @@ class RecurrentPaymentsRepository extends Repository
         return $this->getTable()->where(['user_id' => $userId, 'state' => self::STATE_USER_STOP])->count('*');
     }
 
-    final public function recurrent(IRow $payment)
+    final public function recurrent(ActiveRow $payment)
     {
         return $this->getTable()->where(['parent_payment_id' => $payment->id])->fetch();
     }
 
-    final public function findByPayment(IRow $payment)
+    final public function findByPayment(ActiveRow $payment)
     {
         return $this->findBy('payment_id', $payment->id);
     }
 
-    final public function getLastWithState(IRow $recurrentPayment, $state)
+    final public function getLastWithState(ActiveRow $recurrentPayment, $state)
     {
         return $this->getTable()->where([
             'cid' => $recurrentPayment->cid,

@@ -7,7 +7,7 @@ use Crm\ApplicationModule\Criteria\ScenarioParams\NumberParam;
 use Crm\ApplicationModule\Criteria\ScenariosCriteriaInterface;
 use Crm\PaymentsModule\PaymentItem\DonationPaymentItem;
 use Kdyby\Translation\Translator;
-use Nette\Database\Table\IRow;
+use Nette\Database\Table\ActiveRow;
 use Nette\Database\Table\Selection;
 
 class DonationAmountCriteria implements ScenariosCriteriaInterface
@@ -38,7 +38,7 @@ class DonationAmountCriteria implements ScenariosCriteriaInterface
         ];
     }
 
-    public function addConditions(Selection $selection, array $paramValues, IRow $criterionItemRow): bool
+    public function addConditions(Selection $selection, array $paramValues, ActiveRow $criterionItemRow): bool
     {
         $operator = $paramValues[self::KEY]->operator;
         $amount = $paramValues[self::KEY]->selection;

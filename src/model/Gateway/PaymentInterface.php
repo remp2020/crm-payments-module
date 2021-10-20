@@ -2,17 +2,17 @@
 
 namespace Crm\PaymentsModule\Gateways;
 
-use Nette\Database\Table\IRow;
+use Nette\Database\Table\ActiveRow;
 
 interface PaymentInterface
 {
     /**
-     * @param IRow $payment
+     * @param ActiveRow $payment
      */
     public function begin($payment);
 
     /**
-     * @param IRow $payment
+     * @param ActiveRow $payment
      * @return bool
      */
     public function complete($payment): ?bool;

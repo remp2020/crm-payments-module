@@ -15,7 +15,7 @@ class PaymentMetaRepository extends Repository
      * @param string $key
      * @param string $value
      * @param bool $override
-     * @return \Nette\Database\Table\IRow
+     * @return ActiveRow
      */
     final public function add(ActiveRow $payment, $key, $value, $override = true)
     {

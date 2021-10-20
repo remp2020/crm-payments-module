@@ -5,7 +5,7 @@ namespace Crm\PaymentsModule\Scenarios;
 use Crm\ApplicationModule\Criteria\ScenarioParams\StringLabeledArrayParam;
 use Crm\ApplicationModule\Criteria\ScenariosCriteriaInterface;
 use Crm\PaymentsModule\Repository\RecurrentPaymentsRepository;
-use Nette\Database\Table\IRow;
+use Nette\Database\Table\ActiveRow;
 use Nette\Database\Table\Selection;
 
 class RecurrentPaymentStatusCriteria implements ScenariosCriteriaInterface
@@ -29,7 +29,7 @@ class RecurrentPaymentStatusCriteria implements ScenariosCriteriaInterface
         ];
     }
 
-    public function addConditions(Selection $selection, array $paramValues, IRow $criterionItemRow): bool
+    public function addConditions(Selection $selection, array $paramValues, ActiveRow $criterionItemRow): bool
     {
         $values = $paramValues[self::KEY];
         $selection->where('recurrent_payments.status IN (?)', $values->selection);

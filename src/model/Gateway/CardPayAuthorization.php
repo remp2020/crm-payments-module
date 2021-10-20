@@ -5,7 +5,7 @@ namespace Crm\PaymentsModule\Gateways;
 use Crm\ApplicationModule\Config\ApplicationConfig;
 use Crm\PaymentsModule\Repository\PaymentMetaRepository;
 use Nette\Application\LinkGenerator;
-use Nette\Database\Table\IRow;
+use Nette\Database\Table\ActiveRow;
 use Nette\Http\Response;
 use Nette\Localization\ITranslator;
 use Nette\Utils\Strings;
@@ -98,7 +98,7 @@ class CardPayAuthorization extends GatewayAbstract implements AuthorizationInter
         return $this->response->isSuccessful();
     }
 
-    public function cancel(IRow $payment): bool
+    public function cancel(ActiveRow $payment): bool
     {
         $this->initialize();
 

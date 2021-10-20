@@ -12,7 +12,6 @@ use Crm\PaymentsModule\Repository\PaymentsRepository;
 use Crm\PaymentsModule\Repository\RecurrentPaymentsRepository;
 use League\Event\Emitter;
 use Nette\Database\Table\ActiveRow;
-use Nette\Database\Table\IRow;
 use Nette\Utils\DateTime;
 use Tracy\Debugger;
 
@@ -63,7 +62,7 @@ class RecurrentPaymentsProcessor
         $this->recurrentPaymentsRepository->setCharged($recurrentPayment, $payment, $resultCode, $resultMessage);
     }
 
-    public function processPendingRecurrent(IRow $recurrentPayment)
+    public function processPendingRecurrent(ActiveRow $recurrentPayment)
     {
         $this->recurrentPaymentsRepository->update($recurrentPayment, [
             'state' => RecurrentPaymentsRepository::STATE_PENDING,

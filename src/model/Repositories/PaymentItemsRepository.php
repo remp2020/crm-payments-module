@@ -13,7 +13,7 @@ use Exception;
 use League\Event\Emitter;
 use Nette\Caching\Storage;
 use Nette\Database\Explorer;
-use Nette\Database\Table\IRow;
+use Nette\Database\Table\ActiveRow;
 use Nette\Utils\DateTime;
 
 class PaymentItemsRepository extends Repository
@@ -43,7 +43,7 @@ class PaymentItemsRepository extends Repository
         $this->dataProviderManager = $dataProviderManager;
     }
 
-    final public function add(IRow $payment, PaymentItemContainer $container): array
+    final public function add(ActiveRow $payment, PaymentItemContainer $container): array
     {
         $rows = [];
         /** @var PaymentItemInterface $item */
@@ -72,7 +72,7 @@ class PaymentItemsRepository extends Repository
         return $rows;
     }
 
-    public function update(IRow &$row, $data)
+    public function update(ActiveRow &$row, $data)
     {
         if (!($this->canBeUpdated($row))) {
             throw new Exception('Payment item ' . $row->id . ' cannot be updated');
@@ -82,7 +82,7 @@ class PaymentItemsRepository extends Repository
         return parent::update($row, $data);
     }
 
-    final public function deleteByPayment(IRow $payment)
+    final public function deleteByPayment(ActiveRow $payment)
     {
         // remove payment item meta
         $paymentItemMetas = $this->paymentItemMetaRepository->getTable()
@@ -99,11 +99,11 @@ class PaymentItemsRepository extends Repository
     }
 
     /**
-     * @param IRow $payment
+     * @param ActiveRow $payment
      * @param string $paymentItemType
-     * @return array|IRow[]
+     * @return array|ActiveRow[]
      */
-    final public function getByType(IRow $payment, string $paymentItemType): array
+    final public function getByType(ActiveRow $payment, string $paymentItemType): array
     {
         return $payment->related('payment_items')->where('type = ?', $paymentItemType)->fetchAll();
     }

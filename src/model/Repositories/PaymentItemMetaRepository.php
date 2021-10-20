@@ -3,21 +3,21 @@
 namespace Crm\PaymentsModule\Repository;
 
 use Crm\ApplicationModule\Repository;
-use Nette\Database\Table\IRow;
+use Nette\Database\Table\ActiveRow;
 use Nette\Utils\DateTime;
 
 class PaymentItemMetaRepository extends Repository
 {
     protected $tableName = 'payment_item_meta';
 
-    final public function addMetas(IRow $paymentItem, array $keyValue)
+    final public function addMetas(ActiveRow $paymentItem, array $keyValue)
     {
         foreach ($keyValue as $key => $value) {
             $this->add($paymentItem, $key, $value);
         }
     }
 
-    final public function add(IRow $paymentItem, $key, $value)
+    final public function add(ActiveRow $paymentItem, $key, $value)
     {
         $this->insert([
             'payment_item_id' => $paymentItem->id,
@@ -28,14 +28,14 @@ class PaymentItemMetaRepository extends Repository
         ]);
     }
 
-    final public function update(IRow &$row, $data)
+    final public function update(ActiveRow &$row, $data)
     {
         $data['updated_at'] = new DateTime();
 
         return parent::update($row, $data);
     }
 
-    final public function upsert(IRow $paymentItem, $key, $value)
+    final public function upsert(ActiveRow $paymentItem, $key, $value)
     {
         $paymentItemMeta = $this->findByPaymentItemAndKey($paymentItem, $key)->fetch();
         if ($paymentItemMeta) {
@@ -45,13 +45,13 @@ class PaymentItemMetaRepository extends Repository
         }
     }
 
-    final public function findByPaymentItemAndKey(IRow $paymentItem, string $key)
+    final public function findByPaymentItemAndKey(ActiveRow $paymentItem, string $key)
     {
         return $this->findByPaymentItem($paymentItem)
             ->where('key = ?', $key);
     }
 
-    final public function findByPaymentItem(IRow $paymentItem)
+    final public function findByPaymentItem(ActiveRow $paymentItem)
     {
         return $this->getTable()->where(['payment_item_id' => $paymentItem->id]);
     }

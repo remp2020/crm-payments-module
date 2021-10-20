@@ -7,7 +7,7 @@ use Crm\PaymentsModule\GatewayFactory;
 use DateTime;
 use Nette\Caching\Storage;
 use Nette\Database\Explorer;
-use Nette\Database\Table\IRow;
+use Nette\Database\Table\ActiveRow;
 use Nette\Database\Table\Selection;
 
 class PaymentGatewaysRepository extends Repository
@@ -80,7 +80,7 @@ class PaymentGatewaysRepository extends Repository
         return $this->getTable()->where(['code' => $code])->count('*') > 0;
     }
 
-    final public function update(IRow &$row, $data)
+    final public function update(ActiveRow &$row, $data)
     {
         $data['modified_at'] = new DateTime();
         return parent::update($row, $data);

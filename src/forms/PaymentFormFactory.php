@@ -16,7 +16,7 @@ use Crm\SubscriptionsModule\Subscription\SubscriptionTypeHelper;
 use Crm\UsersModule\Repository\AddressesRepository;
 use Crm\UsersModule\Repository\UsersRepository;
 use Nette\Application\UI\Form;
-use Nette\Database\Table\IRow;
+use Nette\Database\Table\ActiveRow;
 use Nette\Forms\Controls\TextInput;
 use Nette\Localization\ITranslator;
 use Nette\Utils\DateTime;
@@ -81,12 +81,12 @@ class PaymentFormFactory
 
     /**
      * @param int $paymentId
-     * @param IRow $user
+     * @param ActiveRow $user
      * @return Form
      * @throws \Crm\ApplicationModule\DataProvider\DataProviderException
      * @throws \Nette\Utils\JsonException
      */
-    public function create($paymentId, IRow $user = null)
+    public function create($paymentId, ActiveRow $user = null)
     {
         $defaults = [
             'additional_type' => 'single',

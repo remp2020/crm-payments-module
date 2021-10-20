@@ -3,7 +3,7 @@
 namespace Crm\PaymentsModule\Builder;
 
 use Crm\ApplicationModule\Builder\Builder;
-use Nette\Database\Table\IRow;
+use Nette\Database\Table\ActiveRow;
 
 class ParsedMailLogsBuilder extends Builder
 {
@@ -45,7 +45,7 @@ class ParsedMailLogsBuilder extends Builder
         return $this->set('amount', $amount);
     }
 
-    public function setPayment(IRow $payment)
+    public function setPayment(ActiveRow $payment)
     {
         return $this->set('payment_id', $payment->id);
     }

@@ -8,7 +8,6 @@ use Crm\SubscriptionsModule\Repository\SubscriptionsRepository;
 use League\Event\AbstractListener;
 use League\Event\EventInterface;
 use Nette\Database\Table\ActiveRow;
-use Nette\Database\Table\IRow;
 use Tracy\Debugger;
 use Tracy\ILogger;
 
@@ -62,10 +61,10 @@ class PaymentStatusChangeHandler extends AbstractListener
     }
 
     /**
-     * @param ActiveRow|IRow $payment
+     * @param ActiveRow|ActiveRow $payment
      * @param EventInterface $event
      *
-     * @return bool|int|IRow
+     * @return bool|int|ActiveRow
      */
     private function createSubscriptionFromPayment(ActiveRow $payment, EventInterface $event)
     {

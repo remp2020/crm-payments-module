@@ -9,7 +9,6 @@ use Crm\PaymentsModule\RecurrentPaymentFailStop;
 use Crm\PaymentsModule\RecurrentPaymentFailTry;
 use Crm\PaymentsModule\Repository\PaymentMetaRepository;
 use Nette\Application\LinkGenerator;
-use Nette\Database\IRow;
 use Nette\Http\Response;
 use Nette\Localization\ITranslator;
 use Omnipay\Common\Exception\InvalidRequestException;
@@ -171,7 +170,7 @@ class CsobOneClick extends GatewayAbstract implements RecurrentPaymentInterface
     /**
      * Returns array [$cid => (DateTime)$expiration]
      *
-     * @param IRow[] $recurrentPayments
+     * @param array $recurrentPayments
      * @return array
      */
     public function checkExpire($recurrentPayments)

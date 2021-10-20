@@ -5,7 +5,7 @@ namespace Crm\PaymentsModule\Scenarios;
 use Crm\ApplicationModule\Criteria\ScenarioParams\BooleanParam;
 use Crm\ApplicationModule\Criteria\ScenariosCriteriaInterface;
 use Crm\PaymentsModule\Repository\RecurrentPaymentsRepository;
-use Nette\Database\Table\IRow;
+use Nette\Database\Table\ActiveRow;
 use Nette\Database\Table\Selection;
 
 class IsActiveRecurrentSubscriptionCriteria implements ScenariosCriteriaInterface
@@ -26,7 +26,7 @@ class IsActiveRecurrentSubscriptionCriteria implements ScenariosCriteriaInterfac
         ];
     }
 
-    public function addConditions(Selection $selection, array $paramValues, IRow $subscriptionRow): bool
+    public function addConditions(Selection $selection, array $paramValues, ActiveRow $subscriptionRow): bool
     {
         $values = $paramValues[self::KEY];
 

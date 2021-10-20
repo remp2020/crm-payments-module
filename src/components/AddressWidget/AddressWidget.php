@@ -3,7 +3,7 @@
 namespace Crm\PaymentsModule\Components;
 
 use Crm\ApplicationModule\Widget\BaseWidget;
-use Nette\Database\Table\IRow;
+use Nette\Database\Table\ActiveRow;
 
 class AddressWidget extends BaseWidget
 {
@@ -14,7 +14,7 @@ class AddressWidget extends BaseWidget
         return 'paymentaddresswidget';
     }
 
-    public function render(IRow $payment = null)
+    public function render(ActiveRow $payment = null)
     {
         $this->template->payment = $payment;
         $this->template->setFile(__DIR__ . DIRECTORY_SEPARATOR . $this->templateName);

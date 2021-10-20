@@ -4,7 +4,7 @@ namespace Crm\PaymentsModule\Repository;
 
 use Crm\ApplicationModule\Repository;
 use Crm\ApplicationModule\Selection;
-use Nette\Database\Table\IRow;
+use Nette\Database\Table\ActiveRow;
 use Nette\Utils\Json;
 
 class RetentionAnalysisJobsRepository extends Repository
@@ -48,7 +48,7 @@ class RetentionAnalysisJobsRepository extends Repository
         }
     }
 
-    final public function update(IRow &$row, $data)
+    final public function update(ActiveRow &$row, $data)
     {
         $data['updated_at'] = new \DateTime();
         return parent::update($row, $data);

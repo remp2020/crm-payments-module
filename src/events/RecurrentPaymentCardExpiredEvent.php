@@ -3,18 +3,18 @@
 namespace Crm\PaymentsModule\Events;
 
 use League\Event\AbstractEvent;
-use Nette\Database\Table\IRow;
+use Nette\Database\Table\ActiveRow;
 
 class RecurrentPaymentCardExpiredEvent extends AbstractEvent
 {
     private $recurrentPayment;
 
-    public function __construct(IRow $recurrentPayment)
+    public function __construct(ActiveRow $recurrentPayment)
     {
         $this->recurrentPayment = $recurrentPayment;
     }
 
-    public function getRecurrentPayment(): IRow
+    public function getRecurrentPayment(): ActiveRow
     {
         return $this->recurrentPayment;
     }

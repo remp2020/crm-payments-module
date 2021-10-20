@@ -19,7 +19,6 @@ use DateTime;
 use League\Event\Emitter;
 use Nette\Database\Explorer;
 use Nette\Database\Table\ActiveRow;
-use Nette\Database\Table\IRow;
 use Nette\Database\Table\Selection;
 use Tracy\Debugger;
 use malkusch\lock\mutex\PredisMutex;
@@ -94,7 +93,7 @@ class PaymentsRepository extends Repository
         $additionalAmount = 0,
         $additionalType = null,
         $variableSymbol = null,
-        IRow $address = null,
+        ActiveRow $address = null,
         $recurrentCharge = false,
         array $metaData = []
     ) {
@@ -216,14 +215,14 @@ class PaymentsRepository extends Repository
     /**
      * @param ActiveRow $payment
      * @param string $paymentItemType
-     * @return array|IRow[]
+     * @return array|ActiveRow[]
      */
     final public function getPaymentItemsByType(ActiveRow $payment, string $paymentItemType): array
     {
         return $this->paymentItemsRepository->getByType($payment, $paymentItemType);
     }
 
-    final public function update(IRow &$row, $data, PaymentItemContainer $paymentItemContainer = null)
+    final public function update(ActiveRow &$row, $data, PaymentItemContainer $paymentItemContainer = null)
     {
         if ($paymentItemContainer) {
             $this->paymentItemsRepository->deleteByPayment($row);
@@ -307,12 +306,12 @@ class PaymentsRepository extends Repository
         );
     }
 
-    final public function addSubscriptionToPayment(IRow $subscription, IRow $payment)
+    final public function addSubscriptionToPayment(ActiveRow $subscription, ActiveRow $payment)
     {
         return parent::update($payment, ['subscription_id' => $subscription->id]);
     }
 
-    final public function subscriptionPayment(IRow $subscription)
+    final public function subscriptionPayment(ActiveRow $subscription)
     {
         return $this->getTable()->where(['subscription_id' => $subscription->id])->select('*')->limit(1)->fetch();
     }
@@ -665,11 +664,11 @@ SQL;
     }
 
     /**
-     * @param IRow $subscription
+     * @param ActiveRow $subscription
      * @param array $includeSubscriptionTypeIds
      * @return ActiveRow[]
      */
-    public function followingSubscriptions(IRow $subscription, array $includeSubscriptionTypeIds = []): array
+    public function followingSubscriptions(ActiveRow $subscription, array $includeSubscriptionTypeIds = []): array
     {
         $currentSubscription = $subscription;
         $includeSubscriptionTypeIds[] = $subscription->subscription_type_id;

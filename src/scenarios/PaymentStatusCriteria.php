@@ -5,7 +5,7 @@ namespace Crm\PaymentsModule\Scenarios;
 use Crm\ApplicationModule\Criteria\ScenarioParams\StringLabeledArrayParam;
 use Crm\ApplicationModule\Criteria\ScenariosCriteriaInterface;
 use Crm\PaymentsModule\Repository\PaymentsRepository;
-use Nette\Database\Table\IRow;
+use Nette\Database\Table\ActiveRow;
 use Nette\Database\Table\Selection;
 
 class PaymentStatusCriteria implements ScenariosCriteriaInterface
@@ -27,7 +27,7 @@ class PaymentStatusCriteria implements ScenariosCriteriaInterface
         ];
     }
 
-    public function addConditions(Selection $selection, array $paramValues, IRow $criterionItemRow): bool
+    public function addConditions(Selection $selection, array $paramValues, ActiveRow $criterionItemRow): bool
     {
         $values = $paramValues['status'];
         $selection->where('status IN (?)', $values->selection);
