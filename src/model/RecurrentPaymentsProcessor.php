@@ -13,6 +13,7 @@ use League\Event\Emitter;
 use Nette\Database\Table\ActiveRow;
 use Nette\Database\Table\IRow;
 use Nette\Utils\DateTime;
+use Tracy\Debugger;
 
 class RecurrentPaymentsProcessor
 {
@@ -99,6 +100,11 @@ class RecurrentPaymentsProcessor
             $customChargeAmount,
             $recurrentPayment->retries - 1
         );
+
+        if (strlen($resultMessage) > 250) {
+            Debugger::log('Result message of failed recurrent is too long: [' . $resultMessage . '].', Debugger::ERROR);
+            $resultMessage = substr($resultMessage, 0, 250);
+        }
 
         $this->recurrentPaymentsRepository->update($recurrentPayment, [
             'state' => RecurrentPaymentsRepository::STATE_CHARGE_FAILED,
