@@ -3,7 +3,7 @@
 namespace Crm\PaymentsModule\Commands;
 
 use Crm\ApplicationModule\ActiveRow;
-use Crm\ApplicationModule\DataRow;
+use Crm\ApplicationModule\ActiveRowFactory;
 use Crm\PaymentsModule\Repository\PaymentGatewaysRepository;
 use Crm\PaymentsModule\Repository\PaymentsRepository;
 use Crm\UsersModule\Events\NotificationEvent;
@@ -34,6 +34,8 @@ class LastPaymentsCheckCommand extends Command
     /** @var OutputInterface */
     private $output;
 
+    private $activeRowFactory;
+
     /** @var array */
     private $emails = [];
 
@@ -52,12 +54,14 @@ class LastPaymentsCheckCommand extends Command
     public function __construct(
         PaymentGatewaysRepository $paymentGatewaysRepository,
         PaymentsRepository $paymentsRepository,
-        Emitter $emitter
+        Emitter $emitter,
+        ActiveRowFactory $activeRowFactory
     ) {
         parent::__construct();
         $this->paymentGatewaysRepository = $paymentGatewaysRepository;
         $this->paymentsRepository = $paymentsRepository;
         $this->emitter = $emitter;
+        $this->activeRowFactory = $activeRowFactory;
     }
 
     protected function configure()
@@ -267,7 +271,7 @@ EOH
     {
         $this->output->writeln(" * Sending <error>notification</error> <info>{$error}</info>");
         foreach ($this->emails as $email) {
-            $userRow = new DataRow([
+            $userRow = $this->activeRowFactory->create([
                 'email' => $email,
             ]);
             $this->emitter->emit(new NotificationEvent($this->emitter, $userRow, $this->emailTempate, [

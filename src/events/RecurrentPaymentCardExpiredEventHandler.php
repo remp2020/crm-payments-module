@@ -2,7 +2,7 @@
 
 namespace Crm\PaymentsModule\Events;
 
-use Crm\ApplicationModule\DataRow;
+use Crm\ApplicationModule\ActiveRowFactory;
 use Crm\PaymentsModule\Repository\RecurrentPaymentsRepository;
 use Crm\UsersModule\Events\NotificationEvent;
 use League\Event\AbstractListener;
@@ -15,12 +15,16 @@ class RecurrentPaymentCardExpiredEventHandler extends AbstractListener
 
     private $emitter;
 
+    private $activeRowFactory;
+
     public function __construct(
         RecurrentPaymentsRepository $recurrentPaymentsRepository,
-        Emitter $emitter
+        Emitter $emitter,
+        ActiveRowFactory $activeRowFactory
     ) {
         $this->recurrentPaymentsRepository = $recurrentPaymentsRepository;
         $this->emitter = $emitter;
+        $this->activeRowFactory = $activeRowFactory;
     }
 
     public function handle(EventInterface $event)
@@ -44,7 +48,7 @@ class RecurrentPaymentCardExpiredEventHandler extends AbstractListener
             return;
         }
 
-        $userRow = new DataRow([
+        $userRow = $this->activeRowFactory->create([
             'email' => $recurrentPayment->user->email,
         ]);
         $this->emitter->emit(new NotificationEvent($this->emitter, $userRow, 'card_expires_this_month'));
