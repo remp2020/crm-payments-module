@@ -55,7 +55,6 @@ use Crm\SubscriptionsModule\DataProvider\SubscriptionFormDataProviderInterface;
 use Crm\UsersModule\Auth\UserTokenAuthorization;
 use Kdyby\Translation\Translator;
 use League\Event\Emitter;
-use Nette\Application\Routers\Route;
 use Nette\Application\Routers\RouteList;
 use Nette\DI\Container;
 use Symfony\Component\Console\Output\OutputInterface;
@@ -476,6 +475,6 @@ class PaymentsModule extends CrmModule
 
     public function registerRoutes(RouteList $router)
     {
-        $router[] = new Route('payments/return/gateway/<gatewayCode>', 'Payments:Return:gateway');
+        $router->addRoute('payments/return/gateway/<gatewayCode>', 'Payments:Return:gateway');
     }
 }
