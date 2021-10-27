@@ -4,7 +4,7 @@ namespace Crm\PaymentsModule\Hermes;
 
 use Crm\PaymentsModule\Repository\RetentionAnalysisJobsRepository;
 use Crm\PaymentsModule\Retention\RetentionAnalysis;
-use Nette\Localization\ITranslator;
+use Nette\Localization\Translator;
 use Psr\Log\LoggerAwareTrait;
 use Tomaj\Hermes\Handler\HandlerInterface;
 use Tomaj\Hermes\MessageInterface;
@@ -26,7 +26,7 @@ class RetentionAnalysisJobHandler implements HandlerInterface
     public function __construct(
         RetentionAnalysisJobsRepository $retentionAnalysisJobsRepository,
         RetentionAnalysis $retentionAnalysis,
-        ITranslator $translator
+        Translator $translator
     ) {
         $this->retentionAnalysisJobsRepository = $retentionAnalysisJobsRepository;
         $this->retentionAnalysis = $retentionAnalysis;

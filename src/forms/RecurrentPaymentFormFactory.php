@@ -6,7 +6,7 @@ use Crm\PaymentsModule\Repository\RecurrentPaymentsRepository;
 use Crm\SubscriptionsModule\Repository\SubscriptionTypesRepository;
 use Crm\SubscriptionsModule\Subscription\SubscriptionTypeHelper;
 use Nette\Application\UI\Form;
-use Nette\Localization\ITranslator;
+use Nette\Localization\Translator;
 use Nette\Utils\DateTime;
 use Tomaj\Form\Renderer\BootstrapRenderer;
 
@@ -25,7 +25,7 @@ class RecurrentPaymentFormFactory
     public function __construct(
         RecurrentPaymentsRepository $recurrentPaymentsRepository,
         SubscriptionTypesRepository $subscriptionTypesRepository,
-        ITranslator $translator,
+        Translator $translator,
         SubscriptionTypeHelper $subscriptionTypeHelper
     ) {
         $this->recurrentPaymentsRepository = $recurrentPaymentsRepository;

@@ -8,7 +8,7 @@ use Crm\PaymentsModule\Repository\PaymentsRepository;
 use Crm\SegmentModule\Repository\SegmentsRepository;
 use Crm\UsersModule\Repository\UsersRepository;
 use Nette\Application\UI\Form;
-use Nette\Localization\ITranslator;
+use Nette\Localization\Translator;
 use Tomaj\Form\Renderer\BootstrapRenderer;
 
 class RetentionAnalysisFilterFormFactory
@@ -28,7 +28,7 @@ class RetentionAnalysisFilterFormFactory
         DataProviderManager $dataProviderManager,
         SegmentsRepository $segmentsRepository,
         UsersRepository $usersRepository,
-        ITranslator $translator
+        Translator $translator
     ) {
         $this->paymentsRepository = $paymentsRepository;
         $this->translator = $translator;

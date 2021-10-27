@@ -18,7 +18,7 @@ use Crm\UsersModule\Repository\UsersRepository;
 use Nette\Application\UI\Form;
 use Nette\Database\Table\ActiveRow;
 use Nette\Forms\Controls\TextInput;
-use Nette\Localization\ITranslator;
+use Nette\Localization\Translator;
 use Nette\Utils\DateTime;
 use Nette\Utils\Html;
 use Nette\Utils\Json;
@@ -64,7 +64,7 @@ class PaymentFormFactory
         AddressesRepository $addressesRepository,
         DataProviderManager $dataProviderManager,
         ApplicationConfig $applicationConfig,
-        ITranslator $translator,
+        Translator $translator,
         SubscriptionTypeHelper $subscriptionTypeHelper
     ) {
         $this->paymentsRepository = $paymentsRepository;

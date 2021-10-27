@@ -4,7 +4,7 @@ namespace Crm\PaymentsModule\Forms;
 
 use Crm\PaymentsModule\Repository\PaymentGatewaysRepository;
 use Nette\Application\UI\Form;
-use Nette\Localization\ITranslator;
+use Nette\Localization\Translator;
 use Tomaj\Form\Renderer\BootstrapRenderer;
 
 class PaymentGatewayFormFactory
@@ -19,7 +19,7 @@ class PaymentGatewayFormFactory
 
     public function __construct(
         PaymentGatewaysRepository $paymentGatewaysRepository,
-        ITranslator $translator
+        Translator $translator
     ) {
         $this->paymentGatewaysRepository = $paymentGatewaysRepository;
         $this->translator = $translator;

@@ -9,7 +9,7 @@ use Crm\PaymentsModule\MailConfirmation\ParsedMailLogsRepository;
 use Crm\PaymentsModule\Repository\PaymentsRepository;
 use Crm\PaymentsModule\Repository\RecurrentPaymentsRepository;
 use Nette\Application\BadRequestException;
-use Nette\Localization\ITranslator;
+use Nette\Localization\Translator;
 use Nette\Utils\DateTime;
 
 /**
@@ -35,7 +35,7 @@ class UserPaymentsListing extends BaseWidget
 
     public function __construct(
         WidgetManager $widgetManager,
-        ITranslator $translator,
+        Translator $translator,
         PaymentsRepository $paymentsRepository,
         RecurrentPaymentsRepository $recurrentPaymentsRepository,
         ParsedMailLogsRepository $parsedMailLogsRepository

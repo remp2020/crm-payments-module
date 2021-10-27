@@ -7,7 +7,7 @@ use Crm\PaymentsModule\Repository\PaymentMetaRepository;
 use Nette\Application\LinkGenerator;
 use Nette\Database\Table\ActiveRow;
 use Nette\Http\Response;
-use Nette\Localization\ITranslator;
+use Nette\Localization\Translator;
 use Nette\Utils\Strings;
 use Omnipay\CardPay\Gateway;
 use Omnipay\CardPay\Message\CancelAuthorizeRequest;
@@ -27,7 +27,7 @@ class CardPayAuthorization extends GatewayAbstract implements AuthorizationInter
         LinkGenerator $linkGenerator,
         ApplicationConfig $applicationConfig,
         Response $httpResponse,
-        ITranslator $translator,
+        Translator $translator,
         PaymentMetaRepository $paymentMetaRepository
     ) {
         parent::__construct($linkGenerator, $applicationConfig, $httpResponse, $translator);

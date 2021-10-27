@@ -9,7 +9,7 @@ use Crm\SubscriptionsModule\DataProvider\SubscriptionFormDataProviderInterface;
 use Crm\SubscriptionsModule\Repository\SubscriptionsRepository;
 use Nette\Application\UI\Form;
 use Nette\Forms\Controls\TextInput;
-use Nette\Localization\ITranslator;
+use Nette\Localization\Translator;
 use Nette\Utils\DateTime;
 use Nette\Utils\Html;
 use Tracy\Debugger;
@@ -25,7 +25,7 @@ class SubscriptionFormDataProvider implements SubscriptionFormDataProviderInterf
     private $userDateHelper;
 
     public function __construct(
-        ITranslator $translator,
+        Translator $translator,
         PaymentsRepository $paymentsRepository,
         SubscriptionsRepository $subscriptionsRepository,
         UserDateHelper $userDateHelper

@@ -6,13 +6,13 @@ use Crm\ApplicationModule\DataProvider\DataProviderException;
 use Crm\ApplicationModule\Graphs\Criteria;
 use Crm\ApplicationModule\Graphs\GraphDataItem;
 use Crm\SubscriptionsModule\DataProvider\EndingSubscriptionsDataProviderInterface;
-use Nette\Localization\ITranslator;
+use Nette\Localization\Translator;
 
 class SubscriptionsWithoutExtensionEndingWithinPeriodDataProvider implements EndingSubscriptionsDataProviderInterface
 {
     private $translator;
 
-    public function __construct(ITranslator $translator)
+    public function __construct(Translator $translator)
     {
         $this->translator = $translator;
     }

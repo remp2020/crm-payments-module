@@ -5,7 +5,7 @@ namespace Crm\PaymentsModule\Components;
 use Crm\ApplicationModule\Widget\BaseWidget;
 use Crm\ApplicationModule\Widget\WidgetManager;
 use Crm\PaymentsModule\Repository\PaymentsRepository;
-use Nette\Localization\ITranslator;
+use Nette\Localization\Translator;
 
 /**
  * This widget allow to edit payment status in case status is other than `paid`.
@@ -20,13 +20,13 @@ class ChangePaymentStatus extends BaseWidget
     /** @var PaymentsRepository */
     private $paymentsRepository;
 
-    /** @var ITranslator */
+    /** @var Translator */
     private $translator;
 
     public function __construct(
         WidgetManager $widgetManager,
         PaymentsRepository $paymentsRepository,
-        ITranslator $translator
+        Translator $translator
     ) {
         parent::__construct($widgetManager);
         $this->paymentsRepository = $paymentsRepository;

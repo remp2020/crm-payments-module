@@ -6,7 +6,7 @@ use Crm\ApplicationModule\Widget\BaseWidget;
 use Crm\ApplicationModule\Widget\WidgetManager;
 use Crm\PaymentsModule\Repository\PaymentsRepository;
 use Crm\SubscriptionsModule\Components\IWidgetLegend;
-use Nette\Localization\ITranslator;
+use Nette\Localization\Translator;
 use Nette\Utils\DateTime;
 
 /**
@@ -26,7 +26,7 @@ class PaidSubscriptionsWithoutExtensionEndingWithinPeriodWidget extends BaseWidg
     public function __construct(
         WidgetManager $widgetManager,
         PaymentsRepository $paymentsRepository,
-        ITranslator $translator
+        Translator $translator
     ) {
         parent::__construct($widgetManager);
         $this->paymentsRepository = $paymentsRepository;

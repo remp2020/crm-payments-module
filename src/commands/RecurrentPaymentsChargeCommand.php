@@ -21,7 +21,7 @@ use Crm\PaymentsModule\Repository\PaymentsRepository;
 use Crm\PaymentsModule\Repository\RecurrentPaymentsRepository;
 use Crm\SubscriptionsModule\PaymentItem\SubscriptionTypePaymentItem;
 use League\Event\Emitter;
-use Nette\Localization\ITranslator;
+use Nette\Localization\Translator;
 use Nette\Utils\DateTime;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;
@@ -60,7 +60,7 @@ class RecurrentPaymentsChargeCommand extends Command
         ApplicationConfig $applicationConfig,
         RecurrentPaymentsResolver $recurrentPaymentsResolver,
         RecurrentPaymentsProcessor $recurrentPaymentsProcessor,
-        ITranslator $translator
+        Translator $translator
     ) {
         parent::__construct();
         $this->recurrentPaymentsRepository = $recurrentPaymentsRepository;

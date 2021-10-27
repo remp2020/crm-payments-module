@@ -6,7 +6,7 @@ use Crm\PaymentsModule\Repository\PaymentsRepository;
 use Crm\SubscriptionsModule\Events\SubscriptionPreUpdateEvent;
 use League\Event\AbstractListener;
 use League\Event\EventInterface;
-use Nette\Localization\ITranslator;
+use Nette\Localization\Translator;
 
 class SubscriptionPreUpdateHandler extends AbstractListener
 {
@@ -16,7 +16,7 @@ class SubscriptionPreUpdateHandler extends AbstractListener
 
     public function __construct(
         PaymentsRepository $paymentsRepository,
-        ITranslator $translator
+        Translator $translator
     ) {
         $this->paymentsRepository = $paymentsRepository;
         $this->translator = $translator;

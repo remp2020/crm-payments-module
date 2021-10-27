@@ -6,7 +6,7 @@ use Crm\ApplicationModule\Widget\BaseWidget;
 use Crm\ApplicationModule\Widget\WidgetManager;
 use Crm\PaymentsModule\Repository\RecurrentPaymentsRepository;
 use Nette\Application\BadRequestException;
-use Nette\Localization\ITranslator;
+use Nette\Localization\Translator;
 
 /**
  * This widgets fetches and renders bootstrap table with all duplicate recurrent payments.
@@ -21,13 +21,13 @@ class DuplicateRecurrentPayments extends BaseWidget
     /** @var RecurrentPaymentsRepository */
     private $recurrentPaymentsRepository;
 
-    /** @var ITranslator */
+    /** @var Translator */
     private $translator;
 
     public function __construct(
         WidgetManager $widgetManager,
         RecurrentPaymentsRepository $recurrentPaymentsRepository,
-        ITranslator $translator
+        Translator $translator
     ) {
         parent::__construct($widgetManager);
         $this->recurrentPaymentsRepository = $recurrentPaymentsRepository;

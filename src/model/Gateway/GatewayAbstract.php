@@ -8,7 +8,7 @@ use Crm\PaymentsModule\RecurrentPaymentFailStop;
 use Crm\PaymentsModule\RecurrentPaymentFailTry;
 use Nette\Application\LinkGenerator;
 use Nette\Http\Response;
-use Nette\Localization\ITranslator;
+use Nette\Localization\Translator;
 
 abstract class GatewayAbstract implements PaymentInterface
 {
@@ -31,7 +31,7 @@ abstract class GatewayAbstract implements PaymentInterface
         LinkGenerator $linkGenerator,
         ApplicationConfig $applicationConfig,
         Response $httpResponse,
-        ITranslator $translator
+        Translator $translator
     ) {
         $this->linkGenerator = $linkGenerator;
         $this->applicationConfig = $applicationConfig;
