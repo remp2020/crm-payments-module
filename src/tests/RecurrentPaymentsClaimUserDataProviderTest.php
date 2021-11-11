@@ -14,6 +14,8 @@ use Crm\PaymentsModule\Seeders\PaymentGatewaysSeeder;
 use Crm\SubscriptionsModule\Builder\SubscriptionTypeBuilder;
 use Crm\SubscriptionsModule\Repository\SubscriptionTypeItemsRepository;
 use Crm\SubscriptionsModule\Repository\SubscriptionTypesRepository;
+use Crm\SubscriptionsModule\Seeders\SubscriptionExtensionMethodsSeeder;
+use Crm\SubscriptionsModule\Seeders\SubscriptionLengthMethodSeeder;
 use Crm\UsersModule\Repository\UserMetaRepository;
 use Crm\UsersModule\Repository\UsersRepository;
 use Crm\UsersModule\Seeders\UsersSeeder;
@@ -68,7 +70,9 @@ class RecurrentPaymentsClaimUserDataProviderTest extends DatabaseTestCase
     {
         return [
             PaymentGatewaysSeeder::class,
-            UsersSeeder::class
+            UsersSeeder::class,
+            SubscriptionExtensionMethodsSeeder::class,
+            SubscriptionLengthMethodSeeder::class,
         ];
     }
 
