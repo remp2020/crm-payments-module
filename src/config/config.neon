@@ -44,6 +44,7 @@ services:
 	- Crm\PaymentsModule\Components\DeviceUserListingWidget
 	- Crm\PaymentsModule\Components\MonthDonationAmountStatWidget
 	- Crm\PaymentsModule\Components\MonthToDateDonationAmountStatWidget
+	- Crm\PaymentsModule\Components\AddressWidget
 	- Crm\PaymentsModule\Commands\RecurrentPaymentsCardCheck
 	- Crm\PaymentsModule\Commands\RecurrentPaymentsChargeCommand
 	- Crm\PaymentsModule\Commands\CsobMailConfirmationCommand

@@ -240,6 +240,10 @@ class PaymentsModule extends CrmModule
             $this->getInstance(\Crm\PaymentsModule\Components\RefundPaymentsListWidget::class)
         );
         $widgetManager->registerWidget(
+            'frontend.payment.success.bottom',
+            $this->getInstance(\Crm\PaymentsModule\Components\AddressWidget::class),
+        );
+        $widgetManager->registerWidget(
             'segment.detail.statspanel.row',
             $this->getInstance(\Crm\PaymentsModule\Components\AvgMonthPaymentWidget::class)
         );

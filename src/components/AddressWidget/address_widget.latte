@@ -1,0 +1,64 @@
+{block #head}
+    <link rel="stylesheet" type="text/css" href="{$basePath}/layouts/default/css/thank-you.css?v=2">
+{/block}
+
+<div id="address-forms" class="row" style="margin-top: 1em">
+    <div class="col-md-12">
+        <div class="additionalform">
+            <div id="address-forms">
+                {control simpleWidget 'payment.address', $payment}
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+  // Forms registered via widget need to have possibility to save form data on final submit direting user away.
+  // We need to wait for confirmation that forms succeeded and no validation errors occurred.
+  var finishCallbacks = [];
+  var finished = 0;
+  var errorred = 0;
+
+  function registerFormCallback(callback) {
+    finishCallbacks.push(callback);
+    console.log("registered callback")
+  }
+
+  function finishCallback() {
+    finished += 1;
+  }
+
+  function errorCallback() {
+    errorred += 1;
+  }
+
+  function handleFormSaved(headerSelector) {
+    var $header = $(headerSelector),
+      $open = $header.find('.open').hide(),
+      $done = $header.find('.done').show();
+
+    setTimeout(function () {
+      $done.fadeOut(300, function () {
+        $open.fadeIn();
+      });
+    }, 3200);
+  }
+
+  $(function () {
+    $(document).on('click', '.additionalform-header-box', function () {
+      if ($(this).data('toggle') === 'collapse') {
+        // dont intervene with bootstrap collapsing;
+        return;
+      }
+      var target = $(this).data('target');
+      $(target).toggle();
+    });
+
+    var addressForms = document.getElementById('address-forms');
+    if ((addressForms.querySelector('form') !== null)) {
+      document.querySelectorAll('.hide-if-no-forms').forEach(function (element) {
+        element.style.display = 'block';
+      });
+    }
+  });
+</script>
