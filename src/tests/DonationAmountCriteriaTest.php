@@ -11,6 +11,7 @@ use Crm\PaymentsModule\Repository\PaymentsRepository;
 use Crm\PaymentsModule\Scenarios\DonationAmountCriteria;
 use Crm\PaymentsModule\Seeders\PaymentGatewaysSeeder;
 use Crm\SubscriptionsModule\Builder\SubscriptionTypeBuilder;
+use Crm\SubscriptionsModule\Repository\SubscriptionTypesRepository;
 use Crm\SubscriptionsModule\Seeders\SubscriptionExtensionMethodsSeeder;
 use Crm\SubscriptionsModule\Seeders\SubscriptionLengthMethodSeeder;
 use Crm\SubscriptionsModule\Seeders\SubscriptionTypeNamesSeeder;
@@ -23,9 +24,10 @@ class DonationAmountCriteriaTest extends DatabaseTestCase
     {
         return [
             PaymentsRepository::class,
-            PaymentItemsRepository::class,
-            UsersRepository::class,
             PaymentGatewaysRepository::class,
+            PaymentItemsRepository::class,
+            SubscriptionTypesRepository::class,
+            UsersRepository::class,
         ];
     }
 
