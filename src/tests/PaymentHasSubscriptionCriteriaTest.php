@@ -13,10 +13,10 @@ class PaymentHasSubscriptionCriteriaTest extends PaymentsTestCase
 {
     public function requiredRepositories(): array
     {
-        $repositories = parent::requiredRepositories();
-        $repositories[] = SubscriptionsRepository::class;
-        $repositories[] = SubscriptionTypesRepository::class;
-        return $repositories;
+        return array_merge(parent::requiredRepositories(), [
+            SubscriptionsRepository::class,
+            SubscriptionTypesRepository::class,
+        ]);
     }
 
     public function dataProviderForTestPaymentHasSubscriptionCriteria(): array
