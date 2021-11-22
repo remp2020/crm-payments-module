@@ -72,7 +72,7 @@ class IsActiveRecurrentSubscriptionCriteriaTest extends DatabaseTestCase
             $isActiveRecurrentSubscriptionCriteria->addConditions($subscriptionSelection, ['is_active_recurrent_subscription' => $values], $subscriptionRow)
         );
 
-        $this->assertNotFalse($subscriptionSelection->fetch());
+        $this->assertNotNull($subscriptionSelection->fetch());
     }
 
     public function testIsActiveRecurrentSubscriptionWithRecurrentStopped(): void
@@ -121,7 +121,7 @@ class IsActiveRecurrentSubscriptionCriteriaTest extends DatabaseTestCase
             $isActiveRecurrentSubscriptionCriteria->addConditions($subscriptionSelection, ['is_active_recurrent_subscription' => $values], $subscriptionRow)
         );
 
-        $this->assertNotFalse($subscriptionSelection->fetch());
+        $this->assertNotNull($subscriptionSelection->fetch());
     }
 
     public function testIsNotActiveRecurrentSubscriptionWithoutRecurrent(): void
@@ -135,7 +135,7 @@ class IsActiveRecurrentSubscriptionCriteriaTest extends DatabaseTestCase
             $isActiveRecurrentSubscriptionCriteria->addConditions($subscriptionSelection, ['is_active_recurrent_subscription' => $values], $subscriptionRow)
         );
 
-        $this->assertNotFalse($subscriptionSelection->fetch());
+        $this->assertNotNull($subscriptionSelection->fetch());
     }
 
     private function prepareData(bool $isRecurrent, bool $isStoppedBySubscription): array

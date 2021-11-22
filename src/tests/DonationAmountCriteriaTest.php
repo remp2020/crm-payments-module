@@ -54,9 +54,9 @@ class DonationAmountCriteriaTest extends DatabaseTestCase
         $criteria->addConditions($paymentSelection, [DonationAmountCriteria::KEY => $values], $paymentRow);
 
         if ($expectedValue) {
-            $this->assertNotFalse($paymentSelection->fetch());
+            $this->assertNotNull($paymentSelection->fetch());
         } else {
-            $this->assertFalse($paymentSelection->fetch());
+            $this->assertNull($paymentSelection->fetch());
         }
     }
 

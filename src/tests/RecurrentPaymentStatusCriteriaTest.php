@@ -72,7 +72,7 @@ class RecurrentPaymentStatusCriteriaTest extends DatabaseTestCase
         $this->assertTrue(
             $recurrentPaymentStateCriteria->addConditions($recurrentPaymentSelection, [RecurrentPaymentStatusCriteria::KEY => $values], $recurrentPaymentRow)
         );
-        $this->assertNotFalse($recurrentPaymentSelection->fetch());
+        $this->assertNotNull($recurrentPaymentSelection->fetch());
     }
 
     public function testPositiveResultWithMoreSelectedValues(): void
@@ -93,7 +93,7 @@ class RecurrentPaymentStatusCriteriaTest extends DatabaseTestCase
                 $recurrentPaymentRow
             )
         );
-        $this->assertNotFalse($recurrentPaymentSelection->fetch());
+        $this->assertNotNull($recurrentPaymentSelection->fetch());
     }
 
     public function testNegativeResultWithOneSelectedValue(): void
@@ -106,7 +106,7 @@ class RecurrentPaymentStatusCriteriaTest extends DatabaseTestCase
         $this->assertTrue(
             $recurrentPaymentStateCriteria->addConditions($recurrentPaymentSelection, [RecurrentPaymentStateCriteria::KEY => $values], $recurrentPaymentRow)
         );
-        $this->assertFalse($recurrentPaymentSelection->fetch());
+        $this->assertNull($recurrentPaymentSelection->fetch());
     }
 
     public function testNegativeResultWithMoreSelectedValues(): void
@@ -127,7 +127,7 @@ class RecurrentPaymentStatusCriteriaTest extends DatabaseTestCase
                 $recurrentPaymentRow
             )
         );
-        $this->assertFalse($recurrentPaymentSelection->fetch());
+        $this->assertNull($recurrentPaymentSelection->fetch());
     }
 
     private function prepareData(string $recurrentPaymentStatus): array

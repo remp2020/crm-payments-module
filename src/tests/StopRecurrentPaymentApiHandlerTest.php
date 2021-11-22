@@ -89,7 +89,7 @@ class StopRecurrentPaymentApiHandlerTest extends PaymentsTestCase
         $notFoundRecurrentPaymentID = 424242;
         // no recurrent payment created; check it
         $recurrentPayment = $this->recurrentPaymentsRepository->find($notFoundRecurrentPaymentID);
-        $this->assertFalse($recurrentPayment);
+        $this->assertNull($recurrentPayment);
 
         // call API
         $this->handler->setRawPayload(Json::encode(['id' => $notFoundRecurrentPaymentID]));

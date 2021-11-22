@@ -56,7 +56,7 @@ class PaymentGatewayCriteriaTest extends DatabaseTestCase
             [PaymentGatewayCriteria::KEY => (object)['selection' => [BankTransfer::GATEWAY_CODE]]],
             $paymentRow
         ));
-        $this->assertFalse($q->fetch());
+        $this->assertNull($q->fetch());
 
         [$userRow, $paymentRow] = $this->prepareData('user2@example.com', BankTransfer::GATEWAY_CODE);
         $q = $this->paymentsRepository->getTable()->where('payments.id = ?', $paymentRow->id);
@@ -65,7 +65,7 @@ class PaymentGatewayCriteriaTest extends DatabaseTestCase
             [PaymentGatewayCriteria::KEY => (object)['selection' => [BankTransfer::GATEWAY_CODE]]],
             $paymentRow
         ));
-        $this->assertNotFalse($q->fetch());
+        $this->assertNotNull($q->fetch());
     }
 
     private function prepareData(string $userEmail, string $paymentGatewayCode): array

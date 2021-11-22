@@ -89,7 +89,7 @@ class RecurrentPaymentsRepository extends Repository
 
         // check if recurrent payment already exists and return existing instance
         $recurrentPayment = $this->recurrent($payment);
-        if ($recurrentPayment !== false) {
+        if ($recurrentPayment) {
             return $recurrentPayment;
         }
 

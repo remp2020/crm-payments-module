@@ -42,9 +42,9 @@ class PaymentHasSubscriptionCriteriaTest extends PaymentsTestCase
         $criteria->addConditions($paymentSelection, [PaymentHasSubscriptionCriteria::KEY => $values], $paymentRow);
 
         if ($expectedResult) {
-            $this->assertNotFalse($paymentSelection->fetch());
+            $this->assertNotNull($paymentSelection->fetch());
         } else {
-            $this->assertFalse($paymentSelection->fetch());
+            $this->assertNull($paymentSelection->fetch());
         }
     }
 
