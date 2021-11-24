@@ -5,9 +5,7 @@ namespace Crm\PaymentsModule\Events;
 use Crm\PaymentsModule\Repository\PaymentsRepository;
 use Crm\PaymentsModule\Repository\RecurrentPaymentsRepository;
 use Crm\SubscriptionsModule\Repository\SubscriptionsRepository;
-use Crm\UsersModule\Repository\AddressesRepository;
 use League\Event\AbstractListener;
-use League\Event\Emitter;
 use League\Event\EventInterface;
 use Nette\Database\Table\ActiveRow;
 use Nette\Database\Table\IRow;
@@ -18,26 +16,18 @@ class PaymentStatusChangeHandler extends AbstractListener
 {
     private $subscriptionsRepository;
 
-    private $addressesRepository;
-
     private $paymentsRepository;
 
     private $recurrentPaymentsRepository;
 
-    private $emitter;
-
     public function __construct(
         SubscriptionsRepository $subscriptionsRepository,
-        AddressesRepository $addressesRepository,
         PaymentsRepository $paymentsRepository,
-        RecurrentPaymentsRepository $recurrentPaymentsRepository,
-        Emitter $emitter
+        RecurrentPaymentsRepository $recurrentPaymentsRepository
     ) {
         $this->subscriptionsRepository = $subscriptionsRepository;
-        $this->addressesRepository = $addressesRepository;
         $this->paymentsRepository = $paymentsRepository;
         $this->recurrentPaymentsRepository = $recurrentPaymentsRepository;
-        $this->emitter = $emitter;
     }
 
     public function handle(EventInterface $event)
@@ -46,7 +36,7 @@ class PaymentStatusChangeHandler extends AbstractListener
         // hard reload, other handlers could have alter the payment already
         $payment = $this->paymentsRepository->find($payment->id);
 
-        if (in_array($payment->status, [PaymentsRepository::STATUS_REFUND])) {
+        if ($payment->status === PaymentsRepository::STATUS_REFUND) {
             $this->stopRecurrentPayment($payment);
         }
 
