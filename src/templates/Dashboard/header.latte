@@ -8,7 +8,7 @@
 				<li role="presentation" n:class="$presenter->isLinkCurrent('arpu') ? active"><a n:href="arpu">{_payments.admin.stats.menu.arpu}</a></li>
 			{/if}
 
-			{if $user->isAllowed('Payments:Dashboard', 'arpu')}
+			{if $user->isAllowed('Payments:Dashboard', 'detailed')}
 				<li role="presentation" n:class="$presenter->isLinkCurrent('detailed') ? active"><a n:href="detailed">{_payments.admin.stats.menu.detailed}</a></li>
 			{/if}
 		</ul>
