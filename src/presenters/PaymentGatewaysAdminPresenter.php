@@ -6,6 +6,7 @@ use Crm\AdminModule\Presenters\AdminPresenter;
 use Crm\ApplicationModule\Components\Graphs\GoogleLineGraphGroupControlFactoryInterface;
 use Crm\ApplicationModule\Components\Graphs\InlineBarGraph;
 use Crm\ApplicationModule\Graphs\Criteria;
+use Crm\ApplicationModule\Graphs\GraphData;
 use Crm\ApplicationModule\Graphs\GraphDataItem;
 use Crm\PaymentsModule\Components\LastPaymentsControlFactoryInterface;
 use Crm\PaymentsModule\Forms\PaymentGatewayFormFactory;
@@ -16,6 +17,9 @@ use Nette\Application\UI\Multiplier;
 
 class PaymentGatewaysAdminPresenter extends AdminPresenter
 {
+    /** @inject */
+    public GraphData $graphData;
+
     /** @var PaymentGatewaysRepository @inject */
     public $paymentGatewaysRepository;
 
@@ -99,12 +103,11 @@ class PaymentGatewaysAdminPresenter extends AdminPresenter
                         ->setStart('-3 months')
                 );
 
-            $graphData = $this->context->getService('graph_data');
-            $graphData->clear();
-            $graphData->addGraphDataItem($graphDataItem);
-            $graphData->setScaleRange('day');
+            $this->graphData->clear();
+            $this->graphData->addGraphDataItem($graphDataItem);
+            $this->graphData->setScaleRange('day');
 
-            $data = $graphData->getData();
+            $data = $this->graphData->getData();
             if (!empty($data)) {
                 $data = array_pop($data);
             }

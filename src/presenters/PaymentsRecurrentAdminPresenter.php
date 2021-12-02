@@ -6,6 +6,7 @@ use Crm\AdminModule\Presenters\AdminPresenter;
 use Crm\ApplicationModule\Components\Graphs\SmallBarGraphControlFactoryInterface;
 use Crm\ApplicationModule\Components\VisualPaginator;
 use Crm\ApplicationModule\Graphs\Criteria;
+use Crm\ApplicationModule\Graphs\GraphData;
 use Crm\ApplicationModule\Graphs\GraphDataItem;
 use Crm\PaymentsModule\Components\DuplicateRecurrentPaymentsControlFactoryInterface;
 use Crm\PaymentsModule\Forms\RecurrentPaymentFormFactory;
@@ -16,6 +17,9 @@ use Tomaj\Form\Renderer\BootstrapInlineRenderer;
 
 class PaymentsRecurrentAdminPresenter extends AdminPresenter
 {
+    /** @inject */
+    public GraphData $graphData;
+
     /** @var SubscriptionTypesRepository @inject */
     public $subscriptionTypesRepository;
 
@@ -111,7 +115,11 @@ class PaymentsRecurrentAdminPresenter extends AdminPresenter
 
     protected function createComponentFormRecurrentPaymentsSmallBarGraph(SmallBarGraphControlFactoryInterface $factory)
     {
-        return $this->generateSmallBarGraphComponent('active', 'Form', $factory);
+        return $this->generateSmallBarGraphComponent(
+            RecurrentPaymentsRepository::STATE_ACTIVE,
+            'Active',
+            $factory
+        );
     }
 
     private function generateSmallBarGraphComponent($status, $title, SmallBarGraphControlFactoryInterface $factory)
@@ -119,16 +127,16 @@ class PaymentsRecurrentAdminPresenter extends AdminPresenter
         $graphDataItem = new GraphDataItem();
         $graphDataItem->setCriteria((new Criteria())
             ->setTableName('recurrent_payments')
-            ->setWhere("AND recurrent_payments.status = '$status'"));
+            ->setWhere("AND recurrent_payments.state = '$status'"));
 
-        $graphData = $this->context->getService('graph_data');
-        $graphData->addGraphDataItem($graphDataItem);
-        $graphData->setScaleRange('day')
+        $this->graphData->clear();
+        $this->graphData->addGraphDataItem($graphDataItem);
+        $this->graphData->setScaleRange('day')
             ->setStart('-40 days');
 
         $control = $factory->create();
         $control->setGraphTitle($title)
-            ->addSerie($graphData->getData());
+            ->addSerie($this->graphData->getData());
 
         return $control;
     }
