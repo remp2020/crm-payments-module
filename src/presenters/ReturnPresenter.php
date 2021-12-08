@@ -2,7 +2,9 @@
 
 namespace Crm\PaymentsModule\Presenters;
 
+use Crm\ApplicationModule\DataProvider\DataProviderManager;
 use Crm\ApplicationModule\Presenters\FrontendPresenter;
+use Crm\PaymentsModule\DataProvider\PaymentReturnGatewayDataProviderInterface;
 use Crm\PaymentsModule\Gateways\GatewayAbstract;
 use Crm\PaymentsModule\Model\PaymentCompleteRedirectManager;
 use Crm\PaymentsModule\Model\PaymentCompleteRedirectResolver;
@@ -37,6 +39,9 @@ class ReturnPresenter extends FrontendPresenter
     /** @var UserData @inject */
     public $userData;
 
+    /** @var DataProviderManager @inject */
+    public DataProviderManager $dataProviderManager;
+
     /** @persistent */
     public $VS;
 
@@ -67,7 +72,7 @@ class ReturnPresenter extends FrontendPresenter
         $parts = explode('*', $responseString);
         $payment = false;
         foreach ($parts as $pairs) {
-            list($key, $value) = explode(':', $pairs);
+            [$key, $value] = explode(':', $pairs);
             if ($key == 'VS') {
                 $payment = $this->paymentsRepository->findByVs($value);
                 break;
@@ -101,6 +106,13 @@ class ReturnPresenter extends FrontendPresenter
         if (!$payment) {
             $this->resolveRedirect(null, PaymentCompleteRedirectResolver::ERROR);
         }
+
+        // Chance to override gateway code before check
+        $providers = $this->dataProviderManager->getProviders('payments.dataprovider.payment_return_gateway', PaymentReturnGatewayDataProviderInterface::class);
+        foreach ($providers as $provider) {
+            $gatewayCode = $provider->provide(['payment' => $payment]);
+        }
+
         if ($payment->payment_gateway->code !== $gatewayCode) {
             $this->paymentLogsRepository->add(
                 'ERROR',
@@ -110,6 +122,7 @@ class ReturnPresenter extends FrontendPresenter
             );
             $this->resolveRedirect($payment, PaymentCompleteRedirectResolver::ERROR);
         }
+
         return $this->processPayment($payment);
     }
 

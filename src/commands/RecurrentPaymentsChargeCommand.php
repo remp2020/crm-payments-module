@@ -2,7 +2,9 @@
 
 namespace Crm\PaymentsModule\Commands;
 
+use Crm\ApplicationModule\Commands\DecoratedCommandTrait;
 use Crm\ApplicationModule\Config\ApplicationConfig;
+use Crm\PaymentsModule\Events\BeforeRecurrentPaymentChargeEvent;
 use Crm\PaymentsModule\GatewayFactory;
 use Crm\PaymentsModule\GatewayFail;
 use Crm\PaymentsModule\Gateways\ExternallyChargedRecurrentPaymentInterface;
@@ -29,6 +31,8 @@ use Tracy\Debugger;
 
 class RecurrentPaymentsChargeCommand extends Command
 {
+    use DecoratedCommandTrait;
+
     private $recurrentPaymentsRepository;
 
     private $paymentsRepository;
@@ -86,15 +90,10 @@ class RecurrentPaymentsChargeCommand extends Command
     {
         $start = microtime(true);
 
-        $output->writeln('');
-        $output->writeln('<info>***** Recurrent Payment *****</info>');
-        $output->writeln('');
-
         $chargeableRecurrentPayments = $this->recurrentPaymentsRepository->getChargeablePayments();
 
-        $output->writeln('Date: ' . (new DateTime())->format(DATE_RFC3339));
-        $output->writeln('Charging: <info>' . $chargeableRecurrentPayments->count('*') . '</info> payments');
-        $output->writeln('');
+        $this->line('Charging: <info>' . $chargeableRecurrentPayments->count('*') . '</info> payments');
+        $this->line('');
 
         foreach ($chargeableRecurrentPayments as $recurrentPayment) {
             try {
@@ -102,16 +101,14 @@ class RecurrentPaymentsChargeCommand extends Command
             } catch (RecurrentPaymentFastCharge $exception) {
                 $msg = 'RecurringPayment_id: ' . $recurrentPayment->id . ' Card_id: ' . $recurrentPayment->cid . ' User_id: ' . $recurrentPayment->user_id . ' Error: Fast charge';
                 Debugger::log($msg, Debugger::EXCEPTION);
-                $output->writeln('<error>' . $msg . '</error>');
+                $this->error($msg);
                 continue;
             }
 
             $subscriptionType = $this->recurrentPaymentsResolver->resolveSubscriptionType($recurrentPayment);
             $customChargeAmount = $this->recurrentPaymentsResolver->resolveCustomChargeAmount($recurrentPayment);
 
-            if (isset($recurrentPayment->payment_id) && $recurrentPayment->payment_id != null) {
-                $payment = $this->paymentsRepository->find($recurrentPayment->payment_id);
-            } else {
+            if (!isset($recurrentPayment->payment_id) || $recurrentPayment->payment_id === null) {
                 $additionalAmount = 0;
                 $additionalType = null;
                 $parentPayment = $recurrentPayment->parent_payment;
@@ -204,96 +201,104 @@ class RecurrentPaymentsChargeCommand extends Command
                     null,
                     true
                 );
+
+                $this->recurrentPaymentsRepository->update($recurrentPayment, [
+                    'payment_id' => $payment->id,
+                ]);
             }
 
-            $this->recurrentPaymentsRepository->update($recurrentPayment, [
-                'payment_id' => $payment->id,
-            ]);
-
-            /** @var RecurrentPaymentInterface $gateway */
-            $gateway = $this->gatewayFactory->getGateway($payment->payment_gateway->code);
-            try {
-                if ($payment->status === PaymentsRepository::STATUS_PAID) {
-                    $this->recurrentPaymentsProcessor->processChargedRecurrent(
-                        $recurrentPayment,
-                        $payment->status,
-                        $gateway->getResultCode(),
-                        $gateway->getResultMessage(),
-                        $customChargeAmount
-                    );
-                } else {
-                    $result = $gateway->charge($payment, $recurrentPayment->cid);
-                    switch ($result) {
-                        case RecurrentPaymentInterface::CHARGE_OK:
-                            $paymentStatus = PaymentsRepository::STATUS_PAID;
-                            $chargeAt = null;
-                            if ($gateway instanceof ExternallyChargedRecurrentPaymentInterface) {
-                                $paymentStatus = $gateway->getChargedPaymentStatus();
-                                $chargeAt = $gateway->getLatestReceiptExpiration();
-                            }
-                            $this->recurrentPaymentsProcessor->processChargedRecurrent(
-                                $recurrentPayment,
-                                $paymentStatus,
-                                $gateway->getResultCode(),
-                                $gateway->getResultMessage(),
-                                $customChargeAmount,
-                                $chargeAt
-                            );
-                            break;
-                        case RecurrentPaymentInterface::CHARGE_PENDING:
-                            $this->recurrentPaymentsProcessor->processPendingRecurrent($recurrentPayment);
-                            break;
-                        default:
-                            throw new \Exception('unhandled charge result provided by gateway: ' . $result);
-                    }
-                }
-            } catch (RecurrentPaymentFailTry $exception) {
-                $this->recurrentPaymentsProcessor->processFailedRecurrent(
-                    $recurrentPayment,
-                    $gateway->getResultCode(),
-                    $gateway->getResultMessage(),
-                    $customChargeAmount
-                );
-            } catch (RecurrentPaymentFailStop $exception) {
-                $this->recurrentPaymentsProcessor->processStoppedRecurrent(
-                    $recurrentPayment,
-                    $gateway->getResultCode(),
-                    $gateway->getResultMessage()
-                );
-            } catch (GatewayFail $exception) {
-                $this->recurrentPaymentsProcessor->processRecurrentChargeError(
-                    $recurrentPayment,
-                    $exception->getCode(),
-                    $exception->getMessage(),
-                    $customChargeAmount
-                );
-            }
-
-            $this->paymentLogsRepository->add(
-                $gateway->isSuccessful() ? 'OK' : 'ERROR',
-                json_encode($gateway->getResponseData()),
-                'recurring-payment-automatic-charge',
-                $payment->id
-            );
-
-            $now = new DateTime();
-            $output->writeln("[{$now->format(DATE_RFC3339)}] Recurrent payment: #{$recurrentPayment->id} (<comment>cid {$recurrentPayment->cid}</comment>)");
-            $output->writeln("  * status: <info>{$gateway->getResultCode()}</info>");
-            $output->writeln("  * message: {$gateway->getResultMessage()}");
+            $this->chargeRecurrentPayment($recurrentPayment, $customChargeAmount);
         }
 
         $end = microtime(true);
         $duration = $end - $start;
 
-        $output->writeln('');
-        $output->writeln('EndDate: ' . (new DateTime())->format(DATE_RFC3339));
-        $output->writeln('<info>All done. Took ' . round($duration, 2) . ' sec.</info>');
-        $output->writeln('');
+        $this->line('');
+        $this->line('EndDate: ' . (new DateTime())->format(DATE_RFC3339));
+        $this->info('All done. Took ' . round($duration, 2) . ' sec.');
+        $this->line('');
 
         return Command::SUCCESS;
     }
 
-    public function getSubscriptionTypeItemsForCustomChargeAmount($subscriptionType, $customChargeAmount)
+    private function chargeRecurrentPayment($recurrentPayment, $customChargeAmount)
+    {
+        $this->emitter->emit(new BeforeRecurrentPaymentChargeEvent($recurrentPayment->payment, $recurrentPayment->cid)); // ability to modify payment
+        $payment = $this->paymentsRepository->find($recurrentPayment->payment_id); // reload
+
+        /** @var RecurrentPaymentInterface $gateway */
+        $gateway = $this->gatewayFactory->getGateway($payment->payment_gateway->code);
+        try {
+            if ($payment->status === PaymentsRepository::STATUS_PAID) {
+                $this->recurrentPaymentsProcessor->processChargedRecurrent(
+                    $recurrentPayment,
+                    $payment->status,
+                    $gateway->getResultCode(),
+                    $gateway->getResultMessage(),
+                    $customChargeAmount
+                );
+            } else {
+                $result = $gateway->charge($payment, $recurrentPayment->cid);
+                switch ($result) {
+                    case RecurrentPaymentInterface::CHARGE_OK:
+                        $paymentStatus = PaymentsRepository::STATUS_PAID;
+                        $chargeAt = null;
+                        if ($gateway instanceof ExternallyChargedRecurrentPaymentInterface) {
+                            $paymentStatus = $gateway->getChargedPaymentStatus();
+                            $chargeAt = $gateway->getLatestReceiptExpiration();
+                        }
+                        $this->recurrentPaymentsProcessor->processChargedRecurrent(
+                            $recurrentPayment,
+                            $paymentStatus,
+                            $gateway->getResultCode(),
+                            $gateway->getResultMessage(),
+                            $customChargeAmount,
+                            $chargeAt
+                        );
+                        break;
+                    case RecurrentPaymentInterface::CHARGE_PENDING:
+                        $this->recurrentPaymentsProcessor->processPendingRecurrent($recurrentPayment);
+                        break;
+                    default:
+                        throw new \Exception('unhandled charge result provided by gateway: ' . $result);
+                }
+            }
+        } catch (RecurrentPaymentFailTry $exception) {
+            $this->recurrentPaymentsProcessor->processFailedRecurrent(
+                $recurrentPayment,
+                $gateway->getResultCode(),
+                $gateway->getResultMessage(),
+                $customChargeAmount
+            );
+        } catch (RecurrentPaymentFailStop $exception) {
+            $this->recurrentPaymentsProcessor->processStoppedRecurrent(
+                $recurrentPayment,
+                $gateway->getResultCode(),
+                $gateway->getResultMessage()
+            );
+        } catch (GatewayFail $exception) {
+            $this->recurrentPaymentsProcessor->processRecurrentChargeError(
+                $recurrentPayment,
+                $exception->getCode(),
+                $exception->getMessage(),
+                $customChargeAmount
+            );
+        }
+
+        $this->paymentLogsRepository->add(
+            $gateway->isSuccessful() ? 'OK' : 'ERROR',
+            json_encode($gateway->getResponseData()),
+            'recurring-payment-automatic-charge',
+            $payment->id
+        );
+
+        $now = new DateTime();
+        $this->line("[{$now->format(DATE_RFC3339)}] Recurrent payment: #{$recurrentPayment->id} (<comment>cid {$recurrentPayment->cid}</comment>)");
+        $this->line("  * status: <info>{$gateway->getResultCode()}</info>");
+        $this->line("  * message: {$gateway->getResultMessage()}");
+    }
+
+    protected function getSubscriptionTypeItemsForCustomChargeAmount($subscriptionType, $customChargeAmount)
     {
         $items = SubscriptionTypePaymentItem::fromSubscriptionType($subscriptionType);
 

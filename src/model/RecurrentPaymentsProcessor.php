@@ -3,6 +3,7 @@
 namespace Crm\PaymentsModule;
 
 use Crm\ApplicationModule\Config\ApplicationConfig;
+use Crm\PaymentsModule\Events\BeforeRecurrentPaymentChargeEvent;
 use Crm\PaymentsModule\Events\RecurrentPaymentFailEvent;
 use Crm\PaymentsModule\Events\RecurrentPaymentFailTryEvent;
 use Crm\PaymentsModule\Gateways\RecurrentPaymentInterface;
@@ -157,6 +158,9 @@ class RecurrentPaymentsProcessor
 
     public function chargeRecurrentUsingCid(ActiveRow $payment, string $cid, RecurrentPaymentInterface $gateway): bool
     {
+        $this->emitter->emit(new BeforeRecurrentPaymentChargeEvent($payment, $cid)); // ability to modify payment
+        $payment = $this->paymentsRepository->find($payment->id); // reload
+
         try {
             $gateway->charge($payment, $cid);
         } catch (\Exception $e) {

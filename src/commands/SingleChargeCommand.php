@@ -2,12 +2,14 @@
 
 namespace Crm\PaymentsModule\Commands;
 
+use Crm\PaymentsModule\Events\BeforeRecurrentPaymentChargeEvent;
 use Crm\PaymentsModule\GatewayFactory;
 use Crm\PaymentsModule\PaymentItem\PaymentItemContainer;
 use Crm\PaymentsModule\Repository\PaymentsRepository;
 use Crm\PaymentsModule\Repository\RecurrentPaymentsRepository;
 use Crm\SubscriptionsModule\PaymentItem\SubscriptionTypePaymentItem;
 use Crm\SubscriptionsModule\Repository\SubscriptionTypesRepository;
+use League\Event\Emitter;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
@@ -23,17 +25,21 @@ class SingleChargeCommand extends Command
 
     private $subscriptionTypesRepository;
 
+    private Emitter $emitter;
+
     public function __construct(
         RecurrentPaymentsRepository $recurrentPaymentsRepository,
         GatewayFactory $gatewayFactory,
         PaymentsRepository $paymentsRepository,
-        SubscriptionTypesRepository $subscriptionTypesRepository
+        SubscriptionTypesRepository $subscriptionTypesRepository,
+        Emitter $emitter
     ) {
         parent::__construct();
         $this->recurrentPaymentsRepository = $recurrentPaymentsRepository;
         $this->gatewayFactory = $gatewayFactory;
         $this->paymentsRepository = $paymentsRepository;
         $this->subscriptionTypesRepository = $subscriptionTypesRepository;
+        $this->emitter = $emitter;
     }
 
     protected function configure()
@@ -126,7 +132,10 @@ class SingleChargeCommand extends Command
             true
         );
 
-        $gateway = $this->gatewayFactory->getGateway($recurrentPayment->payment_gateway->code);
+        $this->emitter->emit(new BeforeRecurrentPaymentChargeEvent($payment, $recurrentPayment->cid)); // ability to modify payment
+        $payment = $this->paymentsRepository->find($payment->id); // reload
+
+        $gateway = $this->gatewayFactory->getGateway($payment->payment_gateway->code);
         $gateway->charge($payment, $recurrentPayment->cid);
         $this->paymentsRepository->updateStatus($payment, PaymentsRepository::STATUS_PAID);
 

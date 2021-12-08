@@ -2,10 +2,12 @@
 
 namespace Crm\PaymentsModule;
 
+use Crm\PaymentsModule\Events\BeforePaymentBeginEvent;
 use Crm\PaymentsModule\Gateways\AuthorizationInterface;
 use Crm\PaymentsModule\Repository\PaymentLogsRepository;
 use Crm\PaymentsModule\Repository\PaymentsRepository;
 use Crm\PaymentsModule\Repository\RecurrentPaymentsRepository;
+use League\Event\Emitter;
 use Nette\Http\Request;
 use Nette\Utils\Json;
 use Tracy\Debugger;
@@ -13,37 +15,39 @@ use Tracy\ILogger;
 
 class PaymentProcessor
 {
-    /** @var GatewayFactory */
-    private $gatewayFactory;
+    private GatewayFactory $gatewayFactory;
 
-    /** @var PaymentsRepository */
-    private $paymentsRepository;
+    private PaymentsRepository $paymentsRepository;
 
-    /** @var RecurrentPaymentsRepository */
-    private $recurrentPaymentsRepository;
+    private RecurrentPaymentsRepository $recurrentPaymentsRepository;
 
-    /** @var PaymentLogsRepository */
-    private $paymentLogsRepository;
+    private PaymentLogsRepository $paymentLogsRepository;
 
-    /** @var Request */
-    protected $request;
+    protected Request $request;
+
+    private Emitter $emitter;
 
     public function __construct(
         GatewayFactory $gatewayFactory,
         PaymentsRepository $paymentsRepository,
         RecurrentPaymentsRepository $recurrentPaymentsRepository,
         PaymentLogsRepository $paymentLogsRepository,
-        Request $request
+        Request $request,
+        Emitter $emitter
     ) {
         $this->gatewayFactory = $gatewayFactory;
         $this->paymentsRepository = $paymentsRepository;
         $this->recurrentPaymentsRepository = $recurrentPaymentsRepository;
         $this->paymentLogsRepository = $paymentLogsRepository;
         $this->request = $request;
+        $this->emitter = $emitter;
     }
 
     public function begin($payment, $allowRedirect = true)
     {
+        $this->emitter->emit(new BeforePaymentBeginEvent($payment)); // ability to modify payment
+        $payment = $this->paymentsRepository->find($payment->id); // payment could have been altered, reload
+
         $gateway = $this->gatewayFactory->getGateway($payment->payment_gateway->code);
         $gateway->begin($payment);
 
