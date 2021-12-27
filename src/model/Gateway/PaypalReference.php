@@ -20,6 +20,8 @@ use Tracy\ILogger;
 
 class PaypalReference extends GatewayAbstract implements RecurrentPaymentInterface
 {
+    public const GATEWAY_CODE = 'paypal_reference';
+
     /** @var ExpressGateway */
     protected $gateway;
 

@@ -3,7 +3,16 @@
 namespace Crm\PaymentsModule\Seeders;
 
 use Crm\ApplicationModule\Seeders\ISeeder;
+use Crm\PaymentsModule\Gateways\BankTransfer;
 use Crm\PaymentsModule\Gateways\CardPayAuthorization;
+use Crm\PaymentsModule\Gateways\Cardpay;
+use Crm\PaymentsModule\Gateways\Comfortpay;
+use Crm\PaymentsModule\Gateways\Csob;
+use Crm\PaymentsModule\Gateways\CsobOneClick;
+use Crm\PaymentsModule\Gateways\Free;
+use Crm\PaymentsModule\Gateways\Paypal;
+use Crm\PaymentsModule\Gateways\PaypalReference;
+use Crm\PaymentsModule\Gateways\Tatrapay;
 use Crm\PaymentsModule\Repository\PaymentGatewaysRepository;
 use Symfony\Component\Console\Output\OutputInterface;
 
@@ -18,10 +27,10 @@ class PaymentGatewaysSeeder implements ISeeder
 
     public function seed(OutputInterface $output)
     {
-        if (!$this->paymentGatewaysRepository->exists('paypal')) {
+        if (!$this->paymentGatewaysRepository->exists(Paypal::GATEWAY_CODE)) {
             $this->paymentGatewaysRepository->add(
                 'Paypal',
-                'paypal',
+                Paypal::GATEWAY_CODE,
                 10,
                 true
             );
@@ -30,10 +39,10 @@ class PaymentGatewaysSeeder implements ISeeder
             $output->writeln('  * payment gateway <info>paypal</info> exists');
         }
 
-        if (!$this->paymentGatewaysRepository->exists('paypal_reference')) {
+        if (!$this->paymentGatewaysRepository->exists(PaypalReference::GATEWAY_CODE)) {
             $this->paymentGatewaysRepository->add(
                 'Paypal Reference',
-                'paypal_reference',
+                PaypalReference::GATEWAY_CODE,
                 15,
                 true,
                 true
@@ -44,10 +53,10 @@ class PaymentGatewaysSeeder implements ISeeder
         }
 
 
-        if (!$this->paymentGatewaysRepository->exists('cardpay')) {
+        if (!$this->paymentGatewaysRepository->exists(Cardpay::GATEWAY_CODE)) {
             $this->paymentGatewaysRepository->add(
                 'CardPay',
-                'cardpay',
+                Cardpay::GATEWAY_CODE,
                 20,
                 true
             );
@@ -56,10 +65,10 @@ class PaymentGatewaysSeeder implements ISeeder
             $output->writeln('  * payment gateway <info>cardpay</info> exists');
         }
 
-        if (!$this->paymentGatewaysRepository->exists('comfortpay')) {
+        if (!$this->paymentGatewaysRepository->exists(Comfortpay::GATEWAY_CODE)) {
             $this->paymentGatewaysRepository->add(
                 'ComfortPay',
-                'comfortpay',
+                Comfortpay::GATEWAY_CODE,
                 21,
                 true,
                 true
@@ -69,10 +78,10 @@ class PaymentGatewaysSeeder implements ISeeder
             $output->writeln('  * payment gateway <info>comfortpay</info> exists');
         }
 
-        if (!$this->paymentGatewaysRepository->exists('tatrapay')) {
+        if (!$this->paymentGatewaysRepository->exists(Tatrapay::GATEWAY_CODE)) {
             $this->paymentGatewaysRepository->add(
                 'TatraPay',
-                'tatrapay',
+                Tatrapay::GATEWAY_CODE,
                 30,
                 true
             );
@@ -81,10 +90,10 @@ class PaymentGatewaysSeeder implements ISeeder
             $output->writeln('  * payment gateway <info>tatrapay</info> exists');
         }
 
-        if (!$this->paymentGatewaysRepository->exists('bank_transfer')) {
+        if (!$this->paymentGatewaysRepository->exists(BankTransfer::GATEWAY_CODE)) {
             $this->paymentGatewaysRepository->add(
                 'Bankový prevod',
-                'bank_transfer',
+                BankTransfer::GATEWAY_CODE,
                 40,
                 true
             );
@@ -93,10 +102,10 @@ class PaymentGatewaysSeeder implements ISeeder
             $output->writeln('  * payment gateway <info>bank_transfer</info> exists');
         }
 
-        if (!$this->paymentGatewaysRepository->exists('csob')) {
+        if (!$this->paymentGatewaysRepository->exists(Csob::GATEWAY_CODE)) {
             $this->paymentGatewaysRepository->add(
                 'ČSOB',
-                'csob',
+                Csob::GATEWAY_CODE,
                 22,
                 true
             );
@@ -105,10 +114,10 @@ class PaymentGatewaysSeeder implements ISeeder
             $output->writeln('  * payment gateway <info>csob</info> exists');
         }
 
-        if (!$this->paymentGatewaysRepository->exists('csob_one_click')) {
+        if (!$this->paymentGatewaysRepository->exists(CsobOneClick::GATEWAY_CODE)) {
             $this->paymentGatewaysRepository->add(
                 'ČSOB One Click',
-                'csob_one_click',
+                CsobOneClick::GATEWAY_CODE,
                 23,
                 true,
                 true
@@ -117,10 +126,10 @@ class PaymentGatewaysSeeder implements ISeeder
         } else {
             $output->writeln('  * payment gateway <info>csob_one_click</info> exists');
         }
-        if (!$this->paymentGatewaysRepository->exists('free')) {
+        if (!$this->paymentGatewaysRepository->exists(Free::GATEWAY_CODE)) {
             $this->paymentGatewaysRepository->add(
                 'Free',
-                'free',
+                Free::GATEWAY_CODE,
                 10,
                 true
             );

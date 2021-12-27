@@ -6,6 +6,7 @@ use Crm\ApplicationModule\DataProvider\DataProviderException;
 use Crm\ApplicationModule\Tests\DatabaseTestCase;
 use Crm\PaymentsModule\DataProvider\RecurrentPaymentsClaimUserDataProvider;
 use Crm\PaymentsModule\GatewayFactory;
+use Crm\PaymentsModule\Gateways\Paypal;
 use Crm\PaymentsModule\PaymentItem\PaymentItemContainer;
 use Crm\PaymentsModule\Repository\PaymentGatewaysRepository;
 use Crm\PaymentsModule\Repository\PaymentsRepository;
@@ -89,8 +90,8 @@ class RecurrentPaymentsClaimUserDataProviderTest extends DatabaseTestCase
         $this->usersRepository = $this->getRepository(UsersRepository::class);
         $this->gatewayFactory = $this->inject(GatewayFactory::class);
 
-        $this->gatewayFactory->registerGateway('paypal');
-        $paymentGateway = $this->paymentGatewaysRepository->findByCode('paypal');
+        $this->gatewayFactory->registerGateway(Paypal::GATEWAY_CODE);
+        $paymentGateway = $this->paymentGatewaysRepository->findByCode(Paypal::GATEWAY_CODE);
         $this->subscriptionTypeBuilder = $this->inject(SubscriptionTypeBuilder::class);
         $subscriptionType = $this->subscriptionTypeBuilder->createNew()
             ->setNameAndUserLabel('Online mesiac - iba web')

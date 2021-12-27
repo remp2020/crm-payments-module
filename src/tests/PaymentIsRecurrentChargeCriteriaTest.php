@@ -3,6 +3,7 @@
 namespace Crm\PaymentsModule\Tests;
 
 use Crm\ApplicationModule\Tests\DatabaseTestCase;
+use Crm\PaymentsModule\Gateways\Paypal;
 use Crm\PaymentsModule\PaymentItem\PaymentItemContainer;
 use Crm\PaymentsModule\Repository\PaymentGatewaysRepository;
 use Crm\PaymentsModule\Repository\PaymentsRepository;
@@ -83,7 +84,7 @@ class PaymentIsRecurrentChargeCriteriaTest extends DatabaseTestCase
 
         /** @var PaymentGatewaysRepository $paymentGatewaysRepository */
         $paymentGatewaysRepository = $this->getRepository(PaymentGatewaysRepository::class);
-        $paymentGatewayRow = $paymentGatewaysRepository->findBy('code', 'paypal');
+        $paymentGatewayRow = $paymentGatewaysRepository->findBy('code', Paypal::GATEWAY_CODE);
 
         /** @var PaymentsRepository $paymentsRepository */
         $paymentsRepository = $this->getRepository(PaymentsRepository::class);

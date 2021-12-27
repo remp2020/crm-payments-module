@@ -4,7 +4,7 @@ namespace Crm\PaymentsModule\Gateways;
 
 class BankTransfer extends GatewayAbstract
 {
-    const GATEWAY_CODE = 'bank_transfer';
+    public const GATEWAY_CODE = 'bank_transfer';
 
     public function isSuccessful(): bool
     {

@@ -12,6 +12,8 @@ use Omnipay\PayPal\ExpressGateway;
 
 class Paypal extends GatewayAbstract
 {
+    public const GATEWAY_CODE = 'paypal';
+
     /** @var ExpressGateway */
     protected $gateway;
 

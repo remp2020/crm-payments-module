@@ -3,6 +3,7 @@
 namespace Crm\PaymentsModule\Tests;
 
 use Crm\ApplicationModule\Tests\DatabaseTestCase;
+use Crm\PaymentsModule\Gateways\Paypal;
 use Crm\PaymentsModule\PaymentItem\DonationPaymentItem;
 use Crm\PaymentsModule\PaymentItem\PaymentItemContainer;
 use Crm\PaymentsModule\Repository\PaymentGatewaysRepository;
@@ -91,7 +92,7 @@ class DonationAmountCriteriaTest extends DatabaseTestCase
 
         /** @var PaymentGatewaysRepository $paymentGatewaysRepository */
         $paymentGatewaysRepository = $this->getRepository(PaymentGatewaysRepository::class);
-        $paymentGatewayRow = $paymentGatewaysRepository->findBy('code', 'paypal');
+        $paymentGatewayRow = $paymentGatewaysRepository->findBy('code', Paypal::GATEWAY_CODE);
 
 
         /** @var PaymentsRepository $paymentsRepository */

@@ -14,7 +14,7 @@ use Tracy\ILogger;
 
 class Comfortpay extends GatewayAbstract implements RecurrentPaymentInterface
 {
-    const GATEWAY_CODE = 'comfortpay';
+    public const GATEWAY_CODE = 'comfortpay';
 
     /** @var Gateway */
     protected $gateway;

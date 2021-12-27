@@ -3,6 +3,7 @@
 namespace Crm\PaymentsModule\Tests;
 
 use Crm\ApplicationModule\Tests\DatabaseTestCase;
+use Crm\PaymentsModule\Gateways\BankTransfer;
 use Crm\PaymentsModule\PaymentItem\PaymentItemContainer;
 use Crm\PaymentsModule\Repository\PaymentGatewaysRepository;
 use Crm\PaymentsModule\Repository\PaymentsRepository;
@@ -52,16 +53,16 @@ class PaymentGatewayCriteriaTest extends DatabaseTestCase
         $q = $this->paymentsRepository->getTable()->where('payments.id = ?', $paymentRow->id);
         $this->assertTrue($this->paymentGatewayCriteria->addConditions(
             $q,
-            [PaymentGatewayCriteria::KEY => (object)['selection' => ['bank_transfer']]],
+            [PaymentGatewayCriteria::KEY => (object)['selection' => [BankTransfer::GATEWAY_CODE]]],
             $paymentRow
         ));
         $this->assertFalse($q->fetch());
 
-        [$userRow, $paymentRow] = $this->prepareData('user2@example.com', 'bank_transfer');
+        [$userRow, $paymentRow] = $this->prepareData('user2@example.com', BankTransfer::GATEWAY_CODE);
         $q = $this->paymentsRepository->getTable()->where('payments.id = ?', $paymentRow->id);
         $this->assertTrue($this->paymentGatewayCriteria->addConditions(
             $q,
-            [PaymentGatewayCriteria::KEY => (object)['selection' => ['bank_transfer']]],
+            [PaymentGatewayCriteria::KEY => (object)['selection' => [BankTransfer::GATEWAY_CODE]]],
             $paymentRow
         ));
         $this->assertNotFalse($q->fetch());

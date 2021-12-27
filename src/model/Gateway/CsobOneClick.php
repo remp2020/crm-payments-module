@@ -20,6 +20,8 @@ use Tracy\Debugger;
 
 class CsobOneClick extends GatewayAbstract implements RecurrentPaymentInterface
 {
+    public const GATEWAY_CODE = 'csob_one_click';
+
     private const MERCHANT_BLOCKED = 120; // merchant is not authorised to accept payments
     private const MASTERPASS_SERVER_ERROR = 260; // masterPass payment can not be completed due to a technical error
     private const INTERNAL_ERROR = 260; // internal error in request processing

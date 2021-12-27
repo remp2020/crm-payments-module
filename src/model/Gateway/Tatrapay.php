@@ -8,6 +8,8 @@ use Omnipay\TatraPay\Gateway;
 
 class Tatrapay extends GatewayAbstract
 {
+    public const GATEWAY_CODE = 'tatrapay';
+
     /** @var Gateway */
     protected $gateway;
 

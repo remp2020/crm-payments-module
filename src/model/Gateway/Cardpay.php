@@ -8,6 +8,8 @@ use Omnipay\Omnipay;
 
 class Cardpay extends GatewayAbstract
 {
+    public const GATEWAY_CODE = 'cardpay';
+
     /** @var Gateway */
     protected $gateway;
 

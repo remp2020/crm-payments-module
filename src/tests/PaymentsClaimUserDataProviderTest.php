@@ -6,6 +6,7 @@ use Crm\ApplicationModule\DataProvider\DataProviderException;
 use Crm\ApplicationModule\Tests\DatabaseTestCase;
 use Crm\PaymentsModule\DataProvider\PaymentsClaimUserDataProvider;
 use Crm\PaymentsModule\GatewayFactory;
+use Crm\PaymentsModule\Gateways\Paypal;
 use Crm\PaymentsModule\PaymentItem\PaymentItemContainer;
 use Crm\PaymentsModule\Repository\PaymentGatewaysRepository;
 use Crm\PaymentsModule\Repository\PaymentsRepository;
@@ -67,7 +68,7 @@ class PaymentsClaimUserDataProviderTest extends DatabaseTestCase
         $this->unclaimedUser = $this->inject(UnclaimedUser::class);
         $this->usersRepository = $this->getRepository(UsersRepository::class);
         $this->gatewayFactory = $this->inject(GatewayFactory::class);
-        $this->gatewayFactory->registerGateway('paypal');
+        $this->gatewayFactory->registerGateway(Paypal::GATEWAY_CODE);
 
         $this->unclaimedUserObj = $this->unclaimedUser->createUnclaimedUser();
         $this->loggedUser = $this->usersRepository->getByEmail('admin@admin.sk');
@@ -81,7 +82,7 @@ class PaymentsClaimUserDataProviderTest extends DatabaseTestCase
 
     public function testClaimUserPayments(): void
     {
-        $paymentGateway = $this->paymentGatewaysRepository->findByCode('paypal');
+        $paymentGateway = $this->paymentGatewaysRepository->findByCode(Paypal::GATEWAY_CODE);
         $addedPayment = $this->paymentsRepository->add(null, $paymentGateway, $this->unclaimedUserObj, new PaymentItemContainer(), null, 1, null, null, null, 1, null, '154');
 
         $this->dataProvider->provide(['unclaimedUser' => $this->unclaimedUserObj, 'loggedUser' => $this->loggedUser]);

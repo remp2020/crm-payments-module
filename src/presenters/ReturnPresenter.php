@@ -15,6 +15,7 @@ use Crm\PaymentsModule\Repository\PaymentsRepository;
 use Crm\UsersModule\Repository\UserMetaRepository;
 use Crm\UsersModule\Repository\UsersRepository;
 use Crm\UsersModule\User\UserData;
+use Crm\ViamoModule\Gateways\Viamo;
 
 class ReturnPresenter extends FrontendPresenter
 {
@@ -88,7 +89,7 @@ class ReturnPresenter extends FrontendPresenter
             $this->resolveRedirect(null, PaymentCompleteRedirectResolver::ERROR);
         }
 
-        if ($payment->payment_gateway->code != 'viamo') {
+        if ($payment->payment_gateway->code != Viamo::GATEWAY_CODE) {
             $this->paymentLogsRepository->add(
                 'ERROR',
                 "Return to wrong payment type 'viamo'",

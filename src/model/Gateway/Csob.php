@@ -12,6 +12,8 @@ use Omnipay\Omnipay;
 
 class Csob extends GatewayAbstract
 {
+    public const GATEWAY_CODE = 'csob';
+
     /** @var \Omnipay\Csob\Gateway */
     protected $gateway;
 

@@ -4,6 +4,7 @@ namespace Crm\PaymentsModule\Gateways;
 
 class Free extends GatewayAbstract
 {
+    public const GATEWAY_CODE = 'free';
 
     protected function initialize()
     {
