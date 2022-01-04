@@ -440,6 +440,8 @@ admin:
 			label: Platba má priradené predplatné
 		donation_amount:
 			label: Darovaná suma
+		payment_has_item_type:
+			label: Platba má položky typu
 
 form:
 	payment_gateway:

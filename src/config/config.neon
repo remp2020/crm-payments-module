@@ -88,15 +88,16 @@ services:
 	- Crm\PaymentsModule\Scenarios\PaymentIsRecurrentChargeCriteria
 	- Crm\PaymentsModule\Scenarios\IsActiveRecurrentSubscriptionCriteria
 	- Crm\PaymentsModule\Scenarios\PaymentGatewayCriteria
+	- Crm\PaymentsModule\Scenarios\RecurrentPaymentStateCriteria
+	- Crm\PaymentsModule\Scenarios\PaymentHasSubscriptionCriteria
+	- Crm\PaymentsModule\Scenarios\DonationAmountCriteria
+	- Crm\PaymentsModule\Scenarios\PaymentHasItemTypeCriteria
 	- Crm\PaymentsModule\Segment\AmountCriteria
 	- Crm\PaymentsModule\Segment\StatusCriteria
 	- Crm\PaymentsModule\Segment\ReferenceCriteria
 	- Crm\PaymentsModule\Seeders\ConfigsSeeder
 	- Crm\PaymentsModule\Seeders\PaymentGatewaysSeeder
 	- Crm\PaymentsModule\Seeders\SegmentsSeeder
-	- Crm\PaymentsModule\Scenarios\RecurrentPaymentStateCriteria
-	- Crm\PaymentsModule\Scenarios\PaymentHasSubscriptionCriteria
-	- Crm\PaymentsModule\Scenarios\DonationAmountCriteria
 
 	# events
 	- Crm\PaymentsModule\Events\PaymentStatusChangeHandler

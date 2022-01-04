@@ -43,6 +43,7 @@ use Crm\PaymentsModule\Repository\PaymentsRepository;
 use Crm\PaymentsModule\Scenarios\DonationAmountCriteria;
 use Crm\PaymentsModule\Scenarios\IsActiveRecurrentSubscriptionCriteria;
 use Crm\PaymentsModule\Scenarios\PaymentGatewayCriteria;
+use Crm\PaymentsModule\Scenarios\PaymentHasItemTypeCriteria;
 use Crm\PaymentsModule\Scenarios\PaymentHasSubscriptionCriteria;
 use Crm\PaymentsModule\Scenarios\PaymentIsRecurrentChargeCriteria;
 use Crm\PaymentsModule\Scenarios\PaymentStatusCriteria;
@@ -350,6 +351,7 @@ class PaymentsModule extends CrmModule
         $scenariosCriteriaStorage->register('payment', PaymentGatewayCriteria::KEY, $this->getInstance(PaymentGatewayCriteria::class));
         $scenariosCriteriaStorage->register('payment', PaymentHasSubscriptionCriteria::KEY, $this->getInstance(PaymentHasSubscriptionCriteria::class));
         $scenariosCriteriaStorage->register('payment', DonationAmountCriteria::KEY, $this->getInstance(DonationAmountCriteria::class));
+        $scenariosCriteriaStorage->register('payment', PaymentHasItemTypeCriteria::KEY, $this->getInstance(PaymentHasItemTypeCriteria::class));
         $scenariosCriteriaStorage->register('subscription', IsActiveRecurrentSubscriptionCriteria::KEY, $this->getInstance(IsActiveRecurrentSubscriptionCriteria::class));
         $scenariosCriteriaStorage->register('recurrent_payment', RecurrentPaymentStateCriteria::KEY, $this->getInstance(RecurrentPaymentStateCriteria::class));
         $scenariosCriteriaStorage->register('recurrent_payment', RecurrentPaymentStatusCriteria::KEY, $this->getInstance(RecurrentPaymentStatusCriteria::class));

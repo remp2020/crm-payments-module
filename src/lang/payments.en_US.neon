@@ -434,7 +434,9 @@ admin:
 		payment_has_subscription:
 			label: The payment has an associated subscription
 		donation_amount:
-			label: Darovaná suma
+			label: Donated amount
+		payment_has_item_type:
+			label: Payment has items of type
 
 form:
 	payment_gateway:
