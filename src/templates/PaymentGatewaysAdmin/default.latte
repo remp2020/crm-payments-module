@@ -35,10 +35,6 @@
               {if $type->is_recurrent}
                 <span class="label label-primary">{_payments.admin.payment_gateways.is_recurrent}</span>
               {/if}
-
-              <span class="pull-right">
-                {control smallGraph-$type->id}
-              </span>
             </td>
             <td>
               <code>{$type->code}</code>
