@@ -10,9 +10,12 @@ class SalesFunnelIdStatusAmountIndex extends AbstractMigration
             ->addIndex(['sales_funnel_id', 'status', 'amount'])
             ->save();
 
-        $this->table('payments')
-            ->removeIndex(['sales_funnel_id'])
-            ->save();
+        $indexExists = $this->table('payments')->hasIndex(['sales_funnel_id']);
+        if ($indexExists) {
+            $this->table('payments')
+                ->removeIndex(['sales_funnel_id'])
+                ->save();
+        }
     }
 
     public function down()
