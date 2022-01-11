@@ -21,7 +21,7 @@ class StopRecurrentPaymentApiHandler extends ApiHandler
         $this->recurrentPaymentsRepository = $recurrentPaymentsRepository;
     }
 
-    public function params()
+    public function params(): array
     {
         return [];
     }

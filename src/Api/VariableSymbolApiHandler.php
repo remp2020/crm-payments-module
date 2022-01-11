@@ -18,7 +18,7 @@ class VariableSymbolApiHandler extends ApiHandler
         $this->variableSymbol = $variableSymbol;
     }
 
-    public function params()
+    public function params(): array
     {
         return [];
     }

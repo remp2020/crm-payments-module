@@ -20,7 +20,7 @@ class ListRecurrentPaymentsApiHandler extends ApiHandler
         $this->recurrentPaymentsRepository = $recurrentPaymentsRepository;
     }
 
-    public function params()
+    public function params(): array
     {
         return [
             new InputParam(
