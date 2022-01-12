@@ -30,6 +30,7 @@ class ReactivateRecurrentPaymentApiHandler extends ApiHandler
     public function handle(array $params): ApiResponseInterface
     {
         // authorize user
+        $authorization = $this->getAuthorization();
         $data = $authorization->getAuthorizedData();
         if (!isset($data['token']) || !isset($data['token']->user) || empty($data['token']->user)) {
             $response = new JsonResponse([
