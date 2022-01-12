@@ -4,9 +4,9 @@ namespace Crm\PaymentsModule\Api;
 
 use Crm\ApiModule\Api\ApiHandler;
 use Crm\ApiModule\Api\JsonResponse;
-use Crm\ApiModule\Authorization\ApiAuthorizationInterface;
 use Crm\ApiModule\Params\InputParam;
 use Crm\ApiModule\Params\ParamsProcessor;
+use Crm\ApiModule\Response\ApiResponseInterface;
 use Crm\PaymentsModule\Repository\RecurrentPaymentsRepository;
 use Nette\Http\Response;
 use Nette\Utils\DateTime;
@@ -38,11 +38,8 @@ class ListRecurrentPaymentsApiHandler extends ApiHandler
         ];
     }
 
-    /**
-     * @param ApiAuthorizationInterface $authorization
-     * @return \Nette\Application\Response
-     */
-    public function handle(ApiAuthorizationInterface $authorization)
+
+    public function handle(array $params): ApiResponseInterface
     {
         $data = $authorization->getAuthorizedData();
         if (!isset($data['token']) || !isset($data['token']->user) || empty($data['token']->user)) {

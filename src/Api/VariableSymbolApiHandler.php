@@ -4,7 +4,7 @@ namespace Crm\PaymentsModule\Api;
 
 use Crm\ApiModule\Api\ApiHandler;
 use Crm\ApiModule\Api\JsonResponse;
-use Crm\ApiModule\Authorization\ApiAuthorizationInterface;
+use Crm\ApiModule\Response\ApiResponseInterface;
 use Crm\PaymentsModule\VariableSymbolInterface;
 use Nette\Http\Response;
 
@@ -23,11 +23,8 @@ class VariableSymbolApiHandler extends ApiHandler
         return [];
     }
 
-    /**
-     * @param ApiAuthorizationInterface $authorization
-     * @return \Nette\Application\Response
-     */
-    public function handle(ApiAuthorizationInterface $authorization)
+
+    public function handle(array $params): ApiResponseInterface
     {
         $response = new JsonResponse(['status' => 'ok', 'variable_symbol' => $this->variableSymbol->getNew(null)]);
         $response->setHttpCode(Response::S200_OK);
