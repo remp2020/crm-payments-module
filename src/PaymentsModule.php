@@ -443,6 +443,7 @@ class PaymentsModule extends CrmModule
         $eventsStorage->register('recurrent_payment_renewed', Events\RecurrentPaymentRenewedEvent::class, true);
         $eventsStorage->register('card_expires_this_month', Events\RecurrentPaymentCardExpiredEvent::class);
         $eventsStorage->register('recurrent_payment_state_changed', Events\RecurrentPaymentStateChangedEvent::class, true);
+        $eventsStorage->register('before_recurrent_payment_charge', Events\BeforeRecurrentPaymentChargeEvent::class, true);
     }
 
     public function cache(OutputInterface $output, array $tags = [])
