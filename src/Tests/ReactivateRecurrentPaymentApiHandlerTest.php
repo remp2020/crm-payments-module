@@ -43,7 +43,8 @@ class ReactivateRecurrentPaymentApiHandlerTest extends PaymentsTestCase
 
         // call API
         $this->handler->setRawPayload(json_encode(['id' => $recurrentPayment->id]));
-        $response = $this->handler->handle($this->getTestAuthorization($user));
+        $this->handler->setAuthorization($this->getTestAuthorization($user));
+        $response = $this->handler->handle([]); // TODO: fix params
 
         // validate API response
         $this->assertEquals(JsonResponse::class, get_class($response));
@@ -74,7 +75,8 @@ class ReactivateRecurrentPaymentApiHandlerTest extends PaymentsTestCase
         $this->assertEquals(RecurrentPaymentsRepository::STATE_USER_STOP, $recurrentPayment->state);
 
         // call API
-        $response = $this->handler->handle($this->getTestAuthorization($user));
+        $this->handler->setAuthorization($this->getTestAuthorization($user));
+        $response = $this->handler->handle([]); // TODO: fix params
 
         // validate API response
         $this->assertEquals(JsonResponse::class, get_class($response));
@@ -95,7 +97,8 @@ class ReactivateRecurrentPaymentApiHandlerTest extends PaymentsTestCase
 
         // call API
         $this->handler->setRawPayload(json_encode(['id' => $notFoundRecurrentPaymentID]));
-        $response = $this->handler->handle($this->getTestAuthorization($user));
+        $this->handler->setAuthorization($this->getTestAuthorization($user));
+        $response = $this->handler->handle([]); // TODO: fix params
 
         // validate API response
         $this->assertEquals(JsonResponse::class, get_class($response));
@@ -119,7 +122,8 @@ class ReactivateRecurrentPaymentApiHandlerTest extends PaymentsTestCase
 
         // call API
         $this->handler->setRawPayload(json_encode(['id' => $recurrentPayment->id]));
-        $response = $this->handler->handle($this->getTestAuthorization($user));
+        $this->handler->setAuthorization($this->getTestAuthorization($user));
+        $response = $this->handler->handle([]); // TODO: fix params
 
         // validate API response
         $this->assertEquals(JsonResponse::class, get_class($response));
@@ -152,7 +156,8 @@ class ReactivateRecurrentPaymentApiHandlerTest extends PaymentsTestCase
 
         // call API with mismatched recurrent payment (1) and user (2)
         $this->handler->setRawPayload(json_encode(['id' => $recurrentPayment1->id]));
-        $response = $this->handler->handle($this->getTestAuthorization($user2));
+        $this->handler->setAuthorization($this->getTestAuthorization($user2));
+        $response = $this->handler->handle([]); // TODO: fix params
 
         // validate API response
         $this->assertEquals(JsonResponse::class, get_class($response));
@@ -180,7 +185,8 @@ class ReactivateRecurrentPaymentApiHandlerTest extends PaymentsTestCase
 
         // call API
         $this->handler->setRawPayload(json_encode(['id' => $recurrentPayment->id]));
-        $response = $this->handler->handle($this->getTestAuthorization($user));
+        $this->handler->setAuthorization($this->getTestAuthorization($user));
+        $response = $this->handler->handle([]); // TODO: fix params
 
         // validate API response
         $this->assertEquals(JsonResponse::class, get_class($response));
@@ -209,7 +215,8 @@ class ReactivateRecurrentPaymentApiHandlerTest extends PaymentsTestCase
 
         // call API
         $this->handler->setRawPayload(json_encode(['id' => $recurrentPayment->id]));
-        $response = $this->handler->handle($this->getTestAuthorization($user));
+        $this->handler->setAuthorization($this->getTestAuthorization($user));
+        $response = $this->handler->handle([]); // TODO: fix params
 
         // validate API response
         $this->assertEquals(JsonResponse::class, get_class($response));
