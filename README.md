@@ -121,7 +121,7 @@ to extend it with widgets.
 After the payment, user is directed back to the CRM. Each gateway provides its own URL where user is directed for
 payment completion processing.
 
-If the payment is successful, payments module uses [`PaymentCompleteRedirectManager`](extensions/payments-module/src/model/SuccessPageResolver/PaymentCompleteRedirectManager.php)
+If the payment is successful, payments module uses [`PaymentCompleteRedirectManager`](extensions/payments-module/src/Models/SuccessPageResolver/PaymentCompleteRedirectManager.php)
 to determine what kind of success page the user should see. If `crm-salesfunnel-module` is used, user is directed
 to the success page registered by the module.
 
@@ -170,7 +170,7 @@ If gateway supports it, CRM fetches expiration date for each `cid` (effectively 
 7 2 1 * * php /var/www/html/bin/command.php payments:stop_expired_recurrent_payments
 ```
 
-When recurrent payment is stopped, [`Crm\PaymentsModule\Events\RecurrentPaymentCardExpiredEvent`](./src/events/RecurrentPaymentCardExpiredEvent.php) is emitted. By default, `PaymentsModule` checks if there's another active recurring payment for user. If there isn't, it sends `NotificationEvent` with `card_expires_this_month` template code.
+When recurrent payment is stopped, [`Crm\PaymentsModule\Events\RecurrentPaymentCardExpiredEvent`](./src/Events/RecurrentPaymentCardExpiredEvent.php) is emitted. By default, `PaymentsModule` checks if there's another active recurring payment for user. If there isn't, it sends `NotificationEvent` with `card_expires_this_month` template code.
 
 If you're not satisfied with the default implementation, you can remove the default handler by unregistering it in your module definition:
 
@@ -192,14 +192,14 @@ class FooModule extends Crm\ApplicationModule\CrmModule
 ### Implementing new gateway
 
 You can implement and integrate new gateways to the CRM if necessary. Based on whether you're implementing standard
-or recurrent gateway, you implementation should implement just [`Crm\PaymentsModule\Gateways\PaymentInterface`](./extensions/payments-module/src/model/Gateway/PaymentInterface.php)
-or the former and [`Crm\PaymentsModule\Gateways\RecurrentPaymentInterface`](./extensions/payments-module/src/model/Gateway/RecurrentPaymentInterface.php).
+or recurrent gateway, you implementation should implement just [`Crm\PaymentsModule\Gateways\PaymentInterface`](./extensions/payments-module/src/Models/Gateway/PaymentInterface.php)
+or the former and [`Crm\PaymentsModule\Gateways\RecurrentPaymentInterface`](./extensions/payments-module/src/Models/Gateway/RecurrentPaymentInterface.php).
 
-When implementing a gateway, we recommend extending [`Crm\PaymentsModule\Gateways\GatewayAbstract`](./extensions/payments-module/src/model/Gateway/GatewayAbstract.php)
+When implementing a gateway, we recommend extending [`Crm\PaymentsModule\Gateways\GatewayAbstract`](./extensions/payments-module/src/Models/Gateway/GatewayAbstract.php)
 to avoid implementing parts which are always similar and would cause code duplication.
 
 Once you have your implementation ready, you need to seed it into the database from within seeder in your own module
-(see [PaymentGatewaysSeeder](extensions/payments-module/src/seeders/PaymentGatewaysSeeder.php) as an example)
+(see [PaymentGatewaysSeeder](extensions/payments-module/src/Seeders/PaymentGatewaysSeeder.php) as an example)
 and register it into the application's configuration:
 
 ```neon
@@ -212,7 +212,7 @@ services:
 			- registerGateway(foo, Crm\FooModule\Gateways\Foo)
 ```
 
-Then, add *seeder* that will insert the gateway to database. See [`Crm\PaymentsModule\Seeders\PaymentGatewaysSeeder`](./extensions/payments-module/src/seeders/PaymentGatewaysSeeder.php)
+Then, add *seeder* that will insert the gateway to database. See [`Crm\PaymentsModule\Seeders\PaymentGatewaysSeeder`](./extensions/payments-module/src/Seeders/PaymentGatewaysSeeder.php)
 as an example *seeder* implementation and [register seeders](https://github.com/remp2020/crm-skeleton#registerseeders) section
 of CRM skeleton documentation too see how the seeders should be registered in your module.
 
@@ -277,7 +277,7 @@ services:
 
 When `bank_transfer` is used, user isn't redirected to external payment gateway provider, but CRM displays payment information that user should use to complete the payment manually.
 
-By default, this is handled by [`BankTransferPresenter`](src/presenters/BankTransferPresenter.php), but you can use your own custom screen with transfer information by using your own redirect resolver instead of bank transfers' [default resolver](src/model/SuccessPageResolver/BankTransferPaymentCompleteRedirectResolver.php).
+By default, this is handled by [`BankTransferPresenter`](src/Presenters/BankTransferPresenter.php), but you can use your own custom screen with transfer information by using your own redirect resolver instead of bank transfers' [default resolver](src/Models/SuccessPageResolver/BankTransferPaymentCompleteRedirectResolver.php).
 
 Create the resolver and register it with priority >10 in your `config.neon`.
 
@@ -298,8 +298,8 @@ To support this scenario, we've added possibility to read bank confirmation emai
 based on incoming emails.
 
 The implementation is not universal yet and you'd need to create your own command for checking the mailbox. Please take
-a look at two implementations that we included within this package: confirmation commands for [Tatra banka](extensions/payments-module/src/commands/TatraBankaMailConfirmationCommand.php)
-and for [CSOB](extensions/payments-module/src/commands/CsobMailConfirmationCommand.php).
+a look at two implementations that we included within this package: confirmation commands for [Tatra banka](extensions/payments-module/src/Commands/TatraBankaMailConfirmationCommand.php)
+and for [CSOB](extensions/payments-module/src/Commands/CsobMailConfirmationCommand.php).
 
 ## Upgrades
 
