@@ -43,6 +43,7 @@ class Cardpay extends GatewayAbstract
             'rurl' => $this->generateReturnUrl($payment),
             'aredir' => true,
             'name' =>  $name,
+            'lang' => \Locale::getPrimaryLanguage($payment->user->locale),
         ];
 
         $referenceEmail = $this->applicationConfig->get('comfortpay_rem');
