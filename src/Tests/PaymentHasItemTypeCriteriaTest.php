@@ -55,9 +55,9 @@ class PaymentHasItemTypeCriteriaTest extends DatabaseTestCase
         $criteria->addConditions($paymentSelection, [PaymentHasItemTypeCriteria::KEY => $values], $paymentRow);
 
         if ($expectedValue) {
-            $this->assertNotFalse($paymentSelection->fetch());
+            $this->assertNotNull($paymentSelection->fetch());
         } else {
-            $this->assertFalse($paymentSelection->fetch());
+            $this->assertNull($paymentSelection->fetch());
         }
     }
 
