@@ -51,7 +51,7 @@ class ListRecurrentPaymentsApiHandler extends ApiHandler
         $user = $data['token']->user;
 
         $paramsProcessor = new ParamsProcessor($this->params());
-        $error = $paramsProcessor->isError();
+        $error = $paramsProcessor->hasError();
         if ($error) {
             $response = new JsonResponse(['status' => 'error', 'message' => 'Wrong input - ' . $error]);
             $response->setHttpCode(Response::S400_BAD_REQUEST);
