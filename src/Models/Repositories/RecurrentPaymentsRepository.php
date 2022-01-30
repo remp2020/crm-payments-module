@@ -12,6 +12,7 @@ use Crm\PaymentsModule\Events\RecurrentPaymentRenewedEvent;
 use Crm\PaymentsModule\Events\RecurrentPaymentStateChangedEvent;
 use Crm\PaymentsModule\Events\RecurrentPaymentStoppedByAdminEvent;
 use Crm\PaymentsModule\Events\RecurrentPaymentStoppedByUserEvent;
+use DateTime;
 use Exception;
 use League\Event\Emitter;
 use Nette\Database\Explorer;
@@ -449,5 +450,17 @@ class RecurrentPaymentsRepository extends Repository
         }
 
         return $this->latestSuccessfulRecurrentPayment($previousRecurrentCharge);
+    }
+
+    final public function activeFirstChargeBetween(DateTime $chargeAtFrom, DateTime $chargeAtTo)
+    {
+        $where = [
+            'state' => self::STATE_ACTIVE,
+            'charge_at >=' => $chargeAtFrom,
+            'charge_at <=' => $chargeAtTo,
+            'parent_payment_id.status' => [PaymentsRepository::STATUS_PAID, PaymentsRepository::STATUS_PREPAID]
+        ];
+
+        return $this->getTable()->where($where);
     }
 }

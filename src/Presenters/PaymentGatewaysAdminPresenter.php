@@ -4,22 +4,16 @@ namespace Crm\PaymentsModule\Presenters;
 
 use Crm\AdminModule\Presenters\AdminPresenter;
 use Crm\ApplicationModule\Components\Graphs\GoogleLineGraphGroupControlFactoryInterface;
-use Crm\ApplicationModule\Components\Graphs\InlineBarGraph;
 use Crm\ApplicationModule\Graphs\Criteria;
-use Crm\ApplicationModule\Graphs\GraphData;
 use Crm\ApplicationModule\Graphs\GraphDataItem;
 use Crm\PaymentsModule\Components\LastPaymentsControlFactoryInterface;
 use Crm\PaymentsModule\Forms\PaymentGatewayFormFactory;
 use Crm\PaymentsModule\Repository\PaymentGatewaysRepository;
 use Crm\PaymentsModule\Repository\PaymentsRepository;
 use Nette;
-use Nette\Application\UI\Multiplier;
 
 class PaymentGatewaysAdminPresenter extends AdminPresenter
 {
-    /** @inject */
-    public GraphData $graphData;
-
     /** @var PaymentGatewaysRepository @inject */
     public $paymentGatewaysRepository;
 
@@ -86,36 +80,6 @@ class PaymentGatewaysAdminPresenter extends AdminPresenter
         $control->setPaymentGatewayId($this->params['id']);
         $control->setLimit(100);
         return $control;
-    }
-
-    public function createComponentSmallGraph()
-    {
-        return new Multiplier(function ($id) {
-            $control = new InlineBarGraph;
-
-            $graphDataItem = new GraphDataItem();
-            $graphDataItem
-                ->setCriteria(
-                    (new Criteria())
-                        ->setTableName('payments')
-                        ->setWhere('AND payment_gateway_id = ' . $id)
-                        ->setGroupBy('payment_gateway_id')
-                        ->setStart('-3 months')
-                );
-
-            $this->graphData->clear();
-            $this->graphData->addGraphDataItem($graphDataItem);
-            $this->graphData->setScaleRange('day');
-
-            $data = $this->graphData->getData();
-            if (!empty($data)) {
-                $data = array_pop($data);
-            }
-
-            $control->setGraphTitle($this->translator->translate('payments.admin.payment_gateways.small_graph.title'))
-                ->addSerie($data);
-            return $control;
-        });
     }
 
     protected function createComponentPaymentGatewayGraph(GoogleLineGraphGroupControlFactoryInterface $factory)

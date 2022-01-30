@@ -94,8 +94,9 @@ class PaymentsTestCase extends DatabaseTestCase
     protected function getUser()
     {
         if (!$this->user) {
-            $usersRepository = $this->container->getByType('Crm\UsersModule\Repository\UsersRepository');
-            $this->user = $usersRepository->add('asfsaoihf@afasf.sk', 'q039uewt', '', '', '', 1);
+            /** @var UsersRepository $usersRepository */
+            $usersRepository = $this->container->getByType(UsersRepository::class);
+            $this->user = $usersRepository->add('asfsaoihf@afasf.sk', 'q039uewt');
         }
         return $this->user;
     }

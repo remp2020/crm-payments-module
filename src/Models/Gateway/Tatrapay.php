@@ -3,23 +3,23 @@
 namespace Crm\PaymentsModule\Gateways;
 
 use Nette\Utils\Strings;
-use Omnipay\CardPay\Gateway;
 use Omnipay\Omnipay;
+use Omnipay\TatraPay\Gateway;
 
-class Cardpay extends GatewayAbstract
+class Tatrapay extends GatewayAbstract
 {
-    public const GATEWAY_CODE = 'cardpay';
+    public const GATEWAY_CODE = 'tatrapay';
 
     /** @var Gateway */
     protected $gateway;
 
     protected function initialize()
     {
-        $this->gateway = Omnipay::create('CardPay');
+        $this->gateway = Omnipay::create('TatraPay');
 
-        $this->gateway->setMid($this->applicationConfig->get('cardpay_mid'));
-        $this->gateway->setSharedSecret($this->applicationConfig->get('cardpay_sharedsecret'));
-        $this->gateway->setTestMode(!($this->applicationConfig->get('cardpay_mode') == 'live'));
+        $this->gateway->setMid($this->applicationConfig->get('tatrapay_mid'));
+        $this->gateway->setSharedSecret($this->applicationConfig->get('tatrapay_sharedsecret'));
+        $this->gateway->setTestMode(!($this->applicationConfig->get('tatrapay_mode') == 'live'));
     }
 
     public function begin($payment)
@@ -42,7 +42,8 @@ class Cardpay extends GatewayAbstract
             'currency' => $this->applicationConfig->get('currency'),
             'rurl' => $this->generateReturnUrl($payment),
             'aredir' => true,
-            'name' =>  $name,
+            'name' => $name,
+            'lang' => \Locale::getPrimaryLanguage($payment->user->locale),
         ];
 
         $referenceEmail = $this->applicationConfig->get('comfortpay_rem');
