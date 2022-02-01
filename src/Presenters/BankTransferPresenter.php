@@ -4,11 +4,12 @@ namespace Crm\PaymentsModule\Presenters;
 
 use Crm\ApplicationModule\Presenters\FrontendPresenter;
 use Crm\PaymentsModule\Gateways\BankTransfer;
+use Crm\PaymentsModule\PaymentAwareInterface;
 use Crm\PaymentsModule\Repository\PaymentsRepository;
 use Nette\Application\BadRequestException;
-use Nette\Database\Table\IRow;
+use Nette\Database\Table\ActiveRow;
 
-class BankTransferPresenter extends FrontendPresenter
+class BankTransferPresenter extends FrontendPresenter implements PaymentAwareInterface
 {
     /** @var PaymentsRepository @inject */
     public $paymentsRepository;
@@ -35,7 +36,7 @@ class BankTransferPresenter extends FrontendPresenter
         $this->template->note = 'VS' . $payment->variable_symbol;
     }
 
-    public function getPayment(): IRow
+    public function getPayment(): ?ActiveRow
     {
         $payment = $this->paymentsRepository->findLastByVS($this->id);
         if (!$payment) {

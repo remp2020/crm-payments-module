@@ -1,0 +1,8 @@
+frontend:
+	banktransfer:
+		title: "Állandó átutalási megbízáshoz vagy átutalással történő fizetéshez szükséges adatok"
+		amount: "Összeg"
+		account_number: "Bankszámlaszám"
+		variable_symbol: "Az átutalás egyedi azonosítója (variabilný symbol)"
+		recipient_message: "Üzenet a címzettnek"
+		delay_info: "Az összeg jóváírása egytől két munkanapig tarthat. Az előfizetés az összeg jóváírása után aktiválódik."
