@@ -1,4 +1,484 @@
+menu:
+	stats: Fizetés
+	payments: Fizetés
+	admin_payments: Fizetés
+	gateways: Fizetési átjárók
+	parsed_mails: Elemzett fizetési e-mailek
+	recurrent_payments: Ismétlődő fizetések
+	duplicate_recurrent_payments: Ismétlődő fizetés megkettőzése
+	retention_analysis: Megtartási elemzés
+	exports: Exportok
+
+admin:
+	component:
+		actual_free_subscribers_stat_widget:
+			title: Előfizetők fizetés nélkül
+			help: 'Aktív, fizetés nélküli előfizetéssel rendelkező előfizetők száma. Minden felhasználó egyszer van számolva akárhány előfizetése van.'
+
+		actual_paid_subscribers_stat_widget:
+			title: Előfizetők fizetéssel
+			help: 'Aktív, fizetéses előfizetéssel rendelkező előfizetők száma. Minden felhasználó egyszer van számolva akárhány előfizetése van.'
+
+		actual_nonfree_subscribers_stat_widget:
+			title: Subscribers with paid subscriptions
+			help: "Number of subscribers with active subscription which has type of subscription other than 'free'. Every user is counted only once even though subscriber has more subscriptions."
+
+		change_payment_status:
+			title: Fizetés állapotának változtatása
+			variable_symbol: Változó szimbólum
+			created: Létrehozva
+			status: Állapot
+			change_to: Változtatás erre
+			cancel: Mégsem
+			change_without_notification: Változtatás értesités küldése nélkül
+			change_with_notification: Változtatás és értesités küldése
+			messages:
+				status_changed_successfully: Fizetés állapotának változtatása sikeres
+				status_not_changed: Fizetés állapota nem változott
+
+		device_user_listing_widget:
+			device: Eszköz
+
+		duplicate_recurrent_payments:
+			none_found: Nincs találat
+			id: Azonosító
+			cid: CID
+			created: Létrehozva
+			edited: Szerkesztve
+			next_charge: Következő díjbekérés
+			subscription_type: Előfizetés típusa
+			card_expiration: Kártya lejárati dátuma
+			status: Állapot
+			actions: Műveletek
+			next_subscription: következő
+			stop_recurrent_profile: Ismétlődés leállítása
+			stop_recurrent_profile_confirm: Ismétlődés leállítás megerősítése
+			messages:
+				recurrent_profile_stopped: Ismétlődő fizetés leállítva
+
+		last_payments:
+			title: Utolsó fizetés
+			variable_symbol: Változó szimbólum
+			subscription: Előfizetés
+			amount: Összeg
+			payment_gateway: Fizetési átjáró
+			subscription_type: Előfizetés típusa
+			status: Állapot
+			created: Létrehozva
+			referrer: Hivatkozó
+			actions: Műveletek
+			without_subscription: Előfizetés nélkül
+			edit: Szerkesztés
+			badge_donation: Adomány
+			badge_recurrent: Ismétlődő
+
+		parsed_mails_failed_notification:
+			title: Helytelen összeg érkezett a bankszámlára
+
+		subscribers_with_payment_widget:
+			last_day: Utolsó 24 óra
+			last_days: Utolsó %count% nap
+			description: Fizetéses előfizetők számának különbsége az adott periódusra.
+
+		subscription_type_reports:
+			title: Előfizetők forrása
+
+		total_user_payments:
+			spent: Összes költség
+			for: neki
+			for_subscription_payments: "{1}subscription payment|[2,Inf]subscription payments"
+			monthly_average: átlagos havi fizetés
+			more: több
+			less: kevesebb
+			than_average: mint az átlag
+
+		user_payments_listing:
+			header: Fizetések
+			today: Mai nap
+			no_payments:
+				title: "Nincs bejegyzés"
+				message: "Ennek az előfizetésnek nincs fizetése."
+			add_manual_payment: Fizetés hozzáadása kézzel
+			caption:
+				id: Azonosító
+				variable_symbol: Változó szimbólum
+				amount: Összeg
+				payment_gateway: Fizetési átjáró
+				payment_items: Tételek
+				status: Állapot
+				created: Létrehozva
+				source: Fizetés forrása
+				actions: Műveletek
+				cid: CID
+				received: Fogadva
+				edited: Szerkeszve
+				next_charge: Következő díjbekérés
+				subscription_type: Előfizetés típusa
+				card_expiration: Kártya lejárati dátuma
+				created_payment_id: Létrehozott fizetés azonosítója
+				recurrent_state: Ismétlődő fizetés állapota
+				payment: Fizetés
+				message: Üzenet
+			referrer: Hivatkozó
+			edit: Fizetés szerkesztése
+			n_a: "N/A"
+			payment:
+				address: Cím
+				paid: Fizetve
+				active_from_to: "Aktív lesz <strong>%active_from%</strong> től <strong>%active_to%</strong>-ig"
+				active_from_confirmation_to: "Aktív lesz <strong>fizetés megerősítéstől</strong> <strong>%active_to%</strong>-ig"
+				active_from: "Aktív lesz <strong>%active_from%</strong>-tól"
+				badge_donation: adomány
+				badge_upgrade: felminősít
+			recurrent_profile:
+				title: Ismétlődő fizetések
+				next_subscription: következő
+				stop_recurrent_profile: Ismétlődés leállítása
+				stop_recurrent_profile_confirm: Ismétlődés leállítás megerősítése
+				active: Will be charged
+				user_stop: Felhasználó által leállítva
+				admin_stop: Admin által leállítva
+				system_stop: "Sikertelen lekérés, leállítva"
+				charged: Automatikusan megújítva
+				charge_failed: "Sikertelen lekérés, újra próbálás 6 óra mulva"
+				tb_failed: HIBA a TB-nél.
+			parsed_mail_logs:
+				title: "Feldolgozott/megerősített fizetés"
+				changed_to_paid: Állapot fizetett-re állítva
+				already_paid: Fizetve
+				duplicated_payment: Valózsínüleg duplikált fizetés
+				auto_new_payment: Automatikus új fizetés
+				different_amount: Eltérő összeg
+				without_vs: Hiányzó változó szimbólum
+
+		admin_filter_form:
+			variable_symbol:
+				label: Tranzakció azonosító
+			payment_gateway:
+				label: Átjáró
+			status:
+				label: Állapot
+			donation:
+				label: Adomány
+				with_donation: Adománnyal
+				without_donation: Adomány nélkül
+			recurrent_charge:
+				label: Ismétlődő díj
+				all: Mind
+				recurrent: Automatikus bekérés
+				manual: Kézi
+			subscription_type:
+				label: Előfizetés típusa
+			paid_at_from:
+				label: Fizetve mettől
+				placeholder: pl. 31.7.2020 15:30
+			paid_at_to:
+				label: Fizetve meddig
+				placeholder: pl. 1.8.2020 15:30
+			referer:
+				label: Hivatkozó
+
+			filter:
+				send: Szűrés
+				cancel: Visszaállítás
+				more: További lehetőségek
+
+
+		recurrent_payment_form:
+			charge_at:
+				label: Következő bekérés dátuma
+				required: Következő bekérés kötelező
+				placeholder: pl. 4.3.2017 15:30
+			retries:
+				label: Megengedett újra próbálkozások száma
+				required: Megengedett újra próbálkozások száma kötelező
+				placeholder: pl. 4
+			next_subscription_type_id:
+				label: Bekérésnél használt előfizetés típusa
+				description: "Amennyiben a következő előfizetés típusa eltér (%actual%)-tól"
+			custom_amount:
+				label: Bekérés összege
+				description: "Amount originally calculated during upgrade. If next subscription type is changed, this amount will be removed and standard price of next subscription type is used."
+			state:
+				label: Állapot
+				prompt: Válasszon ismétlődő fizetési állapotot
+				required: Ismétlődő fizetési állapot ki kell legyen választva
+				placeholder: pl. aktív
+			note:
+				label: Megjegyzés
+			save: Mentés
+
+		exports_admin_form:
+			file_system:
+				label: Mappa
+			filter:
+				send: Szűrés
+				cancel: Visszaállítás
+
+	donation: Adomány
+
+	arpu:
+		graph_label: ARPU
+		all:
+			title: ARPU - sum of all payments divided by count of payments
+			tooltip: Shows sum of all payments in selected period divided by number of payments - ARPA
+		manual:
+			title: ARPU - sum of all new payments divided by count of payments
+			tooltip: 'Shows sum of new payments (not recurrent) in selected period divided by number of payments - ARPA'
+		recurrent:
+			title: ARPU - sum of all recurrent divided by count of payments
+			tooltip: 'Shows sum of recurrent payments in selected period divided by number of payments - ARPA'
+	stats:
+		title: Fizetés statisztikák
+		menu:
+			general: General
+			arpu: ARPU
+			detailed: Részletes
+
+	payment_gateways:
+		title: Fizetési átjárók
+		back_to_list: Vissza az átjárók listájához
+		back_to_detail: Vissza az átjáróhoz
+		show: Átjáró megjelenítése
+		edit: Átjáró szerkesztése
+		name: Név
+		code: Kód
+		created_at: Létrehozva
+		modified_at: Szerkesztve
+		visible: Látható
+		is_recurrent: Ismétlődő
+		sorting: Rendezés
+		actions: Műveletek
+		updated: Átjáró frissítve
+		graph:
+			title: Átjáró fizetések
+			help: Fizetések létező átjáróval
+			completed_payments: Teljesített fizetések
+			uncompleted_payments: Nem teljesített fizetések
+		small_graph:
+			title: Átjáró fizetések
+
+	payments_recurrent:
+		title: Ismétlődő fizetésekí
+		cid: CID
+		charge_at: Bekérve
+		created_at: Létrehozva
+		subscription_type: Előfizetés típusa
+		email: E-mail cím
+		retries: Fennmaradó újra próbálások
+		charge_status: Bekérés állapota
+		recurrent_status: Ismétlődő fizetés állapota
+		actions: Műveletek
+		no_records: Nincs bejegyzés
+		edit: Ismétlődő fizetés szerkesztése
+		for_payment: for payment
+		back_to_user_detail: vissza a felhasználó részletekhez
+		duplicates: Duplikált ismétlődő fizetések
+
+		admin_filter_form:
+			cid:
+				label: CID
+			status:
+				label: Fizetés állapota
+			problem:
+				label: Csak sikertelen fizetések
+			subscription_type:
+				label: Előfizetés típusa
+			send: Szűrő
+			cancel: Szűrő törlése
+
+		updated: Ismétlődő fizetés frissítve
+
+	dashboard:
+		recurrent_charge:
+			label: Ismétlődő díj *
+			all: Mind
+			recurrent: Csak automatikusan bekért
+			manual: Csak kézi
+		arpu: "ARPU - Average revenue per user"
+
+	parsed_mails:
+		title: Feldolgozott fizetési e-mailek
+		variable_symbol:
+			label: Változó szimbólum
+		state:
+			label: Állapot
+		filter: Szűrő
+		cancel: Szűrő törlése
+		created_at: Létrehozva
+		delivered_at: Kézbesítve
+		amount: Összeg
+		payment: Fizetés
+		message: Üzenet
+		no_records: Nincs találat
+
+	payments:
+		updated: Fizetés frissítve
+		created: Fizetés létrehozva
+		send_notification: Értesítés küldése e-mailben
+		close: Bezár
+		title: Fizetések
+		variable_symbol: Változó szimbólum
+		user: Felhasználó
+		amount: Összeg
+		gateway: Fizetési átjáró
+		items: Tételek
+		status: Állapot
+		created_at: Létrehozva
+		actions: Műveletek
+		recurrent_charge: Ismétlődő díj
+		donation: adomány
+		donation_recurrent: ismétlődő
+		paid_at: Fizetve
+		source: Forrás
+		no_records: Nincs találat
+		edit: Fizetés szerkesztése
+		back_to_user: Vissza a felhasználó részletekhez
+		variable_symbol_error: Nem sikerült változó szimbólumot generálni
+		new: Új fizetés
+		new_for_user: Új fizetés
+		item: tétel
+		item_name: Név
+		price_with_vat: Egységár ÁFÁ-val
+		vat_rate: ÁFA
+		enter_number_of_products: Termékek száma
+		count: Count
+
+	report:
+		no_recurrent_charge:
+			label: "Nincs ismétlődő bekérés"
+		paid_next_subscription:
+			label: "Legalább %count% ismétlődő bekérés"
+		stopped_on_first_subscription:
+			label: "Első periódus alatt visszamondott"
+		total_paid_subscriptions:
+			label: "Vásárolt előfizetés típus (mind)"
+		total_recurrent_subscriptions:
+			label: "Vásárolt előfizetés típus (ismétlődő)"
+form:
+	payment_gateway:
+		name:
+			label: Név
+			required: Átjáró név kötelező
+			placeholder: pl. Paypal
+		code:
+			label: Kód
+			placeholder: pl. paypal
+		visible:
+			label: Látható
+		is_recurrent:
+			label: Ismétlődő
+		sorting:
+			label: Rendezés
+		save:
+			label: Mentés
+
+	accountant_export:
+		payment_gateway:
+			label: Fizetési átjáró
+		status:
+			label: Fizetés állapota
+		subscription_type:
+			label: Előfizetés típusa
+		month:
+			label: Hónap
+		export: Exportálás
+
+	payment:
+		variable_symbol:
+			label: Változó szimbólum
+			required: Változó szimbólum kötelező
+			placeholder: pl. 87239102385
+			generate: Generálás
+		amount:
+			label: Összeg
+			required: Összeg kötelező
+			nonzero: "Összeg pozitív szám kell legyen, talán nem lett fizetési tétel kiválasztva."
+			description: "Note: Összeg is calculated based on selected subscription type. If you want to use different amount, select <strong>custom item amounts</strong> and the payment amount will be recalculated based on prices of the items."
+		items: Fizetési tétel
+		subscription_type_id:
+			label: Előfizetés típusa
+			prompt: Előfizetés típusa
+		custom_payment_items:
+			label: Saját tétel mennyiségek
+		additional_amount:
+			label: Adomány mennyisége
+			placeholder: pl. 14.52
+		additional_type:
+			label: Adomány típusa
+			single: Egyszeri
+			recurrent: Ismétlődő
+			description: "Adomány mennyiség megadása esetén egy típus kiválasztása kötelező"
+		general_settings: Általános fizetési beállítások
+		payment_gateway_id:
+			label: Fizetési átjáró
+		status:
+			label: Állapot
+		paid_at:
+			label: Fizetve
+			placeholder: pl. 14.2.2016 14:21
+			required: Fizetve is required
+		send_notification:
+			label: Értesítés küldése
+		manual_subscription:
+			label: Előfizetés kezdete / vége
+			start: Manuális - határozza meg az előfizetés kezdeté
+			start_end: Manuális - határozza meg az előfizetés elejét és végét
+			prompt: Automatikus - vásárlás dátuma és előfizetés típusának hossza alapján
+		subscription_start_at:
+			label: Előfizetés kezdete
+			placeholder: pl. 14.2.2016
+			description: "Szükséges ha az előfizetés a jövőben fog kezdődni. Ha a fizetés a megadott dátum után lesz megerősítve, a kezdeti dátum a megerősítés dátuma lesz."
+			not_past: Előfizetés kezdete a jövőben kell legyen
+		subscription_end_at:
+			label: Előfizetés vége
+			placeholder: pl. 14.2.2016
+			description: "Szükséges csak ha az előfizetés végét szeretné beállítani egy konkrét jövőbeli dátumra."
+			not_past: Előfizetés kezdete a jövőben kell legyen
+		note:
+			label: Megjegyzés
+			placeholder: Saját fizetési megjegyzés
+		referer:
+			label: Hivatkozó
+			placeholder: URL ahonnan a fizetést indították
+		address_id:
+			label: Cím
+		send: Mentés
+
+gateway:
+	recurrent: ismétlődő fizetés
+
+
 frontend:
+	my:
+		my_payments: Saját fizetések
+		refund_payments: Visszatérített tranzakciók
+		payment_type: Fizetések típusa
+		payment_day: Nap
+		variable_symbol: Tranzakció azonosítója
+		price: Ár
+		is_recurrent: Ismétlődő fizetés
+		receipts: Nyugták
+		stop_recurrent: Ismétlődő fizetés leállítása
+		restart_recurrent: Ismétlődő fizetés újraindítása
+		user_stopped: Ön által leállítva
+		user_stopped_requested: Ön kérésére leállítva
+		failed_recurrent: Sikertelen ismétlődő fizetés
+		success_recurrent: Automatikusan bekért
+		no_payments: Nincs fizetés
+		no_refunds: Nincs visszatérítés
+		buy_offer: Tartalom hozzáféréshez vásárolhat előfizetést
+		next_recurrent_payment: "Önnek engedélyezve van az ismétlődő fizetés. A következő bekérés <strong>%charge_amount%</strong> összegben <strong>%charge_date%</strong> időpontban."
+	recurrent_stop:
+		title: Ismétlődő fizetés visszavonása
+		cancel: "Nem, még átgondolom"
+		confirm: "Igen, visszavonom az ismétlődő fizetést"
+		success: "Sikeresen visszavonta az ismétlődő fizetést"
+		invalid: Sikertelen igénylés ismétlődő fizetés visszavonására. Kérem próbálja újra később.
+	reactivate:
+		success: 'Ismétlődő fizetés újra engedélyezve.'
+		error: Ismétlődő fizetés újra engedélyezése nem lehetséges.
+		error_create_new: 'Ismétlődő fizetés újra engedélyezése nem lehetséges. Kérem, hozzon létre újat.'
 	banktransfer:
 		title: "Állandó átutalási megbízáshoz vagy átutalással történő fizetéshez szükséges adatok"
 		amount: "Összeg"
@@ -6,3 +486,19 @@ frontend:
 		variable_symbol: "Az átutalás egyedi azonosítója (variabilný symbol)"
 		recipient_message: "Üzenet a címzettnek"
 		delay_info: "Az összeg jóváírása egytől két munkanapig tarthat. Az előfizetés az összeg jóváírása után aktiválódik."
+	select_card:
+		title: 'Válasszon kártyát a fizetés folytatásához'
+		lead: 'Emlékszünk a kártyáira, nem szükséges újból beírni az adatokat.'
+		subtitle: 'A mentett kártyák listája'
+		card_with_expiration: 'Lejárati dátum'
+		use_card: 'Kiválasztás'
+		use_new_card: 'Új kártya hozzáadása'
+	proforma_invoice:
+		title: Proforma invoice payment
+		form_title: 'Please fill up your invoice details to complete the order'
+		thank_you: 'Thank you for the order, the invoice will be sent to your email within 3 working days.'
+
+config:
+	category: Fizetések
+	donation_vat_rate:
+		name: Adomány Áfakulcs
