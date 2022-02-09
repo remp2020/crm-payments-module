@@ -333,6 +333,10 @@ class PaymentFormFactory
         $subscriptionEndAt = null;
         $sendNotification = $values['send_notification'];
 
+        if ($values['status'] === PaymentsRepository::STATUS_REFUND) {
+            $sendNotification = true;
+        }
+
         unset($values['subscription_types']);
         unset($values['send_notification']);
 
