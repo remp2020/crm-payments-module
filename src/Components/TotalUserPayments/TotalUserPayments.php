@@ -4,6 +4,7 @@ namespace Crm\PaymentsModule\Components;
 
 use Crm\ApplicationModule\Widget\BaseWidget;
 use Crm\ApplicationModule\Widget\WidgetManager;
+use Crm\PaymentsModule\Models\AverageMonthPayment;
 use Crm\PaymentsModule\Repository\PaymentsRepository;
 use Crm\UsersModule\Repository\UserMetaRepository;
 
@@ -15,20 +16,22 @@ use Crm\UsersModule\Repository\UserMetaRepository;
  */
 class TotalUserPayments extends BaseWidget
 {
-    private $templateName = 'total_user_payments.latte';
+    private string $templateName = 'total_user_payments.latte';
 
-    private $paymentsRepository;
-
-    private $userMetaRepository;
+    private PaymentsRepository $paymentsRepository;
+    private UserMetaRepository $userMetaRepository;
+    private AverageMonthPayment $averageMonthPayment;
 
     public function __construct(
         WidgetManager $widgetManager,
         PaymentsRepository $paymentsRepository,
-        UserMetaRepository $userMetaRepository
+        UserMetaRepository $userMetaRepository,
+        AverageMonthPayment $averageMonthPayment
     ) {
         parent::__construct($widgetManager);
         $this->paymentsRepository = $paymentsRepository;
         $this->userMetaRepository = $userMetaRepository;
+        $this->averageMonthPayment = $averageMonthPayment;
     }
 
     public function identifier()
@@ -49,8 +52,7 @@ class TotalUserPayments extends BaseWidget
             $this->template->subscriptionPayments = $meta['subscription_payments'] ?? 0;
             $this->template->avgMonthPayment = $meta['avg_month_payment'] ?? 0;
 
-            $average = $this->userMetaRepository->getTable()->select('AVG(value) AS average')->where(['key' => 'avg_month_payment'])->fetch();
-            $this->template->averageMonthSum = (float) $average->average;
+            $this->template->averageMonthSum = $this->averageMonthPayment->getAverageMonthPayment();
         }
 
         $this->template->setFile(__DIR__ . '/' . $this->templateName);

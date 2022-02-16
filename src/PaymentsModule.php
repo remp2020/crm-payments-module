@@ -38,6 +38,7 @@ use Crm\PaymentsModule\DataProvider\SubscriptionFormDataProvider;
 use Crm\PaymentsModule\DataProvider\SubscriptionsWithActiveUnchargedRecurrentEndingWithinPeriodDataProvider;
 use Crm\PaymentsModule\DataProvider\SubscriptionsWithoutExtensionEndingWithinPeriodDataProvider;
 use Crm\PaymentsModule\MailConfirmation\ParsedMailLogsRepository;
+use Crm\PaymentsModule\Models\AverageMonthPayment;
 use Crm\PaymentsModule\Repository\PaymentLogsRepository;
 use Crm\PaymentsModule\Repository\PaymentsRepository;
 use Crm\PaymentsModule\Scenarios\DonationAmountCriteria;
@@ -68,18 +69,21 @@ class PaymentsModule extends CrmModule
     private $parsedMailLogsRepository;
 
     private $paymentsHistogramFactory;
+    private $averageMonthPayment;
 
     public function __construct(
         Container $container,
         Translator $translator,
         PaymentsRepository $paymentsRepository,
         ParsedMailLogsRepository $parsedMailLogsRepository,
-        PaymentsHistogramFactory $paymentsHistogramFactory
+        PaymentsHistogramFactory $paymentsHistogramFactory,
+        AverageMonthPayment $averageMonthPayment
     ) {
         parent::__construct($container, $translator);
         $this->paymentsRepository = $paymentsRepository;
         $this->parsedMailLogsRepository = $parsedMailLogsRepository;
         $this->paymentsHistogramFactory = $paymentsHistogramFactory;
+        $this->averageMonthPayment = $averageMonthPayment;
     }
 
     public function registerAdminMenuItems(MenuContainerInterface $menuContainer)
@@ -473,6 +477,8 @@ class PaymentsModule extends CrmModule
             }
 
             $this->parsedMailLogsRepository->formPaymentsWithWrongAmount(true);
+
+            $this->averageMonthPayment->getAverageMonthPayment(true);
         }
     }
 

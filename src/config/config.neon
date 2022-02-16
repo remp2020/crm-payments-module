@@ -28,6 +28,7 @@ services:
 	- Crm\PaymentsModule\RecurrentPaymentsProcessor
 	- Crm\PaymentsModule\Builder\ParsedMailLogsBuilder
 	- Crm\PaymentsModule\AdminFilterFormData
+	- Crm\PaymentsModule\Models\AverageMonthPayment
 
 	- Crm\PaymentsModule\MailConfirmation\TatraBankaMailDownloader
 	- Crm\PaymentsModule\MailConfirmation\CsobMailDownloader
