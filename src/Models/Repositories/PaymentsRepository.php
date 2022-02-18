@@ -354,16 +354,16 @@ class PaymentsRepository extends Repository
             $where['variable_symbol LIKE ? OR note LIKE ?'] = ["%{$text}%", "%{$text}%"];
         }
         if ($payment_gateway) {
-            $where['payment_gateway_id'] = $payment_gateway;
+            $where['payments.payment_gateway_id'] = $payment_gateway;
         }
         if ($subscription_type) {
-            $where['subscription_type_id'] = $subscription_type;
+            $where['payments.subscription_type_id'] = $subscription_type;
         }
         if ($status) {
             $where['payments.status'] = $status;
         }
         if ($sales_funnel) {
-            $where['sales_funnel_id'] = $sales_funnel;
+            $where['payments.sales_funnel_id'] = $sales_funnel;
         }
         if ($donation !== null) {
             if ($donation) {
