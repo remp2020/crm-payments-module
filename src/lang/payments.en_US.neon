@@ -231,6 +231,11 @@ admin:
 		recurrent:
 			title: ARPU - sum of all recurrent divided by count of payments
 			tooltip: 'Shows sum of recurrent payments in selected period divided by number of payments - ARPA'
+
+	recurrent:
+		duplicates:
+			title: Duplicate recurrent payments
+
 	stats:
 		title: Payment stats
 		menu:
@@ -276,7 +281,7 @@ admin:
 		edit: Edit recurrent payment
 		for_payment: for payment
 		back_to_user_detail: Back to user detail
-		duplicates: Duplicitné rekurentné platby
+		duplicates: Duplicate recurrent payments
 
 		admin_filter_form:
 			cid:
