@@ -144,9 +144,9 @@ admin:
 			parsed_mail_logs:
 				title: "Feldolgozott/megerősített fizetés"
 				changed_to_paid: Állapot fizetett-re állítva
+				auto_new_payment: Automatikus új fizetés
 				already_paid: Fizetve
 				duplicated_payment: Valózsínüleg duplikált fizetés
-				auto_new_payment: Automatikus új fizetés
 				different_amount: Eltérő összeg
 				without_vs: Hiányzó változó szimbólum
 
@@ -181,7 +181,6 @@ admin:
 				send: Szűrés
 				cancel: Visszaállítás
 				more: További lehetőségek
-
 
 		recurrent_payment_form:
 			charge_at:
