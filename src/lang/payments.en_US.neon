@@ -150,9 +150,9 @@ admin:
 			parsed_mail_logs:
 				title: "Processed/confirmed payments"
 				changed_to_paid: Status changed to paid
+				auto_new_payment: Auto new payment
 				already_paid: Payment was already paid
 				duplicated_payment: Probably duplicate payment
-				auto_new_payment: Auto new payment
 				different_amount: Different amount
 				without_vs: Without variable symbol
 
@@ -231,6 +231,11 @@ admin:
 		recurrent:
 			title: ARPU - sum of all recurrent divided by count of payments
 			tooltip: 'Shows sum of recurrent payments in selected period divided by number of payments - ARPA'
+
+	recurrent:
+		duplicates:
+			title: Duplicate recurrent payments
+
 	stats:
 		title: Payment stats
 		menu:
@@ -276,7 +281,7 @@ admin:
 		edit: Edit recurrent payment
 		for_payment: for payment
 		back_to_user_detail: Back to user detail
-		duplicates: Duplicitné rekurentné platby
+		duplicates: Duplicate recurrent payments
 
 		admin_filter_form:
 			cid:
@@ -291,16 +296,6 @@ admin:
 			cancel: Cancel filter
 
 		updated: Recurrent profile was updated
-
-	dashboard:
-		recurrent_charge:
-			label: Recurrent charge *
-			all: All
-			recurrent: Only charged automatically
-			manual: Only manual
-		payment_item_types:
-			label: Payment item type
-		arpu: "ARPU - Average revenue per user"
 
 	retention_analysis:
 		title: Retention analysis
@@ -351,6 +346,16 @@ admin:
 		errors:
 			long_execution_time: "Analysis hasn't finished in time limit %minutes% minutes. Please adjust analysis parameters."
 			unexpected_error: "Unexpected error has occured, error details were logged."
+
+	dashboard:
+		recurrent_charge:
+			label: Recurrent charge *
+			all: All
+			recurrent: Only charged automatically
+			manual: Only manual
+		payment_item_types:
+			label: Payment item type
+		arpu: "ARPU - Average revenue per user"
 
 	parsed_mails:
 		title: Processed payment emails
@@ -470,7 +475,7 @@ form:
 			nonzero: "Amount has to be greater than zero, there was probably no payment item selected."
 			description: "Note: Amount is calculated based on selected subscription type. If you want to use different amount, select <strong>custom item amounts</strong> and the payment amount will be recalculated based on prices of the items."
 		items: Payment items
-		items_no_editable: Payment contains subscription type items that can't be edited
+		items_no_editable: "Payment contains subscription type items that can't be edited"
 		subscription_type_id:
 			label: Subscription type
 			prompt: Subscription type
@@ -561,7 +566,7 @@ frontend:
 		invalid: Invalid request to stop recurrent payment. Please try again later.
 	reactivate:
 		success: 'Recurrent payment was reinstantiated.'
-		error: It's not possible to reinstantiate recurrent payment anymore.
+		error: "It's not possible to reinstantiate recurrent payment anymore."
 		error_create_new: "It's not possible to reinstantiate recurrent payment anymore. Please, create a new one"
 	banktransfer:
 		title: Details for standing order or bank transfer payment
@@ -645,14 +650,6 @@ config:
 	recurrent_charge_before:
 		name: "Recurrent charge before (hours)"
 		description: "How many hours before the end of subscription the recurrent charge should be trigerred (e.g. 48). Empty value will schedule next recurrent charge to the time of end of subscription."
-	tatrapay_mid:
-		name: Tatrapay mid
-	cardpay_mid:
-		name: Cardpay mid
-	comfortpay_mid:
-		name: Comfortpay mid
-	comfortpay_ws:
-		name: Comforpay ws
 	gopay_go_id:
 		name: GoPay Go ID
 	gopay_client_id:
@@ -666,6 +663,14 @@ config:
 	gopay_eet_enabled:
 		name: Enabled EET
 		description: Enabled EET reporting from payment gateway
+	tatrapay_mid:
+		name: Tatrapay mid
+	cardpay_mid:
+		name: Cardpay mid
+	comfortpay_mid:
+		name: Comfortpay mid
+	comfortpay_ws:
+		name: Comforpay ws
 	tatrabanka_pgp_private_key_path:
 		name: TatraBanka PGP private key
 		description: Path to PGP private key file for decrypting TatraBanka e-mails
