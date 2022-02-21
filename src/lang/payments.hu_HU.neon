@@ -141,7 +141,6 @@ admin:
 				system_stop: "Sikertelen lekérés, leállítva"
 				charged: Automatikusan megújítva
 				charge_failed: "Sikertelen lekérés, újra próbálás 6 óra mulva"
-				tb_failed: HIBA a TB-nél.
 			parsed_mail_logs:
 				title: "Feldolgozott/megerősített fizetés"
 				changed_to_paid: Állapot fizetett-re állítva
@@ -372,17 +371,6 @@ form:
 			label: Rendezés
 		save:
 			label: Mentés
-
-	accountant_export:
-		payment_gateway:
-			label: Fizetési átjáró
-		status:
-			label: Fizetés állapota
-		subscription_type:
-			label: Előfizetés típusa
-		month:
-			label: Hónap
-		export: Exportálás
 
 	payment:
 		variable_symbol:
