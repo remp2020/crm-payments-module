@@ -1,0 +1,762 @@
+menu:
+    stats: Platby
+    payments: Moje platby
+    admin_payments: Platby
+    gateways: Platební brány
+    parsed_mails: Zpracované platební e-maily
+    recurrent_payments: Rekurentní platby
+    duplicate_recurrent_payments: Duplicitní rekurentné platby
+    retention_analysis: Analýza retence
+    exports: Exporty
+
+admin:
+    component:
+        avg_month_payment_widget:
+            avg_month_payment: Průměrná měsíční platba
+
+        avg_subscription_payment_widget:
+            avg_subscription_payment: Průměrný počet plateb za předplatné
+
+        actual_free_subscribers_stat_widget:
+            title: Předplatitelé bez platby
+            help: Počet předplatitelů s aktivním předplatným bez platby. Jeden uživatel je jednou i když má více předplatných.
+
+        actual_paid_subscribers_stat_widget:
+            title: Předplatitelé s platbou
+            help: Počet předplatitelů s aktivním předplatným s platbou. Jeden uživatel je jednou i když má více předplatných.
+
+        actual_nonfree_subscribers_stat_widget:
+            title: Předplatitelé s placeným předplatným
+            help: "Počet předplatitelů s aktivním předplatným, kteří mají typ předplatného jiný než 'free'. Jeden uživatel je jednou i když má více předplatných."
+
+        change_payment_status:
+            title: Změna stavu platby
+            variable_symbol: Variabilní symbol
+            created: Vytvořená
+            status: Stav
+            change_to: změnit na
+            cancel: Zruš
+            change_without_notification: Změnit a neposlat notifikaci
+            change_with_notification: Změnit a poslat notifikaci
+            messages:
+                status_changed_successfully: Stav platby byl změněn
+                status_not_changed: Stav platby nebyl změněn
+
+        device_user_listing_widget:
+            device: Zařízení
+
+        duplicate_recurrent_payments:
+            none_found: Nebyly nalezeny žádné duplicitní recurentné platby
+            id: ID
+            cid: CID
+            created: Vytvořená
+            edited: Upravená
+            next_charge: Zaplacení proběhne
+            subscription_type: Typ předplatného
+            card_expiration: Karta expiruje
+            status: Status
+            actions: Akce
+            next_subscription: následující bude
+            stop_recurrent_profile: Zastavit opakovanou platbu
+            stop_recurrent_profile_confirm: Potvrďte zastavení rekurentního profilu
+            messages:
+                recurrent_profile_stopped: Rekurentní profil byl zastaven
+
+        last_payments:
+            title: Poslední platby
+            variable_symbol: Variabilní symbol
+            subscription: Předplatné
+            amount: Částka
+            payment_gateway: Platební brána
+            subscription_type: Typ předplatného
+            status: Stav
+            created: Vytvořeno
+            referrer: Referer
+            actions: Akce
+            without_subscription: Bez předplatného
+            edit: Uprav
+            badge_donation: dar
+            badge_recurrent: recurrent
+
+        parsed_mails_failed_notification:
+            title: Zlá částka přijata na účet
+
+        subscribers_with_payment_widget:
+            last_day: Posledních 24 hodin
+            last_days: Posledních %count% dní
+            description: Rozdíl v počtu předplatitelů s platbou za dané období.
+
+        subscription_type_reports:
+            title: Zdroj předplatitelů
+
+        total_user_payments:
+            spent: Celkově minul
+            for: za
+            for_subscription_payments: "{1}platbu za předplatné|[2,4]platby za předplatné|[5,Inf]plateb za předplatné"
+            monthly_average: průměrně měsíčně
+            more: více
+            less: méně
+            than_average: jako průměr
+
+        user_payments_listing:
+            header: Platby
+            today: Dnes
+            no_payments:
+                title: Žádný záznam
+                message: "Tento uživatel nemá zaznamenány žádné platby."
+            add_manual_payment: Přidej platbu manuálně
+            caption:
+                id: ID
+                variable_symbol: Variabilní symbol
+                amount: Částka
+                payment_gateway: Platební brána
+                payment_items: Položky
+                status: Stav
+                created: Vytvořeno
+                source: Zdroje platby
+                actions: Akce
+                cid: CID
+                received: Doručené
+                edited: Upravená
+                next_charge: Zaplacení proběhne
+                subscription_type: Typ předplatného
+                card_expiration: Karta expiruje
+                created_payment_id: ID vytvořené platby
+                recurrent_state: Stav opakované platby
+                payment: Platba
+                message: Zpráva
+            referrer: Referer
+            edit: Upravit platbu
+            n_a: "N/A"
+            payment:
+                address: Adresa
+                paid: Zaplacené
+                active_from_to: "Bude platit od <strong>%active_from%</strong> do <strong>%active_to%</strong>"
+                active_from_confirmation_to: "Bude platit od <strong>potvrzení platby</strong> do <strong>%active_to%</strong>"
+                active_from: "Bude platit od <strong>%active_from%</strong>"
+                badge_donation: dar
+                badge_upgrade: upgrade
+            recurrent_profile:
+                title: Recurrentní platby
+                next_subscription: následující bude
+                stop_recurrent_profile: Zastavit opakovanou platbu
+                stop_recurrent_profile_confirm: Potvrďte zastavení rekurentního profilu
+                active: Proběhne opakování
+                user_stop: Zastaveno uživatelem
+                admin_stop: Zastaveno na žádost
+                system_stop: "Neúspěšné opakování, zastavena"
+                charged: Automaticky prodloužena
+                charge_failed: "Neúspěšné opakování, naplánovaný další pokus"
+            parsed_mail_logs:
+                title: "Zpracované/potvrzené platby"
+                changed_to_paid: Stav změněn na zaplaceno
+                auto_new_payment: Automatická nová platba
+                already_paid: Platba již byla potvrzena
+                duplicated_payment: Pravděpodobně duplicitně zaplaceno
+                different_amount: Jiná částka
+                without_vs: Bez variabilního symbolu
+
+        admin_filter_form:
+            variable_symbol:
+                label: Variabilní symbol
+            payment_gateway:
+                label: Platební brána
+            status:
+                label: Stav platby
+            donation:
+                label: Dar
+                with_donation: S darem
+                without_donation: Bez daru
+            recurrent_charge:
+                label: Automatické obnovení
+                all: Všechny
+                recurrent: Pouze automaticky obnoveny
+                manual: Pouze ruční platby
+            subscription_type:
+                label: Typ předplatného
+            paid_at_from:
+                label: Datum platby od
+                placeholder: například 31.7.2020 15:30
+            paid_at_to:
+                label: Datum platby do
+                placeholder: například 1.8.2020 15:30
+            referer:
+                label: Referer
+            filter:
+                send: Filtr
+                cancel: Zruš filtr
+                more: Víc možností
+
+        recurrent_payment_form:
+            charge_at:
+                label: Datum stažení peněz
+                required: Datum stažení peněz je povinný
+                placeholder: například 4.3.2017 15:30
+            retries:
+                label: Počet opakování pro neúspěšném stažení peněz
+                required: Počet opakování je povinný
+                placeholder: například 4
+            next_subscription_type_id:
+                label: Následující předplatné při stažení
+                description: "Vybrat pouze v případě že následující předplatné má být jiné než aktuální (%actual%)"
+            custom_amount:
+                label: Suma při příštím stažení
+                description: "Částka byla původně vypočtena k upgradu. Při změně následujícího předplatného bude odstraněna, aby se použila cena ze zvoleného předplatného."
+            state:
+                label: Stav
+                prompt: Stav rekurentního profilu
+                required: Stav profilu musí být zvolen
+                placeholder: například active
+            note:
+                label: Poznámka
+            save: Ulož
+
+        exports_admin_form:
+            file_system:
+                label: Složka
+            filter:
+                send: Filtr
+                cancel: Zruš filtr
+
+    donation: Dar k předplatnému
+
+    arpu:
+        graph_label: ARPU
+        all:
+            title: ARPU - celkem všech plateb / počet
+            tooltip: Zobrazuje sumu všech plateb za dané období děleno počtem plateb - ARPA
+        manual:
+            title: ARPU - celkem všech nových plateb / počet
+            tooltip: 'Zobrazuje sumu všech nových plateb (nevytvořených rekurentně) za dané období děleno počtem plateb - ARPA'
+        recurrent:
+            title: ARPU - celkem všech rekurentných plateb / počet
+            tooltip: 'Zobrazuje sumu všech rekurentne vytvořených plateb za dané období děleno počtem plateb - ARPA'
+    stats:
+        title: Statistiky plateb
+        menu:
+            general: Obecné
+            arpu: ARPU
+            detailed: Podrobné
+
+    payment_gateways:
+        title: Platební brány
+        back_to_list: Zpět na platební brány
+        back_to_detail: Zpět na platební bránu
+        show: Zobrazit platební bránu
+        edit: Upravit platební bránu
+        name: Jméno
+        code: Identifikátor
+        created_at: Vytvořená
+        modified_at: Upravená
+        visible: Viditelná
+        is_recurrent: Rekurentní
+        sorting: Pořadí
+        actions: Akce
+        updated: Platební brána byla upravena
+        graph:
+            title: Platby brány
+            help: Platby zaplaceny přes tuto platební bránu
+            completed_payments: Dokončené platby
+            uncompleted_payments: Nedokončené platby
+        small_graph:
+            title: Platby podle brány
+
+    payments_recurrent:
+        title: Rekurentní platby
+        cid: CID
+        charge_at: Čas obnovení
+        created_at: Čas vytvoření
+        subscription_type: Typ předplatného
+        email: E-mail
+        retries: Počet opakování
+        charge_status: Stav pokusu o obnovení
+        recurrent_status: Stav rekurentní platby
+        actions: Akce
+        no_records: "Nebyly nalezeny žádné záznamy, které by odpovídaly filtru"
+        edit: Úprava rekurentního profilu
+        for_payment: ke platbě
+        back_to_user_detail: Zpět na uživatele
+        duplicates: Duplicitní rekurentní platby
+
+        admin_filter_form:
+            cid:
+                label: CID
+            status:
+                label: Stav platby
+            problem:
+                label: Pouze neúspěšná platba
+            subscription_type:
+                label: Typ předplatného
+            send: Filtruj
+            cancel: Zruš filtr
+
+        updated: Rekurentní profil byl upraven
+
+    retention_analysis:
+        title: Analýza retence
+        no_records: "Nebyly nalezeny žádné vypracované analýzy"
+        new_analysis: Nová analýza
+        preview_run: Zjistit počet uživatelů pro analýzu
+        analysis_name: Název analýzy
+        state: Stav
+        together: Spolu
+        month: Měsíc
+        payments_count: "Počet uživatelů s prvním předplatným"
+        results_not_available: "Výsledky nejsou v tomto stavu analýzy dostupné."
+        actions: Akce
+        created_at: Vytvořené
+        started_at: Spuštěné
+        finished_at: Dokončené
+        schedule_computation: Spustit výpočet
+        parameters: Parametry
+        results: Výsledky
+        period_explanation: "PERIODY (31-denní intervaly po prvním předplatném podle zadaného filtru)"
+        continue_method_explanation: "Metoda CONTINUE - do výpočtu jsou zahrnuty všechny předplatné, i po přerušení."
+        analysis_was_scheduled: "Analýza byla zadána, výsledek se objeví po dokončení v tabulce."
+        first_subscription_month_count: "Měsíc prvního předplatného / počet předplatitelů"
+        back: Zpět na seznam
+        incomplete_period_explanation: "Perioda není dokončena pro všechny uživatele, některé předplatné ještě mohou být obnoveny."
+        period_sum_ratio_help: "%retention_count% aktivních předplatných z celkového počtu %users_count% uživatelů kteří dosáhli danou periodu."
+        compare: Porovnat
+        add_to_comparison: Přidat do porovnání
+        clear_comparison: Smazat výběr
+        selected_analyses_to_compare: Zvolené analýzy ke srovnání
+        analyses_comparison: Porovnání analýz
+        period_number: Perioda %period%
+        number_of_subscribers: Počet předplatitelů
+        rerun_job: Znovu spustit
+        remove_job: Smazat
+        job_removed: "Analýza byla smazána."
+        job_was_rerun: "Analýza byla znovu spuštěna, výsledek se objeví po dokončení v tabulce."
+        fields:
+            clear_date: Vynulovat datum
+            segment: Segment
+            user_source: "Zdroj (Uživatel)"
+            min_date_of_payment: "Zahrnout platby od (data)"
+            min_date_of_payment_desc: "Pokud není zvoleno, zarhnuté jsou všechny platby."
+            previous_user_subscriptions: Předchozí předplatné uživatele
+            without_previous_subscription: Bez předchozího předplatného
+            with_previous_subscription_at_least_one_paid: S předchozím předplatným - alespoň jedno placené
+            with_previous_subscription_all_unpaid: S předchozím předplatným - všechny neplacené
+        errors:
+            long_execution_time: "Analýza se nedokončila v časovém limitu %minutes% minut. Zadejte prosím jiné parametry."
+            unexpected_error: "Nastala neočekávaná chyba. Detaily chyby byly zalogované."
+
+    dashboard:
+        recurrent_charge:
+            label: Automatické obnovení *
+            all: Všechny
+            recurrent: Pouze automaticky obnoveny
+            manual: Pouze ručné
+        payment_item_types:
+            label: Typ položky
+        arpu: ARPU - Průměrný výnos na uživatele
+
+    parsed_mails:
+        title: Zpracované platební emaily
+        variable_symbol:
+            label: Variabilní symbol
+        state:
+            label: Stav
+        filter: Filtruj
+        cancel: Zruš filtr
+        created_at: Vytvořeno
+        delivered_at: Doručeno
+        amount: Částka
+        payment: Platba
+        message: Zpráva
+        no_records: "Nebyly nalezeny žádné záznamy, které by odpovídaly filtru"
+
+    payments:
+        updated: Platba byla upravena
+        created: Platba byla vytvořena
+        send_notification: Pošli notifikaci emailem
+        close: Zavřít
+        title: Platby
+        variable_symbol: Variabilní symbol
+        user: Uživatel
+        amount: Částka
+        gateway: Platební brána
+        items: Položky
+        status: Stav
+        created_at: Vytvořeno
+        actions: Akce
+        recurrent_charge: Automaticky obnoveno
+        donation: dar
+        donation_recurrent: opakovaný
+        paid_at: Zaplaceno
+        source: Zdroj
+        no_records: "Nebyly nalezeny žádné záznamy, které by odpovídaly filtru"
+        edit: Upravit platbu
+        back_to_user: Zpět na uživatele
+        variable_symbol_error: Nepodařilo se získat variabilní symbol
+        new: Nová platba
+        new_for_user: Nová platba pro
+        item: položka
+        item_name: Název
+        price_with_vat: Jednotková cena s DPH
+        vat_rate: Sazba DPH
+        enter_number_of_products: Zadejte počet kusů
+        count: Počet kusů
+        export:
+            label: Export
+            exported: 'Export přidán do fronty a bude dostupný mezi <a href="/payments/exports-admin/" class="link">exporty</a>.'
+            modal_title: Export plateb
+            modal_body: 'Export bude obsahovat <code>%payments_number%</code> plateb a bude dostupný mezi <a href="/payments/exports-admin/" class="link">exporty</a>.'
+
+    report:
+        no_recurrent_charge:
+            label: "Ještě nenastal čas prvního prodloužení"
+        paid_next_subscription:
+            label: "Byly %count% krát automaticky obnovení"
+        stopped_on_first_subscription:
+            label: "Zrušili rekurent ještě během prvního období"
+        total_paid_subscriptions:
+            label: "Koupili typ předplatného (všichni)"
+        total_recurrent_subscriptions:
+            label: "Koupili typ předplatného (rekurentně)"
+
+    address:
+        cant_delete: 'Tato adresa se používá při platbě: %payments%|Tato adresa se používá při platbách: %payments%'
+
+    exports:
+        title: Exporty
+        created_at: Čas vytvoření
+        file: Soubor
+        filesystem: Složka
+        actions: Akce
+        download: Stáhnout
+        delete: Smazat
+        deleted: Soubor byl odstraněn
+        delete_error: Soubor nelze odstranit
+
+    scenarios:
+        payment_has_subscription:
+            label: Platba má přiřazené předplatné
+        donation_amount:
+            label: Darovaná suma
+        payment_has_item_type:
+            label: Platba má položky typu
+
+form:
+    payment_gateway:
+        name:
+            label: Jméno
+            required: Jméno musí být zadáno
+            placeholder: například ČSOB
+        code:
+            label: Identifikátor
+            placeholder: například csob
+        visible:
+            label: Viditelná
+        is_recurrent:
+            label: Rekurentní
+        sorting:
+            label: Pořadí
+        save:
+            label: Ulož
+        required: Musí být zadána platební brána
+
+    payment:
+        variable_symbol:
+            label: Variabilní symbol
+            required: Musí být zadaný variabilní symbol
+            placeholder: například 87239102385
+            generate: Vygeneruj
+            already_used: Variabilní symbol byl nedávno použit
+        amount:
+            label: Částka
+            required: Musí být zadána částka
+            nonzero: "Částka platby musí být nenulová, pravděpodobně nebyla vybrána žádná položka platby."
+            description: "Pozor: Částka je předvyplněna podle ceny vybraného typu předplatného. Chcete-li zadat inu částku zaškrněte <strong>vlastni cenu položek</strong> a částka se automaticky přepočítá podle ceny jednotlivých položek."
+        items: Položky platby
+        items_no_editable: "Platba obsahuje položky předplatného, které nelze upravit"
+        subscription_type_id:
+            label: Předplatné
+            prompt: Typ předplatného
+        custom_payment_items:
+            label: Vlastní cena položek
+        additional_amount:
+            label: Darovaná částka
+            placeholder: například 14.52
+        additional_type:
+            label: Darovaná suma - typ
+            single: Jednorázová
+            recurrent: Opakovaná
+            description: Pokud je vyplněna darovaná částka je třeba vybrat i tento typ
+        general_settings: Ostatní nastavení platby
+        payment_gateway_id:
+            label: Platební brána
+        status:
+            label: Stav
+        paid_at:
+            label: Čas zaplacení
+            placeholder: například 14.2.2016 14:21
+            required: Položka je povinná.
+        send_notification:
+            label: Odeslat notifikaci
+        manual_subscription:
+            label: Začátek / Konec předplatného
+            start: Ručně - nastavit začátek předplatného
+            start_end: Ručně - nastavit začátek i konec předplatného
+            prompt: Automaticky - podle data zaplacení a délky typu předplatného
+        subscription_start_at:
+            label: Začátek předplatného
+            placeholder: například 14.2.2016
+            description: "Třeba vyplnit pouze v případě, že potřebujeme posunout začátek předplatného na konkrétní datum v budoucnosti. V případě, že platba bude potvrzena později než zadaný datum, předplatné začne v době potvrzení platby."
+            not_past: Datum začátku předplatného nesmí být v minulosti
+        subscription_end_at:
+            label: Konec předplatného
+            placeholder: například 14.2.2016
+            description: "Potřebné vyplnit pouze v případě, že potřebujeme určit konec předplatného na konkrétní datum v budoucnosti."
+            not_past: Datum konce předplatného musí být v budoucnosti.
+        note:
+            label: Poznámka
+            placeholder: Vlastní poznámka k platbě
+        referer:
+            label: Referer
+            placeholder: URL odkud přišla platba
+        address_id:
+            label: Adresa
+        send: Ulož
+
+    subscription_form:
+        start_time:
+            after_payment:
+                description: "Předplatné musí začít po datu potvrzení platby:: %payment_paid%."
+                error: "Začátek předplatného je před datem potvrzení platby."
+
+gateway:
+    recurrent: automatické obnovování
+
+frontend:
+    my:
+        my_payments: Moje platby
+        refund_payments: Vrácené platby
+        payment_type: Způsob platby
+        payment_day: Dne
+        variable_symbol: Variabilní symbol
+        price: Cena
+        is_recurrent: Opakovaná platba
+        receipts: Doklady
+        stop_recurrent: Zastavit opakování
+        restart_recurrent: Znovu zapnout
+        user_stopped: Vámi zastavené
+        user_stopped_requested: Zastavené na Vaši žádost
+        failed_recurrent: Neúspěšné opakování
+        success_recurrent: Automaticky prodloužená
+        charge_failed:
+            title: Automatické prodloužení selhalo
+            last_try: Předchozí pokus
+            next_try: Následující pokus
+        no_payments: Nemáte žádné platby
+        no_refunds: Nemáte žádné vrácené platby
+        buy_offer: Můžete si předplatné zakoupit a získat tak přístup k obsahu
+        next_recurrent_payment: "Máte zapnuté automatické obnovování předplatného, nejbližší platba v hodnotě <strong>%charge_amount%</strong> proběhne <strong>%charge_date%</strong>."
+    recurrent_stop:
+        title: Zastavení opakované platby
+        cancel: "Ne, ještě si to promyslím"
+        confirm: "Ano, zastavit opakované platby"
+        success: "Opakovaná platba byla zastavena."
+        invalid: Neplatn7 požadavek o zastavení automatické platby. Zkuste to prosím znovu.
+    reactivate:
+        success: 'Automatická platba byla obnovena.'
+        error: 'Automatickou platbu není možné obnovit.'
+        error_create_new: 'Automatickou platbu není možné obnovit. Prosím vytvořte novou.'
+    banktransfer:
+        title: Údaje pro trvalý příkaz nebo platbu převodem
+        amount: Částka
+        account_number: Číslo účtu
+        variable_symbol: Variabilní symbol
+        recipient_message: Zpráva pro příjemce
+        delay_info: Připsání platby na účet může trvat 1 až 2 pracovní dny. Předplatné se aktivuje až po připsání platby na náš účet.
+    select_card:
+        title: 'Vyberte kartu k dokončení platby'
+        lead: 'Pamatujeme si Vámi použité karty, takže ich číslo nemusíte zadávat znovu.'
+        subtitle: 'Seznam uložených karet'
+        card_with_expiration: 'Karta s expirací'
+        use_card: 'Použít uloženou kartu a zaplatit %sum%'
+        use_new_card: 'Zaplatit jinou kartou'
+    proforma_invoice:
+        title: Platba předfakturou
+        form_title: 'Pro dokončení objednávky prosím vyplňte fakturační údaje'
+        thank_you: 'Děkujeme za vaši objednávku, předfakturu Vám zašleme do 3 pracovních dnů e-mailem.'
+    add_card:
+        success: "Přidání karty bylo úspěšné. Platba vytvořená pro potřeby ověření karty Vám bude brzy vrácena."
+        error: "Neúspěšný pokus o přidání karty. Zkuste to prosím znovu."
+
+
+config:
+    category: Platby
+    category_confirmation: Potvrzovací e-maily
+    donation_vat_rate:
+        name: DPH pro dary
+    tatrapay_sharedsecret:
+        name: Tatrapay sharedsecret
+    cardpay_sharedsecret:
+        name: Cardpay sharedsecret
+    comfortpay_terminalid:
+        name: Comfortpay terminalid
+    comfortpay_sharedsecret:
+        name: Comfortpay sharedsecret
+    comfortpay_local_cert_path:
+        name: Cesta ke Comfortpay lokálnímu certifikátu
+        description: "Cesta k certifikátu (např. /data/web/example/cert.pem)"
+    comfortpay_local_passphrase_path:
+        name: Lokální cesta ke Comfortpay passphrase
+        description: "Cert pass cesta (např. /data/web/example/pass)"
+    comfortpay_tem:
+        name: Comfortpay tem
+        description: "Comfortpay odesílány info o registrování karet (např. Y)"
+    comfortpay_rem:
+        name: Comfortpay rem
+        description: Comfortpay
+    paypal_mode:
+        name: Paypal mode
+        description: 'Přepínač pro "test" (sandbox) mód nebo "live" (production) mód'
+    paypal_username:
+        name: Paypal username
+    paypal_password:
+        name: Paypal password
+    paypal_signature:
+        name: Paypal signature
+    paypal_merchant:
+        name: Paypal merchant
+    csob_merchant_id:
+        name: ČSOB Merchant ID
+        description: 'Merchant ID poskytnuté bankou nebo vygenerované přes https://iplatebnibrana.csob.cz/keygen/ (pro vývojářské účely)'
+    csob_shop_name:
+        name: ČSOB obchodní jméno
+        description: "Obchodní jméno zobrazené v popisu platby (pokud je automaticky vygenerované)"
+    csob_bank_public_key_file_path:
+        name: ČSOB Veřejný klíč banky pro verifikovaných odpovědí z banky
+        description: "Cesta k veřejnému klíči banky dostupná na https://github.com/csob/paymentgateway/tree/master/keys (rozdílné klíče pro sandbox a production)"
+    csob_private_key_file_path:
+        name: ČSOB Soukromý klíč pro merchanta
+        description: "Cesta ke soukromému klíči poskytnutého bankou nebo vygenerovaného na https://iplatebnibrana.csob.cz/keygen/ (pro vývojářské účely)"
+    csob_mode:
+        name: ČSOB gateway mode
+        description: 'Přepínač pro "test" (sandbox) mód nebo "live" (production) mód'
+    recurrent_payment_gateway_fail_delay:
+        name: Pauza po neúspěšném spojení
+        description: "Definice intervalu (https://en.wikipedia.org/wiki/ISO_8601#Durations) po chybě v komunikaci. (např. PT1H)"
+    recurrent_payment_charges:
+        name: Opakování rekurentních plateb
+        description: "Definice intervalů (https://en.wikipedia.org/wiki/ISO_8601#Durations) oddělených čárkou. (např. PT15M, PT6H, PT6H, PT6H, PT6H)"
+    recurrent_charge_before:
+        name: "Realizace následující platby (počet hodin před vypršením)"
+        description: "Počet hodin před skončením předplatného kdy má nastat automatické obnovení (např. 48). Prázdná hodnota naplánuje realizaci další platby při ukončení předplatného."
+    gopay_go_id:
+        name: GoPay Go ID
+    gopay_client_id:
+        name: GoPay Client ID
+    gopay_client_secret:
+        name: GoPay Client secret
+    gopay_mode:
+        name: GoPay Test Mode
+    gopay_recurrence_date_to:
+        name: GoPay rekurentný profil datum do
+    gopay_eet_enabled:
+        name: Zapnuté EET
+        description: Zapnutý EET reporting z platební brány
+    tatrapay_mid:
+        name: Tatrapay mid
+    cardpay_mid:
+        name: Cardpay mid
+    comfortpay_mid:
+        name: Comfortpay mid
+    comfortpay_ws:
+        name: Comforpay ws
+    tatrabanka_pgp_private_key_path:
+        name: Tatrabanka PGP private key
+        description: Cesta k souboru PGP private key pro dešifrování Tatrabanka e-mailů
+    tatrabanka_pgp_private_key_passphrase:
+        name: TatraBanka PGP private key passphrase
+        description: Heslo k souboru PGP private key pro dešifrování Tatrabanka e-mailů
+    confirmation_mail_host:
+        name: Potvrzovací emaily HOST
+        description: Emailový server kde chodí potvrzovací emaily z banky
+    confirmation_mail_port:
+        name: Potvrzovací emaily PORT
+    confirmation_mail_username:
+        name: Potvrzovací emaily Username
+    confirmation_mail_password:
+        name: Potvrzovací emaily Heslo
+    confirmation_mail_processed_folder:
+        name: Potvrzovací emaily FOLDER po Zpracování
+        description: IMAP složka do ktereho se přesune email po zpracování
+    tb_simple_confirmation_host:
+        name: TatraBanka Simple host
+        description: "IMAP host pro připojení (např. imap.gmail.com) (<a href='https://github.com/remp2020/crm-payments-module#confirmation-e-mails' target='_blank'>info</a>)"
+    tb_simple_confirmation_port:
+        name: TatraBanka Simple port
+        description: "IMAP port pro připojení (např. 993) (<a href='https://github.com/remp2020/crm-payments-module#confirmation-e-mails' target='_blank'>info</a>)"
+    tb_simple_confirmation_username:
+        name: TatraBanka Simple username
+        description: "IMAP přihlašovací jméno pro připojení (např. example@gmail.com) (<a href='https://github.com/remp2020/crm-payments-module#confirmation-e-mails' target='_blank'>info</a>)"
+    tb_simple_confirmation_password:
+        name: TatraBanka Simple password
+        description: "IMAP heslo pro připojení (např. password) (<a href='https://github.com/remp2020/crm-payments-module#confirmation-e-mails' target='_blank'>info</a>)"
+    tb_simple_confirmation_processed_folder:
+        name: TatraBanka Simple složka
+        description: "IMAP složka do kterého se přesune email po zpracování (např. INBOX/processed) (<a href='https://github.com/remp2020/crm-payments-module#confirmation-e-mails' target='_blank'>info</a>)"
+    tb_confirmation_host:
+        name: TatraBanka host
+        description: "IMAP host pro připojení (např. imap.gmail.com) (<a href='https://github.com/remp2020/crm-payments-module#confirmation-e-mails' target='_blank'>info</a>)"
+    tb_confirmation_port:
+        name: TatraBanka port
+        description: "IMAP port pro připojení (např. 993) (<a href='https://github.com/remp2020/crm-payments-module#confirmation-e-mails' target='_blank'>info</a>)"
+    tb_confirmation_username:
+        name: TatraBanka username
+        description: "IMAP přihlašovací jméno pro připojení (např. example@gmail.com) (<a href='https://github.com/remp2020/crm-payments-module#confirmation-e-mails' target='_blank'>info</a>)"
+    tb_confirmation_password:
+        name: TatraBanka password
+        description: "IMAP heslo pro připojení (např. password) (<a href='https://github.com/remp2020/crm-payments-module#confirmation-e-mails' target='_blank'>info</a>)"
+    tb_confirmation_processed_folder:
+        name: TatraBanka složka
+        description: "IMAP složka do kterého se přesune email po zpracování (např. INBOX/processed) (<a href='https://github.com/remp2020/crm-payments-module#confirmation-e-mails' target='_blank'>info</a>)"
+    csob_confirmation_host:
+        name: 'ČSOB (CZ) host'
+        description: "IMAP host pro připojení (např. imap.gmail.com) (<a href='https://github.com/remp2020/crm-payments-module#confirmation-e-mails' target='_blank'>info</a>)"
+    csob_confirmation_port:
+        name: 'ČSOB (CZ) port'
+        description: "IMAP port pro připojení (např. 993) (<a href='https://github.com/remp2020/crm-payments-module#confirmation-e-mails' target='_blank'>info</a>)"
+    csob_confirmation_username:
+        name: 'ČSOB (CZ) username'
+        description: "IMAP přihlašovací jméno pro připojení (např. example@gmail.com) (<a href='https://github.com/remp2020/crm-payments-module#confirmation-e-mails' target='_blank'>info</a>)"
+    csob_confirmation_password:
+        name: 'ČSOB (CZ) password'
+        description: "IMAP heslo pro připojení (např. password) (<a href='https://github.com/remp2020/crm-payments-module#confirmation-e-mails' target='_blank'>info</a>)"
+    csob_confirmation_processed_folder:
+        name: 'ČSOB (CZ) složka'
+        description: "IMAP složka do kterého se přesune email po zpracování (např. INBOX/processed) (<a href='https://github.com/remp2020/crm-payments-module#confirmation-e-mails' target='_blank'>info</a>)"
+    sk_csob_confirmation_host:
+        name: 'ČSOB (SR) host'
+        description: "IMAP host pro připojení (např. imap.gmail.com) (<a href='https://github.com/remp2020/crm-payments-module#confirmation-e-mails' target='_blank'>info</a>)"
+    sk_csob_confirmation_port:
+        name: 'ČSOB (SR) port'
+        description: "IMAP port pro připojení (např. 993) (<a href='https://github.com/remp2020/crm-payments-module#confirmation-e-mails' target='_blank'>info</a>)"
+    sk_csob_confirmation_username:
+        name: 'ČSOB (SR) username'
+        description: "IMAP přihlašovací jméno pro připojení (např. example@gmail.com) (<a href='https://github.com/remp2020/crm-payments-module#confirmation-e-mails' target='_blank'>info</a>)"
+    sk_csob_confirmation_password:
+        name: 'ČSOB (SR) password'
+        description: "IMAP heslo pro připojení (např. password) (<a href='https://github.com/remp2020/crm-payments-module#confirmation-e-mails' target='_blank'>info</a>)"
+    sk_csob_confirmation_processed_folder:
+        name: 'ČSOB (SR) složka'
+        description: "IMAP složka do kterého se přesune email po zpracování (např. INBOX/processed) (<a href='https://github.com/remp2020/crm-payments-module#confirmation-e-mails' target='_blank'>info</a>)"
+    tbs_confirmation_host:
+        name: TatraBanka výpis host
+        description: "IMAP host pro připojení (např. imap.gmail.com) (<a href='https://github.com/remp2020/crm-payments-module#confirmation-e-mails' target='_blank'>info</a>)"
+    tbs_confirmation_port:
+        name: TatraBanka výpis port
+        description: "IMAP port pro připojení (např. 993) (<a href='https://github.com/remp2020/crm-payments-module#confirmation-e-mails' target='_blank'>info</a>)"
+    tbs_confirmation_username:
+        name: TatraBanka výpis username
+        description: "IMAP přihlašovací jméno pro připojení (např. example@gmail.com) (<a href='https://github.com/remp2020/crm-payments-module#confirmation-e-mails' target='_blank'>info</a>)"
+    tbs_confirmation_password:
+        name: TatraBanka výpis password
+        description: "IMAP heslo pro připojení (např. password) (<a href='https://github.com/remp2020/crm-payments-module#confirmation-e-mails' target='_blank'>info</a>)"
+    tbs_confirmation_processed_folder:
+        name: TatraBanka výpis složka
+        description: "IMAP složka do kterého se přesune email po zpracování (např. INBOX/processed) (<a href='https://github.com/remp2020/crm-payments-module#confirmation-e-mails' target='_blank'>info</a>)"
