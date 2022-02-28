@@ -39,8 +39,8 @@ admin:
             change_without_notification: Zmeň a nepošli notifikáciu
             change_with_notification: Zmeň a pošli notifikáciu
             messages:
-                status_changed_successfully: Stav platby bol zmenený
-                status_not_changed: Stav platby nebol zmenený
+                status_changed_successfully: Stav platby bol zmenený.
+                status_not_changed: Stav platby nebol zmenený.
 
         device_user_listing_widget:
             device: Zariadenie
@@ -60,7 +60,7 @@ admin:
             stop_recurrent_profile: Zastaviť opakovanú platbu
             stop_recurrent_profile_confirm: Potvrďte zastavenie rekurentného profilu
             messages:
-                recurrent_profile_stopped: Rekurentný profil bol zastavený
+                recurrent_profile_stopped: Rekurentný profil bol zastavený.
 
         last_payments:
             title: Posledné platby
@@ -662,7 +662,7 @@ config:
         name: GoPay rekurentný profil dátum do
     gopay_eet_enabled:
         name: Zapnuté EET
-        description: Zapnutý EET reporting z platobnej brany
+        description: Zapnutý EET reporting z platobnej brány
     tatrapay_mid:
         name: Tatrapay mid
     cardpay_mid:
