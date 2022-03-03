@@ -39,8 +39,8 @@ admin:
             change_without_notification: Změnit a neposlat notifikaci
             change_with_notification: Změnit a poslat notifikaci
             messages:
-                status_changed_successfully: Stav platby byl změněn
-                status_not_changed: Stav platby nebyl změněn
+                status_changed_successfully: Stav platby byl změněn.
+                status_not_changed: Stav platby nebyl změněn.
 
         device_user_listing_widget:
             device: Zařízení
@@ -60,7 +60,7 @@ admin:
             stop_recurrent_profile: Zastavit opakovanou platbu
             stop_recurrent_profile_confirm: Potvrďte zastavení rekurentního profilu
             messages:
-                recurrent_profile_stopped: Rekurentní profil byl zastaven
+                recurrent_profile_stopped: Rekurentní profil byl zastaven.
 
         last_payments:
             title: Poslední platby
@@ -551,7 +551,7 @@ frontend:
             next_try: Následující pokus
         no_payments: Nemáte žádné platby
         no_refunds: Nemáte žádné vrácené platby
-        buy_offer: Můžete si předplatné zakoupit a získat tak přístup k obsahu
+        buy_offer: Můžete si předplatné zakoupit a získat tak přístup k obsahu.
         next_recurrent_payment: "Máte zapnuté automatické obnovování předplatného, nejbližší platba v hodnotě <strong>%charge_amount%</strong> proběhne <strong>%charge_date%</strong>."
     recurrent_stop:
         title: Zastavení opakované platby

@@ -39,8 +39,8 @@ admin:
             change_without_notification: Change without sending notification
             change_with_notification: Change and send notification
             messages:
-                status_changed_successfully: Status of payment was successfully changed
-                status_not_changed: Status of payment was not changed
+                status_changed_successfully: Status of payment was successfully changed.
+                status_not_changed: Status of payment was not changed.
 
         device_user_listing_widget:
             device: Device
@@ -60,7 +60,7 @@ admin:
             stop_recurrent_profile: Stop recurrent profile
             stop_recurrent_profile_confirm: Confirm recurrent profile cancellation
             messages:
-                recurrent_profile_stopped: Recurrent profile was stopped
+                recurrent_profile_stopped: Recurrent profile was stopped.
 
         last_payments:
             title: Last payments
@@ -497,7 +497,7 @@ form:
         paid_at:
             label: Paid at
             placeholder: e.g. 14.2.2016 14:21
-            required: Paid at is required
+            required: Field paid at is required.
         send_notification:
             label: Send notification
         manual_subscription:
@@ -514,7 +514,7 @@ form:
             label: End of subscription
             placeholder: e.g. 14.2.2016
             description: "Necessary to fill only when you need to set end of subscription to specific date in the future explictly."
-            not_past: End of subscription has to be in the future
+            not_past: End of subscription has to be in the future.
         note:
             label: Note
             placeholder: Custom payment note
@@ -567,7 +567,7 @@ frontend:
     reactivate:
         success: 'Recurrent payment was reinstantiated.'
         error: "It's not possible to reinstantiate recurrent payment anymore."
-        error_create_new: "It's not possible to reinstantiate recurrent payment anymore. Please, create a new one"
+        error_create_new: "It's not possible to reinstantiate recurrent payment anymore. Please, create a new one."
     banktransfer:
         title: Details for standing order or bank transfer payment
         amount: Amount
