@@ -192,7 +192,7 @@ class PaymentsAdminPresenter extends AdminPresenter
             $presenter->redirect('PaymentsAdmin:Default', ['formData' => $emptyDefaults]);
         };
 
-        $form->addButton('more', 'payments.admin.component.admin_filter_form.filter.more')
+        $form->addButton('more')
             ->setHtmlAttribute('data-toggle', 'collapse')
             ->setHtmlAttribute('data-target', '#formCollapse')
             ->setAttribute('class', 'btn btn-info')
