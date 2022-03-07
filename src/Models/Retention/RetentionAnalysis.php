@@ -44,7 +44,7 @@ class RetentionAnalysis
      * Computes preview of monthly payment counts, used later as a basis for retention analysis.
      * @param array $inputParams Form parameters entered by users
      *
-     * @return array containing IRows with attributes 'paid_at_year', 'paid_at_month', 'count'
+     * @return array containing ActiveRows with attributes 'paid_at_year', 'paid_at_month', 'count'
      */
     public function precalculateMonthlyPaymentCounts(array $inputParams): array
     {
@@ -122,7 +122,7 @@ SQL;
                 if ($subscriptionsCount > 0) {
                     $retention[$paidAtKey][$periodNumber]['count']++;
                 }
-                
+
                 if ($lastIncomplete && ($i === count($periods) - 1)) {
                     $retention[$paidAtKey][$periodNumber]['incomplete'] = true;
                 }
