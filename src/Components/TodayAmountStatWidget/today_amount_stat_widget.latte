@@ -3,6 +3,6 @@
         {_dashboard.payments.sum.title} <i class="fa fa-question-circle" data-toggle="tooltip" data-original-title="{_dashboard.payments.sum.tooltip, ['start' => date('d.m.Y H:i:s', strtotime('today 00:00')), 'end' => date('d.m.Y H:i:s')]}"></i>
     </div>
     <div style="text-align: right; flex-basis: max-content; flex-shrink: 1; flex-grow: 1">
-        {$todayAmount|diffPrice:$yesterdayAmount:0|noescape}
+        {$todayAmount|diffPrice:$yesterdayAmount,0|noescape}
     </div>
 </div>
