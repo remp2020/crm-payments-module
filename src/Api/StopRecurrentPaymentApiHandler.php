@@ -82,6 +82,15 @@ class StopRecurrentPaymentApiHandler extends ApiHandler
             return $response;
         }
 
+        if (!$this->recurrentPaymentsRepository->canBeStoppedByUser($recurrentPayment)) {
+            $response = new JsonResponse([
+                'message' => "Payment gateway [{$recurrentPayment->payment_gateway->code}] is unstoppable by user.",
+                'code' => 'user_unstoppable_recurrent_payment_gateway'
+            ]);
+            $response->setHttpCode(Response::S409_CONFLICT);
+            return $response;
+        }
+
         // stop recurrent payment
         $stoppedRecurrentPayment = $this->recurrentPaymentsRepository->stoppedByUser($recurrentPaymentID, $user->id);
         if (!$stoppedRecurrentPayment) {

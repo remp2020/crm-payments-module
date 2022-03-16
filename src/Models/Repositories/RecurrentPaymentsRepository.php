@@ -37,6 +37,8 @@ class RecurrentPaymentsRepository extends Repository
     const STATE_CHARGE_FAILED = 'charge_failed';
     const STATE_SYSTEM_STOP = 'system_stop';
 
+    private $paymentGatewayMetaRepository;
+
     private $emitter;
 
     private $applicationConfig;
@@ -46,12 +48,14 @@ class RecurrentPaymentsRepository extends Repository
     public function __construct(
         Explorer $database,
         AuditLogRepository $auditLogRepository,
+        PaymentGatewayMetaRepository $paymentGatewayMetaRepository,
         Emitter $emitter,
         ApplicationConfig $applicationConfig,
         \Tomaj\Hermes\Emitter $hermesEmitter
     ) {
         parent::__construct($database);
         $this->auditLogRepository = $auditLogRepository;
+        $this->paymentGatewayMetaRepository = $paymentGatewayMetaRepository;
         $this->emitter = $emitter;
         $this->applicationConfig = $applicationConfig;
         $this->hermesEmitter = $hermesEmitter;
@@ -218,7 +222,8 @@ class RecurrentPaymentsRepository extends Repository
         if ($rp == null) {
             return null;
         }
-        if (!($this->canBeStopped($rp))) {
+
+        if (!($this->canBeStoppedByUser($rp))) {
             throw new Exception('Recurrent payment ID ' . $rp->id . ' cannot be stopped by user');
         }
 
@@ -428,8 +433,20 @@ class RecurrentPaymentsRepository extends Repository
         ];
     }
 
+    final public function canBeStoppedByUser($recurrentPayment): bool
+    {
+        if ($this->paymentGatewayMetaRepository->hasValue($recurrentPayment->payment_gateway, 'user_unstoppable', '1')) {
+            return false;
+        }
+        return $this->canBeStopped($recurrentPayment);
+    }
+
     final public function canBeStopped($recurrentPayment): bool
     {
+        if ($this->paymentGatewayMetaRepository->hasValue($recurrentPayment->payment_gateway, 'unstoppable', '1')) {
+            return false;
+        }
+
         return $recurrentPayment->parent_payment->status !== PaymentsRepository::STATUS_PREPAID;
     }
 
