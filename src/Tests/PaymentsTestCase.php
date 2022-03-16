@@ -5,6 +5,7 @@ namespace Crm\PaymentsModule\Tests;
 use Crm\ApplicationModule\Tests\DatabaseTestCase;
 use Crm\PaymentsModule\MailConfirmation\ParsedMailLogsRepository;
 use Crm\PaymentsModule\PaymentItem\PaymentItemContainer;
+use Crm\PaymentsModule\Repository\PaymentGatewayMetaRepository;
 use Crm\PaymentsModule\Repository\PaymentGatewaysRepository;
 use Crm\PaymentsModule\Repository\PaymentItemMetaRepository;
 use Crm\PaymentsModule\Repository\PaymentItemsRepository;
@@ -60,6 +61,7 @@ class PaymentsTestCase extends DatabaseTestCase
             PaymentItemsRepository::class,
             PaymentItemMetaRepository::class,
             PaymentGatewaysRepository::class,
+            PaymentGatewayMetaRepository::class,
             RecurrentPaymentsRepository::class,
             SubscriptionTypesRepository::class,
             SubscriptionTypesMetaRepository::class,

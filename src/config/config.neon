@@ -9,6 +9,7 @@ services:
 			- registerGateway('bank_transfer', Crm\PaymentsModule\Gateways\BankTransfer)
 
 	paymentGatewaysRepository: Crm\PaymentsModule\Repository\PaymentGatewaysRepository
+	paymentGatewayMetaRepository: Crm\PaymentsModule\Repository\PaymentGatewayMetaRepository
 	paymentsRepository: Crm\PaymentsModule\Repository\PaymentsRepository
 	paymentLogsRepository: Crm\PaymentsModule\Repository\PaymentLogsRepository
 	paymentMetaRepository: Crm\PaymentsModule\Repository\PaymentMetaRepository
