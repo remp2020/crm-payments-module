@@ -1,13 +1,13 @@
 <?php
 
-namespace Crm\UsersModule\Tests;
+namespace Crm\PaymentsModule\Tests;
 
 use Crm\ApiModule\Api\JsonResponse;
 use Crm\PaymentsModule\Api\ListRecurrentPaymentsApiHandler;
 use Crm\PaymentsModule\PaymentItem\PaymentItemContainer;
 use Crm\PaymentsModule\Repository\RecurrentPaymentsRepository;
-use Crm\PaymentsModule\Tests\PaymentsTestCase;
 use Crm\SubscriptionsModule\PaymentItem\SubscriptionTypePaymentItem;
+use Crm\UsersModule\Tests\TestUserTokenAuthorization;
 use Nette\Database\Table\ActiveRow;
 use Nette\Utils\DateTime;
 

@@ -1,14 +1,16 @@
 <?php
 
-namespace Crm\UsersModule\Tests;
+namespace Crm\PaymentsModule\Tests;
 
 use Crm\ApiModule\Api\JsonResponse;
 use Crm\PaymentsModule\Api\StopRecurrentPaymentApiHandler;
+use Crm\PaymentsModule\Models\Gateway;
 use Crm\PaymentsModule\PaymentItem\PaymentItemContainer;
+use Crm\PaymentsModule\Repository\PaymentGatewayMetaRepository;
 use Crm\PaymentsModule\Repository\RecurrentPaymentsRepository;
-use Crm\PaymentsModule\Tests\PaymentsTestCase;
 use Crm\SubscriptionsModule\PaymentItem\SubscriptionTypePaymentItem;
 use Crm\UsersModule\Auth\UserManager;
+use Crm\UsersModule\Tests\TestUserTokenAuthorization;
 use Nette\Database\Table\ActiveRow;
 use Nette\Http\Response;
 use Nette\Utils\Json;
@@ -30,6 +32,64 @@ class StopRecurrentPaymentApiHandlerTest extends PaymentsTestCase
 
         // Api handler we want to test
         $this->handler = $this->inject(StopRecurrentPaymentApiHandler::class);
+    }
+
+    public function testUnstoppableGateway()
+    {
+        // create payment & recurrent payment
+        $user = $this->createUser('test@example.com');
+        $payment = $this->createPaymentWithUser('0000000001', $user);
+        $recurrentPayment = $this->createRecurrentPayment('card', $payment, clone($payment->created_at)->modify('+1 month'));
+        $this->setGatewayAsUnstoppable($this->getPaymentGateway());
+
+        $this->assertEquals(RecurrentPaymentsRepository::STATE_ACTIVE, $recurrentPayment->state);
+
+        // call API
+        $this->handler->setRawPayload(Json::encode(['id' => $recurrentPayment->id]));
+        $this->handler->setAuthorization($this->getTestAuthorization($user));
+        $response = $this->handler->handle([]); // TODO: fix params
+
+        // validate API response
+        $this->assertEquals(JsonResponse::class, get_class($response));
+        $this->assertEquals(Response::S403_FORBIDDEN, $response->getHttpCode());
+        $payload = $response->getPayload();
+        $this->assertEquals('user_unstoppable_recurrent_payment_gateway', $payload['code']);
+
+        // validate state in DB (to be sure) - should be unchanged; stopping failed
+        $recurrentPaymentReloaded = $this->recurrentPaymentsRepository->find($recurrentPayment->id);
+        $this->assertEquals(RecurrentPaymentsRepository::STATE_ACTIVE, $recurrentPaymentReloaded->state);
+
+        // Reset gateway to default "stoppable" status
+        $this->resetGatewayUnstoppableStatus($this->getPaymentGateway());
+    }
+
+    public function testUserUnstoppableGateway()
+    {
+        // create payment & recurrent payment
+        $user = $this->createUser('test@example.com');
+        $payment = $this->createPaymentWithUser('0000000001', $user);
+        $recurrentPayment = $this->createRecurrentPayment('card', $payment, clone($payment->created_at)->modify('+1 month'));
+        $this->setGatewayAsUserUnstoppable($this->getPaymentGateway());
+
+        $this->assertEquals(RecurrentPaymentsRepository::STATE_ACTIVE, $recurrentPayment->state);
+
+        // call API
+        $this->handler->setRawPayload(Json::encode(['id' => $recurrentPayment->id]));
+        $this->handler->setAuthorization($this->getTestAuthorization($user));
+        $response = $this->handler->handle([]); // TODO: fix params
+
+        // validate API response
+        $this->assertEquals(JsonResponse::class, get_class($response));
+        $this->assertEquals(Response::S403_FORBIDDEN, $response->getHttpCode());
+        $payload = $response->getPayload();
+        $this->assertEquals('user_unstoppable_recurrent_payment_gateway', $payload['code']);
+
+        // validate state in DB (to be sure) - should be unchanged; stopping failed
+        $recurrentPaymentReloaded = $this->recurrentPaymentsRepository->find($recurrentPayment->id);
+        $this->assertEquals(RecurrentPaymentsRepository::STATE_ACTIVE, $recurrentPaymentReloaded->state);
+
+        // Reset gateway to default "stoppable" status
+        $this->resetGatewayUnstoppableStatus($this->getPaymentGateway());
     }
 
     public function testSuccessfulStop()
@@ -182,6 +242,28 @@ class StopRecurrentPaymentApiHandlerTest extends PaymentsTestCase
         $payment = $this->paymentsRepository->add($this->getSubscriptionType(), $this->getPaymentGateway(), $user, $paymentItemContainer);
         $this->paymentsRepository->update($payment, ['variable_symbol' => $variableSymbol]);
         return $payment;
+    }
+
+    protected function setGatewayAsUnstoppable(ActiveRow $paymentGateway)
+    {
+        /** @var PaymentGatewayMetaRepository $paymentGatewayMetaRepository */
+        $paymentGatewayMetaRepository = $this->getRepository(PaymentGatewayMetaRepository::class);
+        $paymentGatewayMetaRepository->add($paymentGateway, Gateway::META_UNSTOPPABLE, '1');
+    }
+
+    protected function setGatewayAsUserUnstoppable(ActiveRow $paymentGateway)
+    {
+        /** @var PaymentGatewayMetaRepository $paymentGatewayMetaRepository */
+        $paymentGatewayMetaRepository = $this->getRepository(PaymentGatewayMetaRepository::class);
+        $paymentGatewayMetaRepository->add($paymentGateway, Gateway::META_USER_UNSTOPPABLE, '1');
+    }
+
+    protected function resetGatewayUnstoppableStatus(ActiveRow $paymentGateway)
+    {
+        /** @var PaymentGatewayMetaRepository $paymentGatewayMetaRepository */
+        $paymentGatewayMetaRepository = $this->getRepository(PaymentGatewayMetaRepository::class);
+        $paymentGatewayMetaRepository->findByPaymentGatewayAndKey($paymentGateway, Gateway::META_UNSTOPPABLE)->delete();
+        $paymentGatewayMetaRepository->findByPaymentGatewayAndKey($paymentGateway, Gateway::META_USER_UNSTOPPABLE)->delete();
     }
 
     private function createUser($email)

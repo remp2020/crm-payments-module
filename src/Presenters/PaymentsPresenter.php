@@ -35,7 +35,7 @@ class PaymentsPresenter extends FrontendPresenter
         $this->template->payments = $this->paymentsRepository->userPayments($this->getUser()->getId());
         $this->template->resolver = $this->recurrentPaymentsResolver;
         $this->template->canBeStopped = function ($recurrentPayment) {
-            return $this->recurrentPaymentsRepository->canBeStopped($recurrentPayment);
+            return $this->recurrentPaymentsRepository->canBeStoppedByUser($recurrentPayment);
         };
     }
 
