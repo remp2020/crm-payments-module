@@ -4,6 +4,7 @@ namespace Crm\PaymentsModule\Gateways;
 
 use Crm\ApplicationModule\Config\ApplicationConfig;
 use Crm\ApplicationModule\Request;
+use Crm\PaymentsModule\CannotCheckExpiration;
 use Crm\PaymentsModule\GatewayFail;
 use Crm\PaymentsModule\RecurrentPaymentFailStop;
 use Crm\PaymentsModule\RecurrentPaymentFailTry;
@@ -11,6 +12,7 @@ use Crm\PaymentsModule\Repository\PaymentMetaRepository;
 use Nette\Application\LinkGenerator;
 use Nette\Http\Response;
 use Nette\Localization\Translator;
+use Nette\Utils\DateTime;
 use Omnipay\Common\Exception\InvalidRequestException;
 use Omnipay\Csob\Gateway;
 use Omnipay\Omnipay;
@@ -173,9 +175,27 @@ class CsobOneClick extends GatewayAbstract implements RecurrentPaymentInterface
      * @param array $recurrentPayments
      * @return array
      */
-    public function checkExpire($recurrentPayments)
+    public function checkExpire($tokens)
     {
-        throw new InvalidRequestException("csob one click gateway doesn't support token expiration checking");
+        $this->initialize();
+
+        $result = [];
+        foreach ($tokens as $token) {
+            $response = $this->gateway->paymentStatus([
+                'payId' => $token,
+            ])->send();
+
+            if (!$response->isSuccessful()) {
+                throw new CannotCheckExpiration();
+            }
+
+            $expiration = $response->getExpiration(); // mm/yy
+            $month = substr($expiration, 0, 2);
+            $year = substr($expiration, 3, 2);
+            $result[$token] = DateTime::from("$year-$month-01 00:00 next month");
+        }
+
+        return $result;
     }
 
     public function charge($payment, $token): string
