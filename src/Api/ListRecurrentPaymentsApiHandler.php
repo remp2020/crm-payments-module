@@ -3,13 +3,13 @@
 namespace Crm\PaymentsModule\Api;
 
 use Crm\ApiModule\Api\ApiHandler;
-use Crm\ApiModule\Api\JsonResponse;
 use Crm\ApiModule\Params\InputParam;
 use Crm\ApiModule\Params\ParamsProcessor;
-use Crm\ApiModule\Response\ApiResponseInterface;
 use Crm\PaymentsModule\Repository\RecurrentPaymentsRepository;
 use Nette\Http\Response;
 use Nette\Utils\DateTime;
+use Tomaj\NetteApi\Response\JsonApiResponse;
+use Tomaj\NetteApi\Response\ResponseInterface;
 
 class ListRecurrentPaymentsApiHandler extends ApiHandler
 {
@@ -39,13 +39,12 @@ class ListRecurrentPaymentsApiHandler extends ApiHandler
     }
 
 
-    public function handle(array $params): ApiResponseInterface
+    public function handle(array $params): ResponseInterface
     {
         $authorization = $this->getAuthorization();
         $data = $authorization->getAuthorizedData();
         if (!isset($data['token']) || !isset($data['token']->user) || empty($data['token']->user)) {
-            $response = new JsonResponse(['status' => 'error', 'message' => 'Cannot authorize user']);
-            $response->setHttpCode(Response::S403_FORBIDDEN);
+            $response = new JsonApiResponse(Response::S403_FORBIDDEN, ['status' => 'error', 'message' => 'Cannot authorize user']);
             return $response;
         }
         $user = $data['token']->user;
@@ -53,8 +52,7 @@ class ListRecurrentPaymentsApiHandler extends ApiHandler
         $paramsProcessor = new ParamsProcessor($this->params());
         $error = $paramsProcessor->hasError();
         if ($error) {
-            $response = new JsonResponse(['status' => 'error', 'message' => 'Wrong input - ' . $error]);
-            $response->setHttpCode(Response::S400_BAD_REQUEST);
+            $response = new JsonApiResponse(Response::S400_BAD_REQUEST, ['status' => 'error', 'message' => 'Wrong input - ' . $error]);
             return $response;
         }
         $params = $paramsProcessor->getValues();
@@ -66,12 +64,11 @@ class ListRecurrentPaymentsApiHandler extends ApiHandler
         if ($params['chargeable_from'] ?? false) {
             $chargeableFrom = DateTime::createFromFormat(DATE_ATOM, $params['chargeable_from']);
             if (!$chargeableFrom) {
-                $response = new JsonResponse([
+                $response = new JsonApiResponse(Response::S400_BAD_REQUEST, [
                     'status' => 'error',
                     'code' => 'invalid_date',
                     'message' => 'Invalid format provided for charge_at parameter, ISO 8601 expected: ' . $params['chargeable_from']
                 ]);
-                $response->setHttpCode(Response::S400_BAD_REQUEST);
                 return $response;
             }
             $recurrentPayments->where('charge_at >= ?', $chargeableFrom);
@@ -90,8 +87,7 @@ class ListRecurrentPaymentsApiHandler extends ApiHandler
             ];
         }
 
-        $response = new JsonResponse($results);
-        $response->setHttpCode(Response::S200_OK);
+        $response = new JsonApiResponse(Response::S200_OK, $results);
         return $response;
     }
 }

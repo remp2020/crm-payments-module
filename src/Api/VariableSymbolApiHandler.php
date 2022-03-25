@@ -3,10 +3,10 @@
 namespace Crm\PaymentsModule\Api;
 
 use Crm\ApiModule\Api\ApiHandler;
-use Crm\ApiModule\Api\JsonResponse;
-use Crm\ApiModule\Response\ApiResponseInterface;
 use Crm\PaymentsModule\VariableSymbolInterface;
 use Nette\Http\Response;
+use Tomaj\NetteApi\Response\JsonApiResponse;
+use Tomaj\NetteApi\Response\ResponseInterface;
 
 class VariableSymbolApiHandler extends ApiHandler
 {
@@ -24,10 +24,9 @@ class VariableSymbolApiHandler extends ApiHandler
     }
 
 
-    public function handle(array $params): ApiResponseInterface
+    public function handle(array $params): ResponseInterface
     {
-        $response = new JsonResponse(['status' => 'ok', 'variable_symbol' => $this->variableSymbol->getNew(null)]);
-        $response->setHttpCode(Response::S200_OK);
+        $response = new JsonApiResponse(Response::S200_OK, ['status' => 'ok', 'variable_symbol' => $this->variableSymbol->getNew(null)]);
 
         return $response;
     }

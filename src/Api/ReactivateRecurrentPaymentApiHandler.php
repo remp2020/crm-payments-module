@@ -3,12 +3,12 @@
 namespace Crm\PaymentsModule\Api;
 
 use Crm\ApiModule\Api\ApiHandler;
-use Crm\ApiModule\Api\JsonResponse;
 use Crm\ApiModule\Api\JsonValidationTrait;
-use Crm\ApiModule\Response\ApiResponseInterface;
 use Crm\PaymentsModule\Repository\RecurrentPaymentsRepository;
 use Nette\Http\Response;
 use Nette\Utils\DateTime;
+use Tomaj\NetteApi\Response\JsonApiResponse;
+use Tomaj\NetteApi\Response\ResponseInterface;
 use Tracy\Debugger;
 
 class ReactivateRecurrentPaymentApiHandler extends ApiHandler
@@ -27,17 +27,16 @@ class ReactivateRecurrentPaymentApiHandler extends ApiHandler
         return [];
     }
 
-    public function handle(array $params): ApiResponseInterface
+    public function handle(array $params): ResponseInterface
     {
         // authorize user
         $authorization = $this->getAuthorization();
         $data = $authorization->getAuthorizedData();
         if (!isset($data['token']) || !isset($data['token']->user) || empty($data['token']->user)) {
-            $response = new JsonResponse([
+            $response = new JsonApiResponse(Response::S403_FORBIDDEN, [
                 'message' => 'Cannot authorize user',
                 'code' => 'cannot_authorize_user',
             ]);
-            $response->setHttpCode(Response::S403_FORBIDDEN);
             return $response;
         }
         $user = $data['token']->user;
@@ -56,48 +55,43 @@ class ReactivateRecurrentPaymentApiHandler extends ApiHandler
         $recurrentPaymentID = $validationResult->id;
         $recurrentPayment = $this->recurrentPaymentsRepository->find($recurrentPaymentID);
         if (!$recurrentPayment) {
-            $response = new JsonResponse([
+            $response = new JsonApiResponse(Response::S404_NOT_FOUND, [
                 'message' => "Recurrent payment with ID [$recurrentPaymentID] not found.",
                 'code' => 'recurrent_payment_not_found'
             ]);
-            $response->setHttpCode(Response::S404_NOT_FOUND);
             return $response;
         }
 
         if ($recurrentPayment->user_id !== $user->id) {
-            $response = new JsonResponse([
+            $response = new JsonApiResponse(Response::S404_NOT_FOUND, [
                 'message' => "User with [$user->id] doesn't have recurrent payment with ID [$recurrentPaymentID].",
                 'code' => 'recurrent_payment_not_found',
             ]);
-            $response->setHttpCode(Response::S404_NOT_FOUND);
             return $response;
         }
 
         // check state; user can stop only `user_stop` recurrent payments
         if ($recurrentPayment->state !== RecurrentPaymentsRepository::STATE_USER_STOP) {
-            $response = new JsonResponse([
+            $response = new JsonApiResponse(Response::S409_CONFLICT, [
                 'message' => "Only recurrent payment in state [" . RecurrentPaymentsRepository::STATE_USER_STOP . "] can be reactivated by user. Recurrent payment with ID [$recurrentPaymentID] is in state [$recurrentPayment->state].",
                 'code' => 'recurrent_payment_not_active'
             ]);
-            $response->setHttpCode(Response::S409_CONFLICT);
             return $response;
         }
 
         if (!$recurrentPayment->cid) {
             Debugger::log("User stopped recurrent payment with ID [$recurrentPaymentID] is missing CID.", Debugger::ERROR);
-            $response = new JsonResponse([
+            $response = new JsonApiResponse(Response::S500_INTERNAL_SERVER_ERROR, [
                 'message' => "Recurrent payment with ID [$recurrentPaymentID] cannot be reactivated. Recurrent payment is missing CID.",
                 'code' => 'recurrent_payment_missing_cid',
             ]);
-            $response->setHttpCode(Response::S500_INTERNAL_SERVER_ERROR);
             return $response;
         }
         if ($recurrentPayment->charge_at < new DateTime()) {
-            $response = new JsonResponse([
+            $response = new JsonApiResponse(Response::S400_BAD_REQUEST, [
                 'message' => "Recurrent payment with ID [$recurrentPaymentID] cannot be reactivated. Next charge is in past.",
                 'code' => 'recurrent_payment_next_charge_in_past',
             ]);
-            $response->setHttpCode(Response::S400_BAD_REQUEST);
             return $response;
         }
 
@@ -105,11 +99,10 @@ class ReactivateRecurrentPaymentApiHandler extends ApiHandler
         $reactivatedRecurrentPayment = $this->recurrentPaymentsRepository->reactivateByUser($recurrentPaymentID, $user->id);
         if (!$reactivatedRecurrentPayment) {
             Debugger::log("User is unable to reactivate recurrent payment with ID [$recurrentPaymentID].", Debugger::ERROR);
-            $response = new JsonResponse([
+            $response = new JsonApiResponse(Response::S500_INTERNAL_SERVER_ERROR, [
                 'message' => "Internal server error. Unable to reactivate recurrent payment ID [$recurrentPaymentID].",
                 'code' => 'internal_server_error'
             ]);
-            $response->setHttpCode(Response::S500_INTERNAL_SERVER_ERROR);
             return $response;
         }
 
@@ -123,8 +116,7 @@ class ReactivateRecurrentPaymentApiHandler extends ApiHandler
             'retries' => $reactivatedRecurrentPayment->retries,
         ];
 
-        $response = new JsonResponse($result);
-        $response->setHttpCode(Response::S200_OK);
+        $response = new JsonApiResponse(Response::S200_OK, $result);
         return $response;
     }
 }

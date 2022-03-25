@@ -3,11 +3,11 @@
 namespace Crm\PaymentsModule\Api;
 
 use Crm\ApiModule\Api\ApiHandler;
-use Crm\ApiModule\Api\JsonResponse;
 use Crm\ApiModule\Api\JsonValidationTrait;
-use Crm\ApiModule\Response\ApiResponseInterface;
 use Crm\PaymentsModule\Repository\RecurrentPaymentsRepository;
 use Nette\Http\Response;
+use Tomaj\NetteApi\Response\JsonApiResponse;
+use Tomaj\NetteApi\Response\ResponseInterface;
 use Tracy\Debugger;
 
 class StopRecurrentPaymentApiHandler extends ApiHandler
@@ -26,17 +26,16 @@ class StopRecurrentPaymentApiHandler extends ApiHandler
         return [];
     }
 
-    public function handle(array $params): ApiResponseInterface
+    public function handle(array $params): ResponseInterface
     {
         // authorize user
         $authorization = $this->getAuthorization();
         $data = $authorization->getAuthorizedData();
         if (!isset($data['token']) || !isset($data['token']->user) || empty($data['token']->user)) {
-            $response = new JsonResponse([
+            $response = new JsonApiResponse(Response::S403_FORBIDDEN, [
                 'message' => 'Cannot authorize user',
                 'code' => 'cannot_authorize_user',
             ]);
-            $response->setHttpCode(Response::S403_FORBIDDEN);
             return $response;
         }
         $user = $data['token']->user;
@@ -55,39 +54,35 @@ class StopRecurrentPaymentApiHandler extends ApiHandler
         $recurrentPaymentID = $validationResult->id;
         $recurrentPayment = $this->recurrentPaymentsRepository->find($recurrentPaymentID);
         if (!$recurrentPayment) {
-            $response = new JsonResponse([
+            $response = new JsonApiResponse(Response::S404_NOT_FOUND, [
                 'message' => "Recurrent payment with ID [$recurrentPaymentID] not found.",
                 'code' => 'recurrent_payment_not_found'
             ]);
-            $response->setHttpCode(Response::S404_NOT_FOUND);
             return $response;
         }
 
         if ($recurrentPayment->user_id !== $user->id) {
-            $response = new JsonResponse([
+            $response = new JsonApiResponse(Response::S404_NOT_FOUND, [
                 'message' => "User with [$user->id] doesn't have recurrent payment with ID [$recurrentPaymentID].",
                 'code' => 'recurrent_payment_not_found',
             ]);
-            $response->setHttpCode(Response::S404_NOT_FOUND);
             return $response;
         }
 
         // check state; user can stop only active recurrent payments
         if ($recurrentPayment->state !== RecurrentPaymentsRepository::STATE_ACTIVE) {
-            $response = new JsonResponse([
+            $response = new JsonApiResponse(Response::S409_CONFLICT, [
                 'message' => "Only active recurrent payment can be stopped by user. Recurrent payment with ID [$recurrentPaymentID] is in state [$recurrentPayment->state].",
                 'code' => 'recurrent_payment_not_active'
             ]);
-            $response->setHttpCode(Response::S409_CONFLICT);
             return $response;
         }
 
         if (!$this->recurrentPaymentsRepository->canBeStoppedByUser($recurrentPayment)) {
-            $response = new JsonResponse([
+            $response = new JsonApiResponse(Response::S403_FORBIDDEN, [
                 'message' => "Payment gateway [{$recurrentPayment->payment_gateway->code}] is unstoppable by user.",
                 'code' => 'user_unstoppable_recurrent_payment_gateway'
             ]);
-            $response->setHttpCode(Response::S403_FORBIDDEN);
             return $response;
         }
 
@@ -95,11 +90,10 @@ class StopRecurrentPaymentApiHandler extends ApiHandler
         $stoppedRecurrentPayment = $this->recurrentPaymentsRepository->stoppedByUser($recurrentPaymentID, $user->id);
         if (!$stoppedRecurrentPayment) {
             Debugger::log("User is unable to stop recurrent payment with ID [$recurrentPaymentID].", Debugger::ERROR);
-            $response = new JsonResponse([
+            $response = new JsonApiResponse(Response::S500_INTERNAL_SERVER_ERROR, [
                 'message' => "Internal server error. Unable to stop recurrent payment ID [$recurrentPaymentID].",
                 'code' => 'internal_server_error'
             ]);
-            $response->setHttpCode(Response::S500_INTERNAL_SERVER_ERROR);
             return $response;
         }
 
@@ -113,8 +107,7 @@ class StopRecurrentPaymentApiHandler extends ApiHandler
             'retries' => $stoppedRecurrentPayment->retries,
         ];
 
-        $response = new JsonResponse($result);
-        $response->setHttpCode(Response::S200_OK);
+        $response = new JsonApiResponse(Response::S200_OK, $result);
         return $response;
     }
 }

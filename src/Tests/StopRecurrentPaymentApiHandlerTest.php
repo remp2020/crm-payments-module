@@ -2,7 +2,6 @@
 
 namespace Crm\PaymentsModule\Tests;
 
-use Crm\ApiModule\Api\JsonResponse;
 use Crm\PaymentsModule\Api\StopRecurrentPaymentApiHandler;
 use Crm\PaymentsModule\Models\Gateway;
 use Crm\PaymentsModule\PaymentItem\PaymentItemContainer;
@@ -14,6 +13,7 @@ use Crm\UsersModule\Tests\TestUserTokenAuthorization;
 use Nette\Database\Table\ActiveRow;
 use Nette\Http\Response;
 use Nette\Utils\Json;
+use Tomaj\NetteApi\Response\JsonApiResponse;
 
 class StopRecurrentPaymentApiHandlerTest extends PaymentsTestCase
 {
@@ -50,8 +50,8 @@ class StopRecurrentPaymentApiHandlerTest extends PaymentsTestCase
         $response = $this->handler->handle([]); // TODO: fix params
 
         // validate API response
-        $this->assertEquals(JsonResponse::class, get_class($response));
-        $this->assertEquals(Response::S403_FORBIDDEN, $response->getHttpCode());
+        $this->assertEquals(JsonApiResponse::class, get_class($response));
+        $this->assertEquals(Response::S403_FORBIDDEN, $response->getCode());
         $payload = $response->getPayload();
         $this->assertEquals('user_unstoppable_recurrent_payment_gateway', $payload['code']);
 
@@ -79,8 +79,8 @@ class StopRecurrentPaymentApiHandlerTest extends PaymentsTestCase
         $response = $this->handler->handle([]); // TODO: fix params
 
         // validate API response
-        $this->assertEquals(JsonResponse::class, get_class($response));
-        $this->assertEquals(Response::S403_FORBIDDEN, $response->getHttpCode());
+        $this->assertEquals(JsonApiResponse::class, get_class($response));
+        $this->assertEquals(Response::S403_FORBIDDEN, $response->getCode());
         $payload = $response->getPayload();
         $this->assertEquals('user_unstoppable_recurrent_payment_gateway', $payload['code']);
 
@@ -106,8 +106,8 @@ class StopRecurrentPaymentApiHandlerTest extends PaymentsTestCase
         $response = $this->handler->handle([]); // TODO: fix params
 
         // validate API response
-        $this->assertEquals(JsonResponse::class, get_class($response));
-        $this->assertEquals(Response::S200_OK, $response->getHttpCode());
+        $this->assertEquals(JsonApiResponse::class, get_class($response));
+        $this->assertEquals(Response::S200_OK, $response->getCode());
         $payload = $response->getPayload();
         // status should change to `user_stop`; other fields are same
         $this->assertEquals(RecurrentPaymentsRepository::STATE_USER_STOP, $payload['state']);
@@ -136,8 +136,8 @@ class StopRecurrentPaymentApiHandlerTest extends PaymentsTestCase
         $response = $this->handler->handle([]); // TODO: fix params
 
         // validate API response
-        $this->assertEquals(JsonResponse::class, get_class($response));
-        $this->assertEquals(Response::S400_BAD_REQUEST, $response->getHttpCode());
+        $this->assertEquals(JsonApiResponse::class, get_class($response));
+        $this->assertEquals(Response::S400_BAD_REQUEST, $response->getCode());
 
         // validate state in DB (to be sure) - should be unchanged; stopping failed
         $recurrentPaymentReloaded = $this->recurrentPaymentsRepository->find($recurrentPayment->id);
@@ -158,8 +158,8 @@ class StopRecurrentPaymentApiHandlerTest extends PaymentsTestCase
         $response = $this->handler->handle([]); // TODO: fix params
 
         // validate API response
-        $this->assertEquals(JsonResponse::class, get_class($response));
-        $this->assertEquals(Response::S404_NOT_FOUND, $response->getHttpCode());
+        $this->assertEquals(JsonApiResponse::class, get_class($response));
+        $this->assertEquals(Response::S404_NOT_FOUND, $response->getCode());
         $payload = $response->getPayload();
         $this->assertEquals('recurrent_payment_not_found', $payload['code']);
     }
@@ -183,8 +183,8 @@ class StopRecurrentPaymentApiHandlerTest extends PaymentsTestCase
         $response = $this->handler->handle([]); // TODO: fix params
 
         // validate API response
-        $this->assertEquals(JsonResponse::class, get_class($response));
-        $this->assertEquals(Response::S409_CONFLICT, $response->getHttpCode());
+        $this->assertEquals(JsonApiResponse::class, get_class($response));
+        $this->assertEquals(Response::S409_CONFLICT, $response->getCode());
         $payload = $response->getPayload();
         $this->assertEquals('recurrent_payment_not_active', $payload['code']);
 
@@ -213,8 +213,8 @@ class StopRecurrentPaymentApiHandlerTest extends PaymentsTestCase
         $response = $this->handler->handle([]); // TODO: fix params
 
         // validate API response
-        $this->assertEquals(JsonResponse::class, get_class($response));
-        $this->assertEquals(Response::S404_NOT_FOUND, $response->getHttpCode());
+        $this->assertEquals(JsonApiResponse::class, get_class($response));
+        $this->assertEquals(Response::S404_NOT_FOUND, $response->getCode());
         $payload = $response->getPayload();
         $this->assertEquals('recurrent_payment_not_found', $payload['code']);
 

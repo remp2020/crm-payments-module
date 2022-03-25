@@ -2,7 +2,6 @@
 
 namespace Crm\PaymentsModule\Tests;
 
-use Crm\ApiModule\Api\JsonResponse;
 use Crm\PaymentsModule\Api\ListRecurrentPaymentsApiHandler;
 use Crm\PaymentsModule\PaymentItem\PaymentItemContainer;
 use Crm\PaymentsModule\Repository\RecurrentPaymentsRepository;
@@ -10,6 +9,7 @@ use Crm\SubscriptionsModule\PaymentItem\SubscriptionTypePaymentItem;
 use Crm\UsersModule\Tests\TestUserTokenAuthorization;
 use Nette\Database\Table\ActiveRow;
 use Nette\Utils\DateTime;
+use Tomaj\NetteApi\Response\JsonApiResponse;
 
 class ListRecurrentPaymentsApiHandlerTest extends PaymentsTestCase
 {
@@ -39,7 +39,7 @@ class ListRecurrentPaymentsApiHandlerTest extends PaymentsTestCase
 
         $this->handler->setAuthorization($this->getTestAuthorization($payment));
         $response = $this->handler->handle([]); // TODO: fix params
-        $this->assertEquals(JsonResponse::class, get_class($response));
+        $this->assertEquals(JsonApiResponse::class, get_class($response));
 
         $payload = $response->getPayload();
         $this->assertCount(2, $payload);
@@ -60,7 +60,7 @@ class ListRecurrentPaymentsApiHandlerTest extends PaymentsTestCase
 
         $this->handler->setAuthorization($this->getTestAuthorization($payment));
         $response = $this->handler->handle([]); // TODO: fix params
-        $this->assertEquals(JsonResponse::class, get_class($response));
+        $this->assertEquals(JsonApiResponse::class, get_class($response));
 
         $payload = $response->getPayload();
         $this->assertCount(1, $payload);
@@ -79,7 +79,7 @@ class ListRecurrentPaymentsApiHandlerTest extends PaymentsTestCase
 
         $this->handler->setAuthorization($this->getTestAuthorization($payment));
         $response = $this->handler->handle([]); // TODO: fix params
-        $this->assertEquals(JsonResponse::class, get_class($response));
+        $this->assertEquals(JsonApiResponse::class, get_class($response));
 
         $payload = $response->getPayload();
         $this->assertCount(2, $payload);
@@ -100,7 +100,7 @@ class ListRecurrentPaymentsApiHandlerTest extends PaymentsTestCase
 
         $this->handler->setAuthorization($this->getTestAuthorization($payment));
         $response = $this->handler->handle([]); // TODO: fix params
-        $this->assertEquals(JsonResponse::class, get_class($response));
+        $this->assertEquals(JsonApiResponse::class, get_class($response));
 
         $payload = $response->getPayload();
         $this->assertCount(0, $payload);
@@ -117,7 +117,7 @@ class ListRecurrentPaymentsApiHandlerTest extends PaymentsTestCase
 
         $this->handler->setAuthorization($this->getTestAuthorization($payment));
         $response = $this->handler->handle([]); // TODO: fix params
-        $this->assertEquals(JsonResponse::class, get_class($response));
+        $this->assertEquals(JsonApiResponse::class, get_class($response));
 
         $payload = $response->getPayload();
         $this->assertCount(1, $payload);
@@ -136,7 +136,7 @@ class ListRecurrentPaymentsApiHandlerTest extends PaymentsTestCase
 
         $this->handler->setAuthorization($this->getTestAuthorization($payment));
         $response = $this->handler->handle([]); // TODO: fix params
-        $this->assertEquals(JsonResponse::class, get_class($response));
+        $this->assertEquals(JsonApiResponse::class, get_class($response));
 
         $payload = $response->getPayload();
         $this->assertEquals('error', $payload['status']);
