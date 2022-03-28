@@ -16,6 +16,7 @@ use Crm\UsersModule\Repository\UserMetaRepository;
 use Crm\UsersModule\Repository\UsersRepository;
 use Crm\UsersModule\User\UserData;
 use Crm\ViamoModule\Gateways\Viamo;
+use Nette\Database\Table\ActiveRow;
 
 class ReturnPresenter extends FrontendPresenter
 {
@@ -64,11 +65,15 @@ class ReturnPresenter extends FrontendPresenter
 
     public function renderGateway($gatewayCode)
     {
-        return $this->returnPayment($gatewayCode);
+        $this->returnPayment($gatewayCode);
     }
 
     public function renderViamo()
     {
+        if (!class_exists(Viamo::class)) {
+            throw new \Exception('Unable to process Viamo payment, Viamo module has not been installed yet.');
+        }
+
         $responseString = urldecode($this->params['responseString']);
         $parts = explode('*', $responseString);
         $payment = false;
@@ -124,7 +129,7 @@ class ReturnPresenter extends FrontendPresenter
             $this->resolveRedirect($payment, PaymentCompleteRedirectResolver::ERROR);
         }
 
-        return $this->processPayment($payment);
+        $this->processPayment($payment);
     }
 
     private function processPayment($payment)
@@ -198,19 +203,26 @@ class ReturnPresenter extends FrontendPresenter
         $this->resolveRedirect($payment, PaymentCompleteRedirectResolver::FORM);
     }
 
-    public function getPayment()
+    public function getPayment(): ?ActiveRow
     {
-        if (isset($this->VS)) {
-            $payment = $this->paymentsRepository->findByVs($this->VS);
-            return $payment;
+        if (!isset($this->VS)) {
+            $this->paymentLogsRepository->add(
+                'ERROR',
+                "Missing VS parameter",
+                $this->request->getUrl()
+            );
+            $this->resolveRedirect(null, PaymentCompleteRedirectResolver::ERROR);
         }
-        $this->paymentLogsRepository->add(
-            'ERROR',
-            "Cannot load payment with VS '{$this->VS}'",
-            $this->request->getUrl()
-        );
-        $this->resolveRedirect(null, PaymentCompleteRedirectResolver::ERROR);
-        return false;
+        $payment = $this->paymentsRepository->findByVs($this->VS);
+        if (!$payment) {
+            $this->paymentLogsRepository->add(
+                'ERROR',
+                "Cannot load payment with VS '{$this->VS}'",
+                $this->request->getUrl()
+            );
+            $this->resolveRedirect(null, PaymentCompleteRedirectResolver::ERROR);
+        }
+        return $payment;
     }
 
     public function resolveRedirect($payment, $resolverStatus)
