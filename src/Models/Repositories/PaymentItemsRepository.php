@@ -5,6 +5,7 @@ namespace Crm\PaymentsModule\Repository;
 use Crm\ApplicationModule\Config\ApplicationConfig;
 use Crm\ApplicationModule\DataProvider\DataProviderManager;
 use Crm\ApplicationModule\Repository;
+use Crm\ApplicationModule\Selection;
 use Crm\PaymentsModule\DataProvider\CanUpdatePaymentItemDataProviderInterface;
 use Crm\PaymentsModule\Events\NewPaymentItemEvent;
 use Crm\PaymentsModule\PaymentItem\PaymentItemContainer;
@@ -96,6 +97,30 @@ class PaymentItemsRepository extends Repository
             ->where('payment_id', $payment->id);
 
         return $q->delete();
+    }
+
+    /**
+     * @param ActiveRow $paymentItem
+     * @return int
+     */
+    final public function deletePaymentItem(ActiveRow $paymentItem): int
+    {
+        // remove payment item meta
+        $paymentItemMetas = $this->paymentItemMetaRepository->findByPaymentItem($paymentItem);
+        foreach ($paymentItemMetas as $paymentItemMeta) {
+            $this->paymentItemMetaRepository->delete($paymentItemMeta);
+        }
+
+        return $this->getTable()->where('id', $paymentItem->id)->delete();
+    }
+
+    /**
+     * @param ActiveRow $payment
+     * @return Selection
+     */
+    final public function getByPayment(ActiveRow $payment): Selection
+    {
+        return $this->getTable()->where('payment_id', $payment->id);
     }
 
     /**

@@ -1,0 +1,60 @@
+<a tabindex="-1" href="#" data-toggle="modal" data-target="#change-payment-subscription-type-{$payment->id}" class="btn btn-primary btn-sm btn-change-subscription-type" style="margin-bottom: 10px;">{_payments.admin.component.change_payment_subscription_type_widget.button}</a>
+
+<div class="modal fade show-coupon-modal" id="change-payment-subscription-type-{$payment->id}">
+    <div class="modal-dialog" style="width: 700px;">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+                <h4 class="modal-title">{_payments.admin.component.change_payment_subscription_type_widget.title}: #{$payment->id}</h4>
+            </div>
+            <div class="modal-body">
+                {form changePaymentSubscriptionTypeForm}
+                    <div class="row">
+                        <div class="form-group required clearfix">
+                            <div class="col-sm-3 control-label" style="padding-top: 5px;">
+                                {label subscription_type_id /}
+                            </div>
+
+                            <div class="col-sm-9">
+                                {input subscription_type_id}
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="row">
+                        <div class="form-group clearfix">
+                            <div class="col-sm-4 control-label"></div>
+
+                            <div class="col-sm-8">{input submit}</div>
+                        </div>
+                    </div>
+                {/form}
+
+                <div class="row">
+                    <div class="col-sm-12">
+                        <div style="color: red; white-space: normal;">
+                            {_payments.admin.component.change_payment_subscription_type_widget.warning}
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+$(function () {
+    var $paymentFormSubscriptionTypeIdInput = $('#frm-paymentForm-subscription_type_id');
+    if ($paymentFormSubscriptionTypeIdInput.length) {
+        $paymentFormSubscriptionTypeIdInput.parent().prepend($('.btn-change-subscription-type'));
+    }
+})
+</script>
+
+<style>
+    .select2-container {
+        max-width: 100%;
+    }
+</style>

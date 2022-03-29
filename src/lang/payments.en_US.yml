@@ -218,6 +218,13 @@ admin:
                 send: Filter
                 cancel: Cancel filter
 
+        change_payment_subscription_type_widget:
+            button: Change subscription type
+            title: Change subscription type for payment
+            subscription_type: Subscription type
+            success: Change of subscription type was successful
+            warning: Change of subscription type will delete all related payment items and create new ones from subscription type items.
+
     donation: Donation
 
     arpu:

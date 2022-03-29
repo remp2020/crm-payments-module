@@ -25,6 +25,7 @@ services:
 	recurrentPaymentsResolver: Crm\PaymentsModule\RecurrentPaymentsResolver
 	- Crm\PaymentsModule\Forms\RecurrentPaymentFormFactory
 	- Crm\PaymentsModule\Forms\RetentionAnalysisFilterFormFactory
+	- Crm\PaymentsModule\Forms\ChangePaymentSubscriptionTypeFormFactory
 	- Crm\PaymentsModule\PaymentProcessor
 	- Crm\PaymentsModule\RecurrentPaymentsProcessor
 	- Crm\PaymentsModule\Builder\ParsedMailLogsBuilder
@@ -47,6 +48,7 @@ services:
 	- Crm\PaymentsModule\Components\MonthDonationAmountStatWidget
 	- Crm\PaymentsModule\Components\MonthToDateDonationAmountStatWidget
 	- Crm\PaymentsModule\Components\AddressWidget
+	- Crm\PaymentsModule\Components\ChangePaymentSubscriptionTypeWidget
 	- Crm\PaymentsModule\Commands\RecurrentPaymentsCardCheck
 	- Crm\PaymentsModule\Commands\RecurrentPaymentsChargeCommand
 	- Crm\PaymentsModule\Commands\CsobMailConfirmationCommand

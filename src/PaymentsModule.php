@@ -255,6 +255,10 @@ class PaymentsModule extends CrmModule
             'segment.detail.statspanel.row',
             $this->getInstance(\Crm\PaymentsModule\Components\AvgSubscriptionPaymentWidget::class)
         );
+        $widgetManager->registerWidget(
+            'payments.admin.edit_form.after',
+            $this->getInstance(\Crm\PaymentsModule\Components\ChangePaymentSubscriptionTypeWidget::class)
+        );
     }
 
     public function registerCommands(CommandsContainerInterface $commandsContainer)

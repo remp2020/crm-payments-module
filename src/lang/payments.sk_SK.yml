@@ -218,6 +218,13 @@ admin:
                 send: Filter
                 cancel: Zruš filter
 
+        change_payment_subscription_type_widget:
+            button: Zmeniť typ predplatného
+            title: Zmena typu predplatného pre platbu
+            subscription_type: Typ predplatného
+            success: Zmena typu predplatného bola úspešná
+            warning: Zmena typu predplatného vymaže všetky súvisiace platobné položky a vytvorí nové z položiek typu predplatného.
+
     donation: Dar k predplatnému
 
     arpu:
