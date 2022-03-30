@@ -86,8 +86,7 @@ class ChangePaymentSubscriptionTypeFormFactory
         $form->addSubmit('submit', 'payments.admin.component.change_payment_subscription_type_widget.button')
             ->getControlPrototype()
             ->setName('button')
-            ->setAttribute('class', 'btn btn-primary')
-            ->setHtml($this->translator->translate('payments.admin.component.change_payment_subscription_type_widget.button'));
+            ->setAttribute('class', 'btn btn-primary');
 
         $form->onSuccess[] = [$this, 'formSucceeded'];
         return $form;

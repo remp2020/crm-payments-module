@@ -343,8 +343,7 @@ class RetentionAnalysisAdminPresenter extends AdminPresenter
 
         $form->addSubmit('send', 'payments.admin.retention_analysis.schedule_computation')
             ->getControlPrototype()
-            ->setName('button')
-            ->setHtml($this->translator->translate('payments.admin.retention_analysis.schedule_computation'));
+            ->setName('button');
 
         $form->onSuccess[] = [$this, 'scheduleComputationSubmitted'];
         return $form;
