@@ -94,7 +94,7 @@ class ReturnPresenter extends FrontendPresenter
             $this->resolveRedirect(null, PaymentCompleteRedirectResolver::ERROR);
         }
 
-        if ($payment->payment_gateway->code != Viamo::GATEWAY_CODE) {
+        if ($payment->payment_gateway->code != 'viamo') {
             $this->paymentLogsRepository->add(
                 'ERROR',
                 "Return to wrong payment type 'viamo'",
