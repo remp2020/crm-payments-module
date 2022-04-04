@@ -33,15 +33,14 @@
   }
 
   function handleFormSaved(headerSelector) {
-    var $header = $(headerSelector),
-      $open = $header.find('.open').hide(),
-      $done = $header.find('.done').show();
+    markFormAsDone(headerSelector);
+  }
 
-    setTimeout(function () {
-      $done.fadeOut(300, function () {
-        $open.fadeIn();
-      });
-    }, 3200);
+  // handles only text change
+  function markFormAsDone(headerSelector) {
+    var $header = $(headerSelector);
+    $header.find('.open').hide();
+    $header.find('.done').show();
   }
 
   $(function () {
@@ -56,6 +55,14 @@
 
     var addressForms = document.getElementById('address-forms');
     if ((addressForms.querySelector('form') !== null)) {
+
+      // if form is marked as done by backend, change displayed text to done
+      document.querySelectorAll('.additionalform-header-box').forEach(function (element) {
+        if (element.parentElement.classList.contains('done')) {
+          markFormAsDone('#' + element.parentElement.id);
+        }
+      });
+
       document.querySelectorAll('.hide-if-no-forms').forEach(function (element) {
         element.style.display = 'block';
       });
