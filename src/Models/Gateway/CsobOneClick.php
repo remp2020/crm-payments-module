@@ -4,7 +4,6 @@ namespace Crm\PaymentsModule\Gateways;
 
 use Crm\ApplicationModule\Config\ApplicationConfig;
 use Crm\ApplicationModule\Request;
-use Crm\PaymentsModule\CannotCheckExpiration;
 use Crm\PaymentsModule\GatewayFail;
 use Crm\PaymentsModule\RecurrentPaymentFailStop;
 use Crm\PaymentsModule\RecurrentPaymentFailTry;
