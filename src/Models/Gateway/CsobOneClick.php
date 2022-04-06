@@ -186,7 +186,7 @@ class CsobOneClick extends GatewayAbstract implements RecurrentPaymentInterface
             ])->send();
 
             if (!$response->isSuccessful()) {
-                throw new CannotCheckExpiration();
+                continue;
             }
 
             $expiration = $response->getExpiration(); // mm/yy
