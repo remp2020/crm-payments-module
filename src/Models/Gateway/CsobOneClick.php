@@ -189,6 +189,10 @@ class CsobOneClick extends GatewayAbstract implements RecurrentPaymentInterface
             }
 
             $expiration = $response->getExpiration(); // mm/yy
+            if (!$expiration) {
+                continue;
+            }
+            
             $month = substr($expiration, 0, 2);
             $year = substr($expiration, 3, 2);
             $result[$token] = DateTime::from("$year-$month-01 00:00 next month");
