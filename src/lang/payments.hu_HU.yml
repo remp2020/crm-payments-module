@@ -1,12 +1,12 @@
 menu:
-    stats: Fizetés
-    payments: Fizetés
-    admin_payments: Fizetés
-    gateways: Fizetési átjárók
-    parsed_mails: Elemzett fizetési e-mailek
+    stats: Fizetések
+    payments: Fizetések
+    admin_payments: Fizetések
+    gateways: Fizetési kapuk
+    parsed_mails: Feldolgozott fizetési e-mailek
     recurrent_payments: Ismétlődő fizetések
-    duplicate_recurrent_payments: Ismétlődő fizetés megkettőzése
-    retention_analysis: Megtartási elemzés
+    duplicate_recurrent_payments: Duplikált ismétlődő fizetések
+    retention_analysis: Visszatartás elemzése
     exports: Exportok
 
 admin:
@@ -213,6 +213,8 @@ admin:
                 send: Szűrés
                 cancel: Visszaállítás
 
+        avg_month_payment_widget:
+            avg_month_payment: Fizetés havi átlagösszege
     donation: Adomány
 
     arpu:
@@ -316,10 +318,10 @@ admin:
         send_notification: Értesítés küldése e-mailben
         close: Bezár
         title: Fizetések
-        variable_symbol: Változó szimbólum
+        variable_symbol: Fizetés egyedi azonosítója
         user: Felhasználó
         amount: Összeg
-        gateway: Fizetési átjáró
+        gateway: Fizetési kapu
         items: Tételek
         status: Állapot
         created_at: Létrehozva
@@ -357,10 +359,10 @@ form:
     payment_gateway:
         name:
             label: Név
-            required: Átjáró név kötelező
+            required: Név megadása kötelező
             placeholder: pl. Paypal
         code:
-            label: Kód
+            label: Azonosító
             placeholder: pl. paypal
         visible:
             label: Látható
@@ -371,59 +373,62 @@ form:
         save:
             label: Mentés
 
+        required: Fizetési kapu megadása kötelező
     payment:
         variable_symbol:
-            label: Változó szimbólum
-            required: Változó szimbólum kötelező
+            label: Átutalás egyedi azonosítója
+            required: Egyedi azonosító megadása kötelező
             placeholder: pl. 87239102385
-            generate: Generálás
+            generate: Létrehozás
+            already_used: Az egyedi azonosítót nemrég már használták
         amount:
             label: Összeg
-            required: Összeg kötelező
-            nonzero: "Összeg pozitív szám kell legyen, talán nem lett fizetési tétel kiválasztva."
-            description: "Note: Összeg is calculated based on selected subscription type. If you want to use different amount, select <strong>custom item amounts</strong> and the payment amount will be recalculated based on prices of the items."
-        items: Fizetési tétel
+            required: Összeg megadása kötelező
+            nonzero: "Az összegnek pozitív számnak kell lennie, valószínűleg nem lett fizetési tétel kiválasztva."
+            description: "Figyelem: Az összeg a kiválasztott előfizetés típusának ára szerint előre kitöltésre került. Ha más összeget kíván megadni, jelölje ki a <strong>tételek saját ára </strong> lehetőséget, és az összeg az egyes tételek ára szerint automatikusan átszámításra kerül."
+        items: Fizetési tételek
         subscription_type_id:
             label: Előfizetés típusa
             prompt: Előfizetés típusa
         custom_payment_items:
-            label: Saját tétel mennyiségek
+            label: A tételek saját ára
         additional_amount:
-            label: Adomány mennyisége
+            label: Adományozott összeg
             placeholder: pl. 14.52
         additional_type:
-            label: Adomány típusa
+            label: Adományozott összeg típusa
             single: Egyszeri
             recurrent: Ismétlődő
-            description: "Adomány mennyiség megadása esetén egy típus kiválasztása kötelező"
-        general_settings: Általános fizetési beállítások
+            description: "Adományozott összeg megadása esetén egy típus kiválasztása kötelező"
+        general_settings: Egyéb fizetési beállítások
         payment_gateway_id:
-            label: Fizetési átjáró
+            label: Fizetési kapu
         status:
             label: Állapot
         paid_at:
-            label: Fizetve
-            placeholder: pl. 14.2.2016 14:21
+            label: Fizetés időpontja
+            placeholder: pl. 2016. 2. 14. 14:21
+            required: A tétel megadása kötelező
         send_notification:
             label: Értesítés küldése
         manual_subscription:
             label: Előfizetés kezdete / vége
-            start: Manuális - határozza meg az előfizetés kezdeté
-            start_end: Manuális - határozza meg az előfizetés elejét és végét
-            prompt: Automatikus - vásárlás dátuma és előfizetés típusának hossza alapján
+            start: Manuális - állítsa be az előfizetés kezdetét
+            start_end: Manuális - állítsa be az előfizetés kezdetét és végét
+            prompt: Automatikus - az előfizetés kifizetésének dátuma és típusának hossza alapján
         subscription_start_at:
             label: Előfizetés kezdete
-            placeholder: pl. 14.2.2016
-            description: "Szükséges ha az előfizetés a jövőben fog kezdődni. Ha a fizetés a megadott dátum után lesz megerősítve, a kezdeti dátum a megerősítés dátuma lesz."
-            not_past: Előfizetés kezdete a jövőben kell legyen
+            placeholder: pl. 2016. 2. 14.
+            description: "Csak abban az esetben szükséges kitölteni, ha az előfizetés kezdetét egy jövőbeni, konkrét időpontra szeretnénk ütemezni. Ha a fizetés a dátum megadása után lesz visszaigazolva, az előfizetés kezdeti dátuma a visszaigazolás dátuma lesz."
+            not_past: Az előfizetés kezdete nem tehető már elmúlt dátumra
         subscription_end_at:
             label: Előfizetés vége
-            placeholder: pl. 14.2.2016
-            description: "Szükséges csak ha az előfizetés végét szeretné beállítani egy konkrét jövőbeli dátumra."
-            not_past: Előfizetés kezdete a jövőben kell legyen.
+            placeholder: pl. 2016. 2. 14.
+            description: "Csak abban az esetben szükséges kitölteni, ha az előfizetés végét szeretné  egy konkrét jövőbeli dátumra beállítani."
+            not_past: Az előfizetés végének dátuma nem lehet már elmúlt dátum.
         note:
             label: Megjegyzés
-            placeholder: Saját fizetési megjegyzés
+            placeholder: Saját megjegyzés a fizetéshez
         referer:
             label: Hivatkozó
             placeholder: URL ahonnan a fizetést indították
@@ -431,17 +436,23 @@ form:
             label: Cím
         send: Mentés
 
+        items_no_editable: A fizetés olyan előfizetési tételeket tartalmaz, melyeket nem lehet szerkeszteni
+    subscription_form:
+        start_time:
+            after_payment:
+                description: 'Az előfizetés a minden esetben fizetés visszaigazolásának időpontját követően veszi kezdetét: %payment_paid%.'
+                error: Az előfizetés a fizetés visszaigazolásának dátuma előtt veszi kezdetét.
 gateway:
     recurrent: ismétlődő fizetés
 
 
 frontend:
     my:
-        my_payments: Saját fizetések
+        my_payments: Fizetéseim
         refund_payments: Visszatérített tranzakciók
-        payment_type: Fizetések típusa
-        payment_day: Nap
-        variable_symbol: Tranzakció azonosítója
+        payment_type: Fizetés típusa
+        payment_day: Visszatérítés napja
+        variable_symbol: Tranzakció egyedi azonosítója
         price: Ár
         is_recurrent: Ismétlődő fizetés
         receipts: Nyugták
@@ -450,11 +461,15 @@ frontend:
         user_stopped: Ön által leállítva
         user_stopped_requested: Ön kérésére leállítva
         failed_recurrent: Sikertelen ismétlődő fizetés
-        success_recurrent: Automatikusan bekért
+        success_recurrent: Automatikusan meghosszabbítva
         no_payments: Nincs fizetés
         no_refunds: Nincs visszatérítés
         buy_offer: Tartalom hozzáféréshez vásárolhat előfizetést.
         next_recurrent_payment: "Önnek engedélyezve van az ismétlődő fizetés. A következő bekérés <strong>%charge_amount%</strong> összegben <strong>%charge_date%</strong> időpontban."
+        charge_failed:
+            last_try: Előző kísérlet
+            title: Az automatikus meghosszabítás sikertelen
+            next_try: Következő kísérlet
     recurrent_stop:
         title: Ismétlődő fizetés visszavonása
         cancel: "Nem, még átgondolom"
@@ -477,14 +492,24 @@ frontend:
         lead: 'Emlékszünk a kártyáira, nem szükséges újból beírni az adatokat.'
         subtitle: 'A mentett kártyák listája'
         card_with_expiration: 'Lejárati dátum'
-        use_card: 'Kiválasztás'
-        use_new_card: 'Új kártya hozzáadása'
+        use_card: 'Kártya kiválasztása és %sum% fizetése'
+        use_new_card: 'Új kártya hozzáadása fizetéshez'
     proforma_invoice:
-        title: Proforma invoice payment
-        form_title: 'Please fill up your invoice details to complete the order'
-        thank_you: 'Thank you for the order, the invoice will be sent to your email within 3 working days.'
+        title: Fizetés előlegszámlával
+        form_title: 'A megrendelés véglegesítéséhez, kérjük, töltse ki a számlázási adatokat'
+        thank_you: 'Köszönjük rendelését, az előlegszámlát 3 munkanapon belül e-mailben küldjük.'
 
+    add_card:
+        success: A kártya hozzáadása sikeres volt. A kártya hitelesítéshez szükséges fizetés összegét hamarosan visszautaljuk.
+        error: A kártya hozzáadása sikertelen. Kérjük, próbálja meg újra.
 config:
     category: Fizetések
     donation_vat_rate:
-        name: Adomány Áfakulcs
+        name: Adományok áfakulcsa
+    category_confirmation: Visszaigazoló e-mailek
+    tatrapay_sharedsecret:
+        name: Tatrapay sharedsecret
+    cardpay_sharedsecret:
+        name: Cardpay sharedsecret
+    comfortpay_terminalid:
+        name: Comfortpay terminalid
