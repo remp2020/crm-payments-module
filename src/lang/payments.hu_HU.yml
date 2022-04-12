@@ -407,7 +407,7 @@ form:
             label: Állapot
         paid_at:
             label: Fizetés időpontja
-            placeholder: pl. 2016. 2. 14. 14:21
+            placeholder: pl. 14.2.2016 14:21
             required: A tétel megadása kötelező
         send_notification:
             label: Értesítés küldése
