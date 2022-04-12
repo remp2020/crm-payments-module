@@ -451,7 +451,7 @@ frontend:
         my_payments: Fizetéseim
         refund_payments: Visszatérített tranzakciók
         payment_type: Fizetés típusa
-        payment_day: Visszatérítés napja
+        payment_day: Időpont
         variable_symbol: Tranzakció egyedi azonosítója
         price: Ár
         is_recurrent: Ismétlődő fizetés
