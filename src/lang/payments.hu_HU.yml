@@ -546,5 +546,4 @@ config:
     confirmation_mail_processed_folder: {}
     confirmation_mail_username: {}
     confirmation_mail_port: {}
-    tb_simple_confirmation_port:
-        name: ''
+    tb_simple_confirmation_port: {}
