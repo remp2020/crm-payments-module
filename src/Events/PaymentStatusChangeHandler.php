@@ -56,29 +56,23 @@ class PaymentStatusChangeHandler extends AbstractListener
         }
 
         if (in_array($payment->status, [PaymentsRepository::STATUS_PAID, PaymentsRepository::STATUS_PREPAID])) {
-            $this->createSubscriptionFromPayment($payment, $event);
+            $this->createSubscriptionFromPayment($payment);
         }
     }
 
     /**
-     * @param ActiveRow|ActiveRow $payment
-     * @param EventInterface $event
-     *
      * @return bool|int|ActiveRow
      */
-    private function createSubscriptionFromPayment(ActiveRow $payment, EventInterface $event)
+    public function createSubscriptionFromPayment(ActiveRow $payment, bool $sendEmail = true, \DateTime $startTime = null, \DateTime $endTime = null)
     {
-        $startTime = null;
-        $endTime = null;
-
-        if ($payment->subscription_start_at) {
+        if ($startTime === null && $payment->subscription_start_at) {
             if ($payment->subscription_start_at > $payment->paid_at) {
                 $startTime = $payment->subscription_start_at;
             } else {
                 $startTime = $payment->paid_at;
             }
         }
-        if ($payment->subscription_end_at) {
+        if ($endTime === null && $payment->subscription_end_at) {
             $endTime = $payment->subscription_end_at;
         }
 
@@ -102,7 +96,7 @@ class PaymentStatusChangeHandler extends AbstractListener
             $endTime,
             null,
             $address,
-            true,
+            $sendEmail,
             $callbackBeforeNewSubscriptionEvent = function ($newSubscription) use ($payment) {
                 $this->paymentsRepository->update($payment, ['subscription_id' => $newSubscription]);
             }
