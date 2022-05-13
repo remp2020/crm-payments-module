@@ -1,1 +1,6 @@
-<li class="list-group-item"><b>{_payments.admin.component.avg_subscription_payment_widget.avg_subscription_payment}:</b> {$avgSubscriptionPayments|number:2}</li>
+<li class="list-group-item">
+  <b>{_payments.admin.component.avg_subscription_payment_widget.avg_subscription_payment}:</b> {$avgSubscriptionPayments|number:2}
+  {if $updatedAt}
+    <span class="text-muted">({$updatedAt|userDate})</span>
+  {/if}
+</li>
