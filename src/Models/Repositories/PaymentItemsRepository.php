@@ -73,9 +73,9 @@ class PaymentItemsRepository extends Repository
         return $rows;
     }
 
-    public function update(ActiveRow &$row, $data)
+    public function update(ActiveRow &$row, $data, $force = false)
     {
-        if (!($this->canBeUpdated($row))) {
+        if (!$force && !($this->canBeUpdated($row))) {
             throw new Exception('Payment item ' . $row->id . ' cannot be updated');
         }
 

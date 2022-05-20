@@ -2,6 +2,8 @@
 
 namespace Crm\PaymentsModule\PaymentItem;
 
+use Crm\PaymentsModule\Models\PaymentItem\PaymentItemHelper;
+
 trait PaymentItemTrait
 {
     private $name;
@@ -44,7 +46,7 @@ trait PaymentItemTrait
 
     public function unitPriceWithoutVAT(): float
     {
-        return round($this->unitPrice() / (1 + ($this->vat() / 100)), 2);
+        return PaymentItemHelper::getPriceWithoutVAT($this->unitPrice(), $this->vat());
     }
 
     public function totalPriceWithoutVAT(): float
