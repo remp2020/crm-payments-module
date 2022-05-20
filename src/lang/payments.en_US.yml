@@ -569,7 +569,7 @@ frontend:
         title: Cancellation of recurrent payment
         cancel: "No, I'll think about it"
         confirm: "Yes, cancel the recurrent payment"
-        success: "Opakovaná platba bola zastavená."
+        success: "Recurring payment was stopped."
         invalid: Invalid request to stop recurrent payment. Please try again later.
     reactivate:
         success: 'Recurrent payment was reinstantiated.'
