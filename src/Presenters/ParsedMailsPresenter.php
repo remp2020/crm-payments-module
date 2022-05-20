@@ -54,6 +54,7 @@ class ParsedMailsPresenter extends AdminPresenter
             ParsedMailLogsRepository::STATE_PAYMENT_NOT_FOUND => ParsedMailLogsRepository::STATE_PAYMENT_NOT_FOUND,
             ParsedMailLogsRepository::STATE_DIFFERENT_AMOUNT => ParsedMailLogsRepository::STATE_DIFFERENT_AMOUNT,
             ParsedMailLogsRepository::STATE_AUTO_NEW_PAYMENT => ParsedMailLogsRepository::STATE_AUTO_NEW_PAYMENT,
+            ParsedMailLogsRepository::STATE_DUPLICATED_PAYMENT => ParsedMailLogsRepository::STATE_DUPLICATED_PAYMENT,
         ];
         $form->addselect('state', 'payments.admin.parsed_mails.state.label', $states)
             ->setPrompt('--');
