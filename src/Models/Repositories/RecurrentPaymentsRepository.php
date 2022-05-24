@@ -12,6 +12,8 @@ use Crm\PaymentsModule\Events\RecurrentPaymentRenewedEvent;
 use Crm\PaymentsModule\Events\RecurrentPaymentStateChangedEvent;
 use Crm\PaymentsModule\Events\RecurrentPaymentStoppedByAdminEvent;
 use Crm\PaymentsModule\Events\RecurrentPaymentStoppedByUserEvent;
+use Crm\PaymentsModule\GatewayFactory;
+use Crm\PaymentsModule\Gateways\RecurrentPaymentInterface;
 use Crm\PaymentsModule\Models\Gateway;
 use DateTime;
 use Exception;
@@ -46,13 +48,16 @@ class RecurrentPaymentsRepository extends Repository
 
     private $hermesEmitter;
 
+    private $gatewayFactory;
+
     public function __construct(
         Explorer $database,
         AuditLogRepository $auditLogRepository,
         PaymentGatewayMetaRepository $paymentGatewayMetaRepository,
         Emitter $emitter,
         ApplicationConfig $applicationConfig,
-        \Tomaj\Hermes\Emitter $hermesEmitter
+        \Tomaj\Hermes\Emitter $hermesEmitter,
+        GatewayFactory $gatewayFactory
     ) {
         parent::__construct($database);
         $this->auditLogRepository = $auditLogRepository;
@@ -60,6 +65,7 @@ class RecurrentPaymentsRepository extends Repository
         $this->emitter = $emitter;
         $this->applicationConfig = $applicationConfig;
         $this->hermesEmitter = $hermesEmitter;
+        $this->gatewayFactory = $gatewayFactory;
     }
 
     final public function add($cid, $payment, $chargeAt, $customAmount, $retries)
@@ -489,5 +495,26 @@ class RecurrentPaymentsRepository extends Repository
         ];
 
         return $this->getTable()->where($where);
+    }
+
+    final public function hasStoredCard(ActiveRow $user, ActiveRow $paymentGateway): bool
+    {
+        if (!$paymentGateway->is_recurrent) {
+            return false;
+        }
+
+        // Only gateways supporting recurrent payments have support for stored cards
+        $gateway = $this->gatewayFactory->getGateway($paymentGateway->code);
+        if (!$gateway instanceof RecurrentPaymentInterface) {
+            return false;
+        }
+
+        $usableRecurrentsCount = $this->userRecurrentPayments($user->id)
+            ->where(['payment_gateway.code = ?' => $paymentGateway->code])
+            ->where(['cid IS NOT NULL AND expires_at > ?' => new DateTime()])
+            ->order('id DESC, charge_at DESC')
+            ->count();
+
+        return $usableRecurrentsCount > 0;
     }
 }
