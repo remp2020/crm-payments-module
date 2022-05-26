@@ -157,7 +157,7 @@
 
 						<li n:if="$payment->referer" class="list-group-item">
 							<strong>{_"payments.admin.component.user_payments_listing.referrer"}: </strong>
-							<a title="{$payment->referer}" href="{$payment->referer|checkurl}">
+							<a title="{$payment->referer}" href="{$payment->referer|checkUrl}">
 								{strlen($payment->referer) > 64 ? substr($payment->referer, 0, 64) . "…": $payment->referer}
 							</a>
 						</li>
