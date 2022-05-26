@@ -152,7 +152,7 @@
 
 						<li n:if="$payment->referer" class="list-group-item">
 							<strong>{_"payments.admin.component.user_payments_listing.referrer"}: </strong>
-							<a href="{$payment->referer|checkurl}">{$payment->referer|substr:0, 64}...</a>
+							<a href="{$payment->referer|checkUrl}">{$payment->referer|substr:0, 64}...</a>
 						</li>
 					</ul>
 				</td>
