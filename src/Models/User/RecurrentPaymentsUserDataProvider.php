@@ -19,9 +19,9 @@ class RecurrentPaymentsUserDataProvider implements UserDataProviderInterface
         return 'recurrent_payments';
     }
 
-    public function data($userId)
+    public function data($userId): ?array
     {
-        return [];
+        return null;
     }
 
     public function download($userId)
