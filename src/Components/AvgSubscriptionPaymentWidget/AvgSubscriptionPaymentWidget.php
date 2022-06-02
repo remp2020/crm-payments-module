@@ -57,7 +57,12 @@ class AvgSubscriptionPaymentWidget extends BaseWidget implements SegmentWidgetIn
             ->where(['key' => 'subscription_payments', 'user_id' => $userIds])
             ->fetch();
 
-        $this->cacheRepository->updateKey($this->getCacheKey($segment), $result->sum / count($userIds));
+        $value = 0;
+        if ($result !== null && count($userIds) !== 0) {
+            $value = $result->sum / count($userIds);
+        }
+
+        $this->cacheRepository->updateKey($this->getCacheKey($segment), $value);
     }
 
     private function isWidgetUsable($segment): bool

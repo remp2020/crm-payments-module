@@ -57,7 +57,12 @@ class AvgMonthPaymentWidget extends BaseWidget implements SegmentWidgetInterface
             ->where(['key' => 'avg_month_payment', 'user_id' => $userIds])
             ->fetch();
 
-        $this->cacheRepository->updateKey($this->getCacheKey($segment), $result->sum / count($userIds));
+        $value = 0;
+        if ($result !== null && count($userIds) !== 0) {
+            $value = $result->sum / count($userIds);
+        }
+
+        $this->cacheRepository->updateKey($this->getCacheKey($segment), $value);
     }
 
     private function isWidgetUsable($segment): bool
