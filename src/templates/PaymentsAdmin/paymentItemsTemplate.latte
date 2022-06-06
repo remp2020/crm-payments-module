@@ -5,7 +5,7 @@
             if (isNaN(currentValue)) {
                 return;
             }
-            var decimalNumber = Math.trunc(currentValue * 100) / 100
+            var decimalNumber = Math.trunc((currentValue * 100).toFixed(0)) / 100;
             if (decimalNumber !== currentValue) {
                 $(this).val(decimalNumber)
             }
