@@ -166,7 +166,9 @@ class DashboardPresenter extends AdminPresenter
         $control = $factory->create();
         $control->setGraphTitle($this->translator->translate('dashboard.payments.gateways.title'))
             ->setGraphHelp($this->translator->translate('dashboard.payments.gateways.tooltip'))
-            ->addGraphDataItem($graphDataItem);
+            ->addGraphDataItem($graphDataItem)
+            ->setFrom($this->dateFrom)
+            ->setTo($this->dateTo);
 
         return $control;
     }
@@ -188,7 +190,9 @@ class DashboardPresenter extends AdminPresenter
         $control = $factory->create();
         $control->setGraphTitle($this->translator->translate('dashboard.money.title'))
             ->setGraphHelp($this->translator->translate('dashboard.money.tooltip'))
-            ->addGraphDataItem($graphDataItem);
+            ->addGraphDataItem($graphDataItem)
+            ->setFrom($this->dateFrom)
+            ->setTo($this->dateTo);
 
         return $control;
     }
@@ -218,7 +222,9 @@ class DashboardPresenter extends AdminPresenter
         $control = $factory->create();
         $control = $control->addGraphDataItem($graphDataItem)
             ->setGraphTitle($this->translator->translate($titleTransKey))
-            ->setGraphHelp($this->translator->translate($helpTransKey));
+            ->setGraphHelp($this->translator->translate($helpTransKey))
+            ->setFrom($this->dateFrom)
+            ->setTo($this->dateTo);
 
         return $control;
     }
@@ -243,7 +249,9 @@ class DashboardPresenter extends AdminPresenter
         $control = $factory->create();
         $control->setGraphTitle($this->translator->translate('dashboard.payments.registration.title'))
             ->setGraphHelp($this->translator->translate('dashboard.payments.registration.tooltip'))
-            ->addGraphDataItem($graphDataItem);
+            ->addGraphDataItem($graphDataItem)
+            ->setFrom($this->dateFrom)
+            ->setTo($this->dateTo);
 
         return $control;
     }
@@ -285,7 +293,9 @@ class DashboardPresenter extends AdminPresenter
         $control = $factory->create();
         $control->setGraphTitle($this->translator->translate('dashboard.payments.recurrent.title'))
             ->setGraphHelp($this->translator->translate('dashboard.payments.recurrent.tooltip'))
-            ->setYLabel('');
+            ->setYLabel('')
+            ->setFrom($this->dateFrom)
+            ->setTo($this->dateTo);
 
         foreach ($items as $graphDataItem) {
             $control->addGraphDataItem($graphDataItem);
@@ -311,7 +321,9 @@ class DashboardPresenter extends AdminPresenter
         $control = $factory->create();
         $control->setGraphTitle($this->translator->translate('dashboard.payments.refunds.title'))
             ->setGraphHelp($this->translator->translate('dashboard.payments.refunds.tooltip'))
-            ->addGraphDataItem($graphDataItem);
+            ->addGraphDataItem($graphDataItem)
+            ->setFrom($this->dateFrom)
+            ->setTo($this->dateTo);
 
         return $control;
     }
@@ -346,7 +358,9 @@ class DashboardPresenter extends AdminPresenter
         $control = $factory->create();
         $control->setGraphTitle($this->translator->translate('dashboard.payments.donations.title'))
             ->setGraphHelp($this->translator->translate('dashboard.payments.donations.tooltip'))
-            ->setYLabel('');
+            ->setYLabel('')
+            ->setFrom($this->dateFrom)
+            ->setTo($this->dateTo);
 
         foreach ($items as $graphDataItem) {
             $control->addGraphDataItem($graphDataItem);
@@ -384,7 +398,9 @@ class DashboardPresenter extends AdminPresenter
 
         $control = $factory->create();
         $control->setGraphTitle($this->translator->translate('dashboard.users.new_or_subscribers.title'))
-            ->setGraphHelp($this->translator->translate('dashboard.users.new_or_subscribers.tooltip'));
+            ->setGraphHelp($this->translator->translate('dashboard.users.new_or_subscribers.tooltip'))
+            ->setFrom($this->dateFrom)
+            ->setTo($this->dateTo);
 
         foreach ($items as $graphDataItem) {
             $control->addGraphDataItem($graphDataItem);
