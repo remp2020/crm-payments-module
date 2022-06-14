@@ -25,8 +25,6 @@ abstract class GatewayAbstract implements PaymentInterface
 
     protected $translator;
 
-    abstract protected function initialize();
-
     public function __construct(
         LinkGenerator $linkGenerator,
         ApplicationConfig $applicationConfig,
@@ -73,7 +71,7 @@ abstract class GatewayAbstract implements PaymentInterface
                 exit;
             }
 
-            return $this->response->getRedirectUrl();
+            return new ProcessResponse('url', $this->response->getRedirectUrl());
         } else {
             throw new CannotProcessPayment($this->response->getMessage());
         }

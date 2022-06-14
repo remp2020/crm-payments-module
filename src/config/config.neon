@@ -150,6 +150,8 @@ services:
 	- Crm\PaymentsModule\DataProvider\PaymentItemTypesFilterDataProvider
 	- Crm\PaymentsModule\DataProvider\SubscriptionFormDataProvider
 
+	cardPayDirectService: Crm\PaymentsModule\Models\Wallet\CardPayDirectService
+
 	actualPaidSubscribersStatWidget:
 		factory: Crm\PaymentsModule\Components\ActualPaidSubscribersStatWidget
 		setup:
