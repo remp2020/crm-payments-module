@@ -150,7 +150,12 @@ services:
 	- Crm\PaymentsModule\DataProvider\PaymentItemTypesFilterDataProvider
 	- Crm\PaymentsModule\DataProvider\SubscriptionFormDataProvider
 
-	cardPayDirectService: Crm\PaymentsModule\Models\Wallet\CardPayDirectService
+	cardPayDirectLogger:
+		factory: Monolog\Logger('card-pay-direct')
+		setup:
+			- pushHandler(Monolog\Handler\StreamHandler("%appDir%/../log/card_pay_direct.log"))
+
+	cardPayDirectService: Crm\PaymentsModule\Models\Wallet\CardPayDirectService(@cardPayDirectLogger)
 
 	actualPaidSubscribersStatWidget:
 		factory: Crm\PaymentsModule\Components\ActualPaidSubscribersStatWidget

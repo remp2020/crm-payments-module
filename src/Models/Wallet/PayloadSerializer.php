@@ -15,7 +15,7 @@ class PayloadSerializer
             'timestamp' => $payload->getTimestamp(),
         ];
 
-        // jedno ztychto 2 musi byt vyplnene
+        // one of the two has to be set
         if ($payload->getVariableSymbol()) {
             $data['variableSymbol'] = $payload->getVariableSymbol();
         }
@@ -23,7 +23,7 @@ class PayloadSerializer
             $data['e2eReference'] = $payload->getE2eReference();
         }
 
-        // jedno z tychto 2 musi byt vyplnene
+        // one of the two has to be set
         if ($payload->getGooglePayToken()) {
             $data['googlePayToken'] = $payload->getGooglePayToken();
         }

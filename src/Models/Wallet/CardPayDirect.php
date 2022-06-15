@@ -5,7 +5,11 @@ namespace Crm\PaymentsModule\Models\Wallet;
 use GuzzleHttp;
 use GuzzleHttp\Exception\ClientException;
 use GuzzleHttp\Exception\ServerException;
+use GuzzleHttp\HandlerStack;
+use GuzzleHttp\MessageFormatter;
+use GuzzleHttp\Middleware;
 use Nette\Utils\DateTime;
+use Psr\Log\LoggerInterface;
 
 /**
  * This class is kept outside of CRM
@@ -15,17 +19,19 @@ use Nette\Utils\DateTime;
 class CardPayDirect
 {
     // to generate transaction detail url we can append `/{processigId}` to url
-    private string $transactionUrl = 'https://moja.tatrabanka.sk/cgi-bin/e-commerce/start/api/cardpay/transaction';
-
-    private string $debugUrl = 'https://platby.tomaj.sk/cgi-bin/e-commerce/start/api/cardpay/transaction';
+    private const TRANSACTION_URL = 'https://moja.tatrabanka.sk/cgi-bin/e-commerce/start/api/cardpay/transaction';
+    private const DEBUG_URL = 'https://platby.tomaj.sk/cgi-bin/e-commerce/start/api/cardpay/transaction';
 
     private bool $isDebug = false;
-
+    private bool $isLoggingRequests = false;
     private string $secretKey;
+    private ?HandlerStack $handlerStack = null;
+    private ?LoggerInterface $logger;
 
-    public function __construct(string $secretKey)
+    public function __construct(string $secretKey, ?LoggerInterface $logger)
     {
         $this->secretKey = $secretKey;
+        $this->logger = $logger;
     }
 
     public function enableDebug(): void
@@ -33,12 +39,39 @@ class CardPayDirect
         $this->isDebug = true;
     }
 
+    public function enableLoggingRequests(): void
+    {
+        $this->isLoggingRequests = true;
+    }
+
     private function getUrl(): string
     {
-        if ($this->isDebug) {
-            return $this->debugUrl;
+        return $this->isDebug ? self::DEBUG_URL : self::TRANSACTION_URL;
+    }
+
+    private function getHandlerStack(): HandlerStack
+    {
+        if (!$this->handlerStack) {
+            $stack = HandlerStack::create();
+            $stack->push(
+                Middleware::log(
+                    $this->logger,
+                    new MessageFormatter("REQUEST: {request} RESPONSE: {response}")
+                )
+            );
+            $this->handlerStack = $stack;
         }
-        return $this->transactionUrl;
+
+        return $this->handlerStack;
+    }
+
+    private function clientOptions(): array
+    {
+        $options = [];
+        if ($this->logger && $this->isLoggingRequests) {
+            $options['handler'] = $this->getHandlerStack();
+        }
+        return $options;
     }
 
     public function postTransaction(TransactionPayload $payload): TransactionResult
@@ -46,7 +79,7 @@ class CardPayDirect
         $serializer = new PayloadSerializer();
         $data = $serializer->serialize($payload);
 
-        $client = new GuzzleHttp\Client();
+        $client = new GuzzleHttp\Client($this->clientOptions());
         try {
             $result = $client->request('POST', $this->getUrl(), [
                 'headers' => [
@@ -90,7 +123,7 @@ class CardPayDirect
             TransactionResultData::fromPayload($result->getBody())
         );
 
-        // Odpoved
+        // Answer:
         // {"error":"Invalid authorization header"}
         // {"error":"Cannot process Google Pay token"}
     }
@@ -99,7 +132,7 @@ class CardPayDirect
     {
         $url = $this->getUrl() . '/' . $processingId;
 
-        $client = new GuzzleHttp\Client();
+        $client = new GuzzleHttp\Client($this->clientOptions());
 
         $timestamp = DateTime::from('now')->format('dmYHis');
 
