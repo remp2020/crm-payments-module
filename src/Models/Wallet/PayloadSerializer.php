@@ -2,6 +2,8 @@
 
 namespace Crm\PaymentsModule\Models\Wallet;
 
+use Nette\Utils\Json;
+
 class PayloadSerializer
 {
     public function serialize(TransactionPayload $payload): string
@@ -29,7 +31,7 @@ class PayloadSerializer
         }
         if ($payload->getApplePayToken()) {
             $data['applePay'] = [
-                'token' => $payload->getApplePayToken(),
+                'token' => Json::decode($payload->getApplePayToken(), Json::FORCE_ARRAY),
             ];
         }
 
@@ -49,6 +51,6 @@ class PayloadSerializer
             $data['ipspData'] = $payload->getIpsData()->getData();
         }
 
-        return json_encode($data);
+        return Json::encode($data);
     }
 }
