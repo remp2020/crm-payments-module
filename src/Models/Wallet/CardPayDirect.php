@@ -85,6 +85,7 @@ class CardPayDirect
                 'headers' => [
                     'X-Merchant-Id' => $payload->getMerchantId(),
                     'Authorization' => 'HMAC=' . $this->sign($data),
+                    'Content-Type' => 'application/json',
                 ],
                 'body' => $data,
             ]);

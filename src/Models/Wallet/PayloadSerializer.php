@@ -28,7 +28,9 @@ class PayloadSerializer
             $data['googlePayToken'] = $payload->getGooglePayToken();
         }
         if ($payload->getApplePayToken()) {
-            $data['applePay'] = $payload->getApplePayToken();
+            $data['applePay'] = [
+                'token' => $payload->getApplePayToken(),
+            ];
         }
 
         if ($payload->isPreAuthorization()) {
