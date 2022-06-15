@@ -3,6 +3,8 @@
 namespace Crm\PaymentsModule\Models\Wallet;
 
 use Nette\Utils\Json;
+use Tracy\Debugger;
+use Tracy\ILogger;
 
 class TransactionResultData
 {
@@ -42,7 +44,7 @@ class TransactionResultData
         try {
             $data = Json::decode($payload, Json::FORCE_ARRAY);
         } catch (\Nette\Utils\JsonException $jsonException) {
-            // TODO maybe better error handling
+            Debugger::log("Error decoding json: " . $jsonException->getMessage(), ILogger::ERROR);
             return null;
         }
 
