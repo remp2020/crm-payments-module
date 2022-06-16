@@ -128,6 +128,13 @@ class MailProcessor
             return false;
         }
 
+        if ($payment->status == PaymentsRepository::STATUS_REFUND) {
+            $this->logBuilder
+                ->setState(ParsedMailLogsRepository::STATE_ALREADY_REFUNDED)
+                ->save();
+            return false;
+        }
+
         if (in_array($payment->status, [PaymentsRepository::STATUS_FORM, PaymentsRepository::STATUS_FAIL, PaymentsRepository::STATUS_TIMEOUT])) {
             $this->paymentsRepository->updateStatus($payment, PaymentsRepository::STATUS_PAID, true);
 
@@ -185,6 +192,11 @@ class MailProcessor
         }
         if (!$skipCheck && $payment->status == PaymentsRepository::STATUS_PAID) {
             $this->logBuilder->setState(ParsedMailLogsRepository::STATE_ALREADY_PAID)->save();
+            return false;
+        }
+
+        if (!$skipCheck && $payment->status == PaymentsRepository::STATUS_REFUND) {
+            $this->logBuilder->setState(ParsedMailLogsRepository::STATE_ALREADY_REFUNDED)->save();
             return false;
         }
 

@@ -197,4 +197,25 @@ class MailProcessorTest extends PaymentsTestCase
         $log = $this->parsedMailLogsRepository->lastLog();
         $this->assertEquals(ParsedMailLogsRepository::STATE_DUPLICATED_PAYMENT, $log->state);
     }
+
+    public function testAlreadyRefundedPayment()
+    {
+        $payment = $this->createPayment('7492851612');
+        $this->paymentsRepository->update($payment, array(
+            'amount' => 10.4,
+            'status' => PaymentsRepository::STATUS_REFUND,
+            'created_at' => new DateTime('23 days ago')
+        ));
+
+        $mailContent = new MailContent();
+        $mailContent->setAmount(10.4);
+        $mailContent->setTransactionDate(strtotime('2.3.2015 13:43'));
+        $mailContent->setVs('7492851612');
+
+        $result = $this->mailProcessor->processMail($mailContent, new TestOutput());
+        $this->assertFalse($result);
+
+        $log = $this->parsedMailLogsRepository->lastLog();
+        $this->assertEquals(ParsedMailLogsRepository::STATE_ALREADY_REFUNDED, $log->state);
+    }
 }

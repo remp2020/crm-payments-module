@@ -21,6 +21,7 @@ class ParsedMailLogsRepository extends Repository
     const STATE_AUTO_NEW_PAYMENT = 'auto_new_payment';
     const STATE_NO_SIGN = 'no_sign';
     const STATE_NOT_VALID_SIGN = 'no_valid_sign';
+    const STATE_ALREADY_REFUNDED = 'already_refunded';
 
     protected $tableName = 'parsed_mail_logs';
 
