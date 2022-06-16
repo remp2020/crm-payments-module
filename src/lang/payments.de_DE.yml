@@ -1,1 +1,688 @@
-{}
+menu:
+    gateways: Zahlungsdienstleister
+    parsed_mails: Verarbeitete Zahlungs-E-Mails
+    duplicate_recurrent_payments: Doppelte wiederkehrende Zahlungen
+    retention_analysis: Retention-Analyse
+    exports: Exporte
+    admin_payments: Zahlungen
+    recurrent_payments: Wiederkehrende Zahlungen
+    payments: Zahlungen
+    stats: Zahlungen
+admin:
+    component:
+        avg_subscription_payment_widget:
+            avg_subscription_payment: Durchschnittliche Anzahl von Abonnementzahlungen
+        actual_free_subscribers_stat_widget:
+            title: Abonnenten ohne Bezahlung
+            help: Anzahl der Abonnenten mit einem aktiven Abonnement ohne Zahlung. Jeder Nutzer wird nur einmal gezählt, auch wenn er mehrere Abonnements hat.
+        actual_paid_subscribers_stat_widget:
+            title: Zahlende Abonnenten
+            help: Anzahl der zahlenden Abonnenten mit einem aktiven Abonnement. Jeder Nutzer wird nur einmal gezählt, auch wenn er mehrere Abonnements hat.
+        actual_nonfree_subscribers_stat_widget:
+            title: Abonnenten mit bezahltem Abonnement
+            help: Anzahl der Abonnenten mit einem aktiven Abonnement, dessen Typ nicht 'kostenlos' ist. Jeder Nutzer wird nur einmal gezählt, auch wenn er mehrere Abonnements hat.
+        change_payment_status:
+            title: Änderung des Zahlungsstatus
+            variable_symbol: Variables Symbol
+            created: Angelegt am
+            status: Status
+            messages:
+                status_not_changed: Der Zahlungsstatus wurde nicht geändert.
+                status_changed_successfully: Der Zahlungsstatus wurde erfolgreich geändert.
+            change_without_notification: Ändern und keine Benachrichtigung senden
+            change_with_notification: Ändern und Benachrichtigung senden
+            change_to: Wechsel zu
+            cancel: Abbrechen
+        duplicate_recurrent_payments:
+            none_found: Keine doppelten wiederkehrenden Zahlungen gefunden
+            id: ID
+            cid: CID
+            created: Angelegt am
+            edited: Bearbeitet
+            subscription_type: Abonnementtyp
+            card_expiration: Karte läuft ab
+            status: Status
+            actions: Aktionen
+            next_subscription: erfolgt am
+            stop_recurrent_profile: Wiederkehrende Zahlungen stoppen
+            stop_recurrent_profile_confirm: Bestätigen Sie, um die wiederkehrende Zahlung zu beenden
+            messages:
+                recurrent_profile_stopped: Die wiederkehrende Zahlung wurde gestoppt.
+            next_charge: Nächste Zahlung
+        last_payments:
+            title: Letzte Zahlungen
+            variable_symbol: Variables Symbol
+            subscription: Abonnement
+            amount: Summe
+            payment_gateway: Zahlungsdienstleister
+            subscription_type: Abonnementtyp
+            status: Status
+            created: Angelegt am
+            badge_donation: Spende
+            badge_recurrent: wiederkehrend
+            without_subscription: Ohne Abonnement
+            actions: Aktionen
+            referrer: Referer
+            edit: Bearbeiten
+        parsed_mails_failed_notification:
+            title: Unvollständiger Betrag auf dem Konto eingegangen
+        subscribers_with_payment_widget:
+            last_day: Letzte 24 Stunden
+            last_days: Letzte %count% Tage
+            description: Die Differenz der Anzahl der zahlenden Abonnenten in einem bestimmten Zeitraum.
+        total_user_payments:
+            spent: Insgesamt ausgegeben
+            monthly_average: im Durchschnitt monatlich
+            less: weniger
+            more: mehr
+            than_average: im Durchschnitt
+            for: für
+            for_subscription_payments: '{1}Abonnementzahlung|[2,Inf]Abonnementzahlungen'
+        user_payments_listing:
+            no_payments:
+                title: Keine Daten
+                message: Dieser Nutzer hat keine Zahlungen geleistet.
+            add_manual_payment: Zahlung manuell hinzufügen
+            caption:
+                id: ID
+                variable_symbol: Variables Symbol
+                payment_items: Artikel
+                status: Status
+                payment_gateway: Zahlungsdienstleister
+                amount: Summe
+                created: Angelegt am
+                source: Herkunft
+                actions: Aktionen
+                cid: CID
+                received: Erhalten
+                edited: Bearbeitet
+                next_charge: Nächste Zahlung
+                subscription_type: Abonnementtyp
+                card_expiration: Karte läuft ab
+                created_payment_id: Zahlungs-ID
+                recurrent_state: Status der wiederkehrenden Zahlungen
+                payment: Zahlung
+                message: Eine Nachricht
+            today: Heute
+            header: Zahlungen
+            payment:
+                paid: Bezahlt
+                active_from_to: Gültig von <strong>% active_from% </strong> bis <strong>% active_to% </strong>
+                active_from_confirmation_to: Gültig ab <strong> Zahlungsbestätigung </strong> bis <strong>% active_to% </strong>
+                active_from: Gültig ab <strong>%active_from%</strong>
+                address: Adresse
+                badge_donation: Spende
+                badge_upgrade: Upgrade
+            recurrent_profile:
+                title: Wiederkehrende Zahlungen
+                next_subscription: erfolgt am
+                stop_recurrent_profile: Wiederkehrende Zahlungen stoppen
+                stop_recurrent_profile_confirm: Bestätigen Sie, um die wiederkehrende Zahlung zu beenden
+                active: Abbuchung geplant
+                user_stop: Vom Nutzer gestoppt
+                admin_stop: Von Admin gestoppt
+                charge_failed: Abbuchung fehlgeschlagen, weiterer Versuch geplant
+                charged: Automatisch verlängert
+                system_stop: Fehlgeschlagene Abbuchung, gestoppt
+            parsed_mail_logs:
+                title: Verarbeitete/bestätigte Zahlungen
+                changed_to_paid: Status geändert in bezahlt
+                auto_new_payment: Automatische neue Zahlung
+                different_amount: Abweichender Betrag
+                without_vs: Ohne variables Symbol
+                already_paid: Zahlung wurde bereits bestätigt
+                duplicated_payment: Wahrscheinlich doppelt bezahlt
+            referrer: Referer
+            edit: Zahlung bearbeiten
+            n_a: N/A
+        avg_month_payment_widget:
+            avg_month_payment: Durchschnittliche monatliche Zahlung
+        device_user_listing_widget:
+            device: Gerät
+        subscription_type_reports:
+            title: Herkunft der Abonnenten
+        admin_filter_form:
+            recurrent_charge:
+                recurrent: Automatische Abbuchung
+                manual: Nur manuell
+                label: Wiederholende Abbuchung
+                all: Alle
+            paid_at_to:
+                label: Zahlungsdatum ab
+                placeholder: zum Beispiel 31.7.2020 15:30
+            referer:
+                label: Referer
+            filter:
+                more: Weitere Optionen
+                send: Filter
+                cancel: Filter löschen
+            donation:
+                label: Dar
+                with_donation: Mit Spende
+                without_donation: Ohne Spende
+            variable_symbol:
+                label: Variables Symbol
+            status:
+                label: Zahlungsstatus
+            payment_gateway:
+                label: Zahlungsdienstleister
+            subscription_type:
+                label: Abonnementtyp
+            paid_at_from:
+                label: Zahlungsdatum ab
+                placeholder: zum Beispiel 31.7.2020 15:30
+        recurrent_payment_form:
+            charge_at:
+                label: Datum der nächsten Abbuchung
+                required: Datum der nächsten Abbuchung erforderlich
+                placeholder: zum Beispiel 4.3.2017 15:30
+            retries:
+                required: Anzahl der Wiederholungen ist erforderlich
+                label: Anzahl der erlaubten Wiederholungen bei fehlgeschlagener Abbuchung
+                placeholder: zum Beispiel 4
+            custom_amount:
+                label: Abzubuchender Betrag
+                description: Ursprünglich kalkulierter Betrag während des Upgrades. Wenn der Abonnementtyp geändet wird, wird dieser Betrag gelöscht und der Standardpreis des neuen Abonnementtyps verwendet.
+            state:
+                label: Status
+                prompt: Status der wiederkehrenden Zahlung auswählen
+                required: Status der wiederkehrenden Zahlung muss ausgewählt werden
+                placeholder: z.B. Aktiv
+            note:
+                label: Notiz
+            next_subscription_type_id:
+                label: Abonnementtyp für die Abbuchung
+                description: Nur auswählen, wenn der nachfolgende Abonnementtyp vom aktuellen abweicht (%actual%)
+            save: Speichern
+        change_payment_subscription_type_widget:
+            button: Abonnementtyp ändern
+            title: Abonnementtyp für Zahlung ändern
+            subscription_type: Abonnementtyp
+            success: Die Änderung des Abonnementtyps war erfolgreich
+            warning: Das Ändern des Abonnementtyps löscht alle zugehörigen Zahlungsposten und erstellt neue basirend auf dem neuen Abonnementtyp.
+        exports_admin_form:
+            filter:
+                cancel: Filter löschen
+                send: Filter
+            file_system:
+                label: Speicherort
+    arpu:
+        all:
+            title: ARPU - Summe aller Zahlungen / Anzahl
+            tooltip: Zeigt die Summe aller Zahlungen in einem bestimmten Zeitraum geteilt durch die Anzahl der Zahlungen - ARPU
+        manual:
+            title: ARPU - Summe aller neuen Zahlungen / Anzahl
+            tooltip: Zeigt die Summe aller neuen Zahlungen (nicht als wiederkehrend erstellt) in einem bestimmten Zeitraum geteilt durch die Anzahl der Zahlungen - ARPU
+        graph_label: ARPU
+        recurrent:
+            title: ARPU - Summe aller wiederkehrenden Zahlungen / Anzahl
+            tooltip: Zeigt die Summe aller wiederkehrend erstellten Zahlungen in einem bestimmten Zeitraum geteilt durch die Anzahl der Zahlungen - ARPU
+    stats:
+        title: Zahlungsstatistiken
+        menu:
+            general: Allgemein
+            arpu: ARPU
+            detailed: Ausführlich
+    payment_gateways:
+        code: Code
+        created_at: Angelegt am
+        modified_at: Bearbeitet am
+        graph:
+            title: Zahlungsdienstleister
+            help: Zahlungen über den Zahlungsdienstleister
+            completed_payments: Abgeschlossene Zahlungen
+            uncompleted_payments: Nicht abgeschlossene Zahlungen
+        small_graph:
+            title: Zahlungsdienstleister
+        updated: Zahlungsdienstleister wurde aktualisiert
+        title: Zahlungsdienstleister
+        back_to_list: Zurück zur Liste der Zahlungsdienstleister
+        actions: Aktionen
+        name: Name
+        is_recurrent: Wiederkehrend
+        sorting: Sortierung
+        show: Zahlungsdienstleister anzeigen
+        visible: Sichtbar
+        back_to_detail: Zurück zum Zahlungsdienstleister
+        edit: Zahlungsdienstleister bearbeiten
+    payments_recurrent:
+        title: Wiederkehrende Zahlungen
+        cid: CID
+        charge_at: Abbuchung am
+        charge_status: Abbuchungsstatus
+        recurrent_status: Status der wiederkehrenden Abbuchung
+        actions: Aktionen
+        no_records: Keine Datensätze entsprechen den Filterbedingungen
+        edit: Wiederkehrende Zahlung bearbeiten
+        for_payment: zur Zahlung
+        back_to_user_detail: Zurück zu den Nutzerdetails
+        duplicates: Doppelte wiederkehrende Zahlungen
+        admin_filter_form:
+            cid:
+                label: CID
+            status:
+                label: Zahlungsstatus
+            problem:
+                label: Nur fehlgeschlagene Zahlung
+            subscription_type:
+                label: Abonnementtyp
+            send: Filter
+            cancel: Filter löschen
+        updated: Wiederkehrende Zahlung wurde aktualisiert
+        created_at: Angelegt am
+        email: E-Mail
+        retries: Verbleibende Versuche
+        subscription_type: Abonnementtyp
+    retention_analysis:
+        title: Retention-Analyse
+        no_records: Keine Datensätze vorhanden
+        new_analysis: Neue Analyse
+        analysis_name: Name der Analyse
+        state: Status
+        together: Insgesamt
+        payments_count: Anzahl der Nutzer mit Erst-Abonnement entsprechend dem Filter
+        results_not_available: Zum gegenwärtigen Zeitpunkt der Analyse liegen noch keine Ergebnisse vor.
+        started_at: Gestartet
+        schedule_computation: Berechnung starten
+        period_explanation: PERIODEN (31-Tage-Intervalle nach dem ersten Abonnement entsprechend der Filter-Bedingungen)
+        continue_method_explanation: CONTINUE-Methode - alle Abonnements werden in die Berechnung einbezogen, auch nach einer Unterbrechung.
+        incomplete_period_explanation: Die Periode ist noch nicht für alle Nutzer beendet, einige Abonnements wurden eventuell noch nicht verlängert.
+        period_sum_ratio_help: '%retention_count% aktive Abonnements von %users_count% Nutzern wurden im angebenen Zeitraum erreicht.'
+        clear_comparison: Auswahl löschen
+        selected_analyses_to_compare: Ausgewählte Analysen vergleichen
+        number_of_subscribers: Anzahl der Abonnenten
+        rerun_job: Erneut starten
+        remove_job: Löschen
+        fields:
+            previous_user_subscriptions: Vorherige Abonnements
+            with_previous_subscription_at_least_one_paid: Mit mindestens einem früheren bezahlten Abonnement
+            segment: Segment
+            clear_date: Datum zurücksetzen
+            user_source: Herkunft (Nutzer)
+            min_date_of_payment_desc: Wenn nicht ausgewählt, werden alle Zahlungen beachtet.
+            without_previous_subscription: Ohne vorheriges Abonnement
+            min_date_of_payment: Zahlungen ab (Datum)
+            with_previous_subscription_all_unpaid: Mit früheren Abonnements - alle unbezahlt
+        errors:
+            unexpected_error: Es gab einen unerwarteten Fehler. Die Einzelheiten des Fehlers wurden protokolliert.
+            long_execution_time: Die Analyse wurde nicht innerhalb des Zeitlimits von %minutes% Minuten abgeschlossen. Bitte grenzen Sie die Parameter weiter ein.
+        analyses_comparison: Vergleich der Analysen
+        created_at: Angelegt am
+        finished_at: Beendet
+        first_subscription_month_count: Monat des ersten Abonnements / Anzahl der Abonnenten
+        compare: Vergleichen
+        month: Monatlich
+        actions: Aktionen
+        parameters: Parameter
+        results: Ergebnisse
+        add_to_comparison: Zum Vergleich hinzufügen
+        analysis_was_scheduled: Die Analyse wurde gestartet, das Ergebnis erscheint nach Abschluß in der Tabelle.
+        back: Zurück zur Liste
+        period_number: Periode %period%
+        job_removed: Die Analyse wurde gelöscht.
+        job_was_rerun: Die Analyse wurde erneut gestartet, das Ergebnis erscheint nach Abschluss in der Tabelle.
+    dashboard:
+        recurrent_charge:
+            recurrent: Nur automatische Abbbuchungen
+            manual: Nur manuell
+            label: Wiederholende Abbuchung
+            all: Alle
+        payment_item_types:
+            label: Artikeltyp
+        arpu: ARPU - Durchschnittlicher Umsatz pro Nutzer
+    parsed_mails:
+        variable_symbol:
+            label: Variables Symbol
+        state:
+            label: Status
+        filter: Filter
+        cancel: Filter löschen
+        created_at: Angelegt am
+        amount: Summe
+        payment: Zahlung
+        message: Nachricht
+        title: Verarbeitete Zahlungs-E-Mails
+        no_records: Keine Datensätze entsprechen den Filterbedingungen
+        delivered_at: Erhalten am
+    payments:
+        updated: Die Zahlung wurde angepasst
+        created: Die Zahlung wurde erstellt
+        close: Schließen
+        title: Zahlungen
+        amount: Summe
+        donation: Spende
+        donation_recurrent: wiederholend
+        paid_at: Bezahlt
+        source: Herkunft
+        no_records: Keine Datensätze entsprechen den Filterbedingungen
+        edit: Zahlung bearbeiten
+        back_to_user: Zurück zu den Nutzerdetails
+        variable_symbol_error: Variables Symbol konnte nicht erzeugt werden
+        new: Neue Zahlung
+        new_for_user: Neue Zahlung für
+        item: Artikel
+        vat_rate: MwSt-Satz
+        enter_number_of_products: Anzahl der Produkte
+        count: Anzahl
+        export:
+            modal_title: Zahlungen exportieren
+            exported: Der Export wurde der Warteschlange hinzugefügt und ist nun unter den <a href="/payments/exports-admin/" class="link"> Exporten</a> verfügbar.
+            label: Export
+            modal_body: Der Export wird <code>%payments_number%</code> der Zahlungen enthalten und unter <a href="/payments/exports-admin/" class="link">Exporten</a> verfügbar sein.
+        price_with_vat: Einzelpreis inkl. MwSt.
+        send_notification: Benachrichtigung per E-Mail senden
+        created_at: Angelegt am
+        recurrent_charge: Wiederholende Abbuchung
+        variable_symbol: Variables Symbol
+        items: Artikel
+        actions: Aktionen
+        user: Nutzer
+        gateway: Zahlungsdienstleister
+        status: Status
+        item_name: Titel
+    report:
+        no_recurrent_charge:
+            label: Bislang keine wiederkehrende Abbuchung
+        paid_next_subscription:
+            label: Bisher %count% wiederkehrende Abbuchungen erfolgt
+        stopped_on_first_subscription:
+            label: Wiederholende Abbuchung vor Ende der ersten Periode beendet
+        total_paid_subscriptions:
+            label: Gekaufte Abonnementtypen (alle)
+        total_recurrent_subscriptions:
+            label: Gekaufte Abonnementtypen (wiederkehrend)
+    exports:
+        title: Exporte
+        created_at: Angelegt am
+        filesystem: Speicherort
+        deleted: Die Datei wurde gelöscht
+        delete_error: Die Datei kann nicht gelöscht werden
+        actions: Aktionen
+        delete: Löschen
+        file: Datei
+        download: Herunterladen
+    scenarios:
+        payment_has_subscription:
+            label: Die Zahlung hat ein zugehöriges Abonnement
+        payment_has_item_type:
+            label: Die Zahlung hat Elemente des Typs
+        donation_amount:
+            label: Gespendeter Betrag
+    donation: Abo-Geschenk
+    recurrent:
+        duplicates:
+            title: Doppelte wiederkehrende Zahlungen
+    address:
+        cant_delete: 'Diese Adresse wird für die Zahlung verwendet: %payments%|Diese Adresse wird für die Zahlungen verwendet: %payments%'
+frontend:
+    proforma_invoice:
+        form_title: Bitte füllen Sie die Rechnungsdaten aus, um die Bestellung abzuschließen
+        thank_you: Vielen Dank für Ihre Bestellung, die Rechnung wird Ihnen innerhalb von 3 Werktagen per E-Mail zugestellt.
+        title: Zahlung per Vorkasse
+    my:
+        my_payments: Meine Zahlungen
+        refund_payments: Erstattete Zahlungen
+        payment_type: Zahlungstyp
+        payment_day: Tag
+        receipts: Quittungen
+        stop_recurrent: Automatische Abbuchung stoppen
+        restart_recurrent: Automatische Abbuchung fortsetzen
+        user_stopped: Von Ihnen gestoppt
+        user_stopped_requested: Auf Ihren Wunsch hin gestoppt
+        success_recurrent: Automatisch verlängert
+        charge_failed:
+            title: Automatische Verlängerung fehlgeschlagen
+            last_try: Letzter Versuch
+            next_try: Nächster Versuch
+        next_recurrent_payment: Wenn Sie die automatische Verlängerung des Abonnements aktiviert haben, erfolgt die nächste Abbuchung über <strong>%charge_amount%</strong> am <strong>%charge_date%</strong>.
+        price: Preis
+        variable_symbol: Transaktions-ID
+        is_recurrent: Wiederkehrende Zahlung
+        buy_offer: Sie können ein Abonnement erwerben, um Zugang zu den Inhalten zu erhalten.
+        failed_recurrent: Wiederkehrende Abbuchung fehlgeschlagen
+        no_payments: Sie haben keine Zahlungen
+        no_refunds: Sie haben keine Rückerstattungen
+    recurrent_stop:
+        cancel: Nein, ich werde noch darüber nachdenken
+        confirm: Ja, die automatische Abbuchung beenden
+        title: Beenden der automatischen Abbuchung
+        success: Die automatische Abbuchung wurde beendet.
+        invalid: Die automatische Abbuchung konnte nicht beendet werden. Bitte probieren Sie es später noch einmal.
+    reactivate:
+        success: Automatische Abbung wird fortgesetzt.
+        error: Die automatische Abbuchung kann nicht fortgesetzt werden.
+        error_create_new: Die automatische Abbuchung kann nicht fortgesetzt werden. Bitte schließen Sie ein neues Abonnement ab.
+    banktransfer:
+        title: Angaben für Dauerauftrag oder Überweisung
+        amount: Summe
+        account_number: Kontonummer
+        recipient_message: Verwendungszweck
+        delay_info: Es kann 2 bis 3 Werktage dauern, bis der Betrag gutgeschrieben wird. Das Abonnement wird erst nach Gutschrift der Zahlung auf unserem Konto aktiviert.
+        variable_symbol: Transaktions-ID
+    select_card:
+        lead: Die verwendeten Kartendaten werden gespeichert, damit Sie die Kartennummer nicht erneut eingeben müssen.
+        title: Wählen Sie eine Karte aus, um die Zahlung abzuschließen
+        subtitle: Liste der gespeicherten Karten
+        use_new_card: Mit einer anderen Karte bezahlen
+        card_with_expiration: Abblaufdatum der Karte
+        use_card: Die Summe von %sum% mit der hinterlegten Karte bezahlen
+    add_card:
+        error: Die Karte konnte nicht hinzugefügt werden. Bitte probieren Sie es später noch einmal.
+        success: Die Karte wurde erfolgreich hinzugefügt. Eine eventuell im Rahmen der Kartenprüfung erfolgte Abbuchung wird Ihnen wieder zurückerstattet.
+form:
+    payment_gateway:
+        name:
+            label: Name
+            required: Name ist erforderlich
+            placeholder: z.B. Paypal
+        code:
+            label: Code
+            placeholder: z.B. paypal
+        sorting:
+            label: Sortierung
+        is_recurrent:
+            label: Wiederkehrend
+        visible:
+            label: Sichtbar
+        save:
+            label: Speichern
+        required: Zahlungsdienstleister ist erforderlich
+    payment:
+        variable_symbol:
+            label: Variables Symbol
+            required: Variables Symbol erforderlich
+            placeholder: z.B. 87239102385
+            generate: Anlegen
+            already_used: Das Variable Symbol wurde schon vor kurzem benutzt
+        amount:
+            label: Summe
+            nonzero: Die Summe muss größer als Null sein, wahrscheinlich wurde kein Artikel ausgewählt.
+            description: 'Hinweis: Der Betrag wird entsprechend dem Preis des gewählten Abonnementtyps vorausgefüllt. Wenn Sie einen anderen Betrag eingeben möchten, kreuzen Sie <strong>Eigener Artikelpreis</strong> an, und der Betrag wird automatisch entsprechend dem Preis der einzelnen Artikel neu berechnet.'
+            required: Summe ist erforderlich
+        items: Zahlungsartikel
+        items_no_editable: Die Zahlung enthält Abonnementtypen, die nicht bearbeitet werden können
+        custom_payment_items:
+            label: Eigener Artikelpreis
+        additional_amount:
+            label: Gespendeter Betrag
+            placeholder: z.B. 14.52
+        additional_type:
+            label: Typ der Spende
+            single: Einmalig
+            recurrent: wiederkehrend
+            description: Wenn der Spendenbetrag eingegeben wird, muss der Typ ebenfalls ausgewählt werden
+        general_settings: Allgemeine Zahlungseinstellungen
+        payment_gateway_id:
+            label: Zahlungsdienstleister
+        status:
+            label: Status
+        paid_at:
+            label: Zahlungszeitpunkt
+            placeholder: z.B. 14.2.2016 14:21
+            required: Angabe ist erforderlich.
+        send_notification:
+            label: Benachrichtigung senden
+        manual_subscription:
+            label: Beginn / Ende des Abonnements
+            start: Manuell - legen Sie den Beginn des Abonnements fest
+            prompt: Automatisch - nach Datum der Zahlung und Dauer des Abonnements
+            start_end: Manuell - Beginn und Ende des Abonnements festlegen
+        subscription_start_at:
+            not_past: Das Startdatum des Abonnements darf nicht in der Vergangenheit liegen
+            placeholder: z.B. 14.2.2016
+            label: Beginn des Abonnements
+            description: Muss nur ausgefüllt werden, wenn der Beginn des Abonnements auf ein bestimmtes Datum in der Zukunft fallen soll. Falls die Zahlung später als das angegebene Datum bestätigt wird, beginnt das Abonnement zum Zeitpunkt der Zahlungsbestätigung.
+        subscription_end_at:
+            label: Ende des Abonnements
+            placeholder: z.B. 14.2.2016
+            not_past: Das Enddatum des Abonnements muss in der Zukunft liegen.
+            description: Muss nur ausgefüllt werden, wenn das Ende des Abonnements auf ein bestimmtes Datum in der Zukunft festgelegt werden soll.
+        note:
+            label: Notiz
+            placeholder: Individueller Zahlungsvermerk
+        referer:
+            label: Referer
+            placeholder: URL, von der die Zahlung kam
+        address_id:
+            label: Adresse
+        send: Speichern
+        subscription_type_id:
+            label: Abonnementtyp
+            prompt: Abonnementtyp
+    subscription_form:
+        start_time:
+            after_payment:
+                description: 'Das Abonnement muss nach dem Datum der Zahlungsbestätigung beginnen: %payment_paid%.'
+                error: Der Beginn des Abonnements liegt vor dem Datum der Zahlungsbestätigung.
+gateway:
+    recurrent: Wiederkehrende Zahlung
+config:
+    category: Zahlungen
+    donation_vat_rate:
+        name: Mehrwertsteuer für Spenden
+    comfortpay_terminalid:
+        name: Comfortpay terminalid
+    comfortpay_local_cert_path:
+        name: Der Pfad zum lokalen Comfortpay-Zertifikat
+        description: Der Pfad zum Zertifikat (z. B. /data/web/example/cert.pem)
+    comfortpay_local_passphrase_path:
+        name: Lokaler Pfad zur Comfortpay-Passphrase
+        description: Zertifikatspass-Pfad (z. B. /data/web/example/pass)
+    comfortpay_tem:
+        name: Comfortpay tem
+        description: Comfortpay sendet Kartenregistrierungsdaten (z. B. Y)
+    comfortpay_rem:
+        name: Comfortpay rem
+        description: Comfortpay
+    paypal_mode:
+        name: PayPal-Modus
+        description: Wechseln Sie Modus zwischen „test“ (Sandbox) oder „live“ (Produktion)
+    csob_shop_name:
+        description: In der Zahlungsbeschreibung angezeigter Shop-Name (falls automatisch generiert)
+        name: CSOB Shop-Name
+    csob_private_key_file_path:
+        name: ČSOB Private-Key des Händlers
+        description: Pfad zum Private-Key von der Bank oder erzeugt via https://iplatebnibrana.csob.cz/keygen/ (für Entwicklungszwecke)
+    csob_mode:
+        description: Umschalten zwischen "test"-Modus (Sandbox) und "live"-Modus (Produktion)
+    recurrent_payment_gateway_fail_delay:
+        name: Pausieren nach einer fehlgeschlagenen Verbindung
+        description: Zeit-Interval (https://en.wikipedia.org/wiki/ISO_8601#Durations) nach einem Kommunikationsfehler. (e.g. PT1H)
+    recurrent_charge_before:
+        name: Durchführung der wiederkehrende Abbuchung (Anzahl der Stunden vor Ablauf der Frist)
+        description: Die Anzahl der Stunden vor Ablauf des Abonnements, in denen eine automatische Erneuerung erfolgen soll (z. B. 48). Ein leerer Wert legt fest, dass die nächste Zahlung unmittelbar bei Ablauf des Abonnements zu leisten ist.
+    gopay_recurrence_date_to:
+        name: GoPay wiederkehrendes Abbuchungsdatum bis
+    gopay_eet_enabled:
+        name: EET aktivieren
+        description: EET-Berichte vom Zahlungsdienstleister aktivieren
+    tatrabanka_pgp_private_key_path:
+        description: Pfad zum PGP-Private-Key zur Entschlüsselung von TatraBanka-E-Mails
+    tatrabanka_pgp_private_key_passphrase:
+        description: Passwort für die PGP-Private-Key-Datei zur Entschlüsselung von TatraBanka-E-Mails
+    confirmation_mail_host:
+        name: Bestätigungs-E-Mails HOST
+        description: E-Mail-Server, auf dem Bestätigungs-E-Mails von der Bank eingehen
+    confirmation_mail_port:
+        name: Bestätigungs-E-Mails PORT
+    confirmation_mail_processed_folder:
+        name: ORDNER der Bestätigungs-E-Mails nach der Verarbeitung
+        description: IMAP-Ordner, in den die E-Mail nach der Verarbeitung verschoben werden soll
+    tb_simple_confirmation_port:
+        description: IMAP-Connection-Port (eg. 993) (<a href='https://github.com/remp2020/crm-payments-module#confirmation-e-mails' target='_blank'>info</a>)
+    tb_simple_confirmation_processed_folder:
+        description: IMAP-Ordner, in den die Email nach der Verarbeitung verschoben wird (z.B. INBOX/processed) (<a href='https://github.com/remp2020/crm-payments-module#confirmation-e-mails' target='_blank'>info</a>)
+        name: TatraBanka Simple Ordner
+    tb_confirmation_processed_folder:
+        name: TatraBanka Ordner
+        description: IMAP-Ordner, in den die Email nach der Verarbeitung verschoben wird (z.B. INBOX/processed) (<a href='https://github.com/remp2020/crm-payments-module#confirmation-e-mails' target='_blank'>info</a>)
+    csob_confirmation_port:
+        description: IMAP-Connection-Port (z.B. 993) (<a href='https://github.com/remp2020/crm-payments-module#confirmation-e-mails' target='_blank'>info</a>)
+    csob_confirmation_password:
+        description: IMAP-Connection-Passwort (z.B. password) (<a href='https://github.com/remp2020/crm-payments-module#confirmation-e-mails' target='_blank'>info</a>)
+    csob_confirmation_processed_folder:
+        name: ČSOB (CZ) Ordner
+        description: IMAP-Ordner, in den die Email nach der Verarbeitung verschoben wird (z.B. INBOX/processed) (<a href='https://github.com/remp2020/crm-payments-module#confirmation-e-mails' target='_blank'>info</a>)
+    sk_csob_confirmation_processed_folder:
+        name: ČSOB (SK) Ordner
+        description: IMAP-Ordner, in den die Email nach der Verarbeitung verschoben wird (z.B. INBOX/processed) (<a href='https://github.com/remp2020/crm-payments-module#confirmation-e-mails' target='_blank'>info</a>)
+    tbs_confirmation_host:
+        name: TatraBanka status host
+        description: IMAP-Connection-Host (z.B. imap.gmail.com) (<a href='https://github.com/remp2020/crm-payments-module#confirmation-e-mails' target='_blank'>info</a>)
+    tbs_confirmation_port:
+        name: TatraBanka status port
+        description: IMAP-Connection-Port (z.B. 993) (<a href='https://github.com/remp2020/crm-payments-module#confirmation-e-mails' target='_blank'>info</a>)
+    tbs_confirmation_password:
+        name: TatraBanka status password
+        description: IMAP-Connection-Passwort (z.B. password) (<a href='https://github.com/remp2020/crm-payments-module#confirmation-e-mails' target='_blank'>info</a>)
+    tbs_confirmation_processed_folder:
+        name: TatraBanka status Ordner
+        description: IMAP-Ordner, in den die Email nach der Verarbeitung verschoben wird (z.B. INBOX/processed) (<a href='https://github.com/remp2020/crm-payments-module#confirmation-e-mails' target='_blank'>info</a>)
+    cardpay_sharedsecret:
+        name: Cardpay sharedsecret
+    tatrapay_sharedsecret:
+        name: Tatrapay Sharedsecret
+    category_confirmation: Bestätigungs-E-Mails
+    comfortpay_sharedsecret:
+        name: Comfortpay sharedsecret
+    tb_confirmation_port:
+        description: IMAP-Connection-Port (z.B. 993) (<a href='https://github.com/remp2020/crm-payments-module#confirmation-e-mails' target='_blank'>info</a>)
+    csob_merchant_id:
+        description: Von der Bank bereitgestellte oder über https://iplatebnibrana.csob.cz/keygen/ generierte Merchant-ID (für Entwicklungszwecke)
+    tbs_confirmation_username:
+        description: IMAP-Connection-Username (z.B. example@gmail.com) (<a href='https://github.com/remp2020/crm-payments-module#confirmation-e-mails' target='_blank'>info</a>)
+        name: TatraBanka status username
+    csob_bank_public_key_file_path:
+        name: ČSOB Public-Key der Bank zur Verifikation der Bankenantwort
+        description: Pfad zum Public-Key der Bank verfügbar auf https://github.com/csob/paymentgateway/tree/master/keys (Unterschiedliche Keys für Sandbox und Produktion)
+    recurrent_payment_charges:
+        name: Wiederholung wiederkehrender Zahlungen
+        description: Definition von Zeit-Intervallen (https://en.wikipedia.org/wiki/ISO_8601#Durations), getrennt durch Komma. (z. B. PT15M, PT6H, PT6H, PT6H, PT6H)
+    tb_simple_confirmation_username:
+        description: IMAP-Connection-Username (eg. example@gmail.com) (<a href='https://github.com/remp2020/crm-payments-module#confirmation-e-mails' target='_blank'>info</a>)
+    tb_confirmation_host:
+        description: IMAP-Connection-Host (z.B. imap.gmail.com) (<a href='https://github.com/remp2020/crm-payments-module#confirmation-e-mails' target='_blank'>info</a>)
+    tb_confirmation_password:
+        description: IMAP-Connection-Passwort (z.B. password) (<a href='https://github.com/remp2020/crm-payments-module#confirmation-e-mails' target='_blank'>info</a>)
+    confirmation_mail_username:
+        name: Bestätigungs-E-Mails Benutzername
+    confirmation_mail_password:
+        name: Bestätigungs-E-Mails Passwort
+    tb_simple_confirmation_host:
+        description: IMAP-Connection-Host (eg. imap.gmail.com) (<a href='https://github.com/remp2020/crm-payments-module#confirmation-e-mails' target='_blank'>Info</a>)
+    tb_confirmation_username:
+        description: IMAP-Connection-Username (z.B. example@gmail.com) (<a href='https://github.com/remp2020/crm-payments-module#confirmation-e-mails' target='_blank'>info</a>)
+    sk_csob_confirmation_password:
+        description: IMAP-Connection-Passwort (z.B. password) (<a href='https://github.com/remp2020/crm-payments-module#confirmation-e-mails' target='_blank'>info</a>)
+    tb_simple_confirmation_password:
+        description: IMAP-Connection-Passwort (eg. password) (<a href='https://github.com/remp2020/crm-payments-module#confirmation-e-mails' target='_blank'>info</a>)
+    csob_confirmation_host:
+        description: IMAP-Connection-Host (z.B. imap.gmail.com) (<a href='https://github.com/remp2020/crm-payments-module#confirmation-e-mails' target='_blank'>info</a>)
+    csob_confirmation_username:
+        description: IMAP-Connection-Username (z.B. example@gmail.com) (<a href='https://github.com/remp2020/crm-payments-module#confirmation-e-mails' target='_blank'>info</a>)
+    sk_csob_confirmation_port:
+        description: IMAP-Connection-Port (z.B. 993) (<a href='https://github.com/remp2020/crm-payments-module#confirmation-e-mails' target='_blank'>info</a>)
+    sk_csob_confirmation_username:
+        description: IMAP-Connection-Username (z.B. example@gmail.com) (<a href='https://github.com/remp2020/crm-payments-module#confirmation-e-mails' target='_blank'>info</a>)
+    sk_csob_confirmation_host:
+        description: IMAP-Connection-Host (z.B. imap.gmail.com) (<a href='https://github.com/remp2020/crm-payments-module#confirmation-e-mails' target='_blank'>info</a>)
