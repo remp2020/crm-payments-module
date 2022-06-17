@@ -110,7 +110,12 @@ class CardPayDirect
             );
         }
 
-        if (!$this->checkAuthorization($result->getBody()->getContents(), $authorization)) {
+        // Instead of $result->getBody()->getContents(), using __toString, since it rewinds the stream
+        // the problem occurs if logging is turned on (in such case getContents() returns empty string)
+        // see https://github.com/8p/EightPointsGuzzleBundle/issues/48
+        $contents = $result->getBody()->__toString();
+
+        if (!$this->checkAuthorization($contents, $authorization)) {
             // not sure about this, probably exception will be better here
             return new TransactionResult(
                 TransactionResult::ERROR,
@@ -168,7 +173,12 @@ class CardPayDirect
             );
         }
 
-        if (!$this->checkAuthorization($result->getBody()->getContents(), $authorization)) {
+        // Instead of $result->getBody()->getContents(), using __toString, since it rewinds the stream
+        // the problem occurs if logging is turned on (in such case getContents() returns empty string)
+        // see https://github.com/8p/EightPointsGuzzleBundle/issues/48
+        $contents = $result->getBody()->__toString();
+
+        if (!$this->checkAuthorization($contents, $authorization)) {
             // not sure about this, probably exception will be better here
             return new TransactionResult(
                 TransactionResult::ERROR,
