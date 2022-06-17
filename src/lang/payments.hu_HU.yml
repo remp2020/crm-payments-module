@@ -426,7 +426,7 @@ form:
         subscription_end_at:
             label: Előfizetés vége
             placeholder: pl. 2016. 2. 14.
-            description: "Csak abban az esetben szükséges kitölteni, ha az előfizetés végét szeretné  egy konkrét jövőbeli dátumra beállítani."
+            description: "Csak abban az esetben szükséges kitölteni, ha az előfizetés végét szeretné egy konkrét jövőbeli dátumra beállítani."
             not_past: Az előfizetés vége dátumának jövőbeli dátumnak kell lennie.
         note:
             label: Megjegyzés
