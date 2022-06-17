@@ -148,9 +148,9 @@ SQL;
         $wheres = [];
         $whereParams = [];
 
-        $wheres[] = 'subscription_id IS NOT NULL AND paid_at IS NOT NULL';
+        $wheres[] = 'payments.subscription_id IS NOT NULL AND payments.paid_at IS NOT NULL';
         if (!empty($inputParams['min_date_of_payment'])) {
-            $wheres[] = 'paid_at >= ?';
+            $wheres[] = 'payments.paid_at >= ?';
             $whereParams[] = [DateTime::from($inputParams['min_date_of_payment'])];
         }
 
