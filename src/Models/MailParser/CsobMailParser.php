@@ -19,7 +19,7 @@ class CsobMailParser implements ParserInterface
         foreach ($transactions as $transaction) {
             $mailContent = new MailContent();
 
-            $pattern1 = '/(.*) byla na účtu ([a-zA-Z0-9]+) zaúčtovaná transakce typu: (Došlá platba|Příchozí úhrada|Došlá úhrada)/m';
+            $pattern1 = '/(.*) byla na účtu ([a-zA-Z0-9]+) zaúčtována transakce typu: (Došlá platba|Příchozí úhrada|Došlá úhrada)/m';
             $res = preg_match($pattern1, $transaction, $result);
             if (!$res) {
                 continue;
