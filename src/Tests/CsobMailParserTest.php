@@ -20,7 +20,44 @@ Majitel smlouvy: Shmelina a.s.
 Účet protistrany: 1122334455/9999
 Název protistrany: Capi Hnizdo a.s.
 Variabilní symbol: 23456789
-Konstantní symbol: 3456        
+Konstantní symbol: 3456
+
+Zůstatek na účtu po zaúčtování transakce: +1 234 567,89 CZK.
+
+S přáním krásného dne
+Vaše ČSOB
+';
+        $csobMailParser = new CsobMailParser();
+        $mailContents = $csobMailParser->parse($email);
+
+        $this->assertCount(1, $mailContents);
+
+        $mailContent = $mailContents[0];
+        $this->assertEquals('123456789', $mailContent->getAccountNumber());
+        $this->assertEquals('CZK', $mailContent->getCurrency());
+        $this->assertEquals(1234.56, $mailContent->getAmount());
+        $this->assertEquals('23456789', $mailContent->getVs());
+        $this->assertEquals('3456', $mailContent->getKs());
+        $this->assertNull($mailContent->getSs());
+        $this->assertEquals(strtotime('25.9.2018'), $mailContent->getTransactionDate());
+    }
+
+    // zaúčtovaná changed to zaúčtována
+    public function testSingleTransferPaymentFixedTypoZauctovana()
+    {
+        $email = 'Vážený kliente,
+
+dne 25.9.2018 byla na účtu 123456789 zaúčtována transakce typu: Došlá platba.
+
+Název smlouvy: CRM International a.s.
+Číslo smlouvy: 87654321
+Majitel smlouvy: Shmelina a.s.
+Účet: 123456789, CZK, CRM INTERNATION
+Částka: +1 234,56 CZK
+Účet protistrany: 1122334455/9999
+Název protistrany: Capi Hnizdo a.s.
+Variabilní symbol: 23456789
+Konstantní symbol: 3456
 
 Zůstatek na účtu po zaúčtování transakce: +1 234 567,89 CZK.
 
