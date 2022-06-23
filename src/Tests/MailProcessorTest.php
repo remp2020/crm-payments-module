@@ -4,24 +4,27 @@ namespace Crm\PaymentsModule\Tests;
 
 use Crm\PaymentsModule\MailConfirmation\MailProcessor;
 use Crm\PaymentsModule\MailConfirmation\ParsedMailLogsRepository;
+use Crm\PaymentsModule\Models\PaymentItem\PaymentItemHelper;
 use Crm\PaymentsModule\Repository\PaymentsRepository;
+use Crm\SubscriptionsModule\Repository\SubscriptionTypeItemsRepository;
 use DateTime;
 use Tomaj\BankMailsParser\MailContent;
 
 class MailProcessorTest extends PaymentsTestCase
 {
-    /** @var  MailProcessor */
-    private $mailProcessor;
+    private MailProcessor $mailProcessor;
 
-    /** @var  ParsedMailLogsRepository */
-    private $parsedMailLogsRepository;
+    private ParsedMailLogsRepository $parsedMailLogsRepository;
+
+    private SubscriptionTypeItemsRepository $subscriptionTypeItemsRepository;
 
     public function setup(): void
     {
         parent::setup();
 
         $this->mailProcessor = $this->container->getByType('Crm\PaymentsModule\MailConfirmation\MailProcessor');
-        $this->parsedMailLogsRepository = $this->container->getByType('Crm\PaymentsModule\MailConfirmation\ParsedMailLogsRepository');
+        $this->parsedMailLogsRepository = $this->getRepository(ParsedMailLogsRepository::class);
+        $this->subscriptionTypeItemsRepository = $this->getRepository(SubscriptionTypeItemsRepository::class);
     }
 
     public function testMailWithoutVariableSymbol()
@@ -120,11 +123,14 @@ class MailProcessorTest extends PaymentsTestCase
     public function testRepeatedPaymentFromBank()
     {
         $payment = $this->createPayment('7492851612');
-        $this->paymentsRepository->update($payment, array(
+        $this->paymentsRepository->update($payment, [
             'amount' => 10.4,
             'status' => PaymentsRepository::STATUS_PAID,
-            'created_at' => new DateTime('23 days ago')
-        ));
+            'created_at' => new DateTime('23 days ago'),
+        ]);
+
+        $subscriptionTypeItem = $payment->subscription_type->related('subscription_type_item')->fetch();
+        $this->subscriptionTypeItemsRepository->update($subscriptionTypeItem, ['vat' => 20]);
 
         $mailContent = new MailContent();
         $mailContent->setAmount(10.4);
@@ -148,15 +154,23 @@ class MailProcessorTest extends PaymentsTestCase
 
             $paymentItemArray = $paymentItem->toArray();
             $newPaymentItemArray = $newPaymentItem->toArray();
+
+            $this->assertEquals(20, $newPaymentItemArray['vat']);
+            $this->assertEquals(PaymentItemHelper::getPriceWithoutVAT($newPaymentItemArray['amount'], 20), $newPaymentItemArray['amount_without_vat']);
+
             unset(
                 $paymentItemArray['id'],
                 $paymentItemArray['payment_id'],
                 $paymentItemArray['created_at'],
                 $paymentItemArray['updated_at'],
+                $paymentItemArray['vat'],
+                $paymentItemArray['amount_without_vat'],
                 $newPaymentItemArray['id'],
                 $newPaymentItemArray['payment_id'],
                 $newPaymentItemArray['created_at'],
-                $newPaymentItemArray['updated_at']
+                $newPaymentItemArray['updated_at'],
+                $newPaymentItemArray['vat'],
+                $newPaymentItemArray['amount_without_vat'],
             );
 
             $this->assertEqualsCanonicalizing($paymentItemArray, $newPaymentItemArray);

@@ -10,6 +10,8 @@ use Crm\PaymentsModule\DataProvider\CanUpdatePaymentItemDataProviderInterface;
 use Crm\PaymentsModule\Events\NewPaymentItemEvent;
 use Crm\PaymentsModule\PaymentItem\PaymentItemContainer;
 use Crm\PaymentsModule\PaymentItem\PaymentItemInterface;
+use Crm\SubscriptionsModule\PaymentItem\SubscriptionTypePaymentItem;
+use Crm\SubscriptionsModule\Repository\SubscriptionTypeItemsRepository;
 use Exception;
 use League\Event\Emitter;
 use Nette\Caching\Storage;
@@ -29,19 +31,23 @@ class PaymentItemsRepository extends Repository
 
     private $dataProviderManager;
 
+    private SubscriptionTypeItemsRepository $subscriptionTypeItemsRepository;
+
     public function __construct(
         Explorer $database,
         ApplicationConfig $applicationConfig,
         Emitter $emitter,
         Storage $cacheStorage = null,
         PaymentItemMetaRepository $paymentItemMetaRepository,
-        DataProviderManager $dataProviderManager
+        DataProviderManager $dataProviderManager,
+        SubscriptionTypeItemsRepository $subscriptionTypeItemsRepository
     ) {
         parent::__construct($database, $cacheStorage);
         $this->applicationConfig = $applicationConfig;
         $this->emitter = $emitter;
         $this->paymentItemMetaRepository = $paymentItemMetaRepository;
         $this->dataProviderManager = $dataProviderManager;
+        $this->subscriptionTypeItemsRepository = $subscriptionTypeItemsRepository;
     }
 
     final public function add(ActiveRow $payment, PaymentItemContainer $container): array
@@ -136,6 +142,30 @@ class PaymentItemsRepository extends Repository
     final public function getTypes(): array
     {
         return $this->getTable()->select('DISTINCT type')->fetchPairs('type', 'type');
+    }
+
+    final public function copyPaymentItem(ActiveRow $paymentItem, ActiveRow $newPayment)
+    {
+        $paymentItemArray = $paymentItem->toArray();
+
+        $paymentItemArray['payment_id'] = $newPayment->id;
+        $paymentItemArray['created_at'] = new DateTime();
+        $paymentItemArray['updated_at'] = new DateTime();
+        unset($paymentItemArray['id']);
+
+        $newPaymentItemMetaArray = $paymentItem->related('payment_item_meta')->fetchPairs('key', 'value');
+
+        if ($paymentItemArray['type'] === SubscriptionTypePaymentItem::TYPE && isset($newPaymentItemMetaArray['subscription_type_item_id'])) {
+            $subscriptionTypeItem = $this->subscriptionTypeItemsRepository->find($newPaymentItemMetaArray['subscription_type_item_id']);
+            $subscriptionTypePaymentItem = SubscriptionTypePaymentItem::fromSubscriptionTypeItem($subscriptionTypeItem, $paymentItemArray['count']);
+
+            $paymentItemArray['name'] = $subscriptionTypePaymentItem->name();
+            $paymentItemArray['vat'] = $subscriptionTypePaymentItem->vat();
+            $paymentItemArray['amount_without_vat'] = $subscriptionTypePaymentItem->unitPriceWithoutVAT();
+        }
+
+        $newPaymentItem = $this->insert($paymentItemArray);
+        $this->paymentItemMetaRepository->addMetas($newPaymentItem, $newPaymentItemMetaArray);
     }
 
     private function canBeUpdated($paymentItem): bool
