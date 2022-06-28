@@ -51,7 +51,7 @@
                     ])">
                     <div class="col-sm-3 col-xs-5">
                         {$payment->payment_gateway->name}<br>
-                        {$payment->paid_at|userDate:true}
+                        {$payment->paid_at|localizedDate:true}
                     </div>
                     <div class="col-sm-2 col-xs-4">
                         {$payment->variable_symbol}
@@ -78,8 +78,8 @@
                                                 <span class="label label-danger">{_payments.frontend.my.charge_failed.title}</span>
                                                 <div class="text-muted" style="margin: 1em 0">
                                                     <small>
-                                                        {_payments.frontend.my.charge_failed.last_try}: {$lastFailedChargeDate|userDate}<br>
-                                                        {_payments.frontend.my.charge_failed.next_try}: {$recurrent->charge_at|userDate}
+                                                        {_payments.frontend.my.charge_failed.last_try}: {$lastFailedChargeDate|localizedDate}<br>
+                                                        {_payments.frontend.my.charge_failed.next_try}: {$recurrent->charge_at|localizedDate}
                                                     </small>
                                                 </div>
                                             {/if}
