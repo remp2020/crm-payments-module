@@ -73,4 +73,10 @@
             </table>
         </div>
     </div>
+
+    <script type="application/javascript">
+        $('.pay-button').on('click', function(event) {
+            $(event.target).attr('disabled', 'disabled');
+        });
+    </script>
 {/block}
