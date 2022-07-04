@@ -15,7 +15,7 @@
             {_payments.admin.component.total_user_payments.for_subscription_payments, $subscriptionPayments}<br>
         {/if}
 
-        {control simpleWidget 'payments.admin.total_user_payments', $meta}
+        {control simpleWidget 'payments.admin.total_user_payments', $stats}
 
         {ifset $avgMonthPayment}
           <hr>

@@ -6,24 +6,23 @@ use Crm\ApplicationModule\Cache\CacheRepository;
 use Crm\ApplicationModule\Widget\BaseWidget;
 use Crm\ApplicationModule\Widget\WidgetManager;
 use Crm\SegmentModule\SegmentWidgetInterface;
-use Crm\UsersModule\Repository\UserMetaRepository;
+use Crm\UsersModule\Repository\UserStatsRepository;
 use Nette\Database\Table\ActiveRow;
 
 class AvgMonthPaymentWidget extends BaseWidget implements SegmentWidgetInterface
 {
     private string $templateName = 'avg_month_payment_widget.latte';
-
-    private UserMetaRepository $userMetaRepository;
     private CacheRepository $cacheRepository;
+    private UserStatsRepository $userStatsRepository;
 
     public function __construct(
         WidgetManager $widgetManager,
-        UserMetaRepository $userMetaRepository,
+        UserStatsRepository $userStatsRepository,
         CacheRepository $cacheRepository
     ) {
         parent::__construct($widgetManager);
-        $this->userMetaRepository = $userMetaRepository;
         $this->cacheRepository = $cacheRepository;
+        $this->userStatsRepository = $userStatsRepository;
     }
 
     public function identifier()
@@ -51,7 +50,7 @@ class AvgMonthPaymentWidget extends BaseWidget implements SegmentWidgetInterface
             return;
         }
 
-        $result = $this->userMetaRepository
+        $result = $this->userStatsRepository
             ->getTable()
             ->select('COALESCE(SUM(value), 0) AS sum')
             ->where(['key' => 'avg_month_payment', 'user_id' => $userIds])

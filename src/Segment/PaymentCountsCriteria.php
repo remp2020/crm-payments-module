@@ -3,21 +3,12 @@
 namespace Crm\PaymentsModule\Segment;
 
 use Crm\ApplicationModule\Criteria\CriteriaInterface;
-use Crm\PaymentsModule\Repository\PaymentsRepository;
 use Crm\SegmentModule\Criteria\Fields;
 use Crm\SegmentModule\Params\NumberParam;
 use Crm\SegmentModule\Params\ParamsBag;
 
 class PaymentCountsCriteria implements CriteriaInterface
 {
-    private $paymentsRepository;
-
-    public function __construct(
-        PaymentsRepository $paymentsRepository
-    ) {
-        $this->paymentsRepository = $paymentsRepository;
-    }
-
     public function label(): string
     {
         return "Payment Counts";
@@ -45,8 +36,8 @@ class PaymentCountsCriteria implements CriteriaInterface
         $join = [];
 
         if ($params->has('subscription_payments')) {
-            $join[] = "LEFT JOIN user_meta spum ON `key` = 'subscription_payments' AND spum.user_id = users.id";
-            $where += $params->number('subscription_payments')->conditions('COALESCE(`spum`.`value`, 0)');
+            $join[] = "LEFT JOIN user_stats spus ON `key` = 'subscription_payments' AND spus.user_id = users.id";
+            $where += $params->number('subscription_payments')->conditions('COALESCE(`spus`.`value`, 0)');
         }
 
         return "SELECT DISTINCT(users.id) AS id, " . Fields::formatSql($this->fields()) . "

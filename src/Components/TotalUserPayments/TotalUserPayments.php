@@ -6,7 +6,7 @@ use Crm\ApplicationModule\Widget\BaseWidget;
 use Crm\ApplicationModule\Widget\WidgetManager;
 use Crm\PaymentsModule\Models\AverageMonthPayment;
 use Crm\PaymentsModule\Repository\PaymentsRepository;
-use Crm\UsersModule\Repository\UserMetaRepository;
+use Crm\UsersModule\Repository\UserStatsRepository;
 
 /**
  * Display total amount spent by one user.
@@ -19,19 +19,19 @@ class TotalUserPayments extends BaseWidget
     private string $templateName = 'total_user_payments.latte';
 
     private PaymentsRepository $paymentsRepository;
-    private UserMetaRepository $userMetaRepository;
+    private UserStatsRepository $userStatsRepository;
     private AverageMonthPayment $averageMonthPayment;
 
     public function __construct(
         WidgetManager $widgetManager,
         PaymentsRepository $paymentsRepository,
-        UserMetaRepository $userMetaRepository,
-        AverageMonthPayment $averageMonthPayment
+        AverageMonthPayment $averageMonthPayment,
+        UserStatsRepository $userStatsRepository
     ) {
         parent::__construct($widgetManager);
         $this->paymentsRepository = $paymentsRepository;
-        $this->userMetaRepository = $userMetaRepository;
         $this->averageMonthPayment = $averageMonthPayment;
+        $this->userStatsRepository = $userStatsRepository;
     }
 
     public function identifier()
@@ -45,12 +45,13 @@ class TotalUserPayments extends BaseWidget
         $this->template->totalSum = $totalSum;
 
         if ($totalSum > 0) {
-            $meta = $this->userMetaRepository->userMeta($userId);
-            $this->template->meta = $meta;
+            $stats = $this->userStatsRepository->userStats($userId);
 
-            $this->template->subscriptionPaymentsAmount = $meta['subscription_payments_amount'] ?? 0;
-            $this->template->subscriptionPayments = $meta['subscription_payments'] ?? 0;
-            $this->template->avgMonthPayment = $meta['avg_month_payment'] ?? 0;
+            $this->template->stats = $stats;
+
+            $this->template->subscriptionPaymentsAmount = $stats['subscription_payments_amount'] ?? 0;
+            $this->template->subscriptionPayments = $stats['subscription_payments'] ?? 0;
+            $this->template->avgMonthPayment = $stats['avg_month_payment'] ?? 0;
 
             $this->template->averageMonthSum = $this->averageMonthPayment->getAverageMonthPayment();
         }
