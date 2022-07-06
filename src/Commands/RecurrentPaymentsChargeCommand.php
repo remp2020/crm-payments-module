@@ -245,7 +245,7 @@ class RecurrentPaymentsChargeCommand extends Command
                         $chargeAt = null;
                         if ($gateway instanceof ExternallyChargedRecurrentPaymentInterface) {
                             $paymentStatus = $gateway->getChargedPaymentStatus();
-                            $chargeAt = $gateway->getLatestReceiptExpiration();
+                            $chargeAt = $gateway->getSubscriptionExpiration($recurrentPayment->cid);
                         }
                         $this->recurrentPaymentsProcessor->processChargedRecurrent(
                             $recurrentPayment,

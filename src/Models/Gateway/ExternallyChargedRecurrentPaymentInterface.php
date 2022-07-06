@@ -29,7 +29,8 @@ interface ExternallyChargedRecurrentPaymentInterface
      *  - `subscription.end_time` for subscriptions, so user's subscription end time matches with end time provided
      *    by payment gateway service provider.
      *
-     * @return \DateTime
+     * Parameter $cid is supposed to hint the correct subscription in case your gateway provider always returns multiple
+     * active subscriptions.
      */
-    public function getLatestReceiptExpiration(): \DateTime;
+    public function getSubscriptionExpiration(string $cid = null): \DateTime;
 }
