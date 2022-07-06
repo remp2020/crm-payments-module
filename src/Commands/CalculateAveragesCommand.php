@@ -55,6 +55,12 @@ class CalculateAveragesCommand extends Command
                 null,
                 InputOption::VALUE_NONE,
                 "Force deleting existing data in 'user_stats' table and 'user_meta' table (where data was originally stored)"
+            )
+            ->addOption(
+                'user_id',
+                null,
+                InputOption::VALUE_REQUIRED,
+                "Compute average values for given user only."
             );
     }
 
@@ -63,7 +69,7 @@ class CalculateAveragesCommand extends Command
         $keys = ['subscription_payments', 'subscription_payments_amount', 'avg_month_payment'];
 
         if ($input->getOption('delete')) {
-            $this->line("Deleting old values from 'user_stats' and 'user_meta' tables.");
+            $this->line("  * deleting old values from 'user_stats' and 'user_meta' tables.");
 
             $this->userStatsRepository->getTable()
                 ->where('key IN (?)', $keys)
@@ -74,19 +80,37 @@ class CalculateAveragesCommand extends Command
                 ->delete();
         }
 
+        $userId = $input->getOption('user_id');
+
         foreach ($keys as $key) {
-            $this->database->query(<<<SQL
-            -- fill empty values for new users
-            INSERT IGNORE INTO `user_stats` (`user_id`,`key`,`value`, `created_at`, `updated_at`)
-            SELECT `id`, ?, 0, NOW(), NOW()
-            FROM `users`;
+            $this->line("  * filling up 0s for '<info>{$key}</info>' stat");
+
+            if ($userId) {
+                $this->database->query(<<<SQL
+                INSERT IGNORE INTO `user_stats` (`user_id`,`key`,`value`, `created_at`, `updated_at`)
+                VALUES (?, ?, 0, NOW(), NOW())
+SQL, $userId, $key);
+            } else {
+                $this->database->query(<<<SQL
+                -- fill empty values for new users
+                INSERT IGNORE INTO `user_stats` (`user_id`,`key`,`value`, `created_at`, `updated_at`)
+                SELECT `id`, ?, 0, NOW(), NOW()
+                FROM `users`;
 SQL, $key);
+            }
         }
 
-        foreach ($this->userIdIntervals() as $interval) {
+        if ($userId) {
+            $interval = [$userId, $userId];
             $this->computeUserSubscriptionPaymentCounts(...$interval);
             $this->computeUserSubscriptionPaymentAmounts(...$interval);
             $this->computeUserAvgPaymentAmount(...$interval);
+        } else {
+            foreach ($this->userIdIntervals() as $interval) {
+                $this->computeUserSubscriptionPaymentCounts(...$interval);
+                $this->computeUserSubscriptionPaymentAmounts(...$interval);
+                $this->computeUserAvgPaymentAmount(...$interval);
+            }
         }
 
         return Command::SUCCESS;
@@ -111,6 +135,8 @@ SQL, $key);
 
     private function computeUserSubscriptionPaymentCounts($minUserId, $maxUserId)
     {
+        $this->line("  * computing '<info>subscription_payments</info>' for user IDs between [<info>{$minUserId}</info>, <info>{$maxUserId}</info>]");
+
         $subscriptionTypeItem = SubscriptionTypePaymentItem::TYPE;
 
         $values = $this->database->query(<<<SQL
@@ -131,6 +157,8 @@ SQL, self::PAYMENT_STATUSES, $subscriptionTypeItem, $minUserId, $maxUserId)
 
     private function computeUserSubscriptionPaymentAmounts($minUserId, $maxUserId)
     {
+        $this->line("  * computing '<info>subscription_payments_amount</info>' for user IDs between [<info>{$minUserId}</info>, <info>{$maxUserId}</info>]");
+
         $subscriptionTypeItem = SubscriptionTypePaymentItem::TYPE;
 
         $values = $this->database->query(<<<SQL
@@ -151,6 +179,8 @@ SQL, self::PAYMENT_STATUSES, $subscriptionTypeItem, $minUserId, $maxUserId)
 
     public function computeUserAvgPaymentAmount($minUserId, $maxUserId)
     {
+        $this->line("  * computing '<info>avg_month_payment</info>' for user IDs between [<info>{$minUserId}</info>, <info>{$maxUserId}</info>]");
+
         $values = $this->database->query(<<<SQL
                 SELECT
                     `payments`.`user_id` AS `user_id`,
