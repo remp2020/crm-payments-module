@@ -14,6 +14,7 @@ use Crm\PaymentsModule\Repository\PaymentsRepository;
 use Crm\PaymentsModule\Repository\RecurrentPaymentsRepository;
 use Crm\PaymentsModule\Seeders\PaymentGatewaysSeeder;
 use Crm\PaymentsModule\VariableSymbolInterface;
+use Crm\SubscriptionsModule\Builder\SubscriptionTypeBuilder;
 use Crm\SubscriptionsModule\PaymentItem\SubscriptionTypePaymentItem;
 use Crm\SubscriptionsModule\Repository\SubscriptionTypeItemsRepository;
 use Crm\SubscriptionsModule\Repository\SubscriptionTypesMetaRepository;
@@ -122,6 +123,7 @@ class PaymentsTestCase extends DatabaseTestCase
     protected function getSubscriptionType()
     {
         if (!$this->subscriptionType) {
+            /** @var SubscriptionTypeBuilder $subscriptionTypeBuilder */
             $subscriptionTypeBuilder = $this->container->getByType('Crm\SubscriptionsModule\Builder\SubscriptionTypeBuilder');
             $this->subscriptionType = $subscriptionTypeBuilder->createNew()
                 ->setName('my subscription type')
