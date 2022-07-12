@@ -12,7 +12,7 @@ class TransactionResultData
 
     private TransactionStatus $status;
 
-    private int $transactionId;
+    private ?int $transactionId;
 
     private ?string $authorizationCode;
 
@@ -23,7 +23,7 @@ class TransactionResultData
     public function __construct(
         int $processingId,
         TransactionStatus $status,
-        int $transactionId,
+        ?int $transactionId,
         ?string $authorizationCode,
         ?string $responseCode,
         ?string $tdsRedirectionFormHtml = null
@@ -68,7 +68,7 @@ class TransactionResultData
         return $this->status;
     }
 
-    public function getTransactionId(): int
+    public function getTransactionId(): ?int
     {
         return $this->transactionId;
     }
