@@ -547,3 +547,7 @@ config:
     confirmation_mail_username: {}
     confirmation_mail_port: {}
     tb_simple_confirmation_port: {}
+
+data_provider:
+    universal_search:
+        payment_group: Fizetések

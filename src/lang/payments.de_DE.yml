@@ -686,3 +686,7 @@ config:
         description: IMAP-Connection-Username (z.B. example@gmail.com) (<a href='https://github.com/remp2020/crm-payments-module#confirmation-e-mails' target='_blank'>info</a>)
     sk_csob_confirmation_host:
         description: IMAP-Connection-Host (z.B. imap.gmail.com) (<a href='https://github.com/remp2020/crm-payments-module#confirmation-e-mails' target='_blank'>info</a>)
+
+data_provider:
+    universal_search:
+        payment_group: Zahlungen

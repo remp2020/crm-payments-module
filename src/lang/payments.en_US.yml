@@ -771,3 +771,7 @@ config:
     tbs_confirmation_processed_folder:
         name: TatraBanka statement folder
         description: "IMAP folder to which the email will be moved after processing (napr. INBOX/processed) (<a href='https://github.com/remp2020/crm-payments-module#confirmation-e-mails' target='_blank'>info</a>)"
+
+data_provider:
+    universal_search:
+        payment_group: Payments
