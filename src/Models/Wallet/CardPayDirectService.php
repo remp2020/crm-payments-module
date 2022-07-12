@@ -19,14 +19,18 @@ class CardPayDirectService
         $this->logger = $logger;
     }
 
-    public function enableDebug(): void
+    public function enableDebug(bool $enable = true): void
     {
-        $this->getCardPayDirect()->enableDebug();
+        if ($enable) {
+            $this->getCardPayDirect()->enableDebug();
+        }
     }
 
-    public function enableLoggingRequests(): void
+    public function enableLoggingRequests(bool $enable = true): void
     {
-        $this->getCardPayDirect()->enableLoggingRequests();
+        if ($enable) {
+            $this->getCardPayDirect()->enableLoggingRequests();
+        }
     }
 
     public function postTransaction(TransactionPayload $payload): TransactionResult
