@@ -760,3 +760,7 @@ config:
     tbs_confirmation_processed_folder:
         name: TatraBanka výpis složka
         description: "IMAP složka do kterého se přesune email po zpracování (např. INBOX/processed) (<a href='https://github.com/remp2020/crm-payments-module#confirmation-e-mails' target='_blank'>info</a>)"
+
+data_provider:
+    universal_search:
+        payment_group: Platby

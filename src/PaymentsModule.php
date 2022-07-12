@@ -37,6 +37,7 @@ use Crm\PaymentsModule\DataProvider\RecurrentPaymentsClaimUserDataProvider;
 use Crm\PaymentsModule\DataProvider\SubscriptionFormDataProvider;
 use Crm\PaymentsModule\DataProvider\SubscriptionsWithActiveUnchargedRecurrentEndingWithinPeriodDataProvider;
 use Crm\PaymentsModule\DataProvider\SubscriptionsWithoutExtensionEndingWithinPeriodDataProvider;
+use Crm\PaymentsModule\DataProvider\UniversalSearchDataProvider;
 use Crm\PaymentsModule\MailConfirmation\ParsedMailLogsRepository;
 use Crm\PaymentsModule\Models\AverageMonthPayment;
 use Crm\PaymentsModule\Repository\PaymentLogsRepository;
@@ -402,6 +403,11 @@ class PaymentsModule extends CrmModule
         $dataProviderManager->registerDataProvider(
             SubscriptionFormDataProviderInterface::PATH,
             $this->getInstance(SubscriptionFormDataProvider::class)
+        );
+
+        $dataProviderManager->registerDataProvider(
+            'admin.dataprovider.universal_search',
+            $this->getInstance(UniversalSearchDataProvider::class)
         );
     }
 

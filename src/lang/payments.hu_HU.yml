@@ -489,3 +489,7 @@ config:
     category: Fizetések
     donation_vat_rate:
         name: Adomány Áfakulcs
+
+data_provider:
+    universal_search:
+        payment_group: Fizetések
