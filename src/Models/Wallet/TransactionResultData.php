@@ -51,7 +51,7 @@ class TransactionResultData
         return new TransactionResultData(
             $data['processingId'],
             new TransactionStatus($data['status']),
-            $data['transactionId'],
+            $data['transactionId'] ?? null,
             $data['transactionData']['authorizationCode'] ?? null,
             $data['transactionData']['responseCode'] ?? null,
             $data['tdsRedirectionFormHtml'] ?? null
