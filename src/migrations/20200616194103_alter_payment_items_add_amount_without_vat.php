@@ -12,7 +12,7 @@ class AlterPaymentItemsAddAmountWithoutVat extends AbstractMigration
 
         $sql = <<<SQL
 UPDATE `payment_items` 
-SET `amount_without_vat` = ROUND(`amount` * (1 - (`vat`/100)), 2); 
+SET `amount_without_vat` = ROUND(`amount` / (1 + (`vat`/100)), 2); 
 SQL;
         $this->execute($sql);
 
