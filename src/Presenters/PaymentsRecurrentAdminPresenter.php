@@ -4,7 +4,7 @@ namespace Crm\PaymentsModule\Presenters;
 
 use Crm\AdminModule\Presenters\AdminPresenter;
 use Crm\ApplicationModule\Components\Graphs\SmallBarGraphControlFactoryInterface;
-use Crm\ApplicationModule\Components\VisualPaginator;
+use Crm\ApplicationModule\Components\PreviousNextPaginator;
 use Crm\ApplicationModule\Graphs\Criteria;
 use Crm\ApplicationModule\Graphs\GraphDataItem;
 use Crm\PaymentsModule\Components\DuplicateRecurrentPaymentsControlFactoryInterface;
@@ -48,17 +48,19 @@ class PaymentsRecurrentAdminPresenter extends AdminPresenter
             $this->status,
             $this->cid
         );
-        $vp = new VisualPaginator();
-        $this->addComponent($vp, 'vp');
-        $paginator = $vp->getPaginator();
-        $paginator->setItemCount($recurrentPayments->count('*'));
+
+        $pnp = new PreviousNextPaginator();
+        $this->addComponent($pnp, 'paginator');
+        $paginator = $pnp->getPaginator();
         $paginator->setItemsPerPage($this->onPage);
-        $this->template->vp = $vp;
-        $this->template->recurrentPayments = $recurrentPayments->limit(
+
+        $recurrentPayments = $recurrentPayments->limit(
             $paginator->getLength(),
             $paginator->getOffset()
-        );
-        $this->template->totalRecurrentPayments = $this->recurrentPaymentsRepository->totalCount();
+        )->fetchAll();
+        $pnp->setActualItemCount(count($recurrentPayments));
+
+        $this->template->recurrentPayments = $recurrentPayments;
     }
 
     public function createComponentAdminFilterForm()

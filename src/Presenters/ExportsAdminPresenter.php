@@ -3,7 +3,7 @@
 namespace Crm\PaymentsModule\Presenters;
 
 use Crm\AdminModule\Presenters\AdminPresenter;
-use Crm\ApplicationModule\Components\VisualPaginator;
+use Crm\ApplicationModule\Components\PreviousNextPaginator;
 use Crm\ApplicationModule\DataProvider\DataProviderManager;
 use Crm\ApplicationModule\Models\ApplicationMountManager;
 use League\Flysystem\FileNotFoundException;
@@ -30,14 +30,16 @@ class ExportsAdminPresenter extends AdminPresenter
         $exports = $this->getExports();
         $fileCount = count($exports);
 
-        $vp = new VisualPaginator();
-        $this->addComponent($vp, 'vp');
-        $paginator = $vp->getPaginator();
-        $paginator->setItemCount($fileCount);
+        $pnp = new PreviousNextPaginator();
+        $this->addComponent($pnp, 'paginator');
+        $paginator = $pnp->getPaginator();
         $paginator->setItemsPerPage($this->onPage);
-        $this->template->vp = $vp;
+
+        $exports = array_slice($exports, $paginator->getOffset(), $paginator->getLength());
+        $pnp->setActualItemCount(count($exports));
+
         $this->template->fileCount = $fileCount;
-        $this->template->exports = array_slice($exports, $paginator->getOffset(), $paginator->getLength());
+        $this->template->exports = $exports;
     }
 
     private function getExports(): array

@@ -407,7 +407,7 @@ admin:
             label: Export
             exported: 'Export pridaný do poradia a bude dostupný medzi <a href="/payments/exports-admin/" class="link">exportami</a>.'
             modal_title: Export platieb
-            modal_body: 'Export bude obsahovať <code>%payments_number%</code> platieb a bude dostupný medzi <a href="/payments/exports-admin/" class="link">exportami</a>.'
+            modal_body: 'Export bude obsahovať vyfiltrované platby a bude dostupný medzi <a href="/payments/exports-admin/" class="link">exportami</a>.'
 
     report:
         no_recurrent_charge:

@@ -3,7 +3,7 @@
 namespace Crm\PaymentsModule\Presenters;
 
 use Crm\AdminModule\Presenters\AdminPresenter;
-use Crm\ApplicationModule\Components\VisualPaginator;
+use Crm\ApplicationModule\Components\PreviousNextPaginator;
 use Crm\ApplicationModule\DataProvider\DataProviderManager;
 use Crm\ApplicationModule\Hermes\HermesMessage;
 use Crm\PaymentsModule\Forms\RetentionAnalysisFilterFormFactory;
@@ -53,16 +53,18 @@ class RetentionAnalysisAdminPresenter extends AdminPresenter
     {
         $jobs = $this->retentionAnalysisJobsRepository->all();
 
-        $vp = new VisualPaginator();
-        $this->addComponent($vp, 'vp');
-        $paginator = $vp->getPaginator();
-        $paginator->setItemCount($jobs->count('*'));
+        $pnp = new PreviousNextPaginator();
+        $this->addComponent($pnp, 'paginator');
+        $paginator = $pnp->getPaginator();
         $paginator->setItemsPerPage($this->onPage);
-        $this->template->vp = $vp;
-        $this->template->jobs = $jobs->limit(
+
+        $jobs = $jobs->limit(
             $paginator->getLength(),
             $paginator->getOffset()
-        );
+        )->fetchAll();
+        $pnp->setActualItemCount(count($jobs));
+
+        $this->template->jobs = $jobs;
 
         $section = $this->getSession(self::SESSION_SECTION);
         $jobIdsToCompare = $section->jobIdsToCompare ?? [];

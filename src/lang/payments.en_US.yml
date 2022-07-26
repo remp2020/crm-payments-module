@@ -407,7 +407,7 @@ admin:
             label: Export
             exported: 'Export added to queue and will be available in <a href="/payments/exports-admin/" class="link">exports</a>.'
             modal_title: Payments export
-            modal_body: 'Export will contain <code>%payments_number%</code> payments and will be available in <a href="/payments/exports-admin/" class="link">exports</a>.'
+            modal_body: 'Export will contain filtered payments and will be available in <a href="/payments/exports-admin/" class="link">exports</a>.'
 
     report:
         no_recurrent_charge:

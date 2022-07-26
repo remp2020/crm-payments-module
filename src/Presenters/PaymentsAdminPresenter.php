@@ -4,7 +4,7 @@ namespace Crm\PaymentsModule\Presenters;
 
 use Crm\AdminModule\Presenters\AdminPresenter;
 use Crm\ApplicationModule\Components\Graphs\SmallBarGraphControlFactoryInterface;
-use Crm\ApplicationModule\Components\VisualPaginator;
+use Crm\ApplicationModule\Components\PreviousNextPaginator;
 use Crm\ApplicationModule\DataProvider\DataProviderManager;
 use Crm\ApplicationModule\Hermes\HermesMessage;
 use Crm\PaymentsModule\AdminFilterFormData;
@@ -84,16 +84,16 @@ class PaymentsAdminPresenter extends AdminPresenter
         $payments = $this->adminFilterFormData->filteredPayments()
             ->order('created_at DESC')
             ->order('id DESC');
-        $filteredCount = $payments->count('*');
 
-        $vp = new VisualPaginator();
-        $this->addComponent($vp, 'vp');
-        $paginator = $vp->getPaginator();
-        $paginator->setItemCount($filteredCount);
+        $pnp = new PreviousNextPaginator();
+        $this->addComponent($pnp, 'paginator');
+        $paginator = $pnp->getPaginator();
         $paginator->setItemsPerPage($this->onPage);
-        $this->template->vp = $vp;
-        $this->template->filteredCount = $filteredCount;
-        $this->template->payments = $payments->limit($paginator->getLength(), $paginator->getOffset());
+
+        $payments = $payments->limit($paginator->getLength(), $paginator->getOffset())->fetchAll();
+        $pnp->setActualItemCount(count($payments));
+
+        $this->template->payments = $payments;
         $this->template->totalPayments = $this->paymentsRepository->totalCount(true);
     }
 
