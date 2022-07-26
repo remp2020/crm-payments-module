@@ -409,7 +409,7 @@ admin:
             label: Export
             exported: 'Export přidán do fronty a bude dostupný mezi <a href="/payments/exports-admin/" class="link">exporty</a>.'
             modal_title: Export plateb
-            modal_body: 'Export bude obsahovat <code>%payments_number%</code> plateb a bude dostupný mezi <a href="/payments/exports-admin/" class="link">exporty</a>.'
+            modal_body: 'Export bude obsahovat vyfiltrované platby a bude dostupný mezi <a href="/payments/exports-admin/" class="link">exporty</a>.'
 
     report:
         no_recurrent_charge:

@@ -3,7 +3,7 @@
 namespace Crm\PaymentsModule\Presenters;
 
 use Crm\AdminModule\Presenters\AdminPresenter;
-use Crm\ApplicationModule\Components\VisualPaginator;
+use Crm\ApplicationModule\Components\PreviousNextPaginator;
 use Crm\PaymentsModule\MailConfirmation\ParsedMailLogsRepository;
 use Nette\Application\UI\Form;
 use Tomaj\Form\Renderer\BootstrapInlineRenderer;
@@ -26,15 +26,15 @@ class ParsedMailsPresenter extends AdminPresenter
     {
         $logs = $this->parsedMailLogsRepository->all($this->vs, $this->state);
 
-        $vp = new VisualPaginator();
-        $this->addComponent($vp, 'vp');
-        $paginator = $vp->getPaginator();
-        $paginator->setItemCount($logs->count('*'));
+        $pnp = new PreviousNextPaginator();
+        $this->addComponent($pnp, 'paginator');
+        $paginator = $pnp->getPaginator();
         $paginator->setItemsPerPage($this->onPage);
-        $this->template->vp = $vp;
 
-        $this->template->logs = $logs->limit($paginator->getLength(), $paginator->getOffset());
+        $logs = $logs->limit($paginator->getLength(), $paginator->getOffset())->fetchAll();
+        $pnp->setActualItemCount(count($logs));
 
+        $this->template->logs = $logs;
         $this->template->logs_sum = $this->parsedMailLogsRepository->totalCount();
     }
 

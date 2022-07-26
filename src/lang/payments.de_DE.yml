@@ -368,7 +368,7 @@ admin:
             modal_title: Zahlungen exportieren
             exported: Der Export wurde der Warteschlange hinzugefügt und ist nun unter den <a href="/payments/exports-admin/" class="link"> Exporten</a> verfügbar.
             label: Export
-            modal_body: Der Export wird <code>%payments_number%</code> der Zahlungen enthalten und unter <a href="/payments/exports-admin/" class="link">Exporten</a> verfügbar sein.
+            modal_body: Der Export wird enthält die gefilterten Zahlungen enthalten und unter <a href="/payments/exports-admin/" class="link">Exporten</a> verfügbar sein.
         price_with_vat: Einzelpreis inkl. MwSt.
         send_notification: Benachrichtigung per E-Mail senden
         created_at: Angelegt am

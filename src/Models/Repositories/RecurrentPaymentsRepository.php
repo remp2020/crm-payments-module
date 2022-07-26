@@ -2,6 +2,7 @@
 
 namespace Crm\PaymentsModule\Repository;
 
+use Crm\ApplicationModule\Cache\CacheRepository;
 use Crm\ApplicationModule\Config\ApplicationConfig;
 use Crm\ApplicationModule\Hermes\HermesMessage;
 use Crm\ApplicationModule\NowTrait;
@@ -50,6 +51,8 @@ class RecurrentPaymentsRepository extends Repository
 
     private $gatewayFactory;
 
+    private $cacheRepository;
+
     public function __construct(
         Explorer $database,
         AuditLogRepository $auditLogRepository,
@@ -57,7 +60,8 @@ class RecurrentPaymentsRepository extends Repository
         Emitter $emitter,
         ApplicationConfig $applicationConfig,
         \Tomaj\Hermes\Emitter $hermesEmitter,
-        GatewayFactory $gatewayFactory
+        GatewayFactory $gatewayFactory,
+        CacheRepository $cacheRepository
     ) {
         parent::__construct($database);
         $this->auditLogRepository = $auditLogRepository;
@@ -66,6 +70,7 @@ class RecurrentPaymentsRepository extends Repository
         $this->applicationConfig = $applicationConfig;
         $this->hermesEmitter = $hermesEmitter;
         $this->gatewayFactory = $gatewayFactory;
+        $this->cacheRepository = $cacheRepository;
     }
 
     final public function add($cid, $payment, $chargeAt, $customAmount, $retries)
@@ -516,5 +521,21 @@ class RecurrentPaymentsRepository extends Repository
             ->count();
 
         return $usableRecurrentsCount > 0;
+    }
+
+    final public function totalCount($allowCached = false, $forceCacheUpdate = false)
+    {
+        $callable = function () {
+            return parent::totalCount();
+        };
+        if ($allowCached) {
+            return $this->cacheRepository->loadAndUpdate(
+                'recurrent_payments_count',
+                $callable,
+                \Nette\Utils\DateTime::from(CacheRepository::REFRESH_TIME_5_MINUTES),
+                $forceCacheUpdate
+            );
+        }
+        return $callable();
     }
 }
