@@ -94,7 +94,6 @@ class PaymentsAdminPresenter extends AdminPresenter
         $pnp->setActualItemCount(count($payments));
 
         $this->template->payments = $payments;
-        $this->template->totalPayments = $this->paymentsRepository->totalCount(true);
     }
 
     public function createComponentAdminFilterForm()

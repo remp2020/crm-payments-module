@@ -2,7 +2,6 @@
 
 namespace Crm\PaymentsModule\Repository;
 
-use Crm\ApplicationModule\Cache\CacheRepository;
 use Crm\ApplicationModule\Config\ApplicationConfig;
 use Crm\ApplicationModule\Hermes\HermesMessage;
 use Crm\ApplicationModule\NowTrait;
