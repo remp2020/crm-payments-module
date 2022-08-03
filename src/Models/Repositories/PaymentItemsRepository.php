@@ -148,6 +148,7 @@ class PaymentItemsRepository extends Repository
     {
         $paymentItemArray = $paymentItem->toArray();
 
+        $oldPaymentId = $paymentItemArray['payment_id'];
         $paymentItemArray['payment_id'] = $newPayment->id;
         $paymentItemArray['created_at'] = new DateTime();
         $paymentItemArray['updated_at'] = new DateTime();
@@ -157,6 +158,9 @@ class PaymentItemsRepository extends Repository
 
         if ($paymentItemArray['type'] === SubscriptionTypePaymentItem::TYPE && isset($newPaymentItemMetaArray['subscription_type_item_id'])) {
             $subscriptionTypeItem = $this->subscriptionTypeItemsRepository->find($newPaymentItemMetaArray['subscription_type_item_id']);
+            if (!$subscriptionTypeItem) {
+                throw new Exception("No `subscription_type_item`: ({$newPaymentItemMetaArray['subscription_type_item_id']}) found by copying payment: {$oldPaymentId} - to payment: {$newPayment->id}");
+            }
             $subscriptionTypePaymentItem = SubscriptionTypePaymentItem::fromSubscriptionTypeItem($subscriptionTypeItem, $paymentItemArray['count']);
 
             $paymentItemArray['name'] = $subscriptionTypePaymentItem->name();

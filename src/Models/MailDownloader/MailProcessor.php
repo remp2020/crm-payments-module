@@ -103,7 +103,14 @@ class MailProcessor
         $createdNewPayment = false;
 
         if ($payment->status == PaymentsRepository::STATUS_PAID && $payment->created_at < $newPaymentThreshold) {
-            $newPayment = $this->paymentsRepository->copyPayment($payment);
+            try {
+                $newPayment = $this->paymentsRepository->copyPayment($payment);
+            } catch (\Exception $exception) {
+                $this->output->writeln(" * Couldn't copy payment: <info>{$payment->id}</info>. Error: {$exception->getMessage()}");
+                Debugger::log($exception->getMessage(), ILogger::EXCEPTION);
+                throw $exception;
+            }
+
             $payment = $newPayment;
             $this->logBuilder->setPayment($payment);
             $createdNewPayment = true;
