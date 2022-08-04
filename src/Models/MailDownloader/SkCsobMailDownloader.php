@@ -42,12 +42,12 @@ class SkCsobMailDownloader
 
             // csob changed encoding for some emails and ImapDownloader doesn't provide the header
             // this is a dummy check to verify what encoding was used to encode the content of email
-            $mailContent = $skCsobMailParser->parse(base64_decode($email->getBody()));
+            $mailContent = $skCsobMailParser->parseMulti(base64_decode($email->getBody()));
             if (!empty($mailContent)) {
                 return $callback($mailContent);
             }
 
-            $mailContent = $skCsobMailParser->parse(quoted_printable_decode($email->getBody()));
+            $mailContent = $skCsobMailParser->parseMulti(quoted_printable_decode($email->getBody()));
             if (!empty($mailContent)) {
                 return $callback($mailContent);
             }

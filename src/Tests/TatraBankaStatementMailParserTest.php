@@ -21,7 +21,7 @@ class TatraBankaStatementMailParserTest extends PaymentsTestCase
                 'heslo'
             )
         );
-        $mailContents = $parser->parse($email);
+        $mailContents = $parser->parseMulti($email);
 
         $this->assertCount(4, $mailContents);
 

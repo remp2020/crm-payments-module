@@ -31,7 +31,7 @@ Ak máte otázky alebo problémy súvisiace so službami Elektronického bankovn
 ČSOB.';
 
         $skCsobMailParser = new SkCsobMailParser();
-        $mailContents = $skCsobMailParser->parse($email);
+        $mailContents = $skCsobMailParser->parseMulti($email);
 
         $this->assertCount(1, $mailContents);
 

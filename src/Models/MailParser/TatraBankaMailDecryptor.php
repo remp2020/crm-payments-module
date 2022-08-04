@@ -4,9 +4,9 @@ namespace Crm\PaymentsModule\MailParser;
 
 class TatraBankaMailDecryptor
 {
-    private $privateKeyPath;
+    private string $privateKeyPath;
 
-    private $passphrase;
+    private string $passphrase;
 
     public function __construct(
         string $privateKeyPath,
@@ -16,14 +16,13 @@ class TatraBankaMailDecryptor
         $this->passphrase = $passphrase;
     }
 
-    public function decrypt($contents)
+    public function decrypt(string $contents): ?string
     {
         if (!$this->privateKeyPath || !file_exists($this->privateKeyPath)) {
             throw new \Exception('missing path to TatraBanka PGP private key in config');
         }
 
         $privateKey = \OpenPGP_Message::parse(file_get_contents($this->privateKeyPath));
-        $msg = null;
         foreach ($privateKey as $p) {
             if (!($p instanceof \OpenPGP_SecretKeyPacket)) {
                 continue;
@@ -42,6 +41,6 @@ class TatraBankaMailDecryptor
             return $decrypted->packets[0]->data;
         }
 
-        return false;
+        return null;
     }
 }

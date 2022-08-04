@@ -16,10 +16,9 @@ class TatraBankaStatementMailParser implements ParserInterface
     }
 
     /**
-     * @param $content
      * @return MailContent[]|null
      */
-    public function parse($content)
+    public function parseMulti(string $content): ?array
     {
         $mailContents = [];
 
@@ -28,34 +27,41 @@ class TatraBankaStatementMailParser implements ParserInterface
         if (!$res) {
             return null;
         }
-        $content = $results[0];
-        $content = $this->decryptor->decrypt($content);
-        if (!$content) {
+
+        $decrypted = $this->decryptor->decrypt($results[0]);
+        if ($decrypted === null) {
             return null;
         }
+        $transactions = preg_split("/\r\n|\n|\r/", $decrypted);
 
-        $data = preg_split("/\r\n|\n|\r/", $content);
-
-        foreach ($data as $line => $row) {
+        foreach ($transactions as $line => $transaction) {
             if (!$line) {
                 continue;
             }
 
-            $cols = array_filter(explode('|', $row));
-            if (empty($cols)) {
-                continue;
+            $mailContent = $this->parse($transaction);
+            if ($mailContent !== null) {
+                $mailContents[] = $mailContent;
             }
-
-            $mailContent = new MailContent();
-            $mailContent->setAmount(floatval($cols[9]));
-            $mailContent->setCurrency($cols[10]);
-            $mailContent->setVs($cols[18]);
-            $mailContent->setAccountNumber(trim($cols[19]));
-            $mailContent->setTransactionDate(strtotime($cols[0]));
-
-            $mailContents[] = $mailContent;
         }
 
         return $mailContents;
+    }
+
+    public function parse(string $content): ?MailContent
+    {
+        $cols = array_filter(explode('|', $content));
+        if (empty($cols)) {
+            return null;
+        }
+
+        $mailContent = new MailContent();
+        $mailContent->setAmount((float) $cols[9]);
+        $mailContent->setCurrency($cols[10]);
+        $mailContent->setVs($cols[18]);
+        $mailContent->setAccountNumber(trim($cols[19]));
+        $mailContent->setTransactionDate(strtotime($cols[0]));
+
+        return $mailContent;
     }
 }
