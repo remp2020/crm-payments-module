@@ -9,7 +9,6 @@ use Tomaj\ImapMailDownloader\Downloader;
 use Tomaj\ImapMailDownloader\Email;
 use Tomaj\ImapMailDownloader\MailCriteria;
 use Tracy\Debugger;
-use Tracy\ILogger;
 
 class TatraBankaMailDownloader
 {
@@ -45,8 +44,11 @@ class TatraBankaMailDownloader
             $mailContent = $tatraBankaMailParser->parse($email->getBody());
 
             if (!$mailContent) {
-                //                throw new \Exception("Error in parsing email");
-                // nebudeme movovat spravu do spracovanych, ale aby sa oznacila ako precitana
+                Debugger::log(
+                    'Unable to parse TatraBanka email (b-mail - Kredit na ucte) email from: ' . $email->getDate(),
+                    Debugger::ERROR
+                );
+                // email not parsed; do not call callback
                 return false;
             }
 
@@ -63,9 +65,10 @@ class TatraBankaMailDownloader
 
             if (!$mailContent) {
                 Debugger::log(
-                    'Error in parsing TatraBanka (Kredit na ucte) email from: ' . $email->getDate(),
-                    ILogger::WARNING
+                    'Unable to parse TatraBanka email (b-mail - e-commerce) email from: ' . $email->getDate(),
+                    Debugger::ERROR
                 );
+                // email not parsed; do not call callback
                 return false;
             }
 

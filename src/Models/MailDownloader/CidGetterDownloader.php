@@ -7,6 +7,7 @@ use Tomaj\BankMailsParser\Parser\TatraBanka\TatraBankaSimpleMailParser;
 use Tomaj\ImapMailDownloader\Downloader;
 use Tomaj\ImapMailDownloader\Email;
 use Tomaj\ImapMailDownloader\MailCriteria;
+use Tracy\Debugger;
 
 class CidGetterDownloader
 {
@@ -41,7 +42,11 @@ class CidGetterDownloader
             $mailContent = $tatraBankaMailParser->parse($email->getBody());
 
             if (!$mailContent) {
-                // we dont want to move mail to processed mailbox, just keep it as read
+                Debugger::log(
+                    'Unable to parse TatraBanka email (b-mail - e-commerce) email from: ' . $email->getDate(),
+                    Debugger::ERROR
+                );
+                // email not parsed; do not call callback
                 return false;
             }
             return $callback($mailContent);

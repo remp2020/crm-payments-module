@@ -9,7 +9,6 @@ use Tomaj\ImapMailDownloader\Downloader;
 use Tomaj\ImapMailDownloader\Email;
 use Tomaj\ImapMailDownloader\MailCriteria;
 use Tracy\Debugger;
-use Tracy\ILogger;
 
 class TatraBankaStatementMailDownloader
 {
@@ -63,9 +62,10 @@ class TatraBankaStatementMailDownloader
 
             if (!$mailContent) {
                 Debugger::log(
-                    'Error in parsing TatraBanka statement email from: ' . $email->getDate(),
-                    ILogger::WARNING
+                    'Unable to parse TatraBanka statement (vypis_obchodnik) email from: ' . $email->getDate(),
+                    Debugger::ERROR
                 );
+                // email not parsed; do not call callback
                 return false;
             }
 

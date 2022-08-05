@@ -7,6 +7,7 @@ use Crm\PaymentsModule\MailParser\SkCsobMailParser;
 use Tomaj\ImapMailDownloader\Downloader;
 use Tomaj\ImapMailDownloader\Email;
 use Tomaj\ImapMailDownloader\MailCriteria;
+use Tracy\Debugger;
 
 class SkCsobMailDownloader
 {
@@ -52,6 +53,11 @@ class SkCsobMailDownloader
                 return $callback($mailContent);
             }
 
+            Debugger::log(
+                'Unable to parse CSOB statement (ČSOB Info 24 - Avízo) email from: ' . $email->getDate(),
+                Debugger::ERROR
+            );
+            // email not parsed; do not call callback
             return false;
         });
     }
