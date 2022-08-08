@@ -10,9 +10,10 @@ class AlterPaymentItemsAddAmountWithoutVat extends AbstractMigration
             ->addColumn('amount_without_vat', 'decimal', ['after'=> 'amount', 'scale' => 2, 'precision' => 10, 'null' => true])
             ->update();
 
+        // formula for amount without vat is incorrect; this was fixed by following migration FixPaymentItemsAmountWithoutVat
         $sql = <<<SQL
 UPDATE `payment_items` 
-SET `amount_without_vat` = ROUND(`amount` / (1 + (`vat`/100)), 2); 
+SET `amount_without_vat` = ROUND(`amount` * (1 - (`vat`/100)), 2); 
 SQL;
         $this->execute($sql);
 
