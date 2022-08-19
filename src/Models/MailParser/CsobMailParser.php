@@ -29,7 +29,7 @@ class CsobMailParser implements ParserInterface
     {
         $mailContent = new MailContent();
 
-        $pattern1 = '/(.*) byla na účtu ([a-zA-Z0-9]+) (?:zaúčtovaná|zaúčtována) transakce typu: (Došlá platba|Příchozí úhrada|Došlá úhrada)/m';
+        $pattern1 = '/(.*) byl(?:a)? na účtu ([a-zA-Z0-9]+) (?:zaúčtovaná|zaúčtována|zaúčtovaný) (?:transakce typu: )?(Došlá platba|Příchozí úhrada|Došlá úhrada|SEPA převod)/m';
         $res = preg_match($pattern1, $content, $result);
         if (!$res) {
             return null;
@@ -58,6 +58,16 @@ class CsobMailParser implements ParserInterface
         }
 
         $pattern4 = '/Variabilní symbol: ([0-9]{1,10})/m';
+        $res = preg_match($pattern4, $content, $result);
+        if ($res) {
+            $mailContent->setVs($result[1]);
+        }
+        $pattern4 = '/Identifikace: ([0-9]{1,10})/m';
+        $res = preg_match($pattern4, $content, $result);
+        if ($res) {
+            $mailContent->setVs($result[1]);
+        }
+        $pattern4 = '/Účel platby: ([0-9]{1,10})/m';
         $res = preg_match($pattern4, $content, $result);
         if ($res) {
             $mailContent->setVs($result[1]);

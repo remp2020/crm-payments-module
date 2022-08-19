@@ -138,6 +138,83 @@ Vaše ČSOB
         $this->assertEquals(strtotime('25.9.2018'), $mailContent->getTransactionDate());
     }
 
+    public function testImmediateTransferPayment()
+    {
+        $email = 'Vážený kliente,
+
+dne 18.8.2022 byla na účtu 123456789 zaúčtována transakce typu: Příchozí úhrada okamžitá.
+
+Název smlouvy: CRM International a.s.
+Číslo smlouvy: 87654321
+Majitel smlouvy: Shmelina a.s.
+Účet: 123456789, CZK, CRM INTERNATION
+Částka: +414,00 CZK
+Účet protistrany: 1122334455/9999
+Název protistrany: Capi Hnizdo a.s.
+Variabilní symbol: 23456789
+Zpráva příjemci: VS23456789
+
+Zůstatek na účtu po zaúčtování transakce: +1 234 567,89 CZK.
+
+S přáním krásného dne
+Vaše ČSOB
+';
+        $csobMailParser = new CsobMailParser();
+        $mailContents = $csobMailParser->parseMulti($email);
+
+        $this->assertCount(1, $mailContents);
+
+        $mailContent = $mailContents[0];
+        $this->assertEquals('123456789', $mailContent->getAccountNumber());
+        $this->assertEquals('CZK', $mailContent->getCurrency());
+        $this->assertEquals(414.00, $mailContent->getAmount());
+        $this->assertEquals('23456789', $mailContent->getVs());
+        $this->assertNull($mailContent->getKs());
+        $this->assertNull($mailContent->getSs());
+        $this->assertEquals(strtotime('18.8.2022'), $mailContent->getTransactionDate());
+    }
+
+    public function testForeignTransferPayment()
+    {
+        $email = 'Vážený kliente,
+
+dne 18.8.2022 byl na účtu 123456789 zaúčtovaný SEPA převod.
+
+Název smlouvy: CRM International a.s.
+Číslo smlouvy: 87654321
+Majitel smlouvy: Shmelina a.s.
+Účet: 123456789, CZK, CRM INTERNATION
+Zaslaná částka platby: 150,00 EUR
+Kurz: 23,878
+Částka: +3 581,70 CZK
+Účet protistrany: NL56 ABNA 1234 5678 90
+Název protistrany: 360GEORGE SRS
+Adresa protistrany: NETHERLANDS
+Číslo transakce ČSOB: 9876543210
+Reference plátce: CT12345678901234
+Identifikace: 23456789
+Účel platby: 23456789
+
+Zůstatek na účtu po zaúčtování transakce: +1 234 567,89 CZK.
+
+S přáním krásného dne
+Vaše ČSOB
+';
+        $csobMailParser = new CsobMailParser();
+        $mailContents = $csobMailParser->parseMulti($email);
+
+        $this->assertCount(1, $mailContents);
+
+        $mailContent = $mailContents[0];
+        $this->assertEquals('123456789', $mailContent->getAccountNumber());
+        $this->assertEquals('CZK', $mailContent->getCurrency());
+        $this->assertEquals(3581.70, $mailContent->getAmount());
+        $this->assertEquals('23456789', $mailContent->getVs());
+        $this->assertNull($mailContent->getKs());
+        $this->assertNull($mailContent->getSs());
+        $this->assertEquals(strtotime('18.8.2022'), $mailContent->getTransactionDate());
+    }
+
     public function testSingleCardpaySettlement()
     {
         $email = 'Vážený kliente,
