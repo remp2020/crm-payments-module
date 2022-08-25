@@ -50,56 +50,42 @@ class SubscriptionsWithoutExtensionEndingWithinPeriodWidget extends BaseWidget i
                 'from' => DateTime::from('today 00:00:00'),
                 'to' => DateTime::from('today 23:59:59'),
                 'label' => $this->translator->translate('dashboard.time.today'),
-                'load' => true,
             ],
             'subscriptionsNotRenewedTomorow' => [
                 'from' => DateTime::from('tomorrow 00:00:00'),
                 'to' => DateTime::from('tomorrow 23:59:59'),
                 'label' => $this->translator->translate('dashboard.time.tomorrow'),
-                'load' => true,
             ],
             'subscriptionsNotRenewedAfterTomorow' => [
                 'from' => DateTime::from('+2 days 00:00:00'),
                 'to' => DateTime::from('+2 days 23:59:59'),
                 'label' => $this->translator->translate('dashboard.time.after_tomorrow'),
-                'load' => true,
             ],
             'subscriptionsNotRenewedInOneWeek' => [
                 'from' => DateTime::from('today 00:00:00'),
                 'to' => DateTime::from('+7 days 23:59:59'),
                 'label' => $this->translator->translate('dashboard.time.seven_days'),
-                'load' => true,
             ],
+            // Following computations are cached since we want to speed up page loading
             'subscriptionsNotRenewedInTwoWeeks' => [
                 'from' => DateTime::from('today 00:00'),
                 'to' => DateTime::from('+14 days 23:59:59'),
                 'label' => $this->translator->translate('dashboard.time.fourteen_days'),
-                'load' => false,
+                'callable' => fn() => $this->paymentsRepository->subscriptionsWithoutExtensionEndingNextTwoWeeksCount(),
             ],
             'subscriptionsNotRenewedInOneMonth' => [
                 'from' =>  DateTime::from('today 00:00'),
                 'to' => DateTime::from('+31 days 23:59:59'),
                 'label' => $this->translator->translate('dashboard.time.thirtyone_days'),
-                'load' => false,
+                'callable' => fn() => $this->paymentsRepository->subscriptionsWithoutExtensionEndingNextMonthCount(),
             ],
         ];
 
         foreach ($dateRanges as $key => $dateRange) {
-            if (!$dateRange['load']) {
-                continue;
-            }
-            $this->template->stats[$key] = $this->paymentsRepository
-                ->subscriptionsWithoutExtensionEndingBetweenCount(
-                    $dateRange['from'],
-                    $dateRange['to']
-                );
+            $this->template->stats[$key] = isset($dateRange['callable'])
+                ? $dateRange['callable']()
+                : $this->paymentsRepository->subscriptionsWithoutExtensionEndingBetweenCount($dateRange['from'], $dateRange['to']);
         }
-
-        // Following computations are cached since we want to speed up page loading
-        $this->template->subscriptionsNotRenewedInTwoWeeks = $this->paymentsRepository
-            ->subscriptionsWithoutExtensionEndingNextTwoWeeksCount();
-        $this->template->subscriptionsNotRenewedInOneMonth = $this->paymentsRepository
-            ->subscriptionsWithoutExtensionEndingNextMonthCount();
 
         $this->template->dateRanges = $dateRanges;
         $this->template->setFile(__DIR__ . DIRECTORY_SEPARATOR . $this->templateName);
