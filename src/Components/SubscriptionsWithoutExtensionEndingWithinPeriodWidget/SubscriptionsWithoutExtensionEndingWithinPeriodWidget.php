@@ -88,7 +88,7 @@ class SubscriptionsWithoutExtensionEndingWithinPeriodWidget extends BaseWidget i
             if (!$dateRange['load']) {
                 continue;
             }
-            $this->template->$key = $this->paymentsRepository
+            $this->template->stats[$key] = $this->paymentsRepository
                 ->subscriptionsWithoutExtensionEndingBetweenCount(
                     $dateRange['from'],
                     $dateRange['to']

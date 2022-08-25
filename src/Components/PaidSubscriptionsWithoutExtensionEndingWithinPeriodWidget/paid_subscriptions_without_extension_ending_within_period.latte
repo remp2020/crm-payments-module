@@ -14,7 +14,7 @@
             <p>
                 <strong>{$dateRange['label']}: </strong>
                 <a class="without-expaid-without-extension" href="{plink :Subscriptions:SubscriptionsEnds:default startTime => $dateRange['from']->format(DATE_RFC3339), endTime => $dateRange['to']->format(DATE_RFC3339), withoutNext => 1, withoutRecurrent => 1}">
-                    {$$key} {_system.pcs}
+                    {$stats[$key] ?? 'N/A'} {_system.pcs}
                 </a>
                 <i data-toggle="tooltip" data-placement="top" title="{_dashboard.subscriptions.ending.no_paid_renew_between.tooltip} {$dateRange['from']|userDate} - {$dateRange['to']|userDate}" class="fa fa-question-circle"></i>
             </p>

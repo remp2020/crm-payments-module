@@ -2,42 +2,42 @@
     <div class="col-md-2">
         <p>
             <strong>{_dashboard.time.today}: </strong> {$subscriptionsAutoRenewToday} {_system.pcs}
-            <i data-toggle="tooltip" data-placement="top" title="{_dashboard.subscriptions.renew.between.tooltip} {php echo date('d.m.Y', strtotime('today')) } 00:00:00 - 23:59:59" class="fa fa-question-circle"></i>
+            <i data-toggle="tooltip" data-placement="top" title="{_dashboard.subscriptions.renew.between.tooltip} {date('d.m.Y', strtotime('today')) } 00:00:00 - 23:59:59" class="fa fa-question-circle"></i>
         </p>
     </div>
 
     <div class="col-md-2">
         <p>
             <strong>{_dashboard.time.tomorrow}: </strong> {$subscriptionsAutoRenewTomorow} {_system.pcs}
-            <i data-toggle="tooltip" data-placement="top" title="{_dashboard.subscriptions.renew.between.tooltip} {php echo date('d.m.Y', strtotime('tomorrow')) } 00:00:00 - 23:59:59" class="fa fa-question-circle"></i>
+            <i data-toggle="tooltip" data-placement="top" title="{_dashboard.subscriptions.renew.between.tooltip} {date('d.m.Y', strtotime('tomorrow')) } 00:00:00 - 23:59:59" class="fa fa-question-circle"></i>
         </p>
     </div>
 
     <div class="col-md-2">
         <p>
             <strong>{_dashboard.time.after_tomorrow}: </strong> {$subscriptionsAutoRenewAfterTomorow} {_system.pcs}
-            <i data-toggle="tooltip" data-placement="top" title="{_dashboard.subscriptions.renew.between.tooltip} {php echo date('d.m.Y', strtotime('+2 day')) } 00:00:00 - 23:59:59" class="fa fa-question-circle"></i>
+            <i data-toggle="tooltip" data-placement="top" title="{_dashboard.subscriptions.renew.between.tooltip} {date('d.m.Y', strtotime('+2 day')) } 00:00:00 - 23:59:59" class="fa fa-question-circle"></i>
         </p>
     </div>
 
     <div class="col-md-2">
         <p>
             <strong>{_dashboard.time.seven_days}: </strong> {$subscriptionsAutoRenewInOneWeek} {_system.pcs}
-            <i data-toggle="tooltip" data-placement="top" title="{_dashboard.subscriptions.renew.between.tooltip} {php echo date('d.m.Y', strtotime('today')) } 00:00:00 - {php echo date('d.m.Y', strtotime('+7 days')) } 23:59:59" class="fa fa-question-circle"></i>
+            <i data-toggle="tooltip" data-placement="top" title="{_dashboard.subscriptions.renew.between.tooltip} {date('d.m.Y', strtotime('today')) } 00:00:00 - {date('d.m.Y', strtotime('+7 days')) } 23:59:59" class="fa fa-question-circle"></i>
         </p>
     </div>
 
     <div class="col-md-2">
         <p>
             <strong>{_dashboard.time.fourteen_days}: </strong> {$subscriptionsAutoRenewInTwoWeeks} {_system.pcs}
-            <i data-toggle="tooltip" data-placement="top" title="{_dashboard.subscriptions.renew.between.tooltip} {php echo date('d.m.Y', strtotime('today')) } 00:00:00 - {php echo date('d.m.Y', strtotime('+14 days')) } 23:59:59" class="fa fa-question-circle"></i>
+            <i data-toggle="tooltip" data-placement="top" title="{_dashboard.subscriptions.renew.between.tooltip} {date('d.m.Y', strtotime('today')) } 00:00:00 - {date('d.m.Y', strtotime('+14 days')) } 23:59:59" class="fa fa-question-circle"></i>
         </p>
     </div>
 
     <div class="col-md-2">
         <p>
             <strong>{_dashboard.time.thirtyone_days}: </strong> {$subscriptionsAutoRenewInOneMonth} {_system.pcs}
-            <i data-toggle="tooltip" data-placement="top" title="{_dashboard.subscriptions.renew.between.tooltip} {php echo date('d.m.Y', strtotime('today')) } 00:00:00 - {php echo date('d.m.Y', strtotime('+31 days')) } 23:59:59" class="fa fa-question-circle"></i>
+            <i data-toggle="tooltip" data-placement="top" title="{_dashboard.subscriptions.renew.between.tooltip} {date('d.m.Y', strtotime('today')) } 00:00:00 - {date('d.m.Y', strtotime('+31 days')) } 23:59:59" class="fa fa-question-circle"></i>
         </p>
     </div>
 </div>

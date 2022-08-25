@@ -304,7 +304,7 @@ class RecurrentPaymentsChargeCommand extends Command
 
         // sort items by vat (higher vat first)
         usort($items, function (SubscriptionTypePaymentItem $a, SubscriptionTypePaymentItem $b) {
-            return $a->vat() < $b->vat();
+            return ($a->vat() <=> $b->vat()) * -1;
         });
 
         // get vat-amount ratios, floor everything down to avoid scenario that everything is rounded up

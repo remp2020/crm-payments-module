@@ -2,6 +2,7 @@
 
 namespace Crm\PaymentsModule\Components;
 
+use Contributte\Translation\Translator;
 use Crm\ApplicationModule\Widget\BaseWidget;
 use Crm\ApplicationModule\Widget\WidgetManager;
 use Crm\PaymentsModule\Report\NoRecurrentChargeReport;
@@ -12,7 +13,6 @@ use Crm\PaymentsModule\Report\TotalRecurrentSubscriptionsReport;
 use Crm\SubscriptionsModule\Report\ReportGroup;
 use Crm\SubscriptionsModule\Report\ReportTable;
 use Crm\SubscriptionsModule\Repository\SubscriptionTypesRepository;
-use Kdyby\Translation\Translator;
 
 /**
  * This widget uses `ReportTable` to fetch different stats for specific subscription type

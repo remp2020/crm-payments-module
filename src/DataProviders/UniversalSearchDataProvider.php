@@ -2,10 +2,10 @@
 
 namespace Crm\PaymentsModule\DataProvider;
 
+use Contributte\Translation\Translator;
 use Crm\AdminModule\Model\UniversalSearchDataProviderInterface;
 use Crm\ApplicationModule\Helpers\UserDateHelper;
 use Crm\PaymentsModule\Repository\PaymentsRepository;
-use Kdyby\Translation\Translator;
 use Nette\Application\LinkGenerator;
 
 class UniversalSearchDataProvider implements UniversalSearchDataProviderInterface

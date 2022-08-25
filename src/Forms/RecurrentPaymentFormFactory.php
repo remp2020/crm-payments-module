@@ -109,7 +109,7 @@ class RecurrentPaymentFormFactory
         $values->charge_at = DateTime::from(strtotime($values->charge_at));
 
         unset($values['id']);
-        if ($values['custom_amount'] == 0) {
+        if ($values['custom_amount'] === 0 || $values['custom_amount'] === '') {
             $values['custom_amount'] = null;
         }
 

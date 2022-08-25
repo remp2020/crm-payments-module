@@ -2,9 +2,9 @@
 
 namespace Crm\PaymentsModule\DataProvider;
 
+use Contributte\Translation\Translator;
 use Crm\ApplicationModule\DataProvider\DataProviderException;
 use Crm\UsersModule\DataProvider\CanDeleteAddressDataProviderInterface;
-use Kdyby\Translation\Translator;
 use Nette\Application\LinkGenerator;
 
 class CanDeleteAddressDataProvider implements CanDeleteAddressDataProviderInterface

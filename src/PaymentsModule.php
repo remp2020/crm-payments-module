@@ -2,6 +2,7 @@
 
 namespace Crm\PaymentsModule;
 
+use Contributte\Translation\Translator;
 use Crm\ApiModule\Api\ApiRoutersContainerInterface;
 use Crm\ApiModule\Router\ApiIdentifier;
 use Crm\ApiModule\Router\ApiRoute;
@@ -56,7 +57,6 @@ use Crm\PaymentsModule\Seeders\PaymentGatewaysSeeder;
 use Crm\PaymentsModule\Seeders\SegmentsSeeder;
 use Crm\SubscriptionsModule\DataProvider\SubscriptionFormDataProviderInterface;
 use Crm\UsersModule\Auth\UserTokenAuthorization;
-use Kdyby\Translation\Translator;
 use League\Event\Emitter;
 use Nette\Application\Routers\RouteList;
 use Nette\DI\Container;

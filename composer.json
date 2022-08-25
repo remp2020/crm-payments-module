@@ -5,13 +5,13 @@
   "homepage": "https://remp2020.com",
   "license": "MIT",
   "require": {
-    "php": "^7.4",
+    "php": "^8.0",
     "ext-soap": "*",
-    "php-http/curl-client": "^1.7",
+    "php-http/curl-client": "^2.2.1",
     "tomaj/bank-mails-parser": "^2.7",
     "tomaj/imap-mail-downloader": "^1.2.0",
-    "rootpd/omnipay-csob": "^3.0",
-    "rootpd/omnipay-paypal-reference": "^3.0",
+    "rootpd/omnipay-csob": "@dev",
+    "rootpd/omnipay-paypal-reference": "@dev",
     "singpolyma/openpgp-php": "~0.5",
     "tomaj/omnipay-tatra": "4.1.2"
   },
@@ -21,5 +21,15 @@
       "Crm\\PaymentsModule\\": "src/"
     },
     "classmap": ["src/"]
-  }
+  },
+  "repositories": [
+    {
+      "type": "vcs",
+      "url": "https://github.com/miroc/omnipay-csob"
+    },
+    {
+      "type": "vcs",
+      "url": "https://github.com/miroc/omnipay-paypal-reference"
+    }
+  ]
 }
