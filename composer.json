@@ -11,7 +11,7 @@
     "tomaj/bank-mails-parser": "^2.7",
     "tomaj/imap-mail-downloader": "^1.2.0",
     "rootpd/omnipay-csob": "@dev",
-    "rootpd/omnipay-paypal-reference": "@dev",
+    "miroc/omnipay-paypal-reference": "@dev",
     "singpolyma/openpgp-php": "~0.5",
     "tomaj/omnipay-tatra": "4.1.2"
   },
@@ -21,15 +21,5 @@
       "Crm\\PaymentsModule\\": "src/"
     },
     "classmap": ["src/"]
-  },
-  "repositories": [
-    {
-      "type": "vcs",
-      "url": "https://github.com/miroc/omnipay-csob"
-    },
-    {
-      "type": "vcs",
-      "url": "https://github.com/miroc/omnipay-paypal-reference"
-    }
-  ]
+  }
 }
