@@ -2,7 +2,7 @@
 
 namespace Crm\PaymentsModule\Components;
 
-use Crm\ApplicationModule\Widget\BaseWidget;
+use Crm\ApplicationModule\Widget\BaseLazyWidget;
 use Nette\Database\Table\ActiveRow;
 
 /**
@@ -11,7 +11,7 @@ use Nette\Database\Table\ActiveRow;
  *
  * @package Crm\PaymentsModule\Components
  */
-class DeviceUserListingWidget extends BaseWidget
+class DeviceUserListingWidget extends BaseLazyWidget
 {
     private $templateName = 'device_user_listing_widget.latte';
 

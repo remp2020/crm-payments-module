@@ -2,7 +2,7 @@
 
 namespace Crm\PaymentsModule\Components;
 
-use Crm\ApplicationModule\Widget\BaseWidget;
+use Crm\ApplicationModule\Widget\BaseLazyWidget;
 use Crm\PaymentsModule\PaymentItem\DonationPaymentItem;
 use Nette\Database\Table\ActiveRow;
 
@@ -12,7 +12,7 @@ use Nette\Database\Table\ActiveRow;
  *
  * @package Crm\PaymentsModule\Components
  */
-class DonationPaymentItemsListWidget extends BaseWidget
+class DonationPaymentItemsListWidget extends BaseLazyWidget
 {
     private $templateName = 'donation_payment_items_list_widget.latte';
 

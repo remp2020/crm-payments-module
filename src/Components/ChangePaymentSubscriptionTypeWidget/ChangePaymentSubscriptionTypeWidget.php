@@ -3,14 +3,14 @@
 namespace Crm\PaymentsModule\Components;
 
 use Crm\ApplicationModule\ActiveRow;
-use Crm\ApplicationModule\Widget\BaseWidget;
-use Crm\ApplicationModule\Widget\WidgetManager;
+use Crm\ApplicationModule\Widget\BaseLazyWidget;
+use Crm\ApplicationModule\Widget\LazyWidgetManager;
 use Crm\PaymentsModule\Forms\ChangePaymentSubscriptionTypeFormFactory;
 use Crm\PaymentsModule\Repository\PaymentsRepository;
 use Nette\Application\UI\Form;
 use Nette\Localization\Translator;
 
-class ChangePaymentSubscriptionTypeWidget extends BaseWidget
+class ChangePaymentSubscriptionTypeWidget extends BaseLazyWidget
 {
     public string $templateName = 'change_payment_subscription_type_widget.latte';
 
@@ -19,10 +19,10 @@ class ChangePaymentSubscriptionTypeWidget extends BaseWidget
     private ActiveRow $payment;
 
     public function __construct(
-        WidgetManager $widgetManager,
+        LazyWidgetManager $lazyWidgetManager,
         Translator $translator
     ) {
-        parent::__construct($widgetManager);
+        parent::__construct($lazyWidgetManager);
         $this->translator = $translator;
     }
 

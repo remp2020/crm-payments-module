@@ -2,8 +2,8 @@
 
 namespace Crm\PaymentsModule\Components;
 
-use Crm\ApplicationModule\Widget\BaseWidget;
-use Crm\ApplicationModule\Widget\WidgetManager;
+use Crm\ApplicationModule\Widget\BaseLazyWidget;
+use Crm\ApplicationModule\Widget\LazyWidgetManager;
 use Crm\PaymentsModule\MailConfirmation\ParsedMailLogsRepository;
 
 /**
@@ -12,21 +12,18 @@ use Crm\PaymentsModule\MailConfirmation\ParsedMailLogsRepository;
  *
  * @package Crm\PaymentsModule\Components
  */
-class ParsedMailsFailedNotification extends BaseWidget
+class ParsedMailsFailedNotification extends BaseLazyWidget
 {
     private $templateName = 'parsed_mails_failed_notification.latte';
 
     /** @var ParsedMailLogsRepository */
     private $parsedMailLogsRepository;
 
-    /** @var WidgetManager */
-    protected $widgetManager;
-
     public function __construct(
-        WidgetManager $widgetManager,
+        LazyWidgetManager $lazyWidgetManager,
         ParsedMailLogsRepository $parsedMailLogsRepository
     ) {
-        parent::__construct($widgetManager);
+        parent::__construct($lazyWidgetManager);
         $this->parsedMailLogsRepository = $parsedMailLogsRepository;
     }
 

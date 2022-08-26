@@ -2,11 +2,11 @@
 
 namespace Crm\PaymentsModule\Components;
 
-use Crm\ApplicationModule\Widget\BaseWidget;
+use Crm\ApplicationModule\Widget\BaseLazyWidget;
 use Crm\PaymentsModule\PaymentItem\AuthorizationPaymentItem;
 use Nette\Database\Table\ActiveRow;
 
-class AuthorizationPaymentItemListWidget extends BaseWidget
+class AuthorizationPaymentItemListWidget extends BaseLazyWidget
 {
     private $templateName = 'authorization_payment_items_list_widget.latte';
 

@@ -2,8 +2,8 @@
 
 namespace Crm\PaymentsModule\Components;
 
-use Crm\ApplicationModule\Widget\BaseWidget;
-use Crm\ApplicationModule\Widget\WidgetManager;
+use Crm\ApplicationModule\Widget\BaseLazyWidget;
+use Crm\ApplicationModule\Widget\LazyWidgetManager;
 use Crm\SegmentModule\Repository\SegmentsRepository;
 use Crm\SegmentModule\Repository\SegmentsValuesRepository;
 use DateTime;
@@ -14,7 +14,7 @@ use DateTime;
  *
  * @package Crm\PaymentsModule\Components
  */
-class SubscribersWithPaymentWidget extends BaseWidget
+class SubscribersWithPaymentWidget extends BaseLazyWidget
 {
     private $templateName = 'subscribers_with_payment_widget.latte';
 
@@ -29,11 +29,11 @@ class SubscribersWithPaymentWidget extends BaseWidget
     private $identifier;
 
     public function __construct(
-        WidgetManager $widgetManager,
+        LazyWidgetManager $lazyWidgetManager,
         SegmentsRepository $segmentsRepository,
         SegmentsValuesRepository $segmentsValuesRepository
     ) {
-        parent::__construct($widgetManager);
+        parent::__construct($lazyWidgetManager);
 
         $this->segmentsRepository = $segmentsRepository;
         $this->segmentsValuesRepository = $segmentsValuesRepository;

@@ -2,7 +2,7 @@
 
 namespace Crm\PaymentsModule\Components;
 
-use Crm\ApplicationModule\Widget\WidgetManager;
+use Crm\ApplicationModule\Widget\LazyWidgetManager;
 use Crm\SegmentModule\Repository\SegmentsRepository;
 use Crm\SegmentModule\Repository\SegmentsValuesRepository;
 
@@ -10,7 +10,7 @@ class SubscribersWithPaymentWidgetFactory
 {
     const DEFAULT_SEGMENT = 'active-subscribers-with-paid-subscriptions';
 
-    protected $widgetManager;
+    protected $lazyWidgetManager;
 
     protected $segmentsRepository;
 
@@ -19,11 +19,11 @@ class SubscribersWithPaymentWidgetFactory
     protected $segmentCode;
 
     public function __construct(
-        WidgetManager $widgetManager,
+        LazyWidgetManager $lazyWidgetManager,
         SegmentsRepository $segmentsRepository,
         SegmentsValuesRepository $segmentsValuesRepository
     ) {
-        $this->widgetManager = $widgetManager;
+        $this->lazyWidgetManager = $lazyWidgetManager;
         $this->segmentsRepository = $segmentsRepository;
         $this->segmentsValuesRepository = $segmentsValuesRepository;
     }
@@ -39,7 +39,7 @@ class SubscribersWithPaymentWidgetFactory
         $segmentCode = $this->segmentCode ?? self::DEFAULT_SEGMENT;
 
         return (new SubscribersWithPaymentWidget(
-            $this->widgetManager,
+            $this->lazyWidgetManager,
             $this->segmentsRepository,
             $this->segmentsValuesRepository
         ))->setSegmentCode($segmentCode);

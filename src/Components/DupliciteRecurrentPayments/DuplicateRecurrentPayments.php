@@ -2,8 +2,8 @@
 
 namespace Crm\PaymentsModule\Components;
 
-use Crm\ApplicationModule\Widget\BaseWidget;
-use Crm\ApplicationModule\Widget\WidgetManager;
+use Crm\ApplicationModule\Widget\BaseLazyWidget;
+use Crm\ApplicationModule\Widget\LazyWidgetManager;
 use Crm\PaymentsModule\Repository\RecurrentPaymentsRepository;
 use Nette\Application\BadRequestException;
 use Nette\Localization\Translator;
@@ -14,7 +14,7 @@ use Nette\Localization\Translator;
  *
  * @package Crm\PaymentsModule\Components
  */
-class DuplicateRecurrentPayments extends BaseWidget
+class DuplicateRecurrentPayments extends BaseLazyWidget
 {
     private $templateName = 'duplicate_recurrent_payments.latte';
 
@@ -25,11 +25,11 @@ class DuplicateRecurrentPayments extends BaseWidget
     private $translator;
 
     public function __construct(
-        WidgetManager $widgetManager,
+        LazyWidgetManager $lazyWidgetManager,
         RecurrentPaymentsRepository $recurrentPaymentsRepository,
         Translator $translator
     ) {
-        parent::__construct($widgetManager);
+        parent::__construct($lazyWidgetManager);
         $this->recurrentPaymentsRepository = $recurrentPaymentsRepository;
         $this->translator = $translator;
     }

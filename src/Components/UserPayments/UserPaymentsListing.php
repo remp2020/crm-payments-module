@@ -3,8 +3,8 @@
 namespace Crm\PaymentsModule\Components;
 
 use Crm\ApplicationModule\Components\SimpleWidgetFactoryInterface;
-use Crm\ApplicationModule\Widget\BaseWidget;
-use Crm\ApplicationModule\Widget\WidgetManager;
+use Crm\ApplicationModule\Widget\BaseLazyWidget;
+use Crm\ApplicationModule\Widget\LazyWidgetManager;
 use Crm\PaymentsModule\MailConfirmation\ParsedMailLogsRepository;
 use Crm\PaymentsModule\Repository\PaymentsRepository;
 use Crm\PaymentsModule\Repository\RecurrentPaymentsRepository;
@@ -21,7 +21,7 @@ use Nette\Utils\DateTime;
  *
  * @package Crm\PaymentsModule\Components
  */
-class UserPaymentsListing extends BaseWidget
+class UserPaymentsListing extends BaseLazyWidget
 {
     private $templateName = 'user_payments_listing.latte';
 
@@ -34,13 +34,13 @@ class UserPaymentsListing extends BaseWidget
     private $translator;
 
     public function __construct(
-        WidgetManager $widgetManager,
+        LazyWidgetManager $lazyWidgetManager,
         Translator $translator,
         PaymentsRepository $paymentsRepository,
         RecurrentPaymentsRepository $recurrentPaymentsRepository,
         ParsedMailLogsRepository $parsedMailLogsRepository
     ) {
-        parent::__construct($widgetManager);
+        parent::__construct($lazyWidgetManager);
         $this->paymentsRepository = $paymentsRepository;
         $this->recurrentPaymentsRepository = $recurrentPaymentsRepository;
         $this->parsedMailLogsRepository = $parsedMailLogsRepository;

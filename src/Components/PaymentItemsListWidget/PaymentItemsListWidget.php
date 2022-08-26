@@ -2,7 +2,7 @@
 
 namespace Crm\PaymentsModule\Components;
 
-use Crm\ApplicationModule\Widget\BaseWidget;
+use Crm\ApplicationModule\Widget\BaseLazyWidget;
 use Crm\SubscriptionsModule\PaymentItem\SubscriptionTypePaymentItem;
 use Nette\Database\Table\ActiveRow;
 
@@ -12,7 +12,7 @@ use Nette\Database\Table\ActiveRow;
  *
  * @package Crm\PaymentsModule\Components
  */
-class PaymentItemsListWidget extends BaseWidget
+class PaymentItemsListWidget extends BaseLazyWidget
 {
     private $templateName = 'payment_items_list_widget.latte';
 

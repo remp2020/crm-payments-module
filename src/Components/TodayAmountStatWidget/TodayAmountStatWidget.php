@@ -2,8 +2,8 @@
 
 namespace Crm\PaymentsModule\Components;
 
-use Crm\ApplicationModule\Widget\BaseWidget;
-use Crm\ApplicationModule\Widget\WidgetManager;
+use Crm\ApplicationModule\Widget\BaseLazyWidget;
+use Crm\ApplicationModule\Widget\LazyWidgetManager;
 use Crm\PaymentsModule\Repository\PaymentsRepository;
 use Nette\Utils\DateTime;
 
@@ -13,17 +13,17 @@ use Nette\Utils\DateTime;
  *
  * @package Crm\PaymentsModule\Components
  */
-class TodayAmountStatWidget extends BaseWidget
+class TodayAmountStatWidget extends BaseLazyWidget
 {
     private $templateName = 'today_amount_stat_widget.latte';
 
     private $paymentsRepository;
 
     public function __construct(
-        WidgetManager $widgetManager,
+        LazyWidgetManager $lazyWidgetManager,
         PaymentsRepository $paymentsRepository
     ) {
-        parent::__construct($widgetManager);
+        parent::__construct($lazyWidgetManager);
         $this->paymentsRepository = $paymentsRepository;
     }
 

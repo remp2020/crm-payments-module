@@ -3,8 +3,8 @@
 namespace Crm\PaymentsModule\Components;
 
 use Contributte\Translation\Translator;
-use Crm\ApplicationModule\Widget\BaseWidget;
-use Crm\ApplicationModule\Widget\WidgetManager;
+use Crm\ApplicationModule\Widget\BaseLazyWidget;
+use Crm\ApplicationModule\Widget\LazyWidgetManager;
 use Crm\PaymentsModule\Report\NoRecurrentChargeReport;
 use Crm\PaymentsModule\Report\PaidNextSubscriptionReport;
 use Crm\PaymentsModule\Report\StoppedOnFirstSubscriptionReport;
@@ -20,7 +20,7 @@ use Crm\SubscriptionsModule\Repository\SubscriptionTypesRepository;
  *
  * @package Crm\PaymentsModule\Components
  */
-class SubscriptionTypeReports extends BaseWidget
+class SubscriptionTypeReports extends BaseLazyWidget
 {
     private $templateName = 'subscription_type_reports.latte';
 
@@ -29,11 +29,11 @@ class SubscriptionTypeReports extends BaseWidget
     private $translator;
 
     public function __construct(
-        WidgetManager $widgetManager,
+        LazyWidgetManager $lazyWidgetManager,
         Translator $translator,
         SubscriptionTypesRepository $subscriptionTypesRepository
     ) {
-        parent::__construct($widgetManager);
+        parent::__construct($lazyWidgetManager);
         $this->subscriptionTypesRepository = $subscriptionTypesRepository;
         $this->translator = $translator;
     }

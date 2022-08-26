@@ -2,10 +2,10 @@
 
 namespace Crm\PaymentsModule\Components;
 
-use Crm\ApplicationModule\Widget\BaseWidget;
+use Crm\ApplicationModule\Widget\BaseLazyWidget;
 use Nette\Database\Table\ActiveRow;
 
-class AddressWidget extends BaseWidget
+class AddressWidget extends BaseLazyWidget
 {
     private $templateName = 'address_widget.latte';
 

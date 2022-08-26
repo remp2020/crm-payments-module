@@ -2,8 +2,8 @@
 
 namespace Crm\PaymentsModule\Components;
 
-use Crm\ApplicationModule\Widget\BaseWidget;
-use Crm\ApplicationModule\Widget\WidgetManager;
+use Crm\ApplicationModule\Widget\BaseLazyWidget;
+use Crm\ApplicationModule\Widget\LazyWidgetManager;
 use Crm\PaymentsModule\RecurrentPaymentsResolver;
 use Crm\PaymentsModule\Repository\RecurrentPaymentsRepository;
 
@@ -13,7 +13,7 @@ use Crm\PaymentsModule\Repository\RecurrentPaymentsRepository;
  *
  * @package Crm\PaymentsModule\Components
  */
-class MyNextRecurrentPayment extends BaseWidget
+class MyNextRecurrentPayment extends BaseLazyWidget
 {
     private $templateName = 'my_next_recurrent_payment.latte';
 
@@ -21,15 +21,12 @@ class MyNextRecurrentPayment extends BaseWidget
 
     private $recurrentPaymentsResolver;
 
-    /** @var WidgetManager */
-    protected $widgetManager;
-
     public function __construct(
         RecurrentPaymentsRepository $recurrentPaymentsRepository,
         RecurrentPaymentsResolver $recurrentPaymentsResolver,
-        WidgetManager $widgetManager
+        LazyWidgetManager $lazyWidgetManager
     ) {
-        parent::__construct($widgetManager);
+        parent::__construct($lazyWidgetManager);
         $this->recurrentPaymentsRepository = $recurrentPaymentsRepository;
         $this->recurrentPaymentsResolver = $recurrentPaymentsResolver;
     }

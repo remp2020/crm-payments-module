@@ -3,13 +3,13 @@
 namespace Crm\PaymentsModule\Components;
 
 use Crm\ApplicationModule\Cache\CacheRepository;
-use Crm\ApplicationModule\Widget\BaseWidget;
-use Crm\ApplicationModule\Widget\WidgetManager;
+use Crm\ApplicationModule\Widget\BaseLazyWidget;
+use Crm\ApplicationModule\Widget\LazyWidgetManager;
 use Crm\SegmentModule\SegmentWidgetInterface;
 use Crm\UsersModule\Repository\UserStatsRepository;
 use Nette\Database\Table\ActiveRow;
 
-class AvgSubscriptionPaymentWidget extends BaseWidget implements SegmentWidgetInterface
+class AvgSubscriptionPaymentWidget extends BaseLazyWidget implements SegmentWidgetInterface
 {
     private string $templateName = 'avg_subscription_payment_widget.latte';
 
@@ -17,11 +17,11 @@ class AvgSubscriptionPaymentWidget extends BaseWidget implements SegmentWidgetIn
     private CacheRepository $cacheRepository;
 
     public function __construct(
-        WidgetManager $widgetManager,
+        LazyWidgetManager $lazyWidgetManager,
         CacheRepository $cacheRepository,
         UserStatsRepository $userStatsRepository
     ) {
-        parent::__construct($widgetManager);
+        parent::__construct($lazyWidgetManager);
         $this->cacheRepository = $cacheRepository;
         $this->userStatsRepository = $userStatsRepository;
     }

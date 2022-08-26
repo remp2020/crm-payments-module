@@ -2,8 +2,8 @@
 
 namespace Crm\PaymentsModule\Components;
 
-use Crm\ApplicationModule\Widget\BaseWidget;
-use Crm\ApplicationModule\Widget\WidgetManager;
+use Crm\ApplicationModule\Widget\BaseLazyWidget;
+use Crm\ApplicationModule\Widget\LazyWidgetManager;
 use Crm\PaymentsModule\Repository\PaymentsRepository;
 use Nette\Localization\Translator;
 
@@ -13,7 +13,7 @@ use Nette\Localization\Translator;
  *
  * @package Crm\PaymentsModule\Components
  */
-class ChangePaymentStatus extends BaseWidget
+class ChangePaymentStatus extends BaseLazyWidget
 {
     private $templateName = 'change_payment_status.latte';
 
@@ -24,11 +24,11 @@ class ChangePaymentStatus extends BaseWidget
     private $translator;
 
     public function __construct(
-        WidgetManager $widgetManager,
+        LazyWidgetManager $lazyWidgetManager,
         PaymentsRepository $paymentsRepository,
         Translator $translator
     ) {
-        parent::__construct($widgetManager);
+        parent::__construct($lazyWidgetManager);
         $this->paymentsRepository = $paymentsRepository;
         $this->translator = $translator;
     }

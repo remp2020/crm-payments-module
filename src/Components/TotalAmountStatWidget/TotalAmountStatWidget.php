@@ -2,8 +2,8 @@
 
 namespace Crm\PaymentsModule\Components;
 
-use Crm\ApplicationModule\Widget\BaseWidget;
-use Crm\ApplicationModule\Widget\WidgetManager;
+use Crm\ApplicationModule\Widget\BaseLazyWidget;
+use Crm\ApplicationModule\Widget\LazyWidgetManager;
 use Crm\PaymentsModule\Repository\PaymentsRepository;
 
 /**
@@ -12,15 +12,17 @@ use Crm\PaymentsModule\Repository\PaymentsRepository;
  *
  * @package Crm\PaymentsModule\Components
  */
-class TotalAmountStatWidget extends BaseWidget
+class TotalAmountStatWidget extends BaseLazyWidget
 {
     private $templateName = 'total_amount_stat_widget.latte';
 
     private $paymentsRepository;
 
-    public function __construct(WidgetManager $widgetManager, PaymentsRepository $paymentsRepository)
-    {
-        parent::__construct($widgetManager);
+    public function __construct(
+        LazyWidgetManager $lazyWidgetManager,
+        PaymentsRepository $paymentsRepository
+    ) {
+        parent::__construct($lazyWidgetManager);
         $this->paymentsRepository = $paymentsRepository;
     }
 

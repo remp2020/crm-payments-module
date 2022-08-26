@@ -2,8 +2,8 @@
 
 namespace Crm\PaymentsModule\Components;
 
-use Crm\ApplicationModule\Widget\BaseWidget;
-use Crm\ApplicationModule\Widget\WidgetManager;
+use Crm\ApplicationModule\Widget\BaseLazyWidget;
+use Crm\ApplicationModule\Widget\LazyWidgetManager;
 use Crm\PaymentsModule\Models\AverageMonthPayment;
 use Crm\PaymentsModule\Repository\PaymentsRepository;
 use Crm\UsersModule\Repository\UserStatsRepository;
@@ -14,7 +14,7 @@ use Crm\UsersModule\Repository\UserStatsRepository;
  * This widget works correctly only if user's meta data are filled with calculated amounts.
  * See CalculateAveragesCommand - `payments:calculate_averages`. This command should be executed regularly (eg cron).
  */
-class TotalUserPayments extends BaseWidget
+class TotalUserPayments extends BaseLazyWidget
 {
     private string $templateName = 'total_user_payments.latte';
 
@@ -23,12 +23,12 @@ class TotalUserPayments extends BaseWidget
     private AverageMonthPayment $averageMonthPayment;
 
     public function __construct(
-        WidgetManager $widgetManager,
+        LazyWidgetManager $lazyWidgetManager,
         PaymentsRepository $paymentsRepository,
         AverageMonthPayment $averageMonthPayment,
         UserStatsRepository $userStatsRepository
     ) {
-        parent::__construct($widgetManager);
+        parent::__construct($lazyWidgetManager);
         $this->paymentsRepository = $paymentsRepository;
         $this->averageMonthPayment = $averageMonthPayment;
         $this->userStatsRepository = $userStatsRepository;

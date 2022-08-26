@@ -2,21 +2,21 @@
 
 namespace Crm\PaymentsModule\Components;
 
-use Crm\ApplicationModule\Widget\BaseWidget;
-use Crm\ApplicationModule\Widget\WidgetManager;
+use Crm\ApplicationModule\Widget\BaseLazyWidget;
+use Crm\ApplicationModule\Widget\LazyWidgetManager;
 use Crm\PaymentsModule\Repository\PaymentsRepository;
 
-class RefundPaymentsListWidget extends BaseWidget
+class RefundPaymentsListWidget extends BaseLazyWidget
 {
     private $templateName = 'refund_payments_list_widget.latte';
 
     private $paymentsRepository;
 
     public function __construct(
-        WidgetManager $widgetManager,
+        LazyWidgetManager $lazyWidgetManager,
         PaymentsRepository $paymentsRepository
     ) {
-        parent::__construct($widgetManager);
+        parent::__construct($lazyWidgetManager);
 
         $this->paymentsRepository = $paymentsRepository;
     }

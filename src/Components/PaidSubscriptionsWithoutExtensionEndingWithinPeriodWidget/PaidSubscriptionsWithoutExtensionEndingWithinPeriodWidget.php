@@ -2,8 +2,8 @@
 
 namespace Crm\PaymentsModule\Components;
 
-use Crm\ApplicationModule\Widget\BaseWidget;
-use Crm\ApplicationModule\Widget\WidgetManager;
+use Crm\ApplicationModule\Widget\BaseLazyWidget;
+use Crm\ApplicationModule\Widget\LazyWidgetManager;
 use Crm\PaymentsModule\Repository\PaymentsRepository;
 use Crm\SubscriptionsModule\Components\IWidgetLegend;
 use Nette\Localization\Translator;
@@ -15,7 +15,7 @@ use Nette\Utils\DateTime;
  *
  * @package Crm\PaymentsModule\Components
  */
-class PaidSubscriptionsWithoutExtensionEndingWithinPeriodWidget extends BaseWidget implements IWidgetLegend
+class PaidSubscriptionsWithoutExtensionEndingWithinPeriodWidget extends BaseLazyWidget implements IWidgetLegend
 {
     private $templateName = 'paid_subscriptions_without_extension_ending_within_period.latte';
 
@@ -24,11 +24,11 @@ class PaidSubscriptionsWithoutExtensionEndingWithinPeriodWidget extends BaseWidg
     private $translator;
 
     public function __construct(
-        WidgetManager $widgetManager,
+        LazyWidgetManager $lazyWidgetManager,
         PaymentsRepository $paymentsRepository,
         Translator $translator
     ) {
-        parent::__construct($widgetManager);
+        parent::__construct($lazyWidgetManager);
         $this->paymentsRepository = $paymentsRepository;
         $this->translator = $translator;
     }

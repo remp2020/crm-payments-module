@@ -17,7 +17,7 @@ use Crm\ApplicationModule\Menu\MenuContainerInterface;
 use Crm\ApplicationModule\Menu\MenuItem;
 use Crm\ApplicationModule\SeederManager;
 use Crm\ApplicationModule\User\UserDataRegistrator;
-use Crm\ApplicationModule\Widget\WidgetManagerInterface;
+use Crm\ApplicationModule\Widget\LazyWidgetManagerInterface;
 use Crm\PaymentsModule\Commands\CalculateAveragesCommand;
 use Crm\PaymentsModule\Commands\CancelAuthorizationCommand;
 use Crm\PaymentsModule\Commands\CidGetterCommand;
@@ -138,127 +138,127 @@ class PaymentsModule extends CrmModule
         $menuContainer->attachMenuItem($menuItem);
     }
 
-    public function registerWidgets(WidgetManagerInterface $widgetManager)
+    public function registerLazyWidgets(LazyWidgetManagerInterface $widgetManager)
     {
         $widgetManager->registerWidget(
             'admin.user.detail.bottom',
-            $this->getInstance(\Crm\PaymentsModule\Components\UserPaymentsListing::class),
+            \Crm\PaymentsModule\Components\UserPaymentsListing::class,
             200
         );
         $widgetManager->registerWidget(
             'admin.user.detail.box',
-            $this->getInstance(\Crm\PaymentsModule\Components\TotalUserPayments::class),
+            \Crm\PaymentsModule\Components\TotalUserPayments::class,
             200
         );
         $widgetManager->registerWidget(
             'admin.payments.top',
-            $this->getInstance(\Crm\PaymentsModule\Components\ParsedMailsFailedNotification::class),
+            \Crm\PaymentsModule\Components\ParsedMailsFailedNotification::class,
             1000
         );
         $widgetManager->registerWidget(
             'dashboard.singlestat.totals',
-            $this->getInstance(\Crm\PaymentsModule\Components\TotalAmountStatWidget::class),
+            \Crm\PaymentsModule\Components\TotalAmountStatWidget::class,
             700
         );
         $widgetManager->registerWidget(
             'dashboard.singlestat.actuals.subscribers',
-            $this->getInstance(\Crm\PaymentsModule\Components\ActualPaidSubscribersStatWidget::class),
+            \Crm\PaymentsModule\Components\ActualPaidSubscribersStatWidget::class,
             500
         );
         $widgetManager->registerWidget(
             'dashboard.singlestat.actuals.subscribers',
-            $this->getInstance(\Crm\PaymentsModule\Components\ActualFreeSubscribersStatWidget::class),
+            \Crm\PaymentsModule\Components\ActualFreeSubscribersStatWidget::class,
             600
         );
         $widgetManager->registerWidget(
             'dashboard.singlestat.today',
-            $this->getInstance(\Crm\PaymentsModule\Components\TodayAmountStatWidget::class),
+            \Crm\PaymentsModule\Components\TodayAmountStatWidget::class,
             700
         );
         $widgetManager->registerWidget(
             'dashboard.singlestat.month',
-            $this->getInstance(\Crm\PaymentsModule\Components\MonthAmountStatWidget::class),
+            \Crm\PaymentsModule\Components\MonthAmountStatWidget::class,
             700
         );
         $widgetManager->registerWidget(
             'dashboard.singlestat.mtd',
-            $this->getInstance(\Crm\PaymentsModule\Components\MonthToDateAmountStatWidget::class),
+            \Crm\PaymentsModule\Components\MonthToDateAmountStatWidget::class,
             700
         );
         $widgetManager->registerWidget(
             'subscriptions.endinglist',
-            $this->getInstance(\Crm\PaymentsModule\Components\SubscriptionsWithActiveUnchargedRecurrentEndingWithinPeriodWidget::class),
+            \Crm\PaymentsModule\Components\SubscriptionsWithActiveUnchargedRecurrentEndingWithinPeriodWidget::class,
             700
         );
         $widgetManager->registerWidget(
             'subscriptions.endinglist',
-            $this->getInstance(\Crm\PaymentsModule\Components\SubscriptionsWithoutExtensionEndingWithinPeriodWidget::class),
+            \Crm\PaymentsModule\Components\SubscriptionsWithoutExtensionEndingWithinPeriodWidget::class,
             800
         );
         $widgetManager->registerWidget(
             'subscriptions.endinglist',
-            $this->getInstance(\Crm\PaymentsModule\Components\PaidSubscriptionsWithoutExtensionEndingWithinPeriodWidget::class),
+            \Crm\PaymentsModule\Components\PaidSubscriptionsWithoutExtensionEndingWithinPeriodWidget::class,
             900
         );
-        $widgetManager->registerWidget(
+        $widgetManager->registerWidgetWithInstance(
             'dashboard.singlestat.actuals.system',
             $this->getInstance(\Crm\PaymentsModule\Components\SubscribersWithPaymentWidgetFactory::class)->create()->setDateModifier('-1 day'),
             500
         );
-        $widgetManager->registerWidget(
+        $widgetManager->registerWidgetWithInstance(
             'dashboard.singlestat.actuals.system',
             $this->getInstance(\Crm\PaymentsModule\Components\SubscribersWithPaymentWidgetFactory::class)->create()->setDateModifier('-7 days'),
             600
         );
-        $widgetManager->registerWidget(
+        $widgetManager->registerWidgetWithInstance(
             'dashboard.singlestat.actuals.system',
             $this->getInstance(\Crm\PaymentsModule\Components\SubscribersWithPaymentWidgetFactory::class)->create()->setDateModifier('-30 days'),
             600
         );
         $widgetManager->registerWidget(
             'admin.subscription_types.show.bottom_stats',
-            $this->getInstance(\Crm\PaymentsModule\Components\SubscriptionTypeReports::class),
+            \Crm\PaymentsModule\Components\SubscriptionTypeReports::class,
             500
         );
         $widgetManager->registerWidget(
             'payments.admin.payment_item_listing',
-            $this->getInstance(\Crm\PaymentsModule\Components\PaymentItemsListWidget::class)
+            \Crm\PaymentsModule\Components\PaymentItemsListWidget::class
         );
         $widgetManager->registerWidget(
             'payments.admin.payment_item_listing',
-            $this->getInstance(\Crm\PaymentsModule\Components\DonationPaymentItemsListWidget::class)
+            \Crm\PaymentsModule\Components\DonationPaymentItemsListWidget::class
         );
         $widgetManager->registerWidget(
             'payments.admin.payment_item_listing',
-            $this->getInstance(\Crm\PaymentsModule\Components\AuthorizationPaymentItemListWidget::class)
+            \Crm\PaymentsModule\Components\AuthorizationPaymentItemListWidget::class
         );
         $widgetManager->registerWidget(
             'payments.admin.payment_source_listing',
-            $this->getInstance(\Crm\PaymentsModule\Components\DeviceUserListingWidget::class)
+            \Crm\PaymentsModule\Components\DeviceUserListingWidget::class
         );
         $widgetManager->registerWidget(
             'payments.frontend.payments_my.top',
-            $this->getInstance(\Crm\PaymentsModule\Components\MyNextRecurrentPayment::class)
+            \Crm\PaymentsModule\Components\MyNextRecurrentPayment::class
         );
         $widgetManager->registerWidget(
             'payments.frontend.payments_my.bottom',
-            $this->getInstance(\Crm\PaymentsModule\Components\RefundPaymentsListWidget::class)
+            \Crm\PaymentsModule\Components\RefundPaymentsListWidget::class
         );
         $widgetManager->registerWidget(
             'frontend.payment.success.bottom',
-            $this->getInstance(\Crm\PaymentsModule\Components\AddressWidget::class),
+            \Crm\PaymentsModule\Components\AddressWidget::class
         );
         $widgetManager->registerWidget(
             'segment.detail.statspanel.row',
-            $this->getInstance(\Crm\PaymentsModule\Components\AvgMonthPaymentWidget::class)
+            \Crm\PaymentsModule\Components\AvgMonthPaymentWidget::class
         );
         $widgetManager->registerWidget(
             'segment.detail.statspanel.row',
-            $this->getInstance(\Crm\PaymentsModule\Components\AvgSubscriptionPaymentWidget::class)
+            \Crm\PaymentsModule\Components\AvgSubscriptionPaymentWidget::class
         );
         $widgetManager->registerWidget(
             'payments.admin.edit_form.after',
-            $this->getInstance(\Crm\PaymentsModule\Components\ChangePaymentSubscriptionTypeWidget::class)
+            \Crm\PaymentsModule\Components\ChangePaymentSubscriptionTypeWidget::class
         );
     }
 
