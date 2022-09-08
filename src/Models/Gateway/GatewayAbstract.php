@@ -14,6 +14,8 @@ abstract class GatewayAbstract implements PaymentInterface
 {
     protected $cancelErrorCodes = [];
 
+    protected ?string $testHost;
+
     /** @var \Omnipay\Common\Message\AbstractResponse */
     protected $response;
 
@@ -75,6 +77,11 @@ abstract class GatewayAbstract implements PaymentInterface
         } else {
             throw new CannotProcessPayment($this->response->getMessage());
         }
+    }
+
+    public function setTestHost(?string $testHost)
+    {
+        $this->testHost = $testHost;
     }
 
     protected function generateReturnUrl($payment, $params = [])

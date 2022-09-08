@@ -42,6 +42,7 @@ class CardPayAuthorization extends GatewayAbstract implements AuthorizationInter
         $this->gateway->setMid($this->applicationConfig->get('cardpay_mid'));
         $this->gateway->setSharedSecret($this->applicationConfig->get('cardpay_sharedsecret'));
         $this->gateway->setTestMode(!($this->applicationConfig->get('cardpay_mode') == 'live'));
+        $this->gateway->setTestHost($this->testHost);
     }
 
     public function begin($payment)

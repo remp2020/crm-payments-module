@@ -28,6 +28,7 @@ class Comfortpay extends GatewayAbstract implements RecurrentPaymentInterface
         $this->gateway->setTerminalId($this->applicationConfig->get('comfortpay_terminalid'));
         $this->gateway->setSharedSecret($this->applicationConfig->get('comfortpay_sharedsecret'));
         $this->gateway->setTestMode(!($this->applicationConfig->get('comfortpay_mode') == 'live'));
+        $this->gateway->setTestHost($this->testHost);
     }
 
     public function begin($payment)

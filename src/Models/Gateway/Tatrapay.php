@@ -20,6 +20,7 @@ class Tatrapay extends GatewayAbstract
         $this->gateway->setMid($this->applicationConfig->get('tatrapay_mid'));
         $this->gateway->setSharedSecret($this->applicationConfig->get('tatrapay_sharedsecret'));
         $this->gateway->setTestMode(!($this->applicationConfig->get('tatrapay_mode') == 'live'));
+        $this->gateway->setTestHost($this->testHost);
     }
 
     public function begin($payment)
