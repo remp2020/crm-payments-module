@@ -560,6 +560,7 @@ frontend:
         no_refunds: Nemáte žádné vrácené platby
         buy_offer: Můžete si předplatné zakoupit a získat tak přístup k obsahu.
         next_recurrent_payment: "Máte zapnuté automatické obnovování předplatného, nejbližší platba v hodnotě <strong>%charge_amount%</strong> proběhne <strong>%charge_date%</strong>."
+        no_next_recurrent_payment: "<strong>Momentálně nemáte nastaveno automatické obnovování předplatného.</strong> Zapnout si jej můžete při nejbližším nákupu při výběru platby."
     recurrent_stop:
         title: Zastavení opakované platby
         cancel: "Ne, ještě si to promyslím"
