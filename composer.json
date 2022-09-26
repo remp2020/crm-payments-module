@@ -10,8 +10,8 @@
     "php-http/curl-client": "^2.2.1",
     "tomaj/bank-mails-parser": "^2.7",
     "tomaj/imap-mail-downloader": "^1.2.0",
-    "rootpd/omnipay-csob": "@dev",
-    "miroc/omnipay-paypal-reference": "@dev",
+    "rootpd/omnipay-csob": "^4.0.0",
+    "rootpd/omnipay-paypal-reference": "^4.0.0",
     "singpolyma/openpgp-php": "~0.5",
     "tomaj/omnipay-tatra": "4.2"
   },
