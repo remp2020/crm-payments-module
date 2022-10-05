@@ -18,32 +18,18 @@ use Tracy\ILogger;
 
 class MailProcessor
 {
-    private $paymentsRepository;
+    private ParsedMailLogsBuilder $logBuilder;
 
-    private $paymentProcessor;
+    private MailContent $mailContent;
 
-    private $parsedMailLogsBuilder;
-
-    private $logBuilder;
-
-    private $parsedMailLogsRepository;
-
-    /** @var  MailContent */
-    private $mailContent;
-
-    /** @var  OutputInterface */
-    private $output;
+    private OutputInterface $output;
 
     public function __construct(
-        PaymentsRepository $paymentsRepository,
-        PaymentProcessor $paymentProcessor,
-        ParsedMailLogsBuilder $parsedMailLogsBuilder,
-        ParsedMailLogsRepository $parsedMailLogsRepository
+        private PaymentsRepository $paymentsRepository,
+        private PaymentProcessor $paymentProcessor,
+        private ParsedMailLogsBuilder $parsedMailLogsBuilder,
+        private ParsedMailLogsRepository $parsedMailLogsRepository
     ) {
-        $this->paymentsRepository = $paymentsRepository;
-        $this->paymentProcessor = $paymentProcessor;
-        $this->parsedMailLogsBuilder = $parsedMailLogsBuilder;
-        $this->parsedMailLogsRepository = $parsedMailLogsRepository;
     }
 
     public function processMail(MailContent $mailContent, OutputInterface $output, $skipCheck = false)
@@ -78,11 +64,7 @@ class MailProcessor
             ->setMessage($this->mailContent->getReceiverMessage())
             ->setAmount($this->mailContent->getAmount());
 
-        $vs = $this->getVs();
-        if (!$vs) {
-            return false;
-        }
-        $payment = $this->getPayment($vs);
+        $payment = $this->getPaymentFromMailContentVs();
         if (!$payment) {
             return false;
         }
@@ -172,8 +154,8 @@ class MailProcessor
             ->setMessage($this->mailContent->getReceiverMessage())
             ->setAmount($this->mailContent->getAmount());
 
-        $vs = $this->getVs();
-        if (!$vs) {
+        $payment = $this->getPaymentFromMailContentVs();
+        if (!$payment) {
             return false;
         }
 
@@ -192,16 +174,12 @@ class MailProcessor
         $fields['TIMESTAMP'] = $this->mailContent->getTransactionDate();
         $fields['CC'] = $this->mailContent->getCc();
         $fields['TID'] = $this->mailContent->getTid();
-        $fields['VS'] = $vs;
+        $fields['VS'] = $payment->variable_symbol;
         $fields['AC'] = $this->mailContent->getAc();
         $fields['RES'] = $this->mailContent->getRes();
         $fields['RC'] = $this->mailContent->getRc();
         $fields['TXN'] = $this->mailContent->getTxn();
 
-        $payment = $this->getPayment($vs);
-        if (!$payment) {
-            return false;
-        }
         if (!$skipCheck && $payment->status == PaymentsRepository::STATUS_PAID) {
             $this->logBuilder->setState(ParsedMailLogsRepository::STATE_ALREADY_PAID)->save();
             return false;
@@ -257,36 +235,69 @@ class MailProcessor
         return true;
     }
 
-    private function getVs(): ?string
+    private function getPaymentFromMailContentVs(): ?ActiveRow
     {
         $vs = $this->mailContent->getVs();
         if (!$vs) {
-            $pattern = '/vs[:\.\-_ ]??(\d{1,10})/i';
-            $receiverMessage = $this->mailContent->getReceiverMessage();
-            if ($receiverMessage && preg_match($pattern, $receiverMessage, $result)) {
-                $vs = $result[1];
-                $this->mailContent->setVs($vs);
-            }
-        }
-        if (!$vs) {
+            // library for parsing mail content would find variable symbol if it is present in any field; this is error
             $this->logBuilder->setState(ParsedMailLogsRepository::STATE_WITHOUT_VS);
             $this->logBuilder->save();
             return null;
         }
         $this->logBuilder->setVariableSymbol($vs);
-        return $vs;
-    }
 
-    private function getPayment($vs): ?ActiveRow
-    {
         $payment = $this->paymentsRepository->findLastByVS($vs);
-        if (!$payment) {
-            $this->logBuilder
-                ->setState(ParsedMailLogsRepository::STATE_PAYMENT_NOT_FOUND)
-                ->save();
+        if ($payment) {
+            $this->logBuilder->setPayment($payment);
+            return $payment;
+        }
+
+        // If payment was not found with variable symbol returned by library, try to check receiver message.
+        // Users sometimes enter incorrect value into creditor reference information (eg. missing last digit in "Referencia platitela")
+        // but correct variable symbol into receiver message ("Informacia pre prijemcu").
+        // Library parsing email content will return first number that looks like variable symbol
+        // (there is not way for it to validate it against database).
+        // We shouldn't be trying to match this, but we have around 2 payments each week with this issue ¯\_(ツ)_/¯
+
+        $receiverMessage = $this->mailContent->getReceiverMessage();
+        if ($receiverMessage === null) {
+            // we found variable symbol above so we shouldn't log STATE_WITHOUT_VS
+            // (this is just alternative search because we were unable to find payment for first VS)
+            $this->logBuilder->setState(ParsedMailLogsRepository::STATE_PAYMENT_NOT_FOUND);
+            $this->logBuilder->save();
             return null;
         }
-        $this->logBuilder->setPayment($payment);
-        return $payment;
+
+        // VS number with prefix; one to 10 digits -> vs1 ... vs0123456789
+        $pattern = '/vs[:\.\-_ ]??(\d{1,10})/i';
+        $matched = preg_match($pattern, $receiverMessage, $result);
+        if ($matched === false || !isset($result[1])) {
+            // or try just 8 to 10 digits without prefix (01234567 - 0123456789)
+            $pattern = '/(\d{8,10})/i';
+            $matched = preg_match($pattern, $receiverMessage, $result);
+            if ($matched === false || !isset($result[1])) {
+                // we found variable symbol above so we shouldn't log STATE_WITHOUT_VS
+                // (this is just alternative search because we were unable to find payment for first VS)
+                $this->logBuilder->setState(ParsedMailLogsRepository::STATE_PAYMENT_NOT_FOUND);
+                $this->logBuilder->save();
+                return null;
+            }
+        }
+
+        $vs = $result[1];
+
+        $payment = $this->paymentsRepository->findLastByVS($vs);
+        if ($payment) {
+            $this->mailContent->setVs($vs);
+            $this->logBuilder->setVariableSymbol($vs);
+            $this->logBuilder->setPayment($payment);
+            return $payment;
+        }
+
+        // we tried two different variable symbols, payment not found
+        $this->logBuilder
+            ->setState(ParsedMailLogsRepository::STATE_PAYMENT_NOT_FOUND)
+            ->save();
+        return null;
     }
 }

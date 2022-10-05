@@ -43,13 +43,17 @@ class MailProcessorTest extends PaymentsTestCase
 
     public function testMailWithWrongAmount()
     {
-        $payment = $this->createPayment('7492857611');
-        $this->paymentsRepository->update($payment, array('amount' => 10.3));
+        $variableSymbol = '7492857611';
+        $amount = 10.3;
+        $amountInvalid = 10.2;
+
+        $payment = $this->createPayment($variableSymbol);
+        $this->paymentsRepository->update($payment, array('amount' => $amount));
 
         $mailContent = new MailContent();
-        $mailContent->setAmount(10.2);
+        $mailContent->setAmount($amountInvalid);
         $mailContent->setTransactionDate(strtotime('2.3.2015 13:43'));
-        $mailContent->setVs('7492857611');
+        $mailContent->setVs($variableSymbol);
 
         $result = $this->mailProcessor->processMail($mailContent, new TestOutput());
         $this->assertFalse($result);
@@ -60,13 +64,16 @@ class MailProcessorTest extends PaymentsTestCase
 
     public function testAlreadyPaidPaymentDoNothing()
     {
-        $payment = $this->createPayment('7492857631');
-        $this->paymentsRepository->update($payment, array('amount' => 10.2, 'status' => PaymentsRepository::STATUS_PAID));
+        $variableSymbol = '7492857631';
+        $amount = 10.2;
+
+        $payment = $this->createPayment($variableSymbol);
+        $this->paymentsRepository->update($payment, array('amount' => $amount, 'status' => PaymentsRepository::STATUS_PAID));
 
         $mailContent = new MailContent();
-        $mailContent->setAmount(10.2);
+        $mailContent->setAmount($amount);
         $mailContent->setTransactionDate(strtotime('2.3.2015 13:43'));
-        $mailContent->setVs('7492857631');
+        $mailContent->setVs($variableSymbol);
 
         $result = $this->mailProcessor->processMail($mailContent, new TestOutput());
         $this->assertFalse($result);
@@ -80,15 +87,117 @@ class MailProcessorTest extends PaymentsTestCase
         $this->assertEquals($newPayment->status, $newPayment->status);
     }
 
-    public function testNotFoundVariableSymbol()
+    public function testNoPaymentForVariableSymbol()
     {
-        $payment = $this->createPayment('7492857611');
-        $this->paymentsRepository->update($payment, array('amount' => 10.3));
+        $variableSymbol = '7492857611';
+        $variableSymbolInvalid = '7492857612';
+        $amount = 10.2;
+
+        $payment = $this->createPayment($variableSymbol);
+        $this->paymentsRepository->update($payment, array('amount' => $amount));
 
         $mailContent = new MailContent();
-        $mailContent->setAmount(10.2);
+        $mailContent->setAmount($amount);
         $mailContent->setTransactionDate(strtotime('2.3.2015 13:43'));
-        $mailContent->setVs('7492857612');
+        $mailContent->setVs($variableSymbolInvalid);
+
+        $result = $this->mailProcessor->processMail($mailContent, new TestOutput());
+        $this->assertFalse($result);
+
+        $log = $this->parsedMailLogsRepository->lastLog();
+        $this->assertEquals(ParsedMailLogsRepository::STATE_PAYMENT_NOT_FOUND, $log->state);
+    }
+
+    public function testVariableSymbolInReceiverMessage()
+    {
+        $variableSymbol = '7492857611';
+        $variableSymbolInvalid = '7492857612';
+        $amount = 10.2;
+
+        $payment = $this->createPayment($variableSymbol);
+        $this->paymentsRepository->update($payment, array('amount' => $amount));
+
+        $mailContent = new MailContent();
+        $mailContent->setAmount($amount);
+        $mailContent->setTransactionDate(strtotime('2.3.2015 13:43'));
+        $mailContent->setVs($variableSymbolInvalid); // incorrect
+        $mailContent->setReceiverMessage('vs' . $variableSymbol); // correct (with VS prefix)
+
+        $result = $this->mailProcessor->processMail($mailContent, new TestOutput());
+        $this->assertTrue($result);
+
+        $log = $this->parsedMailLogsRepository->lastLog();
+        $this->assertEquals(ParsedMailLogsRepository::STATE_CHANGED_TO_PAID, $log->state);
+
+        $newPayment = $this->paymentsRepository->find($payment->id);
+        $this->assertEquals($newPayment->id, $payment->id);
+        $this->assertEquals($newPayment->variable_symbol, $payment->variable_symbol);
+        $this->assertEquals(PaymentsRepository::STATUS_PAID, $newPayment->status);
+    }
+
+    public function testVariableSymbolInReceiverMessageWithoutPrefix()
+    {
+        $variableSymbol = '7492857611';
+        $variableSymbolInvalid = '7492857612';
+        $amount = 10.2;
+
+        $payment = $this->createPayment($variableSymbol);
+        $this->paymentsRepository->update($payment, array('amount' => $amount));
+
+        $mailContent = new MailContent();
+        $mailContent->setAmount($amount);
+        $mailContent->setTransactionDate(strtotime('2.3.2015 13:43'));
+        $mailContent->setVs($variableSymbolInvalid); // incorrect
+        $mailContent->setReceiverMessage($variableSymbol); // correct (without VS prefix)
+
+        $result = $this->mailProcessor->processMail($mailContent, new TestOutput());
+        $this->assertTrue($result);
+
+        $log = $this->parsedMailLogsRepository->lastLog();
+        $this->assertEquals(ParsedMailLogsRepository::STATE_CHANGED_TO_PAID, $log->state);
+
+        $newPayment = $this->paymentsRepository->find($payment->id);
+        $this->assertEquals($newPayment->id, $payment->id);
+        $this->assertEquals($newPayment->variable_symbol, $payment->variable_symbol);
+        $this->assertEquals(PaymentsRepository::STATUS_PAID, $newPayment->status);
+    }
+
+    public function testIncorrectVariableSymbolInReceiverMessage()
+    {
+        $variableSymbol = '7492857611';
+        $variableSymbolInvalid = '7492857612';
+        $amount = 10.2;
+
+        $payment = $this->createPayment($variableSymbol);
+        $this->paymentsRepository->update($payment, array('amount' => $amount));
+
+        $mailContent = new MailContent();
+        $mailContent->setAmount($amount);
+        $mailContent->setTransactionDate(strtotime('2.3.2015 13:43'));
+        $mailContent->setVs($variableSymbolInvalid); // incorrect
+        $mailContent->setReceiverMessage('VS' . $variableSymbolInvalid); // incorrect
+
+        $result = $this->mailProcessor->processMail($mailContent, new TestOutput());
+        $this->assertFalse($result);
+
+        $log = $this->parsedMailLogsRepository->lastLog();
+        $this->assertEquals(ParsedMailLogsRepository::STATE_PAYMENT_NOT_FOUND, $log->state);
+    }
+
+    public function testInvalidFormatOfVariableSymbolInReceiverMessage()
+    {
+        $variableSymbol = '7492857611';
+        $variableSymbolInvalid = '749285'; // six characters only; eight are required when used without prefix
+        $amount = 10.2;
+
+        $payment = $this->createPayment($variableSymbol);
+        $this->paymentsRepository->update($payment, array('amount' => $amount));
+
+        $mailContent = new MailContent();
+        $mailContent->setAmount($amount);
+        $mailContent->setTransactionDate(strtotime('2.3.2015 13:43'));
+        $mailContent->setVs($variableSymbolInvalid);
+        $mailContent->setReceiverMessage($variableSymbolInvalid);
 
         $result = $this->mailProcessor->processMail($mailContent, new TestOutput());
         $this->assertFalse($result);
@@ -99,14 +208,17 @@ class MailProcessorTest extends PaymentsTestCase
 
     public function testSuccessfullyPaymentChange()
     {
-        $payment = $this->createPayment('7492857612');
-        $this->paymentsRepository->update($payment, array('amount' => 10.2));
+        $variableSymbol = '7492857611';
+        $amount = 10.2;
+
+        $payment = $this->createPayment($variableSymbol);
+        $this->paymentsRepository->update($payment, array('amount' => $amount));
         $this->assertEquals(PaymentsRepository::STATUS_FORM, $payment->status);
 
         $mailContent = new MailContent();
-        $mailContent->setAmount(10.2);
+        $mailContent->setAmount($amount);
         $mailContent->setTransactionDate(strtotime('2.3.2015 13:43'));
-        $mailContent->setVs('7492857612');
+        $mailContent->setVs($variableSymbol);
 
         $result = $this->mailProcessor->processMail($mailContent, new TestOutput());
         $this->assertTrue($result);
@@ -122,9 +234,12 @@ class MailProcessorTest extends PaymentsTestCase
 
     public function testRepeatedPaymentFromBank()
     {
-        $payment = $this->createPayment('7492851612');
+        $variableSymbol = '7492857611';
+        $amount = 10.2;
+
+        $payment = $this->createPayment($variableSymbol);
         $this->paymentsRepository->update($payment, [
-            'amount' => 10.4,
+            'amount' => $amount,
             'status' => PaymentsRepository::STATUS_PAID,
             'created_at' => new DateTime('23 days ago'),
         ]);
@@ -133,9 +248,9 @@ class MailProcessorTest extends PaymentsTestCase
         $this->subscriptionTypeItemsRepository->update($subscriptionTypeItem, ['vat' => 20]);
 
         $mailContent = new MailContent();
-        $mailContent->setAmount(10.4);
+        $mailContent->setAmount($amount);
         $mailContent->setTransactionDate(strtotime('now'));
-        $mailContent->setVs('7492851612');
+        $mailContent->setVs($variableSymbol);
 
         $result = $this->mailProcessor->processMail($mailContent, new TestOutput());
 
@@ -144,7 +259,7 @@ class MailProcessorTest extends PaymentsTestCase
         $log = $this->parsedMailLogsRepository->lastLog();
         $this->assertEquals(ParsedMailLogsRepository::STATE_AUTO_NEW_PAYMENT, $log->state);
 
-        $newPayment = $this->paymentsRepository->findLastByVS('7492851612');
+        $newPayment = $this->paymentsRepository->findLastByVS($variableSymbol);
         $this->assertNotEquals($newPayment->id, $payment->id);
         $this->assertEquals($newPayment->variable_symbol, $payment->variable_symbol);
         $this->assertEquals(PaymentsRepository::STATUS_PAID, $newPayment->status);
@@ -184,10 +299,13 @@ class MailProcessorTest extends PaymentsTestCase
 
     public function testDuplicatedPaymentByUser()
     {
+        $variableSymbol = '7492857611';
+        $amount = 10.2;
+
         // mock first payment confirmation
-        $payment = $this->createPayment('7492851612');
+        $payment = $this->createPayment($variableSymbol);
         $this->paymentsRepository->update($payment, array(
-            'amount' => 10.4,
+            'amount' => $amount,
             'status' => PaymentsRepository::STATUS_PAID,
             'created_at' => new DateTime('2 days ago'),
         ));
@@ -214,17 +332,20 @@ class MailProcessorTest extends PaymentsTestCase
 
     public function testAlreadyRefundedPayment()
     {
-        $payment = $this->createPayment('7492851612');
+        $variableSymbol = '7492857611';
+        $amount = 10.2;
+
+        $payment = $this->createPayment($variableSymbol);
         $this->paymentsRepository->update($payment, array(
-            'amount' => 10.4,
+            'amount' => $amount,
             'status' => PaymentsRepository::STATUS_REFUND,
             'created_at' => new DateTime('23 days ago')
         ));
 
         $mailContent = new MailContent();
-        $mailContent->setAmount(10.4);
+        $mailContent->setAmount($amount);
         $mailContent->setTransactionDate(strtotime('2.3.2015 13:43'));
-        $mailContent->setVs('7492851612');
+        $mailContent->setVs($variableSymbol);
 
         $result = $this->mailProcessor->processMail($mailContent, new TestOutput());
         $this->assertFalse($result);
