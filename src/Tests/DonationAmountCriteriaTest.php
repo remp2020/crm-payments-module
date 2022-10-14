@@ -100,7 +100,7 @@ class DonationAmountCriteriaTest extends DatabaseTestCase
 
         $paymentItemContainer = new PaymentItemContainer();
         if ($donationAmount) {
-            $paymentItemContainer->addItem(new DonationPaymentItem('Donation', $donationAmount, 0));
+            $paymentItemContainer->addItem(new DonationPaymentItem('Donation', (float) $donationAmount, 0));
         }
 
         /** @var PaymentsRepository $paymentsRepository */

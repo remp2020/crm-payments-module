@@ -424,10 +424,12 @@ class PaymentFormFactory
                         }
                     }
 
+                    $amount = str_replace(",", ".", $item->amount);
+
                     $paymentItem = new SubscriptionTypePaymentItem(
                         $subscriptionType->id,
                         $item->name,
-                        $item->amount,
+                        (float) $amount,
                         $item->vat,
                         $item->count,
                         $meta
@@ -467,7 +469,7 @@ class PaymentFormFactory
                 if ($donationPaymentVat === null) {
                     throw new \Exception("Config 'donation_vat_rate' is not set");
                 }
-                $paymentItemContainer->addItem(new DonationPaymentItem($this->translator->translate('payments.admin.donation'), $values['additional_amount'], $donationPaymentVat));
+                $paymentItemContainer->addItem(new DonationPaymentItem($this->translator->translate('payments.admin.donation'), (float) $values['additional_amount'], (int) $donationPaymentVat));
             }
 
             // we don't want to update subscription dates on payment if it's already paid
@@ -502,7 +504,7 @@ class PaymentFormFactory
             $additionalType = null;
             $additionalAmount = null;
             if (isset($values['additional_amount']) && $values['additional_amount']) {
-                $additionalAmount = $values['additional_amount'];
+                $additionalAmount = (float) str_replace(",", ".", $values['additional_amount']);
             }
             if (isset($values['additional_type']) && $values['additional_type']) {
                 $additionalType = $values['additional_type'];
@@ -513,7 +515,7 @@ class PaymentFormFactory
                 if ($donationPaymentVat === null) {
                     throw new \Exception("Config 'donation_vat_rate' is not set");
                 }
-                $paymentItemContainer->addItem(new DonationPaymentItem($this->translator->translate('payments.admin.donation'), $additionalAmount, $donationPaymentVat));
+                $paymentItemContainer->addItem(new DonationPaymentItem($this->translator->translate('payments.admin.donation'), (float) $additionalAmount, (int) $donationPaymentVat));
             }
 
             $user = $this->usersRepository->find($values['user_id']);

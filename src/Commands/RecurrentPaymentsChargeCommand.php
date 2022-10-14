@@ -179,8 +179,8 @@ class RecurrentPaymentsChargeCommand extends Command
                     $paymentItemContainer->addItem(
                         new DonationPaymentItem(
                             $this->translator->translate('payments.admin.donation'),
-                            $additionalAmount,
-                            $donationPaymentVat
+                            (float) $additionalAmount,
+                            (int) $donationPaymentVat
                         )
                     );
                 }
