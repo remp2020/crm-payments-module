@@ -23,6 +23,7 @@ class CsobOneClick extends GatewayAbstract implements RecurrentPaymentInterface
     public const GATEWAY_CODE = 'csob_one_click';
 
     private const MERCHANT_BLOCKED = 120; // merchant is not authorised to accept payments
+    private const PAYMENT_NOT_AUTHORIZED_ONECLICK_EXPIRED = 150; // orig payment not authorized, oneclick card expired
     private const MASTERPASS_SERVER_ERROR = 260; // masterPass payment can not be completed due to a technical error
     private const INTERNAL_ERROR = 260; // internal error in request processing
 
@@ -47,6 +48,7 @@ class CsobOneClick extends GatewayAbstract implements RecurrentPaymentInterface
     private $resultMessage;
 
     protected $cancelErrorCodes = [
+        self::PAYMENT_NOT_AUTHORIZED_ONECLICK_EXPIRED,
         self::ONECLICK_TEMPLATE_PAYMENT_EXPIRED,
         self::ONECLICK_TEMPLATE_CARD_EXPIRED,
         self::ONECLICK_TEMPLATE_CUSTOMER_REJECTED,
@@ -192,7 +194,7 @@ class CsobOneClick extends GatewayAbstract implements RecurrentPaymentInterface
             if (!$expiration) {
                 continue;
             }
-            
+
             $month = substr($expiration, 0, 2);
             $year = substr($expiration, 3, 2);
             $result[$token] = DateTime::from("$year-$month-01 00:00 next month");
