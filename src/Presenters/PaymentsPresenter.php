@@ -41,8 +41,10 @@ class PaymentsPresenter extends FrontendPresenter
 
     public function handleReactivate($recurrentId)
     {
+        $this->onlyLoggedIn();
+
         $recurrent = $this->recurrentPaymentsRepository->find($recurrentId);
-        if ($this->getUser()->id != $recurrent->user_id) {
+        if (!$recurrent || $this->getUser()->id != $recurrent->user_id) {
             $this->flashMessage($this->translator->translate('payments.frontend.reactivate.error'), 'error');
             $this->redirect('my');
         }
@@ -66,16 +68,33 @@ class PaymentsPresenter extends FrontendPresenter
 
     public function renderRecurrentStop($recurrentPaymentId)
     {
+        $this->onlyLoggedIn();
+
         if (!$recurrentPaymentId) {
             $this->flashMessage($this->translator->translate('payments.frontend.recurrent_stop.invalid'), 'error');
             $this->redirect('my');
         }
+
+        $recurrentPayment = $this->recurrentPaymentsRepository->find($recurrentPaymentId);
+        if (!$recurrentPayment || $this->getUser()->id != $recurrentPayment->user_id) {
+            $this->flashMessage($this->translator->translate('payments.frontend.recurrent_stop.invalid'), 'error');
+            $this->redirect('my');
+        }
+
         $this->template->resolver = $this->recurrentPaymentsResolver;
-        $this->template->recurrentPayment = $this->recurrentPaymentsRepository->find($recurrentPaymentId);
+        $this->template->recurrentPayment = $recurrentPayment;
     }
 
     public function handleStopRecurrentPayment($recurrentPaymentId)
     {
+        $this->onlyLoggedIn();
+
+        $recurrentPayment = $this->recurrentPaymentsRepository->find($recurrentPaymentId);
+        if (!$recurrentPayment || $this->getUser()->id != $recurrentPayment->user_id) {
+            $this->flashMessage($this->translator->translate('payments.frontend.recurrent_stop.invalid'), 'error');
+            $this->redirect('my');
+        }
+
         $this->recurrentPaymentsRepository->stoppedByUser($recurrentPaymentId, $this->getUser()->id);
         $this->flashMessage($this->translator->translate('payments.frontend.recurrent_stop.success'));
         $this->redirect('My');
