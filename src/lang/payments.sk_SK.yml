@@ -486,8 +486,14 @@ form:
         subscription_type_id:
             label: Predplatné
             prompt: Typ predplatného
+            negative_items_amount: Cena položiek musí byť nezáporná.
         custom_payment_items:
             label: Vlastná cena položiek
+        payment_items:
+            name:
+                required: "Názov %iterator%. položky nesmie byť prázdny."
+            vat:
+                required: "Sadzba DPH %iterator%. položky nesmie byť prázdna."
         additional_amount:
             label: Darovaná suma
             placeholder: napríklad 14.52

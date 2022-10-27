@@ -486,8 +486,14 @@ form:
         subscription_type_id:
             label: Subscription type
             prompt: Subscription type
+            negative_items_amount: Sum amount of items must not be negative
         custom_payment_items:
             label: Custom item amounts
+        payment_items:
+            name:
+                required: "%iterator%. item name must not be empty."
+            vat:
+                required: "VAT rate of %iterator%. item must not be empty."
         additional_amount:
             label: Donated amount
             placeholder: e.g. 14.52

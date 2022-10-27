@@ -324,7 +324,7 @@ class PaymentFormFactory
         return $form;
     }
 
-    public function formSucceeded($form, $values)
+    public function formSucceeded(Form $form, $values)
     {
         $values = clone($values);
 
@@ -402,7 +402,8 @@ class PaymentFormFactory
         if ((isset($values['custom_payment_items']) && $values['custom_payment_items'])
             || ($payment && $payment->status === 'form')
         ) {
-            foreach (Json::decode($values->payment_items) as $item) {
+            foreach (Json::decode($values->payment_items) as $i => $item) {
+                $iterator = $i + 1;
                 if ($payment && $item->type !== SubscriptionTypePaymentItem::TYPE) {
                     $allowEditPaymentItems = false;
                 }
@@ -410,7 +411,26 @@ class PaymentFormFactory
                     continue;
                 }
                 if ($item->amount < 0) {
-                    $form['subscription_type_id']->addError('Cena položiek musí byť nezáporná');
+                    $form['subscription_type_id']->addError('payments.form.payment.subscription_type_id.negative_items_amount');
+                }
+                if (strlen($item->name) === 0) {
+                    $form['payment_items']->addError($this->translator->translate(
+                        'payments.form.payment.payment_items.name.required',
+                        [
+                            'iterator' => $iterator,
+                        ]
+                    ));
+                }
+                if (strlen($item->vat) === 0) {
+                    $form['payment_items']->addError($this->translator->translate(
+                        'payments.form.payment.payment_items.vat.required',
+                        [
+                            'iterator' => $iterator,
+                        ]
+                    ));
+                }
+                if ($form->hasErrors()) {
+                    return;
                 }
 
                 if ($subscriptionType && $item->type === SubscriptionTypePaymentItem::TYPE) {
