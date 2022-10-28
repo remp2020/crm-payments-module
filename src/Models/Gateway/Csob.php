@@ -50,7 +50,6 @@ class Csob extends GatewayAbstract
     {
         $this->initialize();
 
-
         $cart = [];
         $paymentItemsCount = $payment->related('payment_items')->count('*');
 
@@ -78,14 +77,22 @@ class Csob extends GatewayAbstract
             }
         }
 
-        $this->response = $this->gateway->checkout([
+        $checkoutRequest = [
             'returnUrl' => $this->generateReturnUrl($payment, [
                 'VS' => $payment->variable_symbol,
             ]),
             'transactionId' => $payment->variable_symbol,
             'cart' => $cart,
-        ])->send();
+            'email' => $payment->user->email,
+            'createdAt' => $payment->user->created_at,
+            'changedAt' => $payment->user->modified_at,
+        ];
 
+        if (!empty($payment->user->last_name)) {
+            $checkoutRequest['name'] = "{$payment->user->first_name} {$payment->user->last_name}";
+        }
+
+        $this->response = $this->gateway->checkout($checkoutRequest)->send();
         $this->paymentMetaRepository->add($payment, 'pay_id', $this->response->getTransactionReference());
     }
 

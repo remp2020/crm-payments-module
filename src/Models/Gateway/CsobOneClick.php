@@ -86,13 +86,22 @@ class CsobOneClick extends GatewayAbstract implements RecurrentPaymentInterface
     {
         $this->initialize();
 
-        $this->response = $this->gateway->checkout([
+        $checkoutRequest = [
             'returnUrl' => $this->generateReturnUrl($payment, [
                 'VS' => $payment->variable_symbol,
             ]),
             'transactionId' => $payment->variable_symbol,
             'cart' => $this->getCart($payment),
-        ])->send();
+            'email' => $payment->user->email,
+            'createdAt' => $payment->user->created_at,
+            'changedAt' => $payment->user->modified_at,
+        ];
+
+        if (!empty($payment->user->last_name)) {
+            $checkoutRequest['name'] = "{$payment->user->first_name} {$payment->user->last_name}";
+        }
+
+        $this->response = $this->gateway->checkout($checkoutRequest)->send();
 
         $this->paymentMetaRepository->add($payment, 'pay_id', $this->response->getTransactionReference());
     }
@@ -208,20 +217,34 @@ class CsobOneClick extends GatewayAbstract implements RecurrentPaymentInterface
         $this->initialize();
         $clientIp = Request::getIp();
 
+        $oneClickPaymentRequest = [
+            'payId' => $token,
+            'transactionId' => $payment->variable_symbol,
+            'cart' => $this->getCart($payment),
+            'email' => $payment->user->email,
+            'createdAt' => $payment->user->created_at,
+            'changedAt' => $payment->user->modified_at,
+
+            // This parameter doesn't make sense. CSOB requires it even for offline payments and even when the library
+            // indicates that client is just not there (clientInitiated: false).
+            'returnUrl' => $this->generateReturnUrl($payment, [
+                'VS' => $payment->variable_symbol,
+            ]),
+        ];
+
         // clientIp for offline payment (cli) should be the same as the one used during initial payment
         // https://github.com/csob/paymentgateway/issues/471
         $initialPaymentMeta = $this->paymentMetaRepository->findByMeta('pay_id', $token);
         if ($clientIp === 'cli' && $initialPaymentMeta) {
-            $clientIp = $initialPaymentMeta->payment->ip;
+            $oneClickPaymentRequest['clientIp'] = $initialPaymentMeta->payment->ip;
+        }
+
+        if (!empty($payment->user->last_name)) {
+            $oneClickPaymentRequest['name'] = "{$payment->user->first_name} {$payment->user->last_name}";
         }
 
         try {
-            $this->response = $this->gateway->oneClickPayment([
-                'payId' => $token,
-                'transactionId' => $payment->variable_symbol,
-                'cart' => $this->getCart($payment),
-                'clientIp' => $clientIp,
-            ])->send();
+            $this->response = $this->gateway->oneClickPayment($oneClickPaymentRequest)->send();
         } catch (\Exception $exception) {
             if ($exception instanceof Exception) {
                 $this->resultCode = $exception->getCode();
