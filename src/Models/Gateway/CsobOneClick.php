@@ -9,9 +9,11 @@ use Crm\PaymentsModule\RecurrentPaymentFailStop;
 use Crm\PaymentsModule\RecurrentPaymentFailTry;
 use Crm\PaymentsModule\Repository\PaymentMetaRepository;
 use Nette\Application\LinkGenerator;
+use Nette\Database\Table\ActiveRow;
 use Nette\Http\Response;
 use Nette\Localization\Translator;
 use Nette\Utils\DateTime;
+use Nette\Utils\Strings;
 use Omnipay\Common\Exception\InvalidRequestException;
 use Omnipay\Csob\Gateway;
 use Omnipay\Omnipay;
@@ -98,7 +100,7 @@ class CsobOneClick extends GatewayAbstract implements RecurrentPaymentInterface
         ];
 
         if (!empty($payment->user->last_name)) {
-            $checkoutRequest['name'] = "{$payment->user->first_name} {$payment->user->last_name}";
+            $checkoutRequest['name'] = $this->getUserName($payment->user);
         }
 
         $this->response = $this->gateway->checkout($checkoutRequest)->send();
@@ -240,7 +242,7 @@ class CsobOneClick extends GatewayAbstract implements RecurrentPaymentInterface
         }
 
         if (!empty($payment->user->last_name)) {
-            $oneClickPaymentRequest['name'] = "{$payment->user->first_name} {$payment->user->last_name}";
+            $oneClickPaymentRequest['name'] = $this->getUserName($payment->user);
         }
 
         try {
@@ -301,5 +303,14 @@ class CsobOneClick extends GatewayAbstract implements RecurrentPaymentInterface
     {
         $data = $this->getResponseData();
         return $data['resultMessage'] ?? $this->resultMessage;
+    }
+
+    private function getUserName(ActiveRow $user): string
+    {
+        return Strings::trim(Strings::substring(
+            "{$user->first_name} {$user->last_name}",
+            0,
+            45
+        ));
     }
 }

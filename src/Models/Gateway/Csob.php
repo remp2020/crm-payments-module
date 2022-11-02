@@ -5,8 +5,10 @@ namespace Crm\PaymentsModule\Gateways;
 use Crm\ApplicationModule\Config\ApplicationConfig;
 use Crm\PaymentsModule\Repository\PaymentMetaRepository;
 use Nette\Application\LinkGenerator;
+use Nette\Database\Table\ActiveRow;
 use Nette\Http\Response;
 use Nette\Localization\Translator;
+use Nette\Utils\Strings;
 use Omnipay\Csob\Gateway;
 use Omnipay\Omnipay;
 
@@ -89,7 +91,7 @@ class Csob extends GatewayAbstract
         ];
 
         if (!empty($payment->user->last_name)) {
-            $checkoutRequest['name'] = "{$payment->user->first_name} {$payment->user->last_name}";
+            $checkoutRequest['name'] = $this->getUserName($payment->user);
         }
 
         $this->response = $this->gateway->checkout($checkoutRequest)->send();
@@ -126,5 +128,14 @@ class Csob extends GatewayAbstract
         }
 
         return $result;
+    }
+
+    private function getUserName(ActiveRow $user): string
+    {
+        return Strings::trim(Strings::substring(
+            "{$user->first_name} {$user->last_name}",
+            0,
+            45
+        ));
     }
 }
