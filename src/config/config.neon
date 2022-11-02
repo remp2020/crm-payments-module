@@ -77,8 +77,9 @@ services:
 	- Crm\PaymentsModule\Gateways\Comfortpay
 	- Crm\PaymentsModule\Gateways\BankTransfer
 	- Crm\PaymentsModule\Gateways\Free
-	- Crm\PaymentsModule\Gateways\Csob
-	- Crm\PaymentsModule\Gateways\CsobOneClick
+	csobLogger: Monolog\Logger('csob-logger')
+	csobGateway: Crm\PaymentsModule\Gateways\Csob(@csobLogger)
+	csobOneClickGateway: Crm\PaymentsModule\Gateways\CsobOneClick(@csobLogger)
 	- Crm\PaymentsModule\Gateways\CardPayAuthorization
 	- Crm\PaymentsModule\Segment\PaymentCriteria
 	- Crm\PaymentsModule\Segment\PaymentCountsCriteria

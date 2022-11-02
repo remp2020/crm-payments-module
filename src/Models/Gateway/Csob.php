@@ -11,6 +11,7 @@ use Nette\Localization\Translator;
 use Nette\Utils\Strings;
 use Omnipay\Csob\Gateway;
 use Omnipay\Omnipay;
+use Psr\Log\LoggerInterface;
 
 class Csob extends GatewayAbstract
 {
@@ -21,7 +22,10 @@ class Csob extends GatewayAbstract
 
     private $paymentMetaRepository;
 
+    private $logger;
+
     public function __construct(
+        LoggerInterface $logger,
         LinkGenerator $linkGenerator,
         ApplicationConfig $applicationConfig,
         Response $httpResponse,
@@ -29,6 +33,7 @@ class Csob extends GatewayAbstract
         PaymentMetaRepository $paymentMetaRepository
     ) {
         parent::__construct($linkGenerator, $applicationConfig, $httpResponse, $translator);
+        $this->logger = $logger;
         $this->paymentMetaRepository = $paymentMetaRepository;
     }
 
@@ -46,6 +51,9 @@ class Csob extends GatewayAbstract
         $this->gateway->setDisplayOmnibox(false);
         $this->gateway->setCurrency('CZK'); // TODO: replace with system currency once implemented
         $this->gateway->setLanguage('CZ');
+        $this->gateway->setTraceLog(function ($message) {
+            $this->logger->info($message);
+        });
     }
 
     public function begin($payment)

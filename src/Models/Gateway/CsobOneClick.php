@@ -18,6 +18,7 @@ use Omnipay\Common\Exception\InvalidRequestException;
 use Omnipay\Csob\Gateway;
 use Omnipay\Omnipay;
 use OndraKoupil\Csob\Exception;
+use Psr\Log\LoggerInterface;
 use Tracy\Debugger;
 
 class CsobOneClick extends GatewayAbstract implements RecurrentPaymentInterface
@@ -49,6 +50,8 @@ class CsobOneClick extends GatewayAbstract implements RecurrentPaymentInterface
 
     private $resultMessage;
 
+    private $logger;
+
     protected $cancelErrorCodes = [
         self::PAYMENT_NOT_AUTHORIZED_ONECLICK_EXPIRED,
         self::ONECLICK_TEMPLATE_PAYMENT_EXPIRED,
@@ -58,6 +61,7 @@ class CsobOneClick extends GatewayAbstract implements RecurrentPaymentInterface
     ];
 
     public function __construct(
+        LoggerInterface $logger,
         LinkGenerator $linkGenerator,
         ApplicationConfig $applicationConfig,
         Response $httpResponse,
@@ -65,6 +69,7 @@ class CsobOneClick extends GatewayAbstract implements RecurrentPaymentInterface
         Translator $translator
     ) {
         parent::__construct($linkGenerator, $applicationConfig, $httpResponse, $translator);
+        $this->logger = $logger;
         $this->paymentMetaRepository = $paymentMetaRepository;
     }
 
@@ -82,6 +87,9 @@ class CsobOneClick extends GatewayAbstract implements RecurrentPaymentInterface
         $this->gateway->setDisplayOmnibox(false);
         $this->gateway->setCurrency('CZK'); // TODO: replace with system currency once implemented
         $this->gateway->setLanguage('CZ');
+        $this->gateway->setTraceLog(function ($message) {
+            $this->logger->info($message);
+        });
     }
 
     public function begin($payment)
