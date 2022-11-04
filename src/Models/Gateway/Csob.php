@@ -5,10 +5,8 @@ namespace Crm\PaymentsModule\Gateways;
 use Crm\ApplicationModule\Config\ApplicationConfig;
 use Crm\PaymentsModule\Repository\PaymentMetaRepository;
 use Nette\Application\LinkGenerator;
-use Nette\Database\Table\ActiveRow;
 use Nette\Http\Response;
 use Nette\Localization\Translator;
-use Nette\Utils\Strings;
 use Omnipay\Csob\Gateway;
 use Omnipay\Omnipay;
 use Psr\Log\LoggerInterface;
@@ -51,9 +49,9 @@ class Csob extends GatewayAbstract
         $this->gateway->setDisplayOmnibox(false);
         $this->gateway->setCurrency('CZK'); // TODO: replace with system currency once implemented
         $this->gateway->setLanguage('CZ');
-        $this->gateway->setTraceLog(function ($message) {
-            $this->logger->info($message);
-        });
+//        $this->gateway->setTraceLog(function ($message) {
+//            $this->logger->info($message);
+//        });
     }
 
     public function begin($payment)
@@ -87,22 +85,14 @@ class Csob extends GatewayAbstract
             }
         }
 
-        $checkoutRequest = [
+        $this->response = $this->gateway->checkout([
             'returnUrl' => $this->generateReturnUrl($payment, [
                 'VS' => $payment->variable_symbol,
             ]),
             'transactionId' => $payment->variable_symbol,
             'cart' => $cart,
-            'email' => $payment->user->email,
-            'createdAt' => $payment->user->created_at,
-            'changedAt' => $payment->user->modified_at,
-        ];
+        ])->send();
 
-        if (!empty($payment->user->last_name)) {
-            $checkoutRequest['name'] = $this->getUserName($payment->user);
-        }
-
-        $this->response = $this->gateway->checkout($checkoutRequest)->send();
         $this->paymentMetaRepository->add($payment, 'pay_id', $this->response->getTransactionReference());
     }
 
@@ -136,14 +126,5 @@ class Csob extends GatewayAbstract
         }
 
         return $result;
-    }
-
-    private function getUserName(ActiveRow $user): string
-    {
-        return Strings::trim(Strings::substring(
-            "{$user->first_name} {$user->last_name}",
-            0,
-            45
-        ));
     }
 }
