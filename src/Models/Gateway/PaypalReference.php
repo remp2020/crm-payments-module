@@ -12,6 +12,8 @@ use Nette\Utils\Json;
 use Omnipay\Common\Exception\InvalidRequestException;
 use Omnipay\Omnipay;
 use Omnipay\PayPal\Message\ExpressCompletePurchaseResponse;
+use Omnipay\PayPal\PayPalItem;
+use Omnipay\PayPal\PayPalItemBag;
 use Omnipay\PayPal\Support\InstantUpdateApi\BillingAgreement;
 use Omnipay\PayPalReference\ExpressGateway;
 use Omnipay\PayPalReference\Message\CreateBillingAgreementResponse;
@@ -52,9 +54,16 @@ class PaypalReference extends GatewayAbstract implements RecurrentPaymentInterfa
     {
         $this->initialize();
 
+        $bag = new PayPalItemBag();
         $items = [];
         foreach ($payment->related('payment_items') as $item) {
             $items[] = $item->name;
+
+            $ppItem = new PayPalItem();
+            $ppItem->setName($item->name);
+            $ppItem->setQuantity($item->count);
+            $ppItem->setPrice($item->amount);
+            $bag->add($ppItem);
         }
         $description = implode(", ", $items) . " ({$this->translator->translate('payments.gateway.recurrent')})";
 
@@ -67,6 +76,7 @@ class PaypalReference extends GatewayAbstract implements RecurrentPaymentInterfa
             'cancelUrl' => $this->generateReturnUrl($payment, ['paypal_success' => '0', 'VS' => $payment->variable_symbol]),
             'landingPage' => 'Login',
             'localeCode' => $payment->user->locale,
+            'items' => $bag,
         ])->send();
     }
 

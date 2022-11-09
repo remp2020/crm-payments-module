@@ -9,6 +9,8 @@ use Nette\Http\Response;
 use Nette\Localization\Translator;
 use Omnipay\Omnipay;
 use Omnipay\PayPal\ExpressGateway;
+use Omnipay\PayPal\PayPalItem;
+use Omnipay\PayPal\PayPalItemBag;
 
 class Paypal extends GatewayAbstract
 {
@@ -44,6 +46,16 @@ class Paypal extends GatewayAbstract
     {
         $this->initialize();
 
+        $bag = new PayPalItemBag();
+        foreach ($payment->related('payment_items') as $paymentItem) {
+            $item = new PayPalItem();
+            $item->setName($paymentItem->name);
+            $item->setQuantity($paymentItem->count);
+            $item->setPrice($paymentItem->amount);
+
+            $bag->add($item);
+        }
+
         $this->response = $this->gateway->purchase([
             'amount' => $payment->amount,
             'currency' => $this->applicationConfig->get('currency'),
@@ -52,6 +64,7 @@ class Paypal extends GatewayAbstract
             'cancelUrl' => $this->generateReturnUrl($payment, ['paypal_success' => '0', 'VS' => $payment->variable_symbol]),
             'landingPage' => 'Login',
             'localeCode' => $payment->user->locale,
+            'items' => $bag,
         ])->send();
     }
 
