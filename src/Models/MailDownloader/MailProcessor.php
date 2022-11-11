@@ -107,8 +107,8 @@ class MailProcessor
                 $newPayment = $this->paymentsRepository->copyPayment($payment);
             } catch (\Exception $exception) {
                 $this->output->writeln(" * Couldn't copy payment: <info>{$payment->id}</info>. Error: {$exception->getMessage()}");
-                Debugger::log($exception->getMessage(), ILogger::EXCEPTION);
-                throw $exception;
+                Debugger::log($exception, ILogger::EXCEPTION);
+                return false;
             }
 
             $payment = $newPayment;

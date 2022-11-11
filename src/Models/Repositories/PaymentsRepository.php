@@ -180,7 +180,13 @@ class PaymentsRepository extends Repository
         ]);
 
         foreach ($payment->related('payment_items') as $paymentItem) {
-            $this->paymentItemsRepository->copyPaymentItem($paymentItem, $newPayment);
+            // change new payment's status to failed if it's not possible to copy payment items (payment would be incomplete)
+            try {
+                $this->paymentItemsRepository->copyPaymentItem($paymentItem, $newPayment);
+            } catch (\Exception $e) {
+                $this->update($newPayment, ['status' => PaymentsRepository::STATUS_FAIL, 'note' => "Unable to copy payment items [{$e->getMessage()}]."]);
+                throw $e;
+            }
         }
 
         return $newPayment;
