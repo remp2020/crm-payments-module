@@ -41,36 +41,18 @@ class RecurrentPaymentsRepository extends Repository
     const STATE_CHARGE_FAILED = 'charge_failed';
     const STATE_SYSTEM_STOP = 'system_stop';
 
-    private $paymentGatewayMetaRepository;
-
-    private $emitter;
-
-    private $applicationConfig;
-
-    private $hermesEmitter;
-
-    private $gatewayFactory;
-
-    private $cacheRepository;
-
     public function __construct(
         Explorer $database,
         AuditLogRepository $auditLogRepository,
-        PaymentGatewayMetaRepository $paymentGatewayMetaRepository,
-        Emitter $emitter,
-        ApplicationConfig $applicationConfig,
-        \Tomaj\Hermes\Emitter $hermesEmitter,
-        GatewayFactory $gatewayFactory,
-        CacheRepository $cacheRepository
+        private PaymentGatewayMetaRepository $paymentGatewayMetaRepository,
+        private Emitter $emitter,
+        private ApplicationConfig $applicationConfig,
+        private \Tomaj\Hermes\Emitter $hermesEmitter,
+        private GatewayFactory $gatewayFactory,
+        private CacheRepository $cacheRepository
     ) {
         parent::__construct($database);
         $this->auditLogRepository = $auditLogRepository;
-        $this->paymentGatewayMetaRepository = $paymentGatewayMetaRepository;
-        $this->emitter = $emitter;
-        $this->applicationConfig = $applicationConfig;
-        $this->hermesEmitter = $hermesEmitter;
-        $this->gatewayFactory = $gatewayFactory;
-        $this->cacheRepository = $cacheRepository;
     }
 
     final public function add($cid, $payment, $chargeAt, $customAmount, $retries)
@@ -353,12 +335,12 @@ class RecurrentPaymentsRepository extends Repository
 
     final public function recurrent(ActiveRow $payment)
     {
-        return $this->getTable()->where(['parent_payment_id' => $payment->id])->fetch();
+        return $payment->related('recurrent_payments', 'parent_payment_id')->fetch();
     }
 
     final public function findByPayment(ActiveRow $payment)
     {
-        return $this->findBy('payment_id', $payment->id);
+        return $payment->related('recurrent_payments', 'payment_id')->fetch();
     }
 
     final public function getLastWithState(ActiveRow $recurrentPayment, $state)
