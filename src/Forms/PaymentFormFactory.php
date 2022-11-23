@@ -249,13 +249,7 @@ class PaymentFormFactory
             ->setHtmlAttribute('flatpickr_datetime', "1")
             ->setOption('id', 'subscription-start-at')
             ->setOption('description', 'payments.form.payment.subscription_start_at.description')
-            ->setRequired(false)
-            ->addRule(function (TextInput $field, $user) {
-                if (DateTime::from($field->getValue()) < new DateTime('today midnight')) {
-                    return false;
-                }
-                return true;
-            }, 'payments.form.payment.subscription_start_at.not_past', $user);
+            ->setRequired(false);
 
         $subscriptionStartAt
             ->addConditionOn($manualSubscription, Form::EQUAL, self::MANUAL_SUBSCRIPTION_START)
@@ -263,6 +257,17 @@ class PaymentFormFactory
         $subscriptionStartAt
             ->addConditionOn($manualSubscription, Form::EQUAL, self::MANUAL_SUBSCRIPTION_START_END)
             ->setRequired(true);
+        $subscriptionStartAt
+            ->addConditionOn($manualSubscription, Form::IS_IN, [
+                self::MANUAL_SUBSCRIPTION_START,
+                self::MANUAL_SUBSCRIPTION_START_END
+            ])
+            ->addRule(function (TextInput $field, $user) {
+                if (DateTime::from($field->getValue()) < new DateTime('today midnight')) {
+                    return false;
+                }
+                return true;
+            }, 'payments.form.payment.subscription_start_at.not_past', $user);
 
         $subscriptionEndAt = $form->addText('subscription_end_at', 'payments.form.payment.subscription_end_at.label')
             ->setHtmlAttribute('placeholder', 'payments.form.payment.subscription_end_at.placeholder')
@@ -270,17 +275,17 @@ class PaymentFormFactory
             ->setHtmlAttribute('flatpickr_datetime', "1")
             ->setOption('id', 'subscription-end-at')
             ->setOption('description', 'payments.form.payment.subscription_end_at.description')
-            ->setRequired(false)
+            ->setRequired(false);
+
+        $subscriptionEndAt
+            ->addConditionOn($manualSubscription, Form::EQUAL, self::MANUAL_SUBSCRIPTION_START_END)
+            ->setRequired(true)
             ->addRule(function (TextInput $field, $user) {
                 if (DateTime::from($field->getValue()) < new DateTime()) {
                     return false;
                 }
                 return true;
             }, 'payments.form.payment.subscription_end_at.not_past', $user);
-
-        $subscriptionEndAt
-            ->addConditionOn($manualSubscription, Form::EQUAL, self::MANUAL_SUBSCRIPTION_START_END)
-            ->setRequired(true);
 
         // allow change of manual subscription start & end dates only for 'form' payments
         if ($payment && $payment->status !== 'form') {
