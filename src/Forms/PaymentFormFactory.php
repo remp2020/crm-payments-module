@@ -113,6 +113,9 @@ class PaymentFormFactory
                 if (isset($paymentItem->product_id)) {
                     $item['product_id'] = $paymentItem->product_id;
                 }
+                if (isset($paymentItem->subscription_type_id)) {
+                    $item['subscription_type_id'] = $paymentItem->subscription_type_id;
+                }
                 $items[] = $item;
             }
             $defaults['payment_items'] = Json::encode($items);
@@ -452,7 +455,7 @@ class PaymentFormFactory
                     $amount = str_replace(",", ".", $item->amount);
 
                     $paymentItem = new SubscriptionTypePaymentItem(
-                        $subscriptionType->id,
+                        $item->subscription_type_id,
                         $item->name,
                         (float) $amount,
                         $item->vat,
