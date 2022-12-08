@@ -14,6 +14,7 @@ use Crm\PaymentsModule\Events\PaymentChangeStatusEvent;
 use Crm\PaymentsModule\PaymentItem\PaymentItemContainer;
 use Crm\PaymentsModule\VariableSymbolInterface;
 use Crm\PaymentsModule\VariableSymbolVariant;
+use Crm\SubscriptionsModule\PaymentItem\SubscriptionTypePaymentItem;
 use Crm\SubscriptionsModule\Repository\SubscriptionsRepository;
 use DateTime;
 use League\Event\Emitter;
@@ -179,7 +180,29 @@ class PaymentsRepository extends Repository
             'referer' => '',
         ]);
 
-        foreach ($payment->related('payment_items') as $paymentItem) {
+        $paymentItems = $payment->related('payment_items');
+        $hasOnlySubscriptionTypePaymentItems = empty(array_filter($paymentItems->fetchPairs('id', 'type'), function ($type) {
+            return $type !== SubscriptionTypePaymentItem::TYPE;
+        }));
+        if ($payment->subscription_type_id && $hasOnlySubscriptionTypePaymentItems) {
+            $paymentItemContainer = new PaymentItemContainer();
+            foreach ($paymentItems as $paymentItem) {
+                $paymentItemContainer->addItem(SubscriptionTypePaymentItem::fromPaymentItem($paymentItem));
+            }
+
+            $subscriptionTypePaymentItemContainer = new PaymentItemContainer();
+            $subscriptionTypePaymentItemContainer->addItems(SubscriptionTypePaymentItem::fromSubscriptionType($payment->subscription_type));
+
+            // subscription type items could be changed, if total price isn't equal payment items will be made from subscription type
+            if (round($paymentItemContainer->totalPriceWithoutVAT(), 2) !==
+                round($subscriptionTypePaymentItemContainer->totalPriceWithoutVAT(), 2)
+            ) {
+                $this->paymentItemsRepository->add($newPayment, $subscriptionTypePaymentItemContainer);
+                return $newPayment;
+            }
+        }
+
+        foreach ($paymentItems as $paymentItem) {
             // change new payment's status to failed if it's not possible to copy payment items (payment would be incomplete)
             try {
                 $this->paymentItemsRepository->copyPaymentItem($paymentItem, $newPayment);
@@ -197,6 +220,7 @@ class PaymentsRepository extends Repository
         $items = [];
         foreach ($payment->related('payment_items') as $paymentItem) {
             $items[] = [
+                'subscription_type_item_id' => $paymentItem->subscription_type_item_id,
                 'name' => $paymentItem->name,
                 'amount' => $paymentItem->amount,
                 'vat' => $paymentItem->vat,

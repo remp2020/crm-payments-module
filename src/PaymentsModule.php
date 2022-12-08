@@ -22,6 +22,7 @@ use Crm\PaymentsModule\Commands\CalculateAveragesCommand;
 use Crm\PaymentsModule\Commands\CancelAuthorizationCommand;
 use Crm\PaymentsModule\Commands\CidGetterCommand;
 use Crm\PaymentsModule\Commands\CsobMailConfirmationCommand;
+use Crm\PaymentsModule\Commands\FillReferenceToSubscriptionTypeItemInPaymentItemsCommand;
 use Crm\PaymentsModule\Commands\LastPaymentsCheckCommand;
 use Crm\PaymentsModule\Commands\RecurrentPaymentsCardCheck;
 use Crm\PaymentsModule\Commands\RecurrentPaymentsChargeCommand;
@@ -277,6 +278,7 @@ class PaymentsModule extends CrmModule
         $commandsContainer->registerCommand($this->getInstance(SkCsobMailConfirmationCommand::class));
         $commandsContainer->registerCommand($this->getInstance(TatraBankaStatementMailConfirmationCommand::class));
         $commandsContainer->registerCommand($this->getInstance(CancelAuthorizationCommand::class));
+        $commandsContainer->registerCommand($this->getInstance(FillReferenceToSubscriptionTypeItemInPaymentItemsCommand::class));
     }
 
     public function registerApiCalls(ApiRoutersContainerInterface $apiRoutersContainer)

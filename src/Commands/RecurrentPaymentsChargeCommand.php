@@ -118,7 +118,8 @@ class RecurrentPaymentsChargeCommand extends Command
                             $item['amount'],
                             $item['vat'],
                             $item['count'],
-                            $item['meta']
+                            $item['meta'],
+                            $item['subscription_type_item_id']
                         ));
 
                         // In case of subscription type VAT change, parent payment would copy incorrect VAT rates

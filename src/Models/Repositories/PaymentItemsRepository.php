@@ -156,8 +156,8 @@ class PaymentItemsRepository extends Repository
 
         $newPaymentItemMetaArray = $paymentItem->related('payment_item_meta')->fetchPairs('key', 'value');
 
-        if ($paymentItemArray['type'] === SubscriptionTypePaymentItem::TYPE && isset($newPaymentItemMetaArray['subscription_type_item_id'])) {
-            $subscriptionTypeItem = $this->subscriptionTypeItemsRepository->find($newPaymentItemMetaArray['subscription_type_item_id']);
+        if ($paymentItemArray['type'] === SubscriptionTypePaymentItem::TYPE && $paymentItem->subscription_type_item_id) {
+            $subscriptionTypeItem = $paymentItem->subscription_type_item;
             if (!$subscriptionTypeItem) {
                 throw new Exception("No `subscription_type_item`: ({$newPaymentItemMetaArray['subscription_type_item_id']}) found by copying payment: {$oldPaymentId} - to payment: {$newPayment->id}");
             }

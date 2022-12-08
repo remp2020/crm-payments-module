@@ -115,6 +115,7 @@ class PaymentFormFactory
                 }
                 if (isset($paymentItem->subscription_type_id)) {
                     $item['subscription_type_id'] = $paymentItem->subscription_type_id;
+                    $item['subscription_type_item_id'] = $paymentItem->subscription_type_item_id;
                 }
                 $items[] = $item;
             }
@@ -460,7 +461,8 @@ class PaymentFormFactory
                         (float) $amount,
                         $item->vat,
                         $item->count,
-                        $meta
+                        $meta,
+                        $item->subscription_type_item_id
                     );
                     $paymentItemContainer->addItem($paymentItem);
                 }

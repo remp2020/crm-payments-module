@@ -89,6 +89,7 @@
                 item.find('input[data-tag="vat"]').val(items[i].vat);
                 item.find('input[data-tag="type"]').val(items[i].type);
                 item.find('input[data-tag="subscription_type_id"]').val(subscriptionTypeId);
+                item.find('input[data-tag="subscription_type_item_id"]').val(items[i].subscription_type_item_id);
                 item.find('input[data-tag="meta"]').val(JSON.stringify(items[i].meta));
                 domItems.append(item)
             }
