@@ -33,45 +33,18 @@ class RecurrentPaymentsChargeCommand extends Command
 {
     use DecoratedCommandTrait;
 
-    private $recurrentPaymentsRepository;
-
-    private $paymentsRepository;
-
-    private $gatewayFactory;
-
-    private $paymentLogsRepository;
-
-    private $emitter;
-
-    private $applicationConfig;
-
-    private $recurrentPaymentsResolver;
-
-    private $recurrentPaymentsProcessor;
-
-    private $translator;
-
     public function __construct(
-        RecurrentPaymentsRepository $recurrentPaymentsRepository,
-        PaymentsRepository $paymentsRepository,
-        GatewayFactory $gatewayFactory,
-        PaymentLogsRepository $paymentLogsRepository,
-        Emitter $emitter,
-        ApplicationConfig $applicationConfig,
-        RecurrentPaymentsResolver $recurrentPaymentsResolver,
-        RecurrentPaymentsProcessor $recurrentPaymentsProcessor,
-        Translator $translator
+        private RecurrentPaymentsRepository $recurrentPaymentsRepository,
+        private PaymentsRepository $paymentsRepository,
+        private GatewayFactory $gatewayFactory,
+        private PaymentLogsRepository $paymentLogsRepository,
+        private Emitter $emitter,
+        private ApplicationConfig $applicationConfig,
+        private RecurrentPaymentsResolver $recurrentPaymentsResolver,
+        private RecurrentPaymentsProcessor $recurrentPaymentsProcessor,
+        private Translator $translator
     ) {
         parent::__construct();
-        $this->recurrentPaymentsRepository = $recurrentPaymentsRepository;
-        $this->paymentsRepository = $paymentsRepository;
-        $this->gatewayFactory = $gatewayFactory;
-        $this->paymentLogsRepository = $paymentLogsRepository;
-        $this->emitter = $emitter;
-        $this->applicationConfig = $applicationConfig;
-        $this->recurrentPaymentsResolver = $recurrentPaymentsResolver;
-        $this->recurrentPaymentsProcessor = $recurrentPaymentsProcessor;
-        $this->translator = $translator;
     }
 
     protected function configure()
@@ -330,7 +303,7 @@ class RecurrentPaymentsChargeCommand extends Command
         foreach ($items as $item) {
             $checkSum += $item->totalPrice();
         }
-        if ($checkSum !== $customChargeAmount) {
+        if (round($checkSum, 2) !== round($customChargeAmount, 2)) {
             throw new \Exception("Cannot charge custom amount, sum of items [{$checkSum}] is different than charged amount [{$customChargeAmount}].");
         }
 
