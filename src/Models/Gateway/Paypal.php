@@ -47,18 +47,23 @@ class Paypal extends GatewayAbstract
         $this->initialize();
 
         $bag = new PayPalItemBag();
+        $items = [];
         foreach ($payment->related('payment_items') as $paymentItem) {
-            $item = new PayPalItem();
-            $item->setName($paymentItem->name);
-            $item->setQuantity($paymentItem->count);
-            $item->setPrice($paymentItem->amount);
+            $items[] = $paymentItem->name;
 
-            $bag->add($item);
+            $ppItem = new PayPalItem();
+            $ppItem->setName($paymentItem->name);
+            $ppItem->setQuantity($paymentItem->count);
+            $ppItem->setPrice($paymentItem->amount);
+
+            $bag->add($ppItem);
         }
+        $description = implode(", ", $items) . " ({$this->translator->translate('payments.gateway.recurrent')})";
 
         $this->response = $this->gateway->purchase([
             'amount' => $payment->amount,
             'currency' => $this->applicationConfig->get('currency'),
+            'description' => $description,
             'transactionId' => $payment->variable_symbol,
             'returnUrl' => $this->generateReturnUrl($payment, ['paypal_success' => '1', 'VS' => $payment->variable_symbol]),
             'cancelUrl' => $this->generateReturnUrl($payment, ['paypal_success' => '0', 'VS' => $payment->variable_symbol]),

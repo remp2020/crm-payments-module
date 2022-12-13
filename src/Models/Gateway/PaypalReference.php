@@ -70,6 +70,7 @@ class PaypalReference extends GatewayAbstract implements RecurrentPaymentInterfa
         $this->response = $this->gateway->purchase([
             'amount' => $payment->amount,
             'currency' => $this->applicationConfig->get('currency'),
+            'description' => $description,
             'transactionId' => $payment->variable_symbol,
             'billingAgreement' => new BillingAgreement(true, $description),
             'returnUrl' => $this->generateReturnUrl($payment, ['paypal_success' => '1', 'VS' => $payment->variable_symbol]),
