@@ -38,7 +38,7 @@
             <td><b>{$log->amount|price}</b></td>
             <td>
               {if $log->payment_id}
-                <a href="{link PaymentsAdmin:default formData => ['text' => $log->variable_symbol]}">#{$log->payment_id}</a>
+                <a href="{link PaymentsAdmin:default formData => ['id' => $log->payment_id]}">#{$log->payment_id}</a>
               {else}
                 N/A
               {/if}

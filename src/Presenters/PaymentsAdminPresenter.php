@@ -109,6 +109,7 @@ class PaymentsAdminPresenter extends AdminPresenter
             ->setOption('id', 'formCollapse');
         $buttonGroup = $form->addGroup('button', false)->setOption('label', null);
 
+        $form->addHidden('id');
         $form->addText('text', 'payments.admin.component.admin_filter_form.variable_symbol.label')
             ->setHtmlAttribute('autofocus');
 

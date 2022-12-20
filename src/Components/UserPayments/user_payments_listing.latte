@@ -256,11 +256,11 @@
       <tr n:foreach="$parsedEmails as $log">
         <td>{$log->created_at|userDate}</td>
         <td>{$log->delivered_at|userDate}</td>
-        <td><a href="{plink :Payments:PaymentsAdmin:default text => $log->variable_symbol}">{$log->variable_symbol}</a></td>
+        <td><a href="{plink :Payments:PaymentsAdmin:default formData => [text => $log->variable_symbol]}">{$log->variable_symbol}</a></td>
         <td><b>{$log->amount|price}</b></td>
         <td>
            {if $log->payment_id}
-             <a href="{plink :Payments:PaymentsAdmin:default text => $log->variable_symbol}">
+             <a href="{plink :Payments:PaymentsAdmin:default formData => [id => $log->payment_id]}">
                {_"payments.admin.component.user_payments_listing.caption.payment"} #{$log->payment_id}
              </a>
            {else}

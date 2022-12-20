@@ -12,16 +12,10 @@ class AdminFilterFormData
 {
     private $formData;
 
-    private $paymentsRepository;
-
-    private $dataProviderManager;
-
     public function __construct(
-        DataProviderManager $dataProviderManager,
-        PaymentsRepository $paymentsRepository
+        private DataProviderManager $dataProviderManager,
+        private PaymentsRepository $paymentsRepository
     ) {
-        $this->paymentsRepository = $paymentsRepository;
-        $this->dataProviderManager = $dataProviderManager;
     }
 
     public function parse($formData)
@@ -44,6 +38,10 @@ class AdminFilterFormData
             $this->getReferer()
         );
 
+        if ($this->getId()) {
+            $payments->where('id = ?', $this->getId());
+        }
+
         if ($this->getPaidAtFrom()) {
             $payments->where('paid_at >= ?', DateTime::from($this->getPaidAtFrom()));
         }
@@ -64,6 +62,7 @@ class AdminFilterFormData
     public function getFormValues()
     {
         return [
+            'id' => $this->getId(),
             'text' => $this->getText(),
             'payment_gateway' => $this->getPaymentGateway(),
             'paid_at_from' => $this->getPaidAtFrom(),
@@ -74,6 +73,11 @@ class AdminFilterFormData
             'recurrent_charge' => $this->getRecurrentCharge(),
             'referer' => $this->getReferer()
         ];
+    }
+
+    private function getId()
+    {
+        return $this->formData['id'] ?? null;
     }
 
     private function getText()
