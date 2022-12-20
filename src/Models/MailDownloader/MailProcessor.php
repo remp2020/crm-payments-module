@@ -87,6 +87,11 @@ class MailProcessor
             return false;
         }
 
+        // Some mails (for failed payments) don't necessarily have to contain the amount. We can (should) ignore them.
+        if ($this->mailContent->getAmount() === null) {
+            return false;
+        }
+
         if ($payment->amount != $this->mailContent->getAmount()) {
             $this->logBuilder
                 ->setState(ParsedMailLogsRepository::STATE_DIFFERENT_AMOUNT)
