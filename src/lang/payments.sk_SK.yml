@@ -429,7 +429,7 @@ admin:
             label: "Kúpili typ predplatného (rekurentne)"
 
     address:
-        cant_delete: 'Táto adresa sa používa pri platbe: %payments%|Táto adresa sa používa pri platbách: %payments%'
+        cant_delete: '{1}Táto adresa sa používa pri platbe: %payments%|[2,Inf]Táto adresa sa používa pri platbách: %payments%'
 
     exports:
         title: Exporty

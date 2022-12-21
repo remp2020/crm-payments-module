@@ -413,7 +413,7 @@ admin:
         duplicates:
             title: Doppelte wiederkehrende Zahlungen
     address:
-        cant_delete: 'Diese Adresse wird für die Zahlung verwendet: %payments%|Diese Adresse wird für die Zahlungen verwendet: %payments%'
+        cant_delete: '{1}Diese Adresse wird für die Zahlung verwendet: %payments%|[2,Inf]Diese Adresse wird für die Zahlungen verwendet: %payments%'
 frontend:
     proforma_invoice:
         form_title: Bitte füllen Sie die Rechnungsdaten aus, um die Bestellung abzuschließen

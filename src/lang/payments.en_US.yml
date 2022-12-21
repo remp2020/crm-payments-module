@@ -429,7 +429,7 @@ admin:
             label: "Purchased subscription type (recurrent)"
 
     address:
-        cant_delete: 'This address is used in payment: %payments%|This address is used in payments: %payments%'
+        cant_delete: '{1}This address is used in payment: %payments%|[2,Inf]This address is used in payments: %payments%'
 
     exports:
         title: Exports

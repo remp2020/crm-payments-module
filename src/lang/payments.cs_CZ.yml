@@ -424,7 +424,7 @@ admin:
             label: "Koupili typ předplatného (rekurentně)"
 
     address:
-        cant_delete: 'Tato adresa se používá při platbě: %payments%|Tato adresa se používá při platbách: %payments%'
+        cant_delete: '{1}Tato adresa se používá při platbě: %payments%|[2,Inf]Tato adresa se používá při platbách: %payments%'
 
     exports:
         title: Exporty
