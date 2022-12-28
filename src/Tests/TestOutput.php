@@ -27,7 +27,7 @@ class TestOutput implements OutputInterface
         $this->level = $level;
     }
 
-    public function getVerbosity()
+    public function getVerbosity(): int
     {
         return $this->level;
     }
@@ -37,7 +37,7 @@ class TestOutput implements OutputInterface
         $this->decorated = $decorated;
     }
 
-    public function isDecorated()
+    public function isDecorated(): bool
     {
         return $this->decorated;
     }
@@ -47,27 +47,27 @@ class TestOutput implements OutputInterface
         $this->formatter = $formatter;
     }
 
-    public function getFormatter()
+    public function getFormatter(): OutputFormatterInterface
     {
         return $this->formatter;
     }
 
-    public function isQuiet()
+    public function isQuiet(): bool
     {
         return false;
     }
 
-    public function isVerbose()
+    public function isVerbose(): bool
     {
         return true;
     }
 
-    public function isVeryVerbose()
+    public function isVeryVerbose(): bool
     {
         return false;
     }
 
-    public function isDebug()
+    public function isDebug(): bool
     {
         return false;
     }

@@ -92,8 +92,12 @@ class RecurrentPaymentsRepository extends Repository
             return $recurrentPayment;
         }
 
-        $retries = explode(', ', $this->applicationConfig->get('recurrent_payment_charges'));
-        $retries = count((array)$retries);
+        $retriesConfig = $this->applicationConfig->get('recurrent_payment_charges');
+        if ($retriesConfig) {
+            $retries = count(explode(',', $retriesConfig));
+        } else {
+            $retries = 1;
+        }
 
         if (!$chargeAt) {
             try {

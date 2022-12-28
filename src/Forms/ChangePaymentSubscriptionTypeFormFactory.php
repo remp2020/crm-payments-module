@@ -70,7 +70,7 @@ class ChangePaymentSubscriptionTypeFormFactory
             'subscription_type_id',
             'payments.admin.component.change_payment_subscription_type_widget.subscription_type',
             $subscriptionTypePairs
-        )->setRequired()->setAttribute('class', 'form-control')
+        )->setRequired()->setHtmlAttribute('class', 'form-control')
             ->getControlPrototype()
             ->addAttributes(['class' => 'select2']);
 

@@ -32,7 +32,7 @@ class PaymentGatewaysAdminPresenter extends AdminPresenter
 
     private function filteredGateways()
     {
-        return $this->paymentGatewaysRepository->all($this->text)->order('sorting ASC');
+        return $this->paymentGatewaysRepository->all()->order('sorting ASC');
     }
 
     /**

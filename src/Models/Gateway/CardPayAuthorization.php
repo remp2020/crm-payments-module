@@ -105,7 +105,8 @@ class CardPayAuthorization extends GatewayAbstract implements AuthorizationInter
 
         $externalTransactionId = $payment->related('payment_meta')
             ->where('key', 'external_transaction_id')
-            ->fetchField('value');
+            ->fetch()
+            ?->value;
 
         if (!$externalTransactionId) {
             Debugger::log("No `external_transaction_id` (TID) found for payment: {$payment->id}");

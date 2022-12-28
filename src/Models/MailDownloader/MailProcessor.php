@@ -262,7 +262,8 @@ class MailProcessor
         $vs = $this->mailContent->getVs();
         if (!$vs) {
             $pattern = '/vs[:\.\-_ ]??(\d{1,10})/i';
-            if (preg_match($pattern, $this->mailContent->getReceiverMessage(), $result)) {
+            $receiverMessage = $this->mailContent->getReceiverMessage();
+            if ($receiverMessage && preg_match($pattern, $receiverMessage, $result)) {
                 $vs = $result[1];
                 $this->mailContent->setVs($vs);
             }

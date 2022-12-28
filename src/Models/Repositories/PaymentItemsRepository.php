@@ -37,10 +37,10 @@ class PaymentItemsRepository extends Repository
         Explorer $database,
         ApplicationConfig $applicationConfig,
         Emitter $emitter,
-        Storage $cacheStorage = null,
         PaymentItemMetaRepository $paymentItemMetaRepository,
         DataProviderManager $dataProviderManager,
-        SubscriptionTypeItemsRepository $subscriptionTypeItemsRepository
+        SubscriptionTypeItemsRepository $subscriptionTypeItemsRepository,
+        Storage $cacheStorage = null
     ) {
         parent::__construct($database, $cacheStorage);
         $this->applicationConfig = $applicationConfig;
