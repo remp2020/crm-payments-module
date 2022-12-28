@@ -2,6 +2,7 @@
 
 namespace Crm\PaymentsModule\Tests;
 
+use Crm\ApiModule\Tests\ApiTestTrait;
 use Crm\PaymentsModule\Api\StopRecurrentPaymentApiHandler;
 use Crm\PaymentsModule\Models\Gateway;
 use Crm\PaymentsModule\PaymentItem\PaymentItemContainer;
@@ -17,11 +18,10 @@ use Tomaj\NetteApi\Response\JsonApiResponse;
 
 class StopRecurrentPaymentApiHandlerTest extends PaymentsTestCase
 {
-    /** @var StopRecurrentPaymentApiHandler */
-    private $handler;
+    use ApiTestTrait;
 
-    /** @var UserManager */
-    private $userManager;
+    private StopRecurrentPaymentApiHandler $handler;
+    private UserManager $userManager;
 
     public function setUp(): void
     {
@@ -47,7 +47,7 @@ class StopRecurrentPaymentApiHandlerTest extends PaymentsTestCase
         // call API
         $this->handler->setRawPayload(Json::encode(['id' => $recurrentPayment->id]));
         $this->handler->setAuthorization($this->getTestAuthorization($user));
-        $response = $this->handler->handle([]); // TODO: fix params
+        $response = $this->runApi($this->handler);
 
         // validate API response
         $this->assertEquals(JsonApiResponse::class, get_class($response));
@@ -76,7 +76,7 @@ class StopRecurrentPaymentApiHandlerTest extends PaymentsTestCase
         // call API
         $this->handler->setRawPayload(Json::encode(['id' => $recurrentPayment->id]));
         $this->handler->setAuthorization($this->getTestAuthorization($user));
-        $response = $this->handler->handle([]); // TODO: fix params
+        $response = $this->runApi($this->handler);
 
         // validate API response
         $this->assertEquals(JsonApiResponse::class, get_class($response));
@@ -103,7 +103,7 @@ class StopRecurrentPaymentApiHandlerTest extends PaymentsTestCase
         // call API
         $this->handler->setRawPayload(Json::encode(['id' => $recurrentPayment->id]));
         $this->handler->setAuthorization($this->getTestAuthorization($user));
-        $response = $this->handler->handle([]); // TODO: fix params
+        $response = $this->runApi($this->handler);
 
         // validate API response
         $this->assertEquals(JsonApiResponse::class, get_class($response));
@@ -133,7 +133,7 @@ class StopRecurrentPaymentApiHandlerTest extends PaymentsTestCase
 
         // call API
         $this->handler->setAuthorization($this->getTestAuthorization($user));
-        $response = $this->handler->handle([]); // TODO: fix params
+        $response = $this->runApi($this->handler);
 
         // validate API response
         $this->assertEquals(JsonApiResponse::class, get_class($response));
@@ -155,7 +155,7 @@ class StopRecurrentPaymentApiHandlerTest extends PaymentsTestCase
         // call API
         $this->handler->setRawPayload(Json::encode(['id' => $notFoundRecurrentPaymentID]));
         $this->handler->setAuthorization($this->getTestAuthorization($user));
-        $response = $this->handler->handle([]); // TODO: fix params
+        $response = $this->runApi($this->handler);
 
         // validate API response
         $this->assertEquals(JsonApiResponse::class, get_class($response));
@@ -180,7 +180,7 @@ class StopRecurrentPaymentApiHandlerTest extends PaymentsTestCase
         // call API
         $this->handler->setRawPayload(Json::encode(['id' => $recurrentPayment->id]));
         $this->handler->setAuthorization($this->getTestAuthorization($user));
-        $response = $this->handler->handle([]); // TODO: fix params
+        $response = $this->runApi($this->handler);
 
         // validate API response
         $this->assertEquals(JsonApiResponse::class, get_class($response));
@@ -210,7 +210,7 @@ class StopRecurrentPaymentApiHandlerTest extends PaymentsTestCase
         // call API with mismatched recurrent payment (1) and user (2)
         $this->handler->setRawPayload(Json::encode(['id' => $recurrentPayment1->id]));
         $this->handler->setAuthorization($this->getTestAuthorization($user2));
-        $response = $this->handler->handle([]); // TODO: fix params
+        $response = $this->runApi($this->handler);
 
         // validate API response
         $this->assertEquals(JsonApiResponse::class, get_class($response));

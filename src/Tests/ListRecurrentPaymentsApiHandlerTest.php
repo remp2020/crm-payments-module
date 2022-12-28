@@ -2,6 +2,7 @@
 
 namespace Crm\PaymentsModule\Tests;
 
+use Crm\ApiModule\Tests\ApiTestTrait;
 use Crm\PaymentsModule\Api\ListRecurrentPaymentsApiHandler;
 use Crm\PaymentsModule\PaymentItem\PaymentItemContainer;
 use Crm\PaymentsModule\Repository\RecurrentPaymentsRepository;
@@ -13,7 +14,9 @@ use Tomaj\NetteApi\Response\JsonApiResponse;
 
 class ListRecurrentPaymentsApiHandlerTest extends PaymentsTestCase
 {
-    private $handler;
+    use ApiTestTrait;
+
+    private ListRecurrentPaymentsApiHandler $handler;
 
     public function setUp(): void
     {
@@ -38,7 +41,7 @@ class ListRecurrentPaymentsApiHandlerTest extends PaymentsTestCase
         $rp2 = $this->createRecurrentPayment('card', $payment, DateTime::from('2016-06-01'));
 
         $this->handler->setAuthorization($this->getTestAuthorization($payment));
-        $response = $this->handler->handle([]); // TODO: fix params
+        $response = $this->runApi($this->handler);
         $this->assertEquals(JsonApiResponse::class, get_class($response));
 
         $payload = $response->getPayload();
@@ -59,7 +62,7 @@ class ListRecurrentPaymentsApiHandlerTest extends PaymentsTestCase
         $_GET['states'] = ['active'];
 
         $this->handler->setAuthorization($this->getTestAuthorization($payment));
-        $response = $this->handler->handle([]); // TODO: fix params
+        $response = $this->runApi($this->handler);
         $this->assertEquals(JsonApiResponse::class, get_class($response));
 
         $payload = $response->getPayload();
@@ -78,7 +81,7 @@ class ListRecurrentPaymentsApiHandlerTest extends PaymentsTestCase
         $_GET['states'] = ['active', 'user_stop', 'admin_stop'];
 
         $this->handler->setAuthorization($this->getTestAuthorization($payment));
-        $response = $this->handler->handle([]); // TODO: fix params
+        $response = $this->runApi($this->handler);
         $this->assertEquals(JsonApiResponse::class, get_class($response));
 
         $payload = $response->getPayload();
@@ -99,7 +102,7 @@ class ListRecurrentPaymentsApiHandlerTest extends PaymentsTestCase
         $_GET['states'] = ['user_stop'];
 
         $this->handler->setAuthorization($this->getTestAuthorization($payment));
-        $response = $this->handler->handle([]); // TODO: fix params
+        $response = $this->runApi($this->handler);
         $this->assertEquals(JsonApiResponse::class, get_class($response));
 
         $payload = $response->getPayload();
@@ -116,7 +119,7 @@ class ListRecurrentPaymentsApiHandlerTest extends PaymentsTestCase
         $_GET['chargeable_from'] = '2016-01-01T01:23:45Z';
 
         $this->handler->setAuthorization($this->getTestAuthorization($payment));
-        $response = $this->handler->handle([]); // TODO: fix params
+        $response = $this->runApi($this->handler);
         $this->assertEquals(JsonApiResponse::class, get_class($response));
 
         $payload = $response->getPayload();
@@ -135,7 +138,7 @@ class ListRecurrentPaymentsApiHandlerTest extends PaymentsTestCase
         $_GET['chargeable_from'] = '2016-01-01 01:23:45++00';
 
         $this->handler->setAuthorization($this->getTestAuthorization($payment));
-        $response = $this->handler->handle([]); // TODO: fix params
+        $response = $this->runApi($this->handler);
         $this->assertEquals(JsonApiResponse::class, get_class($response));
 
         $payload = $response->getPayload();
