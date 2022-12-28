@@ -12,7 +12,7 @@
     "tomaj/imap-mail-downloader": "^1.2.0",
     "rootpd/omnipay-csob": "~4.0.0",
     "rootpd/omnipay-paypal-reference": "^4.0.0",
-    "singpolyma/openpgp-php": "~0.5",
+    "rootpd/openpgp-php": "~0.5",
     "tomaj/omnipay-tatra": "4.2"
   },
   "minimum-stability": "dev",
@@ -21,5 +21,22 @@
       "Crm\\PaymentsModule\\": "src/"
     },
     "classmap": ["src/"]
-  }
+  },
+  "repositories": [
+    {
+      "type": "package",
+      "package": {
+        "name": "rootpd/openpgp-php",
+        "version": "0.5.1",
+        "source": {
+          "url": "https://github.com/rootpd/openpgp-php.git",
+          "type": "git",
+          "reference": "0.5.1"
+        },
+        "autoload": {
+          "classmap": ["lib/"]
+        }
+      }
+    }
+  ]
 }
