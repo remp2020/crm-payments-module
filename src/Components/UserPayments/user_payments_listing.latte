@@ -257,7 +257,13 @@
         <td>{$log->created_at|userDate}</td>
         <td>{$log->delivered_at|userDate}</td>
         <td><a href="{plink :Payments:PaymentsAdmin:default formData => [text => $log->variable_symbol]}">{$log->variable_symbol}</a></td>
-        <td><b>{$log->amount|price}</b></td>
+        <td>
+          {if $log->amount}
+              <b>{$log->amount|price}</b></td>
+          {else}
+              <span class="text-muted">{_system.not_available}</span>
+          {/if}
+
         <td>
            {if $log->payment_id}
              <a href="{plink :Payments:PaymentsAdmin:default formData => [id => $log->payment_id]}">
@@ -282,7 +288,11 @@
             <span title="{$log->state}" class="label label-default">{$log->state}</span>
           {/if}
         </td>
-        <td><code>{$log->message}</code></td>
+        <td>
+            {if $log->message}
+                <code class="muted">{$log->message}</code>
+            {/if}
+        </td>
       </tr>
     </tbody>
   </table>
