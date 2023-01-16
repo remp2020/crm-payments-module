@@ -4,6 +4,7 @@ namespace Crm\PaymentsModule\Gateways;
 
 use Crm\ApplicationModule\Config\ApplicationConfig;
 use Crm\PaymentsModule\Repository\PaymentMetaRepository;
+use Crm\UsersModule\Auth\UserManager;
 use Nette\Application\LinkGenerator;
 use Nette\Http\Response;
 use Nette\Localization\Translator;
@@ -91,6 +92,7 @@ class Csob extends GatewayAbstract
             ]),
             'transactionId' => $payment->variable_symbol,
             'cart' => $cart,
+            'customerId' => UserManager::hashedUserId($payment->user->id),
         ])->send();
 
         $this->paymentMetaRepository->add($payment, 'pay_id', $this->response->getTransactionReference());
