@@ -8,6 +8,7 @@ use Crm\PaymentsModule\GatewayFail;
 use Crm\PaymentsModule\RecurrentPaymentFailStop;
 use Crm\PaymentsModule\RecurrentPaymentFailTry;
 use Crm\PaymentsModule\Repository\PaymentMetaRepository;
+use Crm\UsersModule\Auth\UserManager;
 use Nette\Application\LinkGenerator;
 use Nette\Http\Response;
 use Nette\Localization\Translator;
@@ -97,6 +98,7 @@ class CsobOneClick extends GatewayAbstract implements RecurrentPaymentInterface
             ]),
             'transactionId' => $payment->variable_symbol,
             'cart' => $this->getCart($payment),
+            'customerId' => UserManager::hashedUserId($payment->user->id),
         ])->send();
 
         $this->paymentMetaRepository->add($payment, 'pay_id', $this->response->getTransactionReference());
