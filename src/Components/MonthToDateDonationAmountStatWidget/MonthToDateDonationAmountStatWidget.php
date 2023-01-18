@@ -39,13 +39,13 @@ class MonthToDateDonationAmountStatWidget extends BaseLazyWidget
             DateTime::from(date('Y-m')),
             new DateTime()
         )->where(':payment_item.type = ?', DonationPaymentItem::TYPE)
-            ->sum(':payment_item.amount');
+            ->sum(':payment_item.amount') ?? 0.00;
 
         $this->template->lastMonthDayAmount = $this->paymentsRepository->paidBetween(
             DateTime::from('first day of last month 00:00'),
             DateTime::from('-1 month')
         )->where(':payment_item.type = ?', DonationPaymentItem::TYPE)
-            ->sum(':payment_item.amount');
+            ->sum(':payment_item.amount') ?? 0.00;
 
         $this->template->setFile(__DIR__ . DIRECTORY_SEPARATOR . $this->templateName);
         $this->template->render();

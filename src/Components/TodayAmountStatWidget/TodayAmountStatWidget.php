@@ -37,11 +37,11 @@ class TodayAmountStatWidget extends BaseLazyWidget
         $this->template->todayAmount = $this->paymentsRepository->paidBetween(
             DateTime::from('today 00:00'),
             new DateTime()
-        )->sum('amount');
+        )->sum('amount') ?? 0.00;
         $this->template->yesterdayAmount = $this->paymentsRepository->paidBetween(
             DateTime::from('yesterday 00:00'),
             DateTime::from('today 00:00')
-        )->sum('amount');
+        )->sum('amount') ?? 0.00;
         $this->template->setFile(__DIR__ . DIRECTORY_SEPARATOR . $this->templateName);
         $this->template->render();
     }

@@ -37,11 +37,11 @@ class MonthToDateAmountStatWidget extends BaseLazyWidget
         $this->template->thisMonthAmount = $this->paymentsRepository->paidBetween(
             DateTime::from(date('Y-m')),
             new DateTime()
-        )->sum('amount');
+        )->sum('amount') ?? 0.00;
         $this->template->lastMonthDayAmount = $this->paymentsRepository->paidBetween(
             DateTime::from('first day of last month 00:00'),
             DateTime::from('-1 month')
-        )->sum('amount');
+        )->sum('amount') ?? 0.00;
         $this->template->setFile(__DIR__ . DIRECTORY_SEPARATOR . $this->templateName);
         $this->template->render();
     }

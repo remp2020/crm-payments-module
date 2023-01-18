@@ -392,7 +392,7 @@ class PaymentsRepository extends Repository
     final public function totalAmountSum($allowCached = false, $forceCacheUpdate = false)
     {
         $callable = function () {
-            return $this->getTable()->where(['status' => self::STATUS_PAID])->sum('amount');
+            return $this->getTable()->where(['status' => self::STATUS_PAID])->sum('amount') ?? 0.00;
         };
 
         if ($allowCached) {
@@ -409,7 +409,7 @@ class PaymentsRepository extends Repository
 
     final public function totalUserAmountSum($userId)
     {
-        return $this->getTable()->where(['user_id' => $userId, 'status' => self::STATUS_PAID])->sum('amount');
+        return $this->getTable()->where(['user_id' => $userId, 'status' => self::STATUS_PAID])->sum('amount') ?? 0.00;
     }
 
     final public function getStatusPairs()
