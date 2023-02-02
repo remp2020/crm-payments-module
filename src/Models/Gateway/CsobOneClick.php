@@ -10,9 +10,11 @@ use Crm\PaymentsModule\RecurrentPaymentFailTry;
 use Crm\PaymentsModule\Repository\PaymentMetaRepository;
 use Crm\UsersModule\Auth\UserManager;
 use Nette\Application\LinkGenerator;
+use Nette\Database\Table\ActiveRow;
 use Nette\Http\Response;
 use Nette\Localization\Translator;
 use Nette\Utils\DateTime;
+use Nette\Utils\Strings;
 use Omnipay\Common\Exception\InvalidRequestException;
 use Omnipay\Csob\Gateway;
 use Omnipay\Omnipay;
@@ -43,13 +45,9 @@ class CsobOneClick extends GatewayAbstract implements RecurrentPaymentInterface
     /** @var \Omnipay\Csob\Gateway */
     protected $gateway;
 
-    private $paymentMetaRepository;
-
     private $resultCode;
 
     private $resultMessage;
-
-    private $logger;
 
     protected $cancelErrorCodes = [
         self::PAYMENT_NOT_AUTHORIZED_ONECLICK_EXPIRED,
@@ -60,16 +58,14 @@ class CsobOneClick extends GatewayAbstract implements RecurrentPaymentInterface
     ];
 
     public function __construct(
-        LoggerInterface $logger,
+        private LoggerInterface $logger,
+        private PaymentMetaRepository $paymentMetaRepository,
         LinkGenerator $linkGenerator,
         ApplicationConfig $applicationConfig,
         Response $httpResponse,
-        PaymentMetaRepository $paymentMetaRepository,
         Translator $translator
     ) {
         parent::__construct($linkGenerator, $applicationConfig, $httpResponse, $translator);
-        $this->logger = $logger;
-        $this->paymentMetaRepository = $paymentMetaRepository;
     }
 
     protected function initialize()
@@ -86,20 +82,32 @@ class CsobOneClick extends GatewayAbstract implements RecurrentPaymentInterface
         $this->gateway->setDisplayOmnibox(false);
         $this->gateway->setCurrency('CZK'); // TODO: replace with system currency once implemented
         $this->gateway->setLanguage('CZ');
+        $this->gateway->setTraceLog(function ($message) {
+            $this->logger->info($message);
+        });
     }
 
     public function begin($payment)
     {
         $this->initialize();
 
-        $this->response = $this->gateway->checkout([
+        $checkoutRequest = [
             'returnUrl' => $this->generateReturnUrl($payment, [
                 'VS' => $payment->variable_symbol,
             ]),
             'transactionId' => $payment->variable_symbol,
             'cart' => $this->getCart($payment),
             'customerId' => UserManager::hashedUserId($payment->user->id),
-        ])->send();
+            'email' => $payment->user->email,
+            'createdAt' => $payment->user->created_at,
+            'changedAt' => $payment->user->modified_at,
+        ];
+
+        if (!empty($payment->user->last_name)) {
+            $checkoutRequest['name'] = $this->getUserName($payment->user);
+        }
+
+        $this->response = $this->gateway->checkout($checkoutRequest)->send();
 
         $this->paymentMetaRepository->add($payment, 'pay_id', $this->response->getTransactionReference());
     }
@@ -215,20 +223,34 @@ class CsobOneClick extends GatewayAbstract implements RecurrentPaymentInterface
         $this->initialize();
         $clientIp = Request::getIp();
 
+        $oneClickPaymentRequest = [
+            'payId' => $token,
+            'transactionId' => $payment->variable_symbol,
+            'cart' => $this->getCart($payment),
+            'email' => $payment->user->email,
+            'createdAt' => $payment->user->created_at,
+            'changedAt' => $payment->user->modified_at,
+
+            // This parameter doesn't make sense. CSOB requires it even for offline payments and even when the library
+            // indicates that client is just not there (clientInitiated: false).
+            'returnUrl' => $this->generateReturnUrl($payment, [
+                'VS' => $payment->variable_symbol,
+            ]),
+        ];
+
         // clientIp for offline payment (cli) should be the same as the one used during initial payment
         // https://github.com/csob/paymentgateway/issues/471
         $initialPaymentMeta = $this->paymentMetaRepository->findByMeta('pay_id', $token);
         if ($clientIp === 'cli' && $initialPaymentMeta) {
-            $clientIp = $initialPaymentMeta->payment->ip;
+            $oneClickPaymentRequest['clientIp'] = $initialPaymentMeta->payment->ip;
+        }
+
+        if (!empty($payment->user->last_name)) {
+            $oneClickPaymentRequest['name'] = $this->getUserName($payment->user);
         }
 
         try {
-            $this->response = $this->gateway->oneClickPayment([
-                'payId' => $token,
-                'transactionId' => $payment->variable_symbol,
-                'cart' => $this->getCart($payment),
-                'clientIp' => $clientIp,
-            ])->send();
+            $this->response = $this->gateway->oneClickPayment($oneClickPaymentRequest)->send();
         } catch (\Exception $exception) {
             if ($exception instanceof Exception) {
                 $this->resultCode = $exception->getCode();
@@ -285,5 +307,14 @@ class CsobOneClick extends GatewayAbstract implements RecurrentPaymentInterface
     {
         $data = $this->getResponseData();
         return $data['resultMessage'] ?? $this->resultMessage;
+    }
+
+    private function getUserName(ActiveRow $user): string
+    {
+        return Strings::trim(Strings::substring(
+            "{$user->first_name} {$user->last_name}",
+            0,
+            45
+        ));
     }
 }
