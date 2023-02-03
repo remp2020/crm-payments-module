@@ -230,6 +230,7 @@ class CsobOneClick extends GatewayAbstract implements RecurrentPaymentInterface
             'email' => $payment->user->email,
             'createdAt' => $payment->user->created_at,
             'changedAt' => $payment->user->modified_at,
+            'clientIp' => $clientIp,
 
             // This parameter doesn't make sense. CSOB requires it even for offline payments and even when the library
             // indicates that client is just not there (clientInitiated: false).
