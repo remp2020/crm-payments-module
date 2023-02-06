@@ -97,6 +97,7 @@ services:
 	- Crm\PaymentsModule\Scenarios\IsActiveRecurrentSubscriptionCriteria
 	- Crm\PaymentsModule\Scenarios\PaymentGatewayCriteria
 	- Crm\PaymentsModule\Scenarios\RecurrentPaymentStateCriteria
+	- Crm\PaymentsModule\Scenarios\RecurrentPaymentSubscriptionTypeContentAccessCriteria
 	- Crm\PaymentsModule\Scenarios\PaymentHasSubscriptionCriteria
 	- Crm\PaymentsModule\Scenarios\DonationAmountCriteria
 	- Crm\PaymentsModule\Scenarios\PaymentHasItemTypeCriteria

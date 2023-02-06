@@ -444,6 +444,9 @@ admin:
             label: Darovaná suma
         payment_has_item_type:
             label: Platba má položky typu
+        recurrent_payment_subscription_type_content_access:
+            label: Přístup k obsahu pro typ předplatného rekurentní platby
+            param_label: Typ přístupu k obsahu
 
 form:
     payment_gateway:

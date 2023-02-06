@@ -449,6 +449,9 @@ admin:
             label: Donated amount
         payment_has_item_type:
             label: Payment has items of type
+        recurrent_payment_subscription_type_content_access:
+            label: Recurrent payment subscription type content access
+            param_label: Content access type
 
 form:
     payment_gateway:
