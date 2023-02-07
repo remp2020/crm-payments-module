@@ -4,14 +4,10 @@ namespace Crm\PaymentsModule\Presenters;
 
 use Crm\AdminModule\Presenters\AdminPresenter;
 use Crm\ApplicationModule\Components\PreviousNextPaginator;
-use Crm\ApplicationModule\DataProvider\DataProviderManager;
 use Crm\ApplicationModule\Hermes\HermesMessage;
 use Crm\PaymentsModule\Forms\RetentionAnalysisFilterFormFactory;
-use Crm\PaymentsModule\Repository\PaymentsRepository;
 use Crm\PaymentsModule\Repository\RetentionAnalysisJobsRepository;
 use Crm\PaymentsModule\Retention\RetentionAnalysis;
-use Crm\SubscriptionsModule\Repository\SubscriptionTypesRepository;
-use Crm\SubscriptionsModule\Repository\SubscriptionsRepository;
 use Nette\Application\BadRequestException;
 use Nette\Application\UI\Form;
 use Nette\Utils\Json;
@@ -22,29 +18,14 @@ class RetentionAnalysisAdminPresenter extends AdminPresenter
 {
     private const SESSION_SECTION = 'retention_analysis';
 
-    /** @var DataProviderManager @inject */
-    public $dataProviderManager;
-
-    /** @var SubscriptionTypesRepository @inject */
-    public $subscriptionTypesRepository;
-
-    /** @var PaymentsRepository @inject */
-    public $paymentsRepository;
-
-    /** @var SubscriptionsRepository @inject */
-    public $subscriptionsRepository;
-
-    /** @var RetentionAnalysisJobsRepository @inject */
-    public $retentionAnalysisJobsRepository;
-
-    /** @var RetentionAnalysis @inject */
-    public $retentionAnalysis;
-
-    /** @var RetentionAnalysisFilterFormFactory @inject */
-    public $retentionAnalysisFilterFormFactory;
-
-    /** @var Emitter @inject */
-    public $hermesEmitter;
+    public function __construct(
+        private RetentionAnalysisJobsRepository $retentionAnalysisJobsRepository,
+        private RetentionAnalysis $retentionAnalysis,
+        private RetentionAnalysisFilterFormFactory $retentionAnalysisFilterFormFactory,
+        private Emitter $hermesEmitter
+    ) {
+        parent::__construct();
+    }
 
     /**
      * @admin-access-level read
@@ -236,7 +217,7 @@ class RetentionAnalysisAdminPresenter extends AdminPresenter
     {
         if ($this->getParameter('submitted')) {
             // Increase time limit for calculations
-            set_time_limit(120);
+            set_time_limit(150);
             $this->template->paymentCounts = $this->retentionAnalysis->precalculateMonthlyPaymentCounts($this->params);
         }
     }
@@ -253,11 +234,21 @@ class RetentionAnalysisAdminPresenter extends AdminPresenter
         $this->template->job = $job;
 
         if ($job->state === RetentionAnalysisJobsRepository::STATE_FINISHED && $job->results) {
+            $jobParams = Json::decode($job->params, Json::FORCE_ARRAY);
             $results = Json::decode($job->results, Json::FORCE_ARRAY);
+
+            $version = (int) $results['version'];
             $retention = $results['retention'];
 
             ksort($retention);
             $colsCount = count($retention[array_key_first($retention)]) ?? 0;
+
+            $defaultPeriodLength = 28;
+            if ($version <= 1) {
+                $defaultPeriodLength = 31;
+            }
+            $periodLength = $jobParams['period_length'] ?? $defaultPeriodLength;
+            $zeroPeriodLength = $jobParams['zero_period_length'] ?? $defaultPeriodLength;
 
             $tableRows = [];
 
@@ -317,6 +308,8 @@ class RetentionAnalysisAdminPresenter extends AdminPresenter
             $this->template->allPeriodCounts = $allPeriodCounts;
             $this->template->colsCount = $colsCount;
             $this->template->tableRows = $tableRows;
+            $this->template->zeroPeriodLength = $zeroPeriodLength;
+            $this->template->periodLength = $periodLength;
         }
     }
 
@@ -331,7 +324,10 @@ class RetentionAnalysisAdminPresenter extends AdminPresenter
     {
         $job = $this->retentionAnalysisJobsRepository->find($this->params['job']);
         $inputParams = Json::decode($job->params, Json::FORCE_ARRAY);
-        return $this->retentionAnalysisFilterFormFactory->create($inputParams, true);
+        $results = Json::decode($job->results, Json::FORCE_ARRAY);
+        $version = (int) ($results['version'] ?? RetentionAnalysis::VERSION);
+
+        return $this->retentionAnalysisFilterFormFactory->create($inputParams, true, $version);
     }
 
     public function createComponentScheduleComputationForm(): Form

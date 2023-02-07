@@ -284,7 +284,7 @@ admin:
         results_not_available: Zum gegenwärtigen Zeitpunkt der Analyse liegen noch keine Ergebnisse vor.
         started_at: Gestartet
         schedule_computation: Berechnung starten
-        period_explanation: PERIODEN (31-Tage-Intervalle nach dem ersten Abonnement entsprechend der Filter-Bedingungen)
+        period_explanation: PERIODEN
         continue_method_explanation: CONTINUE-Methode - alle Abonnements werden in die Berechnung einbezogen, auch nach einer Unterbrechung.
         incomplete_period_explanation: Die Periode ist noch nicht für alle Nutzer beendet, einige Abonnements wurden eventuell noch nicht verlängert.
         period_sum_ratio_help: '%retention_count% aktive Abonnements von %users_count% Nutzern wurden im angebenen Zeitraum erreicht.'

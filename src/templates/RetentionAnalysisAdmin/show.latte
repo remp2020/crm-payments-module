@@ -39,53 +39,52 @@
         {control disabledFilterForm}
     </div>
 
-    <div class="col-md-12">
-        <h2>{_payments.admin.retention_analysis.results}</h2>
-
-
         {if $job->state == \Crm\PaymentsModule\Repository\RetentionAnalysisJobsRepository::STATE_FINISHED}
-            <p style="font-weight: bold">{_payments.admin.retention_analysis.continue_method_explanation}</p>
-            <table class="table table-hover table-borderless">
-                <thead>
-                    <tr>
-                        <th rowspan="2" colspan="2">{_payments.admin.retention_analysis.first_subscription_month_count}</th>
-                        <th style="text-align: center" colspan="{$colsCount}">{_payments.admin.retention_analysis.period_explanation}</th>
-                    </tr>
-                    <tr>
-                        {for $i = 0; $i < $colsCount; $i++}
-                            <th>{$i}</th>
-                        {/for}
-                    </tr>
-                </thead>
-                <tbody>
-                    <tr n:foreach="$tableRows as $row">
-                        <td>{$row['year']}-{$row['month']}</td>
-                        <td style="border-right: 4px solid #fff" class="{$row['fullPeriodCount']['color']}">{$row['fullPeriodCount']['value']}</td>
-                        <td n:foreach="$row['periods'] as $period" class="{$period['color']}">
-                            <span title="{_payments.admin.retention_analysis.period_sum_ratio_help, ['retention_count' => $period['retention_count'], 'users_count' => $period['users_count']]}">
-                                {$period['percentage']}
-                            </span>
-                        </td>
-                    </tr>
-                </tbody>
-                <tfoot >
-                    <tr>
-                        <td style="border-top: 4px solid #fff">{_payments.admin.retention_analysis.together}</td>
-                        <td style="border-top: 4px solid #fff">{$allPeriodCounts}</td>
-                        <td style="border-top: 4px solid #fff" n:foreach="$periodNumberCounts as $periodNumberCount" class="{$periodNumberCount['color']}">
-                            <span style="text-decoration-line: underline; text-decoration-style: dashed; cursor: help"
-                                  title="{_payments.admin.retention_analysis.period_sum_ratio_help, ['retention_count' => $periodNumberCount['retention_count'], 'users_count' => $periodNumberCount['users_count']]}">
-                                {$periodNumberCount['percentage']}
-                            </span>
-                        </td>
-                    </tr>
-                </tfoot>
-            </table>
+            <h2>{_payments.admin.retention_analysis.results}</h2>
+            <div class="col-md-12">
+                <p style="font-weight: bold">{_payments.admin.retention_analysis.continue_method_explanation}</p>
+                    <table class="table table-hover table-borderless">
+                        <thead>
+                            <tr>
+                                <th rowspan="2" colspan="2">{_payments.admin.retention_analysis.first_subscription_month_count}</th>
+                                <th style="text-align: center" colspan="{$colsCount}">{_payments.admin.retention_analysis.period_explanation}</th>
+                            </tr>
+                            <tr>
+                                {for $i = 0; $i < $colsCount; $i++}
+                                    <th style="text-decoration-line: underline; text-decoration-style: dashed; cursor: help" title="{_payments.admin.retention_analysis.period_help, ['days' => ($i === 0 ?  $zeroPeriodLength : $periodLength)]}">{$i}</th>
+                                {/for}
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr n:foreach="$tableRows as $row">
+                                <td>{$row['year']}-{$row['month']}</td>
+                                <td style="border-right: 4px solid #fff" class="{$row['fullPeriodCount']['color']}">{$row['fullPeriodCount']['value']}</td>
+                                <td n:foreach="$row['periods'] as $period" class="{$period['color']}">
+                                    <span title="{_payments.admin.retention_analysis.period_sum_ratio_help, ['retention_count' => $period['retention_count'], 'users_count' => $period['users_count']]}">
+                                        {$period['percentage']}
+                                    </span>
+                                </td>
+                            </tr>
+                        </tbody>
+                        <tfoot >
+                            <tr>
+                                <td style="border-top: 4px solid #fff">{_payments.admin.retention_analysis.together}</td>
+                                <td style="border-top: 4px solid #fff">{$allPeriodCounts}</td>
+                                <td style="border-top: 4px solid #fff" n:foreach="$periodNumberCounts as $periodNumberCount" class="{$periodNumberCount['color']}">
+                                    <span style="text-decoration-line: underline; text-decoration-style: dashed; cursor: help"
+                                          title="{_payments.admin.retention_analysis.period_sum_ratio_help, ['retention_count' => $periodNumberCount['retention_count'], 'users_count' => $periodNumberCount['users_count']]}">
+                                        {$periodNumberCount['percentage']}
+                                    </span>
+                                </td>
+                            </tr>
+                        </tfoot>
+                    </table>
 
-            <p><small>* {_payments.admin.retention_analysis.incomplete_period_explanation}</small></p>
+                    <p><small>* {_payments.admin.retention_analysis.incomplete_period_explanation}</small></p>
+            </div>
         {else}
             <p>{_payments.admin.retention_analysis.results_not_available}</p>
         {/if}
-    </div>
+
 </div>
 

@@ -16,28 +16,15 @@ use Tracy\ILogger;
 
 class RetentionAnalysis
 {
-    private $paymentsRepository;
-
-    private $dataProviderManager;
-
-    private $retentionAnalysisJobsRepository;
-
-    private $subscriptionsRepository;
-
-    private $segmentFactory;
+    public const VERSION = 2;
 
     public function __construct(
-        PaymentsRepository $paymentsRepository,
-        SubscriptionsRepository $subscriptionsRepository,
-        RetentionAnalysisJobsRepository $retentionAnalysisJobsRepository,
-        DataProviderManager $dataProviderManager,
-        SegmentFactoryInterface $segmentFactory
+        private PaymentsRepository $paymentsRepository,
+        private SubscriptionsRepository $subscriptionsRepository,
+        private RetentionAnalysisJobsRepository $retentionAnalysisJobsRepository,
+        private DataProviderManager $dataProviderManager,
+        private SegmentFactoryInterface $segmentFactory
     ) {
-        $this->paymentsRepository = $paymentsRepository;
-        $this->dataProviderManager = $dataProviderManager;
-        $this->retentionAnalysisJobsRepository = $retentionAnalysisJobsRepository;
-        $this->subscriptionsRepository = $subscriptionsRepository;
-        $this->segmentFactory = $segmentFactory;
     }
 
     /**
@@ -59,7 +46,7 @@ SQL;
     }
 
     /**
-     * Runs retention analysis computation on a given job (from retention_analysis_jobs table)
+     * Runs retention analysis for given job record
      * @param ActiveRow $job
      *
      * @return bool
@@ -77,40 +64,38 @@ SQL;
             'started_at' => new \DateTime(),
         ]);
 
-        $params = Json::decode($job->params, Json::FORCE_ARRAY);
+        $jobParams = Json::decode($job->params, Json::FORCE_ARRAY);
+
+        // Fix missing params from previous versions
+        $dirtyFlag = false;
+        if (!isset($jobParams['zero_period_length'])) {
+            $jobParams['zero_period_length'] = 31;
+            $dirtyFlag = true;
+        }
+        if (!isset($jobParams['period_length'])) {
+            $jobParams['period_length'] = 31;
+            $dirtyFlag = true;
+        }
+        if ($dirtyFlag) {
+            $this->retentionAnalysisJobsRepository->update($job, [
+                'params' => Json::encode($jobParams)
+            ]);
+        }
+
         $now = new DateTime();
-        [$sql, $sqlParams] = $this->loadPaymentsSql($params);
+        [$sql, $sqlParams] = $this->loadPaymentsSql($jobParams);
 
         $payments = $this->paymentsRepository->getDatabase()->query($sql, ...$sqlParams);
 
         $retention = [];
-
         foreach ($payments as $record) {
+            [$periods, $lastIncomplete] = $this->getPeriods($record->paid_at, $now, $jobParams);
             $paidAtKey = $record->paid_at->format('Y-m');
-            if (!array_key_exists($paidAtKey, $retention)) {
-                $retention[$paidAtKey] = [];
-                // Zero-period is included by definition
-                // It should always has 100% of retention rate (since user has bought a subscription within the period)
-                $retention[$paidAtKey][0] = [
-                    'count' => 0,
-                    'users_in_period' => 0,
-                ];
-            }
 
-            // Count user as having subscription in zero-period
-            $retention[$paidAtKey][0]['count'] += 1;
-            $retention[$paidAtKey][0]['users_in_period'] += 1;
-
-            [$periods, $lastIncomplete] = $this->getPeriods($record->paid_at, $now);
-            $periodNumber = 1;
-            foreach ($periods as $i => $period) {
-                $subscriptionsCount = $this->subscriptionsRepository->getTable()
-                    ->where([
-                        'user_id = ?' => $record->user_id,
-                        'start_time <= ?' => $period[1],
-                        'end_time >= ?' => $period[0],
-                    ])
-                    ->count('*');
+            foreach ($periods as $periodNumber => $period) {
+                if (!array_key_exists($paidAtKey, $retention)) {
+                    $retention[$paidAtKey] = [];
+                }
 
                 if (!array_key_exists($periodNumber, $retention[$paidAtKey])) {
                     $retention[$paidAtKey][$periodNumber]['count'] = 0;
@@ -119,22 +104,35 @@ SQL;
 
                 $retention[$paidAtKey][$periodNumber]['users_in_period']++;
 
-                if ($subscriptionsCount > 0) {
+                if ($periodNumber === 0) {
+                    // Zero-period is included by definition,
+                    // since it has 100% of retention rate (user has bought subscription within the period)
                     $retention[$paidAtKey][$periodNumber]['count']++;
-                }
+                } else {
+                    $subscriptionsCount = $this->subscriptionsRepository->getTable()
+                        ->where([
+                            'user_id = ?' => $record->user_id,
+                            'end_time >= ?' => $period[0],
+                            'start_time < ?' => $period[1],
+                        ])
+                        ->count('*');
 
-                if ($lastIncomplete && ($i === count($periods) - 1)) {
-                    $retention[$paidAtKey][$periodNumber]['incomplete'] = true;
+                    if ($subscriptionsCount > 0) {
+                        $retention[$paidAtKey][$periodNumber]['count']++;
+                    }
+
+                    if ($lastIncomplete && ($periodNumber === count($periods) - 1)) {
+                        $retention[$paidAtKey][$periodNumber]['incomplete'] = true;
+                    }
                 }
-                $periodNumber++;
             }
         }
 
         $this->retentionAnalysisJobsRepository->update($job, [
-            'results' => Json::encode([
+            'results' => Json::encode(array_filter([
                 'retention' => $retention,
-                'version' => 1, // for future changes
-            ]),
+                'version' => self::VERSION,
+            ])),
             'finished_at' => new \DateTime(),
             'state' => RetentionAnalysisJobsRepository::STATE_FINISHED,
         ]);
@@ -187,7 +185,8 @@ SQL;
 
         if (isset($inputParams['user_source'])) {
             $joins[] = "JOIN users ON payments.user_id = users.id";
-            $wheres[] = sprintf("users.source = '%s'", $inputParams['user_source']);
+            $wheres[] = "users.source = ?";
+            $whereParams[] = $inputParams['user_source'];
         }
 
         $joins = implode(' ', $joins);
@@ -202,15 +201,17 @@ SQL;
         return [$sql, $whereParams];
     }
 
-    private function getPeriods(DateTime $paidAt, DateTime $upTo): array
+    private function getPeriods(DateTime $paidAt, DateTime $upTo, array $jobParams): array
     {
-        $periodInterval = new \DateInterval('P31D');
+        $zeroPeriodInterval = new \DateInterval('P' . (int) $jobParams['zero_period_length'] . 'D');
+        $periodInterval = new \DateInterval('P' . (int) $jobParams['period_length'] . 'D');
         $periods = [];
 
-        // first period ([paid_at, paid_at + 31 days]) is skipped, since it always has 100% of retentions
-        $startPeriodIterator = (clone $paidAt)->add($periodInterval);
-
+        $startPeriodIterator = (clone $paidAt)->add($zeroPeriodInterval);
         $lastIncomplete = false;
+
+        // Zero period may have different length
+        $periods[] = [clone $paidAt, clone $startPeriodIterator];
 
         while ($startPeriodIterator < $upTo) {
             $endOfPeriod = (clone $startPeriodIterator)->add($periodInterval);

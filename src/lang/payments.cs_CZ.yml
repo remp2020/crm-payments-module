@@ -308,7 +308,7 @@ admin:
         state: Stav
         together: Spolu
         month: Měsíc
-        payments_count: "Počet uživatelů s prvním předplatným"
+        payments_count: "Počet uživatelů s první platbou (dle zvoleného filtru)"
         results_not_available: "Výsledky nejsou v tomto stavu analýzy dostupné."
         actions: Akce
         created_at: Vytvořené
@@ -317,13 +317,14 @@ admin:
         schedule_computation: Spustit výpočet
         parameters: Parametry
         results: Výsledky
-        period_explanation: "PERIODY (31-denní intervaly po prvním předplatném podle zadaného filtru)"
+        period_explanation: "PERIODY"
         continue_method_explanation: "Metoda CONTINUE - do výpočtu jsou zahrnuty všechny předplatné, i po přerušení."
         analysis_was_scheduled: "Analýza byla zadána, výsledek se objeví po dokončení v tabulce."
         first_subscription_month_count: "Měsíc prvního předplatného / počet předplatitelů"
         back: Zpět na seznam
         incomplete_period_explanation: "Perioda není dokončena pro všechny uživatele, některé předplatné ještě mohou být obnoveny."
         period_sum_ratio_help: "%retention_count% aktivních předplatných z celkového počtu %users_count% uživatelů kteří dosáhli danou periodu."
+        period_help: "Délka periody %days% dnů."
         compare: Porovnat
         add_to_comparison: Přidat do porovnání
         clear_comparison: Smazat výběr
@@ -342,6 +343,9 @@ admin:
             min_date_of_payment: "Zahrnout platby od (data)"
             min_date_of_payment_desc: "Pokud není zvoleno, zarhnuté jsou všechny platby."
             previous_user_subscriptions: Předchozí předplatné uživatele
+            period_length: "Délka periody (ve dnech)"
+            zero_period_length: "Délka nulté periody (ve dnech)"
+            period_length_invalid: "Délka periody musí být číslo mezi 1 a 120 (včetně)."
             without_previous_subscription: Bez předchozího předplatného
             with_previous_subscription_at_least_one_paid: S předchozím předplatným - alespoň jedno placené
             with_previous_subscription_all_unpaid: S předchozím předplatným - všechny neplacené

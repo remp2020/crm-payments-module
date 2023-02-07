@@ -15,22 +15,13 @@ class RetentionAnalysisJobHandler implements HandlerInterface
 
     private static $currentJobId = null;
 
-    private $executionTimeLimit = 30; // in minutes
-
-    private $retentionAnalysisJobsRepository;
-
-    private $retentionAnalysis;
-
-    private $translator;
+    private int $executionTimeLimit = 30; // in minutes
 
     public function __construct(
-        RetentionAnalysisJobsRepository $retentionAnalysisJobsRepository,
-        RetentionAnalysis $retentionAnalysis,
-        Translator $translator
+        private RetentionAnalysisJobsRepository $retentionAnalysisJobsRepository,
+        private RetentionAnalysis $retentionAnalysis,
+        private Translator $translator
     ) {
-        $this->retentionAnalysisJobsRepository = $retentionAnalysisJobsRepository;
-        $this->retentionAnalysis = $retentionAnalysis;
-        $this->translator = $translator;
     }
 
     /**

@@ -58,7 +58,9 @@
                     <span class="label label-success">{$job->state}</span>
                   {elseif $job->state == \Crm\PaymentsModule\Repository\RetentionAnalysisJobsRepository::STATE_FAILED}
                     <span class="label label-danger">{$job->state}</span>
-                    <small>{\Nette\Utils\Json::decode($job->results)->error}</small>
+                      {if $job->results}
+                          <small>{\Nette\Utils\Json::decode($job->results)->error}</small>
+                      {/if}
                   {else}
                     <span class="label label-info">{$job->state}</span>
                   {/if}

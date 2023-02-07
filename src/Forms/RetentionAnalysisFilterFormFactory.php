@@ -5,6 +5,7 @@ namespace Crm\PaymentsModule\Forms;
 use Crm\ApplicationModule\DataProvider\DataProviderManager;
 use Crm\PaymentsModule\DataProvider\RetentionAnalysisDataProviderInterface;
 use Crm\PaymentsModule\Repository\PaymentsRepository;
+use Crm\PaymentsModule\Retention\RetentionAnalysis;
 use Crm\SegmentModule\Repository\SegmentsRepository;
 use Crm\UsersModule\Repository\UsersRepository;
 use Nette\Application\UI\Form;
@@ -13,31 +14,16 @@ use Tomaj\Form\Renderer\BootstrapRenderer;
 
 class RetentionAnalysisFilterFormFactory
 {
-    private $translator;
-
-    private $paymentsRepository;
-
-    private $dataProviderManager;
-
-    private $segmentsRepository;
-
-    private $usersRepository;
-
     public function __construct(
-        PaymentsRepository $paymentsRepository,
-        DataProviderManager $dataProviderManager,
-        SegmentsRepository $segmentsRepository,
-        UsersRepository $usersRepository,
-        Translator $translator
+        private PaymentsRepository $paymentsRepository,
+        private DataProviderManager $dataProviderManager,
+        private SegmentsRepository $segmentsRepository,
+        private UsersRepository $usersRepository,
+        private Translator $translator
     ) {
-        $this->paymentsRepository = $paymentsRepository;
-        $this->translator = $translator;
-        $this->dataProviderManager = $dataProviderManager;
-        $this->segmentsRepository = $segmentsRepository;
-        $this->usersRepository = $usersRepository;
     }
 
-    public function create(array $inputParams, bool $disabled = false): Form
+    public function create(array $inputParams, bool $disabled = false, int $version = RetentionAnalysis::VERSION): Form
     {
         $form = new Form();
         $form->setTranslator($this->translator);
@@ -64,6 +50,18 @@ class RetentionAnalysisFilterFormFactory
                 ->setHtmlAttribute('class', 'btn btn-default')
                 ->setHtmlAttribute('onclick', "document.getElementById('{$dateHtmlId}')._flatpickr.clear()");
         }
+
+        $form->addInteger('zero_period_length', 'payments.admin.retention_analysis.fields.zero_period_length')
+            ->setRequired()
+            ->setDisabled($disabled)
+            ->addRule(Form::MIN, 'payments.admin.retention_analysis.fields.period_length_invalid', 1)
+            ->addRule(Form::MAX, 'payments.admin.retention_analysis.fields.period_length_invalid', 120);
+
+        $form->addInteger('period_length', 'payments.admin.retention_analysis.fields.period_length')
+            ->setRequired()
+            ->setDisabled($disabled)
+            ->addRule(Form::MIN, 'payments.admin.retention_analysis.fields.period_length_invalid', 1)
+            ->addRule(Form::MAX, 'payments.admin.retention_analysis.fields.period_length_invalid', 120);
 
         $form->addSelect('previous_user_subscriptions', 'payments.admin.retention_analysis.fields.previous_user_subscriptions', [
             'without_previous_subscription' => $this->translator->translate('payments.admin.retention_analysis.fields.without_previous_subscription'),
@@ -92,11 +90,19 @@ class RetentionAnalysisFilterFormFactory
         $form->addHidden('submitted', 1);
 
         if (!$disabled) {
-            $form->addSubmit('send', 'system.filter')
+            $form->addSubmit('send')
                 ->getControlPrototype()
-                ->setName('button')
-                ->setHtml('<i class="fa fa-filter"></i> ' . $this->translator->translate('payments.admin.retention_analysis.preview_run'));
+                ->setHtml('<i class="fa fa-filter"></i> ' . $this->translator->translate('payments.admin.retention_analysis.preview_run'))
+                ->setName('button');
         }
+
+        $defaultPeriodLength = 28;
+        if ($version <= 1) {
+            $defaultPeriodLength = 31;
+        }
+
+        $inputParams['zero_period_length'] = $inputParams['zero_period_length'] ?? $defaultPeriodLength;
+        $inputParams['period_length'] = $inputParams['period_length'] ?? $defaultPeriodLength;
 
         $form->setDefaults($inputParams);
         return $form;
