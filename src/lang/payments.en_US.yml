@@ -544,7 +544,7 @@ form:
     subscription_form:
         start_time:
             after_payment:
-                description: "Subscription's start has to be before payment's confirmation date: %payment_paid%."
+                description: "Subscription's start has to be after payment's confirmation date: %payment_paid%."
                 error: "Start of subscription is set before payment's confirmation date."
 
 gateway:
