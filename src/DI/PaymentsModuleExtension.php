@@ -10,15 +10,10 @@ final class PaymentsModuleExtension extends CompilerExtension implements Transla
 {
     public function loadConfiguration()
     {
-        $builder = $this->getContainerBuilder();
         // load services from config and register them to Nette\DI Container
         $this->compiler->loadDefinitionsFromConfig(
             $this->loadFromFile(__DIR__.'/../config/config.neon')['services']
         );
-
-        foreach ($builder->findByType(\Crm\PaymentsModule\Gateways\GatewayAbstract::class) as $definition) {
-            $definition->addSetup('setTestHost', [$this->config->gateway_test_host]);
-        }
     }
 
     public function getConfigSchema(): \Nette\Schema\Schema
@@ -34,6 +29,10 @@ final class PaymentsModuleExtension extends CompilerExtension implements Transla
         // load presenters from extension to Nette
         $builder->getDefinition($builder->getByType(\Nette\Application\IPresenterFactory::class))
             ->addSetup('setMapping', [['Payments' => 'Crm\PaymentsModule\Presenters\*Presenter']]);
+
+        foreach ($builder->findByType(\Crm\PaymentsModule\Gateways\GatewayAbstract::class) as $definition) {
+            $definition->addSetup('setTestHost', [$this->config->gateway_test_host]);
+        }
     }
 
     /**
