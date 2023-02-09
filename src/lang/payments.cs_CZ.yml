@@ -345,7 +345,7 @@ admin:
             previous_user_subscriptions: Předchozí předplatné uživatele
             period_length: "Délka periody (ve dnech)"
             zero_period_length: "Délka nulté periody (ve dnech)"
-            period_length_invalid: "Délka periody musí být číslo mezi 1 a 120 (včetně)."
+            period_length_invalid: "Délka periody musí být číslo mezi 1 a 10000 (včetně)."
             without_previous_subscription: Bez předchozího předplatného
             with_previous_subscription_at_least_one_paid: S předchozím předplatným - alespoň jedno placené
             with_previous_subscription_all_unpaid: S předchozím předplatným - všechny neplacené

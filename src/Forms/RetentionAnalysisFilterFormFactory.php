@@ -55,13 +55,13 @@ class RetentionAnalysisFilterFormFactory
             ->setRequired()
             ->setDisabled($disabled)
             ->addRule(Form::MIN, 'payments.admin.retention_analysis.fields.period_length_invalid', 1)
-            ->addRule(Form::MAX, 'payments.admin.retention_analysis.fields.period_length_invalid', 120);
+            ->addRule(Form::MAX, 'payments.admin.retention_analysis.fields.period_length_invalid', 10000);
 
         $form->addInteger('period_length', 'payments.admin.retention_analysis.fields.period_length')
             ->setRequired()
             ->setDisabled($disabled)
             ->addRule(Form::MIN, 'payments.admin.retention_analysis.fields.period_length_invalid', 1)
-            ->addRule(Form::MAX, 'payments.admin.retention_analysis.fields.period_length_invalid', 120);
+            ->addRule(Form::MAX, 'payments.admin.retention_analysis.fields.period_length_invalid', 10000);
 
         $form->addSelect('previous_user_subscriptions', 'payments.admin.retention_analysis.fields.previous_user_subscriptions', [
             'without_previous_subscription' => $this->translator->translate('payments.admin.retention_analysis.fields.without_previous_subscription'),

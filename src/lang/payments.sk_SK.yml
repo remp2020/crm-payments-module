@@ -350,7 +350,7 @@ admin:
             previous_user_subscriptions: Predchádzajúce predplatné používateľa
             period_length: "Dĺžka periódy (v dňoch)"
             zero_period_length: "Dĺžka nultej periódy (v dňoch)"
-            period_length_invalid: "Dĺžka periódy musí byť číslo medzi 1 a 120 (vrátane)."
+            period_length_invalid: "Dĺžka periódy musí byť číslo medzi 1 a 10000 (vrátane)."
             without_previous_subscription: Bez predchádzajúceho predplatného
             with_previous_subscription_at_least_one_paid: S predchádzajúcim predplatným - aspoň jedno platené
             with_previous_subscription_all_unpaid: S predchádzajúcim predplatným - všetky neplatené
