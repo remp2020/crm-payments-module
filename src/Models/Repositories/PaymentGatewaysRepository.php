@@ -32,12 +32,14 @@ class PaymentGatewaysRepository extends Repository
             ->order('sorting');
     }
 
-    final public function find($id)
+    final public function find($id): ?\Crm\ApplicationModule\ActiveRow
     {
-        return $this->getTable()
+        /** @var \Crm\ApplicationModule\ActiveRow $result */
+        $result = $this->getTable()
             ->where(['id' => $id])
             ->where('code IN (?)', $this->gatewayFactory->getRegisteredCodes())
             ->fetch();
+        return $result;
     }
 
     final public function findByCode($code)

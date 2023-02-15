@@ -509,13 +509,13 @@ class RecurrentPaymentsRepository extends Repository
         return $usableRecurrentsCount > 0;
     }
 
-    final public function totalCount($allowCached = false, $forceCacheUpdate = false)
+    final public function totalCount($allowCached = false, $forceCacheUpdate = false): int
     {
         $callable = function () {
             return parent::totalCount();
         };
         if ($allowCached) {
-            return $this->cacheRepository->loadAndUpdate(
+            return (int) $this->cacheRepository->loadAndUpdate(
                 'recurrent_payments_count',
                 $callable,
                 \Nette\Utils\DateTime::from(CacheRepository::REFRESH_TIME_5_MINUTES),
