@@ -2,18 +2,16 @@
 
 namespace Crm\PaymentsModule\Events;
 
+use Crm\ApplicationModule\ActiveRow;
 use League\Event\AbstractEvent;
 
-class BeforePaymentBeginEvent extends AbstractEvent
+class BeforePaymentBeginEvent extends AbstractEvent implements PaymentEventInterface
 {
-    private $payment;
-
-    public function __construct($payment)
+    public function __construct(private ActiveRow $payment)
     {
-        $this->payment = $payment;
     }
 
-    public function getPayment()
+    public function getPayment(): ActiveRow
     {
         return $this->payment;
     }

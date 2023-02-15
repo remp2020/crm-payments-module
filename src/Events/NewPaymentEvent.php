@@ -3,17 +3,15 @@
 namespace Crm\PaymentsModule\Events;
 
 use League\Event\AbstractEvent;
+use Nette\Database\Table\ActiveRow;
 
-class NewPaymentEvent extends AbstractEvent
+class NewPaymentEvent extends AbstractEvent implements PaymentEventInterface
 {
-    private $payment;
-
-    public function __construct($payment)
+    public function __construct(private ActiveRow $payment)
     {
-        $this->payment = $payment;
     }
 
-    public function getPayment()
+    public function getPayment(): ActiveRow
     {
         return $this->payment;
     }

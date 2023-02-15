@@ -31,6 +31,10 @@ class PaymentStatusChangeHandler extends AbstractListener
 
     public function handle(EventInterface $event)
     {
+        if (!$event instanceof PaymentEventInterface) {
+            throw new \Exception("Invalid type of event received, 'PaymentEventInterface' expected: " . get_class($event));
+        }
+
         $payment = $event->getPayment();
         // hard reload, other handlers could have alter the payment already
         $payment = $this->paymentsRepository->find($payment->id);

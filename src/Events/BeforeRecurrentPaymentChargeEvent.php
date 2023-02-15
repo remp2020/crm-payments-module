@@ -3,31 +3,25 @@
 namespace Crm\PaymentsModule\Events;
 
 use League\Event\AbstractEvent;
+use Nette\Database\Table\ActiveRow;
 
-class BeforeRecurrentPaymentChargeEvent extends AbstractEvent
+class BeforeRecurrentPaymentChargeEvent extends AbstractEvent implements PaymentEventInterface
 {
-    private $payment;
-
-    private $token;
-
     /**
      * Same parameters that go to RecurrentPaymentInterface#charge()
-     *
-     * @param $payment
-     * @param $token
      */
-    public function __construct($payment, $token)
-    {
-        $this->payment = $payment;
-        $this->token = $token;
+    public function __construct(
+        private ActiveRow $payment,
+        private string $token
+    ) {
     }
 
-    public function getPayment()
+    public function getPayment(): ActiveRow
     {
         return $this->payment;
     }
 
-    public function getToken()
+    public function getToken(): string
     {
         return $this->token;
     }
