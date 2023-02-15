@@ -4,17 +4,15 @@ namespace Crm\PaymentsModule\Events;
 
 use Crm\UsersModule\User\IUserGetter;
 use League\Event\AbstractEvent;
+use Nette\Database\Table\ActiveRow;
 
-abstract class BaseRecurrentPaymentEvent extends AbstractEvent implements IUserGetter
+abstract class BaseRecurrentPaymentEvent extends AbstractEvent implements IUserGetter, RecurrentPaymentEventInterface
 {
-    private $recurrentPayment;
-
-    public function __construct($recurrentPayment)
+    public function __construct(private ActiveRow $recurrentPayment)
     {
-        $this->recurrentPayment = $recurrentPayment;
     }
 
-    public function getRecurrentPayment()
+    public function getRecurrentPayment(): ActiveRow
     {
         return $this->recurrentPayment;
     }
