@@ -164,6 +164,7 @@ class PaymentItemsRepository extends Repository
             $subscriptionTypePaymentItem = SubscriptionTypePaymentItem::fromSubscriptionTypeItem($subscriptionTypeItem, $paymentItemArray['count']);
 
             $paymentItemArray['name'] = $subscriptionTypePaymentItem->name();
+            $paymentItemArray['amount'] = $subscriptionTypePaymentItem->unitPrice();
             $paymentItemArray['vat'] = $subscriptionTypePaymentItem->vat();
             $paymentItemArray['amount_without_vat'] = $subscriptionTypePaymentItem->unitPriceWithoutVAT();
         }
