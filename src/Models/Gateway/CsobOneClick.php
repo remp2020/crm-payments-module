@@ -272,6 +272,10 @@ class CsobOneClick extends GatewayAbstract implements RecurrentPaymentInterface
             throw new GatewayFail($exception->getMessage(), $exception->getCode());
         }
 
+        if ($payId = $this->response->getTransactionReference()) {
+            $this->paymentMetaRepository->add($payment, 'pay_id', $payId);
+        }
+
         $this->checkChargeStatus($payment, $this->getResultCode());
 
         return self::CHARGE_OK;
