@@ -193,10 +193,13 @@ class PaymentsRepository extends Repository
             $subscriptionTypePaymentItemContainer = new PaymentItemContainer();
             $subscriptionTypePaymentItemContainer->addItems(SubscriptionTypePaymentItem::fromSubscriptionType($payment->subscription_type));
 
-            // subscription type items could be changed, if total price isn't equal payment items will be made from subscription type
-            if (round($paymentItemContainer->totalPriceWithoutVAT(), 2) !==
-                round($subscriptionTypePaymentItemContainer->totalPriceWithoutVAT(), 2)
-            ) {
+            $paymentTotalPriceWithoutVAT = round($paymentItemContainer->totalPriceWithoutVAT(), 2);
+            $subscriptionTypeTotalPrice = round($subscriptionTypePaymentItemContainer->totalPrice(), 2);
+            $subscriptionTypeTotalPriceWithoutVAT = round($subscriptionTypePaymentItemContainer->totalPriceWithoutVAT(), 2);
+
+            // subscription type items could have changed VAT, if total price without VAT isn't equal payment items will be made from subscription type
+            // also the total amount of subscription type items and payment must be same
+            if ($paymentTotalPriceWithoutVAT !== $subscriptionTypeTotalPriceWithoutVAT && round($payment->amount, 2) === $subscriptionTypeTotalPrice) {
                 $this->paymentItemsRepository->add($newPayment, $subscriptionTypePaymentItemContainer);
                 return $newPayment;
             }

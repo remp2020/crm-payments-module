@@ -234,6 +234,7 @@ class PaymentsRepositoryTest extends PaymentsTestCase
             $secondPayment->related('payment_items')->fetchPairs('subscription_type_id', 'subscription_type_item_id'),
         );
 
+        // Payment with changed vat
         // soft delete related subscription_type_item
         $secondPaymentItem = $secondPayment->related('payment_items')->fetch();
         $secondPaymentSubscriptionTypeItem = $secondPaymentItem->subscription_type_item;
@@ -242,28 +243,51 @@ class PaymentsRepositoryTest extends PaymentsTestCase
         $subscriptionTypeItemRepository = $this->getRepository(SubscriptionTypeItemsRepository::class);
         $subscriptionTypeItemRepository->softDelete($secondPaymentSubscriptionTypeItem);
 
-        // and replace them with another one with higher price so final price_without_vat won't be equal
+        // and replace them with another one with lower vat so final price_without_vat won't be equal
         $subscriptionTypeItemRepository->add(
             $subscriptionType,
             'third item',
-            $secondPaymentSubscriptionTypeItem->amount + 1,
-            $secondPaymentSubscriptionTypeItem->vat
+            $secondPaymentSubscriptionTypeItem->amount,
+            $secondPaymentSubscriptionTypeItem->vat - 10
+        );
+
+        // total price without amount is not equal so payment items will be created with actual items of subscription type
+        $thirdPayment = $this->paymentsRepository->copyPayment($secondPayment);
+
+        // so related payment items should not be equal
+        $this->assertNotEquals(
+            $secondPayment->related('payment_items')->fetchPairs('subscription_type_id', 'subscription_type_item_id'),
+            $thirdPayment->related('payment_items')->fetchPairs('subscription_type_id', 'subscription_type_item_id'),
+        );
+
+        // Payment with changed VAT and same total price
+        $thirdPaymentItem = $thirdPayment->related('payment_items')->fetch();
+        $thirdPaymentSubscriptionTypeItem = $thirdPaymentItem->subscription_type_item;
+
+        // soft delete related subscription_type_item
+        $subscriptionTypeItemRepository->softDelete($thirdPaymentSubscriptionTypeItem);
+
+        // and replace them with another one with different price so final price_without_vat won't be equal
+        $subscriptionTypeItemRepository->add(
+            $subscriptionType,
+            'third item',
+            $thirdPaymentSubscriptionTypeItem->amount + 1,
+            $thirdPaymentSubscriptionTypeItem->vat
         );
 
         /** @var SubscriptionTypesRepository $subscriptionTypesRepository */
         $subscriptionTypesRepository = $this->getRepository(SubscriptionTypesRepository::class);
-        // Also update the price of related subscription type to reflect the change of the item
         $subscriptionTypesRepository->update($subscriptionType, [
             'price' => $paymentItemContainer->totalPrice() + 1,
         ]);
 
-        // copy is made from currently related subscription type items instead of payment items
-        $thirdPayment = $this->paymentsRepository->copyPayment($secondPayment);
+        // total price of payment is not equal with total price of subscription type
+        $fourthPayment = $this->paymentsRepository->copyPayment($thirdPayment);
 
-        // so related payment items should be different
-        $this->assertNotEquals(
-            $secondPayment->related('payment_items')->fetchPairs('subscription_type_id', 'subscription_type_item_id'),
+        // so related payment items should be equal with previous payment
+        $this->assertEquals(
             $thirdPayment->related('payment_items')->fetchPairs('subscription_type_id', 'subscription_type_item_id'),
+            $fourthPayment->related('payment_items')->fetchPairs('subscription_type_id', 'subscription_type_item_id'),
         );
     }
 }
