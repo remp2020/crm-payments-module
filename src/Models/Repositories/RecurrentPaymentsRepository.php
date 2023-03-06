@@ -457,7 +457,7 @@ class RecurrentPaymentsRepository extends Repository
         return $recurrentPayment->parent_payment->status !== PaymentsRepository::STATUS_PREPAID;
     }
 
-    final public function latestSuccessfulRecurrentPayment($recurrentPayment)
+    final public function latestSuccessfulRecurrentPayment(ActiveRow $recurrentPayment): ?ActiveRow
     {
         $parentPayment = $recurrentPayment->parent_payment;
         if (!$parentPayment) {

@@ -6,6 +6,7 @@ use Crm\ApplicationModule\DataProvider\DataProviderManager;
 use Crm\PaymentsModule\DataProvider\RetentionAnalysisDataProviderInterface;
 use Crm\PaymentsModule\Repository\PaymentsRepository;
 use Crm\PaymentsModule\Repository\RetentionAnalysisJobsRepository;
+use Crm\SegmentModule\Segment;
 use Crm\SegmentModule\SegmentFactoryInterface;
 use Crm\SubscriptionsModule\Repository\SubscriptionsRepository;
 use Nette\Database\Table\ActiveRow;
@@ -180,6 +181,10 @@ SQL;
 
         if (isset($inputParams['segment_code'])) {
             $segment = $this->segmentFactory->buildSegment($inputParams['segment_code']);
+            if (!$segment instanceof Segment) {
+                throw new \Exception('Retention analysis is only supported with internal CRM Segment implementation: ' . get_class($segment));
+            }
+
             $joins[] = "JOIN ({$segment->query()}) segment_users ON payments.user_id = segment_users.id";
         }
 

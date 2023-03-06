@@ -6,6 +6,7 @@ use Crm\ApplicationModule\Config\ApplicationConfig;
 use Crm\PaymentsModule\Events\BeforeRecurrentPaymentChargeEvent;
 use Crm\PaymentsModule\Events\RecurrentPaymentFailEvent;
 use Crm\PaymentsModule\Events\RecurrentPaymentFailTryEvent;
+use Crm\PaymentsModule\Gateways\GatewayAbstract;
 use Crm\PaymentsModule\Gateways\RecurrentPaymentInterface;
 use Crm\PaymentsModule\Repository\PaymentLogsRepository;
 use Crm\PaymentsModule\Repository\PaymentsRepository;
@@ -157,6 +158,10 @@ class RecurrentPaymentsProcessor
 
     public function chargeRecurrentUsingCid(ActiveRow $payment, string $cid, RecurrentPaymentInterface $gateway): bool
     {
+        if (!$gateway instanceof GatewayAbstract) {
+            throw new \Exception('To user chargeRecurrentUsingCid you must provide implementation of GatewayAbstract: ' . get_class($gateway));
+        }
+
         $this->emitter->emit(new BeforeRecurrentPaymentChargeEvent($payment, $cid)); // ability to modify payment
         $payment = $this->paymentsRepository->find($payment->id); // reload
 

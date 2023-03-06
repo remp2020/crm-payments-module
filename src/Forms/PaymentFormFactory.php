@@ -115,7 +115,7 @@ class PaymentFormFactory
                 }
                 if (isset($paymentItem->subscription_type_id)) {
                     $item['subscription_type_id'] = $paymentItem->subscription_type_id;
-                    $item['subscription_type_item_id'] = $paymentItem->subscription_type_item_id;
+                    $item['subscription_type_item_id'] = $paymentItem->subscription_type_item_id ?? null;
                 }
                 $items[] = $item;
             }

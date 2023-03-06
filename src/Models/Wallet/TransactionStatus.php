@@ -17,7 +17,6 @@ class TransactionStatus
     {
         if (!self::isValidStatus($status)) {
             throw new UnknownTransactionStatus("Unknown status '{$status}'");
-            ;
         }
 
         $this->status = $status;

@@ -8,6 +8,7 @@ use Crm\PaymentsModule\Events\BeforeRecurrentPaymentChargeEvent;
 use Crm\PaymentsModule\GatewayFactory;
 use Crm\PaymentsModule\GatewayFail;
 use Crm\PaymentsModule\Gateways\ExternallyChargedRecurrentPaymentInterface;
+use Crm\PaymentsModule\Gateways\GatewayAbstract;
 use Crm\PaymentsModule\Gateways\RecurrentPaymentInterface;
 use Crm\PaymentsModule\PaymentItem\DonationPaymentItem;
 use Crm\PaymentsModule\PaymentItem\PaymentItemContainer;
@@ -202,6 +203,10 @@ class RecurrentPaymentsChargeCommand extends Command
 
         /** @var RecurrentPaymentInterface $gateway */
         $gateway = $this->gatewayFactory->getGateway($payment->payment_gateway->code);
+        if (!$gateway instanceof GatewayAbstract) {
+            throw new \Exception('In order to use chargeRecurrentPayment, the gateway needs to implement GatewayAbstract: ' . get_class($gateway));
+        }
+
         try {
             if ($payment->status === PaymentsRepository::STATUS_PAID) {
                 $this->recurrentPaymentsProcessor->processChargedRecurrent(

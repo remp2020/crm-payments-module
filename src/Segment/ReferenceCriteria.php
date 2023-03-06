@@ -40,7 +40,7 @@ class ReferenceCriteria implements CriteriaInterface
 
     public function title(ParamsBag $params): string
     {
-        return " reference {$params->string('reference')->value()}";
+        return " reference {$params->string('reference')->rawString()}";
     }
 
     public function fields(): array

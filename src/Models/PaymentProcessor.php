@@ -4,6 +4,8 @@ namespace Crm\PaymentsModule;
 
 use Crm\PaymentsModule\Events\BeforePaymentBeginEvent;
 use Crm\PaymentsModule\Gateways\AuthorizationInterface;
+use Crm\PaymentsModule\Gateways\GatewayAbstract;
+use Crm\PaymentsModule\Gateways\RecurrentPaymentInterface;
 use Crm\PaymentsModule\Repository\PaymentLogsRepository;
 use Crm\PaymentsModule\Repository\PaymentsRepository;
 use Crm\PaymentsModule\Repository\RecurrentPaymentsRepository;
@@ -49,6 +51,10 @@ class PaymentProcessor
         $payment = $this->paymentsRepository->find($payment->id); // payment could have been altered, reload
 
         $gateway = $this->gatewayFactory->getGateway($payment->payment_gateway->code);
+        if (!$gateway instanceof GatewayAbstract) {
+            throw new \Exception('To use PaymentProcessor, the gateway must be implementation of GatewayAbstract: ' . get_class($gateway));
+        }
+
         $gateway->begin($payment);
 
         $this->paymentLogsRepository->add(
@@ -64,6 +70,10 @@ class PaymentProcessor
     public function complete($payment, $callback)
     {
         $gateway = $this->gatewayFactory->getGateway($payment->payment_gateway->code);
+        if (!$gateway instanceof GatewayAbstract) {
+            throw new \Exception('To use PaymentProcessor, the gateway must be implementation of GatewayAbstract: ' . get_class($gateway));
+        }
+
         if ($payment->status == PaymentsRepository::STATUS_PAID) {
             $callback($payment, $gateway);
             return;
@@ -89,7 +99,11 @@ class PaymentProcessor
             $this->paymentsRepository->updateStatus($payment, $status, true);
             $payment = $this->paymentsRepository->find($payment->id);
 
-            if ((boolean)$payment->payment_gateway->is_recurrent) {
+            if ((boolean) $payment->payment_gateway->is_recurrent) {
+                if (!$gateway instanceof RecurrentPaymentInterface) {
+                    throw new \Exception("Gateway flagged with 'is_recurrent' flag needs to implement RecurrentPaymentInterface: " . get_class($gateway));
+                }
+
                 if ($gateway->hasRecurrentToken()) {
                     $this->recurrentPaymentsRepository->createFromPayment(
                         $payment,
