@@ -79,7 +79,7 @@ class RetentionAnalysisAdminPresenter extends AdminPresenter
 
         $section = $this->getSession(self::SESSION_SECTION);
         $section->jobIdsToCompare = $section->jobIdsToCompare ?? [];
-        if (!in_array($jobId, $section->jobIdsToCompare)) {
+        if (!in_array($jobId, $section->jobIdsToCompare, true)) {
             $section->jobIdsToCompare[] = $jobId;
         }
 

@@ -42,7 +42,7 @@ class PaymentItemTypesFilterDataProvider implements PaymentItemTypesFilterDataPr
 
     public function filter($selectedTypes)
     {
-        if (in_array($this->filterKey, $selectedTypes)) {
+        if (in_array($this->filterKey, $selectedTypes, true)) {
             return "payment_items.type = '{$this->filterKey}'";
         }
 

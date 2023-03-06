@@ -129,7 +129,7 @@ class MailProcessor
             return false;
         }
 
-        if (in_array($payment->status, [PaymentsRepository::STATUS_FORM, PaymentsRepository::STATUS_FAIL, PaymentsRepository::STATUS_TIMEOUT])) {
+        if (in_array($payment->status, [PaymentsRepository::STATUS_FORM, PaymentsRepository::STATUS_FAIL, PaymentsRepository::STATUS_TIMEOUT], true)) {
             $this->paymentsRepository->updateStatus($payment, PaymentsRepository::STATUS_PAID, true);
 
             $state = ParsedMailLogsRepository::STATE_CHANGED_TO_PAID;

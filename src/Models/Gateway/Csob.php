@@ -129,11 +129,11 @@ class Csob extends GatewayAbstract
 
         // we don't want to return unsuccessful result, if response returned one of error codes
         // because it was just an attempt to confirm offline payment
-        if (!$result && $payId && !in_array($data['status'], [
+        if (!$result && $payId && !in_array((int) $data['status'], [
                 Gateway::STATUS_CANCELLED,
                 Gateway::STATUS_DENIED,
-                Gateway::STATUS_REVERSED])
-        ) {
+                Gateway::STATUS_REVERSED,
+        ], true)) {
             return null;
         }
 

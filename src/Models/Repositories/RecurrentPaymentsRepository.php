@@ -313,7 +313,7 @@ class RecurrentPaymentsRepository extends Repository
         if (!$recurrent) {
             return true;
         }
-        if (in_array($recurrent->state, [self::STATE_SYSTEM_STOP, self::STATE_USER_STOP, self::STATE_ADMIN_STOP])) {
+        if (in_array($recurrent->state, [self::STATE_SYSTEM_STOP, self::STATE_USER_STOP, self::STATE_ADMIN_STOP], true)) {
             return true;
         }
         if ($recurrent->state == self::STATE_CHARGE_FAILED) {
@@ -325,7 +325,7 @@ class RecurrentPaymentsRepository extends Repository
                 ->order('charge_at DESC')
                 ->limit(1)
                 ->fetch();
-            if ($newRecurrent && in_array($newRecurrent->state, [self::STATE_SYSTEM_STOP, self::STATE_USER_STOP, self::STATE_ADMIN_STOP])) {
+            if ($newRecurrent && in_array($newRecurrent->state, [self::STATE_SYSTEM_STOP, self::STATE_USER_STOP, self::STATE_ADMIN_STOP], true)) {
                 return true;
             }
         }
@@ -464,7 +464,7 @@ class RecurrentPaymentsRepository extends Repository
             return null;
         }
 
-        if (in_array($parentPayment->status, [PaymentsRepository::STATUS_PAID, PaymentsRepository::STATUS_PREPAID])) {
+        if (in_array($parentPayment->status, [PaymentsRepository::STATUS_PAID, PaymentsRepository::STATUS_PREPAID], true)) {
             return $recurrentPayment;
         }
 

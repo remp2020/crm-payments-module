@@ -113,7 +113,7 @@ abstract class GatewayAbstract implements PaymentInterface
             return false;
         }
 
-        return $recurrentPayment->retries == 0 || in_array($resultCode, $this->cancelErrorCodes);
+        return $recurrentPayment->retries == 0 || in_array($resultCode, $this->cancelErrorCodes, true);
     }
 
     protected function handleSuccessful($response)

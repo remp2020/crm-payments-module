@@ -16,7 +16,7 @@ class PaymentChangeStatusEvent extends AbstractEvent implements PaymentEventInte
 
     public function isPaid(): bool
     {
-        return in_array($this->payment->status, [PaymentsRepository::STATUS_PAID, PaymentsRepository::STATUS_PREPAID]);
+        return in_array($this->payment->status, [PaymentsRepository::STATUS_PAID, PaymentsRepository::STATUS_PREPAID], true);
     }
 
     public function getPayment(): ActiveRow

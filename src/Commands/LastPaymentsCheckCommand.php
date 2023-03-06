@@ -146,7 +146,7 @@ EOH
 
         /** @var ActiveRow $gateway */
         foreach ($this->paymentGatewaysRepository->getAllVisible() as $gateway) {
-            if (in_array($gateway->code, $exclude)) {
+            if (in_array($gateway->code, $exclude, true)) {
                 continue;
             }
 

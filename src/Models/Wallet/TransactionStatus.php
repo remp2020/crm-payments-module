@@ -25,7 +25,7 @@ class TransactionStatus
 
     public static function isValidStatus(string $status): bool
     {
-        return in_array($status, self::validStatuses());
+        return in_array($status, self::validStatuses(), true);
     }
 
     public static function validStatuses(): array

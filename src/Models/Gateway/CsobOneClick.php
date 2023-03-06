@@ -133,11 +133,11 @@ class CsobOneClick extends GatewayAbstract implements RecurrentPaymentInterface
 
         // we don't want to return unsuccessful result, if response returned one of error codes
         // because it was just an attempt to confirm offline payment
-        if (!$result && $payId && !in_array($data['status'], [
+        if (!$result && $payId && !in_array((int) $data['status'], [
             Gateway::STATUS_CANCELLED,
             Gateway::STATUS_DENIED,
-            Gateway::STATUS_REVERSED])
-        ) {
+            Gateway::STATUS_REVERSED
+        ], true)) {
             return null;
         }
 
@@ -260,7 +260,7 @@ class CsobOneClick extends GatewayAbstract implements RecurrentPaymentInterface
 
             // CSOB library doesn't return any response here and throws Exception on any kind of error.
             // We can't rely on the future checks to throw FailTry and we need to do it here manually.
-            if (!in_array($this->resultCode, self::SERVER_FAILURE_CODES)) {
+            if (!in_array((int) $this->resultCode, self::SERVER_FAILURE_CODES, true)) {
                 if ($this->hasStopRecurrentPayment($payment, $this->resultCode)) {
                     throw new RecurrentPaymentFailStop($exception->getMessage(), $exception->getCode());
                 }

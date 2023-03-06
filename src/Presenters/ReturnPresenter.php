@@ -137,7 +137,7 @@ class ReturnPresenter extends FrontendPresenter
         $presenter = $this;
 
         $this->paymentProcessor->complete($payment, function ($payment, GatewayAbstract $gateway) use ($presenter) {
-            if (in_array($payment->status, [PaymentsRepository::STATUS_PAID, PaymentsRepository::STATUS_PREPAID])) {
+            if (in_array($payment->status, [PaymentsRepository::STATUS_PAID, PaymentsRepository::STATUS_PREPAID], true)) {
                 // confirmed payment == agreed to terms
                 if (!$this->userMetaRepository->exists($payment->user, 'gdpr')) {
                     $this->userMetaRepository->setMeta($payment->user, ['gdpr' => 'confirm_payment']);
