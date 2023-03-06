@@ -16,7 +16,6 @@ abstract class GatewayAbstract implements PaymentInterface
 
     protected ?string $testHost;
 
-    /** @var \Omnipay\Common\Message\AbstractResponse */
     protected $response;
 
     protected $linkGenerator;

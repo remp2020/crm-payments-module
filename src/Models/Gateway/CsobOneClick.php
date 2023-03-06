@@ -17,7 +17,6 @@ use Nette\Utils\DateTime;
 use Nette\Utils\Strings;
 use Omnipay\Common\Exception\InvalidRequestException;
 use Omnipay\Csob\Gateway;
-use Omnipay\Omnipay;
 use OndraKoupil\Csob\Exception;
 use Psr\Log\LoggerInterface;
 use Tracy\Debugger;
@@ -42,8 +41,7 @@ class CsobOneClick extends GatewayAbstract implements RecurrentPaymentInterface
         self::INTERNAL_ERROR,
     ];
 
-    /** @var \Omnipay\Csob\Gateway */
-    protected $gateway;
+    protected Gateway $gateway;
 
     private $resultCode;
 
@@ -70,7 +68,10 @@ class CsobOneClick extends GatewayAbstract implements RecurrentPaymentInterface
 
     protected function initialize()
     {
-        $this->gateway = Omnipay::create('Csob');
+        /** @var Gateway $gateway */
+        $gateway = new Gateway();
+        $this->gateway = $gateway;
+
         $this->gateway->setMerchantId($this->applicationConfig->get('csob_merchant_id'));
         $this->gateway->setShopName($this->applicationConfig->get('csob_shop_name'));
         $this->gateway->setBankPublicKeyFilePath($this->applicationConfig->get('csob_bank_public_key_file_path'));
@@ -186,10 +187,8 @@ class CsobOneClick extends GatewayAbstract implements RecurrentPaymentInterface
     }
 
     /**
-     * Returns array [$cid => (DateTime)$expiration]
-     *
-     * @param array $recurrentPayments
-     * @return array
+     * @param array $tokens
+     * @return array [$cid => (DateTime)$expiration]
      */
     public function checkExpire($tokens)
     {

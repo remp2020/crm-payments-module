@@ -16,13 +16,14 @@ class Comfortpay extends GatewayAbstract implements RecurrentPaymentInterface
 {
     public const GATEWAY_CODE = 'comfortpay';
 
-    /** @var Gateway */
-    protected $gateway;
+    protected Gateway $gateway;
 
     protected function initialize()
     {
-        $this->gateway = Omnipay::create('ComfortPay');
+        /** @var Gateway $gateway */
+        $gateway = Omnipay::create('ComfortPay');
 
+        $this->gateway = $gateway;
         $this->gateway->setMid($this->applicationConfig->get('comfortpay_mid'));
         $this->gateway->setWs($this->applicationConfig->get('comfortpay_ws'));
         $this->gateway->setTerminalId($this->applicationConfig->get('comfortpay_terminalid'));

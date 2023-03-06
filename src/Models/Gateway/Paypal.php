@@ -16,8 +16,7 @@ class Paypal extends GatewayAbstract
 {
     public const GATEWAY_CODE = 'paypal';
 
-    /** @var ExpressGateway */
-    protected $gateway;
+    protected ExpressGateway $gateway;
 
     private $paymentMetaRepository;
 
@@ -34,7 +33,9 @@ class Paypal extends GatewayAbstract
 
     protected function initialize()
     {
-        $this->gateway = Omnipay::create('PayPal_Express');
+        /** @var ExpressGateway $gateway */
+        $gateway = Omnipay::create('PayPal_Express');
+        $this->gateway = $gateway;
 
         $this->gateway->setUsername($this->applicationConfig->get('paypal_username'));
         $this->gateway->setPassword($this->applicationConfig->get('paypal_password'));

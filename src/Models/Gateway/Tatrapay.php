@@ -10,12 +10,13 @@ class Tatrapay extends GatewayAbstract
 {
     public const GATEWAY_CODE = 'tatrapay';
 
-    /** @var Gateway */
-    protected $gateway;
+    protected Gateway $gateway;
 
     protected function initialize()
     {
-        $this->gateway = Omnipay::create('TatraPay');
+        /** @var Gateway $gateway */
+        $gateway = Omnipay::create('TatraPay');
+        $this->gateway = $gateway;
 
         $this->gateway->setMid($this->applicationConfig->get('tatrapay_mid'));
         $this->gateway->setSharedSecret($this->applicationConfig->get('tatrapay_sharedsecret'));

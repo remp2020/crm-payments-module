@@ -16,7 +16,6 @@ use Omnipay\PayPal\PayPalItem;
 use Omnipay\PayPal\PayPalItemBag;
 use Omnipay\PayPal\Support\InstantUpdateApi\BillingAgreement;
 use Omnipay\PayPalReference\ExpressGateway;
-use Omnipay\PayPalReference\Message\CreateBillingAgreementResponse;
 use Tracy\Debugger;
 use Tracy\ILogger;
 
@@ -24,8 +23,7 @@ class PaypalReference extends GatewayAbstract implements RecurrentPaymentInterfa
 {
     public const GATEWAY_CODE = 'paypal_reference';
 
-    /** @var ExpressGateway */
-    protected $gateway;
+    protected ExpressGateway $gateway;
 
     private $paymentMetaRepository;
 
@@ -42,7 +40,9 @@ class PaypalReference extends GatewayAbstract implements RecurrentPaymentInterfa
 
     protected function initialize()
     {
-        $this->gateway = Omnipay::create('PayPalReference_Express');
+        /** @var ExpressGateway $gateway */
+        $gateway = Omnipay::create('PayPalReference_Express');
+        $this->gateway = $gateway;
 
         $this->gateway->setUsername($this->applicationConfig->get('paypal_username'));
         $this->gateway->setPassword($this->applicationConfig->get('paypal_password'));
@@ -96,7 +96,6 @@ class PaypalReference extends GatewayAbstract implements RecurrentPaymentInterfa
             $responseData = $paymentResponse->getData();
             $this->paymentMetaRepository->add($payment, 'transaction_id', $responseData['PAYMENTINFO_0_TRANSACTIONID']);
 
-            /** @var CreateBillingAgreementResponse $response */
             $this->response = $this->gateway->createBillingAgreement([
                 'token' => $paymentResponse->getData()['TOKEN'],
             ])->send();

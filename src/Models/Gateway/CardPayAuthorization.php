@@ -18,8 +18,7 @@ class CardPayAuthorization extends GatewayAbstract implements AuthorizationInter
 {
     public const GATEWAY_CODE = 'cardpay_authorization';
 
-    /** @var Gateway */
-    protected $gateway;
+    protected Gateway $gateway;
 
     protected $paymentMetaRepository;
 
@@ -37,8 +36,10 @@ class CardPayAuthorization extends GatewayAbstract implements AuthorizationInter
 
     protected function initialize()
     {
-        $this->gateway = Omnipay::create('CardPay');
+        /** @var Gateway $gateway */
+        $gateway = Omnipay::create('CardPay');
 
+        $this->gateway = $gateway;
         $this->gateway->setMid($this->applicationConfig->get('cardpay_mid'));
         $this->gateway->setSharedSecret($this->applicationConfig->get('cardpay_sharedsecret'));
         $this->gateway->setTestMode(!($this->applicationConfig->get('cardpay_mode') == 'live'));

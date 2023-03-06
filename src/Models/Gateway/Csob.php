@@ -18,8 +18,7 @@ class Csob extends GatewayAbstract
 {
     public const GATEWAY_CODE = 'csob';
 
-    /** @var \Omnipay\Csob\Gateway */
-    protected $gateway;
+    protected Gateway $gateway;
 
     private $paymentMetaRepository;
 
@@ -40,7 +39,10 @@ class Csob extends GatewayAbstract
 
     protected function initialize()
     {
-        $this->gateway = Omnipay::create('Csob');
+        /** @var Gateway $gateway */
+        $gateway = Omnipay::create('Csob');
+
+        $this->gateway = $gateway;
         $this->gateway->setMerchantId($this->applicationConfig->get('csob_merchant_id'));
         $this->gateway->setShopName($this->applicationConfig->get('csob_shop_name'));
         $this->gateway->setBankPublicKeyFilePath($this->applicationConfig->get('csob_bank_public_key_file_path'));
