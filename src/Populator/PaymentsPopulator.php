@@ -29,7 +29,7 @@ class PaymentsPopulator extends AbstractPopulator
             ];
 
             $subscription = false;
-            if (rand(1, 4) == 2) {
+            if (random_int(1, 4) == 2) {
                 $subscription = $this->getRecord('subscriptions');
             }
             $paymentGateway = $this->getRecord('payment_gateways');
@@ -79,6 +79,6 @@ class PaymentsPopulator extends AbstractPopulator
             PaymentsRepository::STATUS_FAIL,
             PaymentsRepository::STATUS_TIMEOUT,
         ];
-        return $statuses[rand(0, count($statuses)-1)];
+        return $statuses[random_int(0, count($statuses)-1)];
     }
 }

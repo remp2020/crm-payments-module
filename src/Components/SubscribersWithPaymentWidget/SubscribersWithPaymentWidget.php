@@ -7,6 +7,7 @@ use Crm\ApplicationModule\Widget\LazyWidgetManager;
 use Crm\SegmentModule\Repository\SegmentsRepository;
 use Crm\SegmentModule\Repository\SegmentsValuesRepository;
 use DateTime;
+use Nette\Utils\Random;
 
 /**
  * This widget takes segment code and date modifier and than fetches subscribers value
@@ -37,7 +38,7 @@ class SubscribersWithPaymentWidget extends BaseLazyWidget
 
         $this->segmentsRepository = $segmentsRepository;
         $this->segmentsValuesRepository = $segmentsValuesRepository;
-        $this->identifier = 'subscriberswithpaymentwidget' . uniqid();
+        $this->identifier = 'subscriberswithpaymentwidget_' . Random::generate();
     }
 
     public function header()

@@ -16,7 +16,7 @@ class ParsedEmailsPopulator extends AbstractPopulator
 
         for ($i = 0; $i < $this->count; $i++) {
             $payment = null;
-            if (rand(1, 3) != 2) {
+            if (random_int(1, 3) != 2) {
                 $payment = $this->getRecord('payments');
             }
 
@@ -47,6 +47,6 @@ class ParsedEmailsPopulator extends AbstractPopulator
             ParsedMailLogsRepository::STATE_AUTO_NEW_PAYMENT,
         ];
 
-        return $types[ rand(0, count($types) - 1) ];
+        return $types[ random_int(0, count($types) - 1) ];
     }
 }

@@ -34,7 +34,7 @@ class VariableSymbol extends Repository implements VariableSymbolInterface
         $characters = '0123456789';
         $result = [];
         for ($i = 0; $i < $length; $i++) {
-            $result[] = $characters[rand(0, strlen($characters) - 1)];
+            $result[] = $characters[random_int(0, strlen($characters) - 1)];
         }
         return implode('', $result);
     }
