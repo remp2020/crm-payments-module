@@ -39,7 +39,7 @@ class AdminFilterFormData
         );
 
         if ($this->getId()) {
-            $payments->where('id = ?', $this->getId());
+            $payments->where('payments.id = ?', $this->getId());
         }
 
         if ($this->getPaidAtFrom()) {

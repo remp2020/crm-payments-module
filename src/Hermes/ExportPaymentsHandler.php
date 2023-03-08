@@ -60,8 +60,8 @@ class ExportPaymentsHandler implements HandlerInterface
         $lastId = 0;
         while (true) {
             $payments = $this->adminFilterFormData->filteredPayments()
-                ->where('id > ?', $lastId)
-                ->order('id ASC')
+                ->where('payments.id > ?', $lastId)
+                ->order('payments.id ASC')
                 ->limit(1000)
                 ->fetchAll();
 
