@@ -129,6 +129,8 @@ class PaymentsTestCase extends DatabaseTestCase
                 ->setName('my subscription type')
                 ->setUserLabel('my subscription type')
                 ->setPrice(12.2)
+                ->addSubscriptionTypeItem('first item', 10, 20)
+                ->addSubscriptionTypeItem('second item', 2.2, 20)
                 ->setCode('my_subscription_type')
                 ->setLength(31)
                 ->setActive(true)

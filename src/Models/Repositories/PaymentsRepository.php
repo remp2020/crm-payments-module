@@ -180,6 +180,7 @@ class PaymentsRepository extends Repository
             'referer' => '',
         ]);
 
+        $totalPricesAreSame = true;
         $paymentItems = $payment->related('payment_items');
         $hasOnlySubscriptionTypePaymentItems = empty(array_filter($paymentItems->fetchPairs('id', 'type'), function ($type) {
             return $type !== SubscriptionTypePaymentItem::TYPE;
@@ -194,21 +195,23 @@ class PaymentsRepository extends Repository
             $subscriptionTypePaymentItemContainer->addItems(SubscriptionTypePaymentItem::fromSubscriptionType($payment->subscription_type));
 
             $paymentTotalPriceWithoutVAT = round($paymentItemContainer->totalPriceWithoutVAT(), 2);
-            $subscriptionTypeTotalPrice = round($subscriptionTypePaymentItemContainer->totalPrice(), 2);
             $subscriptionTypeTotalPriceWithoutVAT = round($subscriptionTypePaymentItemContainer->totalPriceWithoutVAT(), 2);
+
+            $totalPricesAreSame = round($subscriptionTypePaymentItemContainer->totalPrice(), 2) === round($payment->amount, 2);
 
             // subscription type items could have changed VAT, if total price without VAT isn't equal payment items will be made from subscription type
             // also the total amount of subscription type items and payment must be same
-            if ($paymentTotalPriceWithoutVAT !== $subscriptionTypeTotalPriceWithoutVAT && round($payment->amount, 2) === $subscriptionTypeTotalPrice) {
+            if ($paymentTotalPriceWithoutVAT !== $subscriptionTypeTotalPriceWithoutVAT && $totalPricesAreSame) {
                 $this->paymentItemsRepository->add($newPayment, $subscriptionTypePaymentItemContainer);
                 return $newPayment;
             }
         }
 
+        $fromSubscriptionType = $totalPricesAreSame;
         foreach ($paymentItems as $paymentItem) {
             // change new payment's status to failed if it's not possible to copy payment items (payment would be incomplete)
             try {
-                $this->paymentItemsRepository->copyPaymentItem($paymentItem, $newPayment);
+                $this->paymentItemsRepository->copyPaymentItem($paymentItem, $newPayment, $fromSubscriptionType);
             } catch (\Exception $e) {
                 $this->update($newPayment, ['status' => PaymentsRepository::STATUS_FAIL, 'note' => "Unable to copy payment items [{$e->getMessage()}]."]);
                 throw $e;

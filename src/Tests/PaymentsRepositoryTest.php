@@ -5,13 +5,22 @@ namespace Crm\PaymentsModule\Tests;
 use Crm\PaymentsModule\Models\PaymentItem\PaymentItemHelper;
 use Crm\PaymentsModule\PaymentItem\DonationPaymentItem;
 use Crm\PaymentsModule\PaymentItem\PaymentItemContainer;
-use Crm\SubscriptionsModule\Builder\SubscriptionTypeBuilder;
 use Crm\SubscriptionsModule\PaymentItem\SubscriptionTypePaymentItem;
 use Crm\SubscriptionsModule\Repository\SubscriptionTypeItemsRepository;
 use Crm\SubscriptionsModule\Repository\SubscriptionTypesRepository;
 
 class PaymentsRepositoryTest extends PaymentsTestCase
 {
+    private SubscriptionTypesRepository $subscriptionTypesRepository;
+    private SubscriptionTypeItemsRepository $subscriptionTypeItemsRepository;
+
+    public function setUp(): void
+    {
+        parent::setUp();
+        $this->subscriptionTypesRepository = $this->getRepository(SubscriptionTypesRepository::class);
+        $this->subscriptionTypeItemsRepository = $this->getRepository(SubscriptionTypeItemsRepository::class);
+    }
+
     public function testLoadVariableSymbolWithoutLeedingZeros()
     {
         $payment1 = $this->createPayment('0006789465');
@@ -160,9 +169,7 @@ class PaymentsRepositoryTest extends PaymentsTestCase
         $subscriptionType = $this->getSubscriptionType();
         $subscriptionTypeItem = $subscriptionType->related('subscription_type_item')->fetch();
 
-        /** @var SubscriptionTypeItemsRepository $subscriptionTypeItemsRepository */
-        $subscriptionTypeItemsRepository = $this->getRepository(SubscriptionTypeItemsRepository::class);
-        $subscriptionTypeItemsRepository->update($subscriptionTypeItem, ['vat' => 10]);
+        $this->subscriptionTypeItemsRepository->update($subscriptionTypeItem, ['vat' => 10]);
 
         $newPayment = $this->paymentsRepository->copyPayment($payment);
 
@@ -202,29 +209,8 @@ class PaymentsRepositoryTest extends PaymentsTestCase
 
     public function testCopyPaymentWithChangedSubscriptionTypeItems(): void
     {
-        /** @var SubscriptionTypeBuilder $subscriptionTypeBuilder */
-        $subscriptionTypeBuilder = $this->inject('Crm\SubscriptionsModule\Builder\SubscriptionTypeBuilder');
-        $subscriptionType = $subscriptionTypeBuilder->createNew()
-            ->setName('my subscription type')
-            ->setUserLabel('my subscription type')
-            ->setPrice(12.2)
-            ->setCode('my_subscription_type')
-            ->addSubscriptionTypeItem('first item', 10, 20)
-            ->addSubscriptionTypeItem('second item', 2.2, 20)
-            ->setLength(31)
-            ->setActive(true)
-            ->save();
-
-        $paymentItemContainer = (new PaymentItemContainer())->addItems(
-            SubscriptionTypePaymentItem::fromSubscriptionType($subscriptionType)
-        );
-
-        $firstPayment = $this->paymentsRepository->add(
-            $subscriptionType,
-            $this->getPaymentGateway(),
-            $this->getUser(),
-            $paymentItemContainer
-        );
+        $subscriptionType = $this->getSubscriptionType();
+        $firstPayment = $this->createPayment('0001');
 
         $secondPayment = $this->paymentsRepository->copyPayment($firstPayment);
         $secondPayment = $this->paymentsRepository->find($secondPayment->id);
@@ -239,12 +225,10 @@ class PaymentsRepositoryTest extends PaymentsTestCase
         $secondPaymentItem = $secondPayment->related('payment_items')->fetch();
         $secondPaymentSubscriptionTypeItem = $secondPaymentItem->subscription_type_item;
 
-        /** @var SubscriptionTypeItemsRepository $subscriptionTypeItemRepository */
-        $subscriptionTypeItemRepository = $this->getRepository(SubscriptionTypeItemsRepository::class);
-        $subscriptionTypeItemRepository->softDelete($secondPaymentSubscriptionTypeItem);
+        $this->subscriptionTypeItemsRepository->softDelete($secondPaymentSubscriptionTypeItem);
 
         // and replace them with another one with lower vat so final price_without_vat won't be equal
-        $subscriptionTypeItemRepository->add(
+        $this->subscriptionTypeItemsRepository->add(
             $subscriptionType,
             'third item',
             $secondPaymentSubscriptionTypeItem->amount,
@@ -265,20 +249,18 @@ class PaymentsRepositoryTest extends PaymentsTestCase
         $thirdPaymentSubscriptionTypeItem = $thirdPaymentItem->subscription_type_item;
 
         // soft delete related subscription_type_item
-        $subscriptionTypeItemRepository->softDelete($thirdPaymentSubscriptionTypeItem);
+        $this->subscriptionTypeItemsRepository->softDelete($thirdPaymentSubscriptionTypeItem);
 
         // and replace them with another one with different price so final price_without_vat won't be equal
-        $subscriptionTypeItemRepository->add(
+        $this->subscriptionTypeItemsRepository->add(
             $subscriptionType,
             'third item',
             $thirdPaymentSubscriptionTypeItem->amount + 1,
             $thirdPaymentSubscriptionTypeItem->vat
         );
 
-        /** @var SubscriptionTypesRepository $subscriptionTypesRepository */
-        $subscriptionTypesRepository = $this->getRepository(SubscriptionTypesRepository::class);
-        $subscriptionTypesRepository->update($subscriptionType, [
-            'price' => $paymentItemContainer->totalPrice() + 1,
+        $this->subscriptionTypesRepository->update($subscriptionType, [
+            'price' => $firstPayment->amount + 1,
         ]);
 
         // total price of payment is not equal with total price of subscription type
@@ -289,5 +271,31 @@ class PaymentsRepositoryTest extends PaymentsTestCase
             $thirdPayment->related('payment_items')->fetchPairs('subscription_type_id', 'subscription_type_item_id'),
             $fourthPayment->related('payment_items')->fetchPairs('subscription_type_id', 'subscription_type_item_id'),
         );
+    }
+
+    public function testCopyPaymentWithHardChangedSubscriptionTypeItems()
+    {
+        $firstPayment = $this->createPayment('0002');
+
+        $firstPaymentItem = $firstPayment->related('payment_items')->fetch();
+        $firstPaymentSubscriptionTypeItem = $firstPaymentItem->subscription_type_item;
+        $firstPaymentSubscriptionTypeAmount = $firstPaymentItem->subscription_type->price;
+
+        // direct changed the amount of subscription type item
+        $this->subscriptionTypeItemsRepository->update($firstPaymentSubscriptionTypeItem, [
+            'amount' => $firstPaymentSubscriptionTypeItem->amount + 1,
+        ]);
+
+        $firstPayment = $this->paymentsRepository->find($firstPayment->id);
+
+        // total amount of payment doesn't fit maybe legacy payment, copy items as are in previous payment
+        $secondPayment = $this->paymentsRepository->copyPayment($firstPayment);
+
+        $this->assertEquals(
+            $firstPayment->related('payment_items')->fetchPairs('amount', 'subscription_type_item_id'),
+            $secondPayment->related('payment_items')->fetchPairs('amount', 'subscription_type_item_id'),
+        );
+        $this->assertEquals($firstPayment->amount, $secondPayment->amount);
+        $this->assertEquals($firstPaymentSubscriptionTypeAmount, $secondPayment->amount);
     }
 }

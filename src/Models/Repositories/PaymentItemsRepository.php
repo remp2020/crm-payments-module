@@ -144,7 +144,7 @@ class PaymentItemsRepository extends Repository
         return $this->getTable()->select('DISTINCT type')->fetchPairs('type', 'type');
     }
 
-    final public function copyPaymentItem(ActiveRow $paymentItem, ActiveRow $newPayment)
+    final public function copyPaymentItem(ActiveRow $paymentItem, ActiveRow $newPayment, bool $fromSubscriptionType = true)
     {
         $paymentItemArray = $paymentItem->toArray();
 
@@ -156,7 +156,7 @@ class PaymentItemsRepository extends Repository
 
         $newPaymentItemMetaArray = $paymentItem->related('payment_item_meta')->fetchPairs('key', 'value');
 
-        if ($paymentItemArray['type'] === SubscriptionTypePaymentItem::TYPE && $paymentItem->subscription_type_item_id) {
+        if ($paymentItemArray['type'] === SubscriptionTypePaymentItem::TYPE && $paymentItem->subscription_type_item_id && $fromSubscriptionType) {
             $subscriptionTypeItem = $paymentItem->subscription_type_item;
             if (!$subscriptionTypeItem) {
                 throw new Exception("No `subscription_type_item`: ({$newPaymentItemMetaArray['subscription_type_item_id']}) found by copying payment: {$oldPaymentId} - to payment: {$newPayment->id}");
