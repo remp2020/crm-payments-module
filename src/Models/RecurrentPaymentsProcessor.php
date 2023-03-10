@@ -70,8 +70,12 @@ class RecurrentPaymentsProcessor
         ]);
     }
 
-    public function processFailedRecurrent($recurrentPayment, $resultCode, $resultMessage, $customChargeAmount = null)
-    {
+    public function processFailedRecurrent(
+        ActiveRow $recurrentPayment,
+        $resultCode,
+        ?string $resultMessage,
+        ?float $customChargeAmount = null
+    ) {
         // stop recurrent if there are no more retries available
         if ($recurrentPayment->retries === 0) {
             $this->processStoppedRecurrent(
@@ -102,7 +106,7 @@ class RecurrentPaymentsProcessor
             $recurrentPayment->retries - 1
         );
 
-        if (strlen($resultMessage) > 250) {
+        if (isset($resultMessage) && strlen($resultMessage) > 250) {
             Debugger::log('Result message of failed recurrent is too long: [' . $resultMessage . '].', Debugger::ERROR);
             $resultMessage = substr($resultMessage, 0, 250);
         }
