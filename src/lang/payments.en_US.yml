@@ -80,6 +80,10 @@ admin:
 
         parsed_mails_failed_notification:
             title: Incorrect amount received to bank account
+            show_list: Show list
+            today: Today
+            week: Week
+            month: Month
 
         subscribers_with_payment_widget:
             last_day: Last 24 hours
@@ -374,6 +378,8 @@ admin:
             label: Variable symbol
         state:
             label: Status
+        payment_status:
+            label: Payment status
         filter: Filter
         cancel: Cancel filter
         created_at: Created at

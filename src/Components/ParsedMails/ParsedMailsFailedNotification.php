@@ -34,7 +34,12 @@ class ParsedMailsFailedNotification extends BaseLazyWidget
 
     public function render($id = '')
     {
-        $this->template->listPayments = $this->parsedMailLogsRepository->formPaymentsWithWrongAmount();
+        $this->template->today = $this->parsedMailLogsRepository
+            ->getDifferentAmountPaymentLogs(new \DateTime('today midnight'));
+        $this->template->last7days = $this->parsedMailLogsRepository
+            ->getDifferentAmountPaymentLogs((new \DateTime('-7 days'))->setTime(0, 0));
+        $this->template->last30days = $this->parsedMailLogsRepository
+            ->getDifferentAmountPaymentLogs((new \DateTime('-30 days'))->setTime(0, 0));
 
         $this->template->setFile(__DIR__ . '/' . $this->templateName);
         $this->template->render();

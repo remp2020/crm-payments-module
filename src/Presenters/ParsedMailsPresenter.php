@@ -5,6 +5,7 @@ namespace Crm\PaymentsModule\Presenters;
 use Crm\AdminModule\Presenters\AdminPresenter;
 use Crm\ApplicationModule\Components\PreviousNextPaginator;
 use Crm\PaymentsModule\MailConfirmation\ParsedMailLogsRepository;
+use Crm\PaymentsModule\Repository\PaymentsRepository;
 use Nette\Application\UI\Form;
 use Tomaj\Form\Renderer\BootstrapInlineRenderer;
 
@@ -13,18 +14,24 @@ class ParsedMailsPresenter extends AdminPresenter
     /** @var ParsedMailLogsRepository @inject */
     public $parsedMailLogsRepository;
 
+    /** @var PaymentsRepository @inject */
+    public $paymentsRepository;
+
     /** @persistent */
     public $vs;
 
     /** @persistent */
     public $state;
 
+    /** @persistent  */
+    public $paymentStatus;
+
     /**
      * @admin-access-level read
      */
     public function renderDefault()
     {
-        $logs = $this->parsedMailLogsRepository->all($this->vs, $this->state);
+        $logs = $this->parsedMailLogsRepository->all($this->vs, $this->state, $this->paymentStatus);
 
         $pnp = new PreviousNextPaginator();
         $this->addComponent($pnp, 'paginator');
@@ -57,8 +64,14 @@ class ParsedMailsPresenter extends AdminPresenter
             ParsedMailLogsRepository::STATE_DUPLICATED_PAYMENT => ParsedMailLogsRepository::STATE_DUPLICATED_PAYMENT,
             ParsedMailLogsRepository::STATE_ALREADY_REFUNDED => ParsedMailLogsRepository::STATE_ALREADY_REFUNDED,
         ];
-        $form->addselect('state', 'payments.admin.parsed_mails.state.label', $states)
+        $form->addSelect('state', 'payments.admin.parsed_mails.state.label', $states)
             ->setPrompt('--');
+
+        $form->addSelect(
+            'payment_status',
+            'payments.admin.parsed_mails.payment_status.label',
+            $this->paymentsRepository->getStatusPairs(),
+        )->setPrompt('--');
 
         $form->addSubmit('send', 'payments.admin.parsed_mails.filter')
             ->getControlPrototype()
@@ -66,12 +79,17 @@ class ParsedMailsPresenter extends AdminPresenter
             ->setHtml('<i class="fa fa-filter"></i> ' . $this->translator->translate('payments.admin.parsed_mails.filter'));
 
         $form->addSubmit('cancel', 'payments.admin.parsed_mails.cancel')->onClick[] = function () {
-            $this->redirect('default', ['state' => '', 'vs' => '']);
+            $this->redirect('default', [
+                'state' => null,
+                'vs' => null,
+                'paymentStatus' => null,
+            ]);
         };
 
         $form->onSuccess[] = [$this, 'adminFilterSubmited'];
         $form->setDefaults([
             'state' => $this->state,
+            'payment_status' => $this->paymentStatus,
             'vs' => $this->vs,
         ]);
         return $form;
@@ -81,6 +99,7 @@ class ParsedMailsPresenter extends AdminPresenter
     {
         $this->redirect('default', [
             'state' => $values['state'],
+            'paymentStatus' => $values['payment_status'],
             'vs' => $values['vs'],
         ]);
     }

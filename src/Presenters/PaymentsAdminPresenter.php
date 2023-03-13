@@ -330,11 +330,6 @@ class PaymentsAdminPresenter extends AdminPresenter
         return $this->generateSmallBarGraphComponent(PaymentsRepository::STATUS_FAIL, 'Fail', $factory);
     }
 
-    protected function createComponentTimeoutPaymentsSmallBarGraph(SmallBarGraphControlFactoryInterface $factory)
-    {
-        return $this->generateSmallBarGraphComponent(PaymentsRepository::STATUS_TIMEOUT, 'Timeout', $factory);
-    }
-
     protected function createComponentRefundedPaymentsSmallBarGraph(SmallBarGraphControlFactoryInterface $factory)
     {
         return $this->generateSmallBarGraphComponent(PaymentsRepository::STATUS_REFUND, 'Refunded', $factory);

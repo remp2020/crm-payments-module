@@ -2,13 +2,11 @@
 
 namespace Crm\PaymentsModule\MailConfirmation;
 
-use Crm\ApplicationModule\Cache\CacheRepository;
 use Crm\ApplicationModule\Repository;
 use Crm\PaymentsModule\Repository\PaymentsRepository;
 use Crm\PaymentsModule\VariableSymbolVariant;
 use Nette\Caching\Storage;
 use Nette\Database\Explorer;
-use Nette\Utils\Json;
 
 class ParsedMailLogsRepository extends Repository
 {
@@ -25,31 +23,26 @@ class ParsedMailLogsRepository extends Repository
 
     protected $tableName = 'parsed_mail_logs';
 
-    private $paymentsRepository;
-
-    private $cacheRepository;
-
     public function __construct(
         Explorer $database,
-        PaymentsRepository $paymentsRepository,
-        CacheRepository $cacheRepository,
         Storage $cacheStorage = null
     ) {
         parent::__construct($database, $cacheStorage);
-        $this->paymentsRepository = $paymentsRepository;
-        $this->cacheRepository = $cacheRepository;
     }
 
-    public function all($vs = '', $state = '')
+    public function all(?string $vs = null, ?string $state = null, ?string $paymentStatus = null)
     {
         $where = [];
-        if ($vs) {
+        if ($vs !== null) {
             $where['variable_symbol LIKE ?'] = "%{$vs}%";
         }
-        if ($state) {
+        if ($state !== null) {
             $where['state'] = $state;
         }
-        return $this->getTable()->where($where)->order('delivered_at DESC');
+        if ($paymentStatus !== null) {
+            $where['payment.status'] = $paymentStatus;
+        }
+        return $this->getTable()->where($where)->order('parsed_mail_logs.created_at DESC');
     }
 
     public function findByVariableSymbols($variableSymbols)
@@ -64,40 +57,17 @@ class ParsedMailLogsRepository extends Repository
         return $this->getTable()->order('created_at DESC')->limit(1)->fetch();
     }
 
-
-    /**
-     * Cached form payments with wrong amount
-     *
-     * @param bool $forceCacheUpdate
-     *
-     * @return array
-     * @throws \Nette\Utils\JsonException
-     */
-    public function formPaymentsWithWrongAmount($forceCacheUpdate = false): array
+    public function getDifferentAmountPaymentLogs(?\DateTime $deliveredFrom): array
     {
-        $callable = function () {
-            $wrongAmountPayments = $this->all('', 'different_amount');
+        $wrongAmountPaymentLogs = $this->getTable()
+            ->where('state = ?', 'different_amount')
+            ->where('payment.status = ?', PaymentsRepository::STATUS_FORM)
+            ->order('created_at DESC');
 
-            $listPayments = [];
-            foreach ($wrongAmountPayments as $wrongAmountPayment) {
-                $payment = $this->paymentsRepository->findLastByVS($wrongAmountPayment->variable_symbol);
-                if ($payment && $payment->status == PaymentsRepository::STATUS_FORM) {
-                    $listPayments[] = [
-                        'user_id' => $payment->user->id,
-                        'amount' => $wrongAmountPayment->amount,
-                        'public_name' => $payment->user->public_name
-                    ];
-                }
-            }
+        if ($deliveredFrom) {
+            $wrongAmountPaymentLogs->where('delivered_at >= ?', $deliveredFrom);
+        }
 
-            return Json::encode($listPayments);
-        };
-
-        return Json::decode($this->cacheRepository->loadAndUpdate(
-            'payments_with_wrong_sum',
-            $callable,
-            \Nette\Utils\DateTime::from(CacheRepository::REFRESH_TIME_1_HOUR),
-            $forceCacheUpdate
-        ), Json::FORCE_ARRAY);
+        return $wrongAmountPaymentLogs->fetchAll();
     }
 }

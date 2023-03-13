@@ -490,8 +490,6 @@ class PaymentsModule extends CrmModule
                 $this->paymentsHistogramFactory->paymentsLastMonthDailyHistogram($status, true);
             }
 
-            $this->parsedMailLogsRepository->formPaymentsWithWrongAmount(true);
-
             $this->averageMonthPayment->getAverageMonthPayment(true);
         }
     }

@@ -80,6 +80,10 @@ admin:
 
         parsed_mails_failed_notification:
             title: Zlá suma prijatá na účet
+            show_list: Zobraziť zoznam
+            today: Dnes
+            week: Týždeň
+            month: Mesiac
 
         subscribers_with_payment_widget:
             last_day: Posledných 24 hodín
@@ -374,6 +378,8 @@ admin:
             label: Variabilný symbol
         state:
             label: Stav
+        payment_status:
+            label: Stav platby
         filter: Filtruj
         cancel: Zruš filter
         created_at: Vytvorené

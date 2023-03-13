@@ -1,4 +1,10 @@
-<div n:if="count($listPayments) > 0" class="bs-callout bs-callout-warning">
-  <h4>{_payments.admin.component.parsed_mails_failed_notification.title}</h4>
-  <a n:foreach="$listPayments as $payment" href="{plink :Users:UsersAdmin:show id => $payment['user_id']}">{$payment['amount']} <small>({$payment['public_name']})</small>{sep},{/sep}</a>
+<div n:if="count($last30days) > 0" class="bs-callout bs-callout-warning bs-callout-sm bg-warning">
+    {_"payments.admin.component.parsed_mails_failed_notification.title"}:
+    <span class="label label-default">{_"payments.admin.component.parsed_mails_failed_notification.today"}: {count($today)}</span>
+    <span class="label label-default">{_"payments.admin.component.parsed_mails_failed_notification.week"}: {count($last7days)}</span>
+    <span class="label label-default">{_"payments.admin.component.parsed_mails_failed_notification.month"}: {count($last30days)}</span>
+
+    <a class="btn btn-default btn-xs" href="{plink :Payments:ParsedMails:default, 'state' => 'different_amount', 'paymentStatus' => 'form'}">
+        <i class="fa fa-eye"></i> {_"payments.admin.component.parsed_mails_failed_notification.show_list"}
+    </a>
 </div>

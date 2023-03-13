@@ -27,6 +27,7 @@
               <th>{_payments.admin.parsed_mails.amount}</th>
               <th>{_payments.admin.parsed_mails.payment}</th>
               <th>{_payments.admin.parsed_mails.state.label}</th>
+              <th>{_payments.admin.parsed_mails.payment_status.label}</th>
               <th>{_payments.admin.parsed_mails.message}</th>
           </tr>
 	    </thead>
@@ -35,7 +36,7 @@
             <td>{$log->created_at|userDate}</td>
             <td>{$log->delivered_at|userDate}</td>
             <td><a href="{link PaymentsAdmin:default formData => ['text' => $log->variable_symbol]}">{$log->variable_symbol}</a></td>
-            <td><b>{$log->amount|price}</b></td>
+            <td><b n:if="$log->amount">{$log->amount|price}</b></td>
             <td>
               {if $log->payment_id}
                 <a href="{link PaymentsAdmin:default formData => ['id' => $log->payment_id]}">#{$log->payment_id}</a>
@@ -56,7 +57,18 @@
                 <span class="label label-default">{$log->state}</span>
               {/if}
             </td>
-            <td><code>{$log->message}</code></td>
+            <td>
+                {if $log->payment?->status == \Crm\PaymentsModule\Repository\PaymentsRepository::STATUS_PAID}
+                    <span class="label label-success">{$log->payment->status}</span>
+                {elseif $log->payment?->status == \Crm\PaymentsModule\Repository\PaymentsRepository::STATUS_FAIL}
+                    <span class="label label-danger">{$log->payment->status}</span>
+                {else}
+                    <span class="label label-default">{$log->payment?->status}</span>
+                {/if}
+            </td>
+            <td>
+                <code n:ifcontent>{$log->message}</code>
+            </td>
           </tr>
         </tbody>
       </table>
