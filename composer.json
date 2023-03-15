@@ -13,7 +13,7 @@
     "rootpd/omnipay-csob": "~4.2",
     "rootpd/omnipay-paypal-reference": "^4.0.0",
     "rootpd/openpgp-php": "~0.5",
-    "tomaj/omnipay-tatra": "4.2"
+    "tomaj/omnipay-tatra": "4.2.1"
   },
   "minimum-stability": "dev",
   "autoload": {

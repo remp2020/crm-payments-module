@@ -9,7 +9,6 @@ use Crm\PaymentsModule\Repository\PaymentsRepository;
 use DateInterval;
 use Nette\Database\Table\ActiveRow;
 use Nette\Utils\DateTime;
-use Nette\Utils\Json;
 use Omnipay\Common\Exception\InvalidRequestException;
 use Symfony\Component\Console\Output\OutputInterface;
 use Tomaj\BankMailsParser\MailContent;
@@ -228,7 +227,7 @@ class MailProcessor
             });
         } catch (InvalidRequestException $exception) {
             $this->output->writeln(" * Couldn't complete payment: <info>{$payment->variable_symbol}</info>. Email validation failed.");
-            Debugger::log("Couldn't complete mail processed payment: " . Json::encode($fields), ILogger::ERROR);
+            Debugger::log("Couldn't complete mail processed payment: " . $exception->getMessage(), ILogger::ERROR);
             throw $exception;
         }
 
