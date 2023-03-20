@@ -67,6 +67,7 @@ services:
 	- Crm\PaymentsModule\Api\ListRecurrentPaymentsApiHandler
 	- Crm\PaymentsModule\Api\ReactivateRecurrentPaymentApiHandler
 	- Crm\PaymentsModule\Api\StopRecurrentPaymentApiHandler
+	- Crm\PaymentsModule\Api\PaypalIpnHandler
 	- Crm\PaymentsModule\MailConfirmation\CidGetterDownloader
 	variableSymbol:
 		factory: Crm\PaymentsModule\Repository\VariableSymbol

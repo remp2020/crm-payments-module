@@ -4,6 +4,7 @@ namespace Crm\PaymentsModule;
 
 use Contributte\Translation\Translator;
 use Crm\ApiModule\Api\ApiRoutersContainerInterface;
+use Crm\ApiModule\Authorization\NoAuthorization;
 use Crm\ApiModule\Router\ApiIdentifier;
 use Crm\ApiModule\Router\ApiRoute;
 use Crm\ApplicationModule\CallbackManagerInterface;
@@ -313,6 +314,14 @@ class PaymentsModule extends CrmModule
                 new ApiIdentifier('1', 'recurrent-payment', 'stop'),
                 \Crm\PaymentsModule\Api\StopRecurrentPaymentApiHandler::class,
                 UserTokenAuthorization::class
+            )
+        );
+
+        $apiRoutersContainer->attachRouter(
+            new ApiRoute(
+                new ApiIdentifier('1', 'payments', 'paypal-ipn'),
+                \Crm\PaymentsModule\Api\PaypalIpnHandler::class,
+                NoAuthorization::class
             )
         );
     }

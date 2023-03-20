@@ -356,6 +356,12 @@ the error further.
 
 ---
 
+#### POST `/api/v1/payments/paypal-ipn`
+
+Handles the IPN notifications from PayPal. Follow this [guide](https://developer.paypal.com/api/nvp-soap/ipn/IPNSetup/) to enable IPN notifications for your PayPal account. Use `http://crm.press/api/v1/payments/paypal-ipn` as "Notification URL" (replace `http://crm.press` with your domain).
+
+**Note:** when switching to "live" mode, don't forget to also change the `paypal_ipn_baseurl` config to the live IPN endpoint (see [here](https://developer.paypal.com/api/nvp-soap/ipn/IPNImplementation/)) 
+
 #### GET `/api/v1/payments/variable-symbol`
 
 API call returns unique variable symbol (transaction ID) to be used for new payment instance.

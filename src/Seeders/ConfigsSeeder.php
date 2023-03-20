@@ -8,6 +8,7 @@ use Crm\ApplicationModule\Config\Repository\ConfigCategoriesRepository;
 use Crm\ApplicationModule\Config\Repository\ConfigsRepository;
 use Crm\ApplicationModule\Seeders\ConfigsTrait;
 use Crm\ApplicationModule\Seeders\ISeeder;
+use Crm\PaymentsModule\Api\PaypalIpnHandler;
 use Nette\Database\Connection;
 use Symfony\Component\Console\Output\OutputInterface;
 
@@ -295,6 +296,28 @@ class ConfigsSeeder implements ISeeder
             'payments.config.paypal_merchant.name',
             null,
             '',
+            $sorting++
+        );
+
+        $this->addConfig(
+            $output,
+            $category,
+            PaypalIpnHandler::CONF_BASE_URL_KEY,
+            ApplicationConfig::TYPE_STRING,
+            'payments.config.paypal_ipn_baseurl.name',
+            null,
+            'https://ipnpb.sandbox.paypal.com',
+            $sorting++
+        );
+
+        $this->addConfig(
+            $output,
+            $category,
+            PaypalIpnHandler::CONF_EMAIL_KEY,
+            ApplicationConfig::TYPE_STRING,
+            'payments.config.paypal_ipn_email.name',
+            'payments.config.paypal_ipn_email.description',
+            null,
             $sorting++
         );
 

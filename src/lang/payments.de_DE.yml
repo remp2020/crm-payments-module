@@ -577,6 +577,7 @@ config:
     paypal_mode:
         name: PayPal-Modus
         description: Wechseln Sie Modus zwischen „test“ (Sandbox) oder „live“ (Produktion)
+    paypal_ipn_email: {}
     csob_shop_name:
         description: In der Zahlungsbeschreibung angezeigter Shop-Name (falls automatisch generiert)
         name: CSOB Shop-Name

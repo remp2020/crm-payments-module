@@ -649,6 +649,7 @@ config:
         name: Paypal signature
     paypal_merchant:
         name: Paypal merchant
+    paypal_ipn_email: {}
     csob_merchant_id:
         name: ČSOB Merchant ID
         description: 'Merchant ID poskytnuté bankou nebo vygenerované přes https://iplatebnibrana.csob.cz/keygen/ (pro vývojářské účely)'

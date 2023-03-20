@@ -653,6 +653,11 @@ config:
         name: Paypal signature
     paypal_merchant:
         name: Paypal merchant
+    paypal_ipn_baseurl:
+        name: Paypal IPN URL
+    paypal_ipn_email:
+        name: Paypal IPN email
+        description: '"Receiver email" for IPN message checking. Leave empty to skip check.'
     csob_merchant_id:
         name: ČSOB Merchant ID
         description: 'Merchant ID provided by bank or generated via https://iplatebnibrana.csob.cz/keygen/ (for development purpose)'
