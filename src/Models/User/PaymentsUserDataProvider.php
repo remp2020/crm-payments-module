@@ -80,6 +80,7 @@ class PaymentsUserDataProvider implements UserDataProviderInterface
                 'ip' => 'GDPR removal',
                 'user_agent' => 'GDPR removal',
             ]);
+            $this->paymentsRepository->markAuditLogsForDelete($payment->getSignature());
         }
 
         return true;
