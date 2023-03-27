@@ -202,6 +202,14 @@ class PaymentsAdminPresenter extends AdminPresenter
 
         $form->onSuccess[] = [$this, 'adminFilterSubmitted'];
         $form->setDefaults($this->adminFilterFormData->getFormValues());
+
+        foreach ($collapseGroup->getControls() as $control) {
+            if (!empty($control->getValue())) {
+                $collapseGroup->setOption('container', 'div class="collapse in"');
+                break;
+            }
+        }
+
         return $form;
     }
 
