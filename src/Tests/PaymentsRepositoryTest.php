@@ -298,4 +298,29 @@ class PaymentsRepositoryTest extends PaymentsTestCase
         $this->assertEquals($firstPayment->amount, $secondPayment->amount);
         $this->assertEquals($firstPaymentSubscriptionTypeAmount, $secondPayment->amount);
     }
+
+    public function testCopyPaymentWithProperlyChangedSubscriptionTypeButDividedBetweenMoreItems(): void
+    {
+        $firstPayment = $this->createPayment('0003');
+
+        $subscriptionType = $firstPayment->subscription_type;
+        $firstSubscriptionTypeItem = $subscriptionType->related('subscription_type_item')->fetch();
+        $firstSubscriptionTypeItemAmount = $firstSubscriptionTypeItem->amount;
+
+        // divide one of subscription type items between two
+        $this->subscriptionTypeItemsRepository->update($firstSubscriptionTypeItem, [
+            'name' => 'divided item 1',
+            'amount' => round($firstSubscriptionTypeItemAmount / 2, 2)
+        ]);
+        $this->subscriptionTypeItemsRepository->add($subscriptionType, 'divided item 2', round($firstSubscriptionTypeItemAmount / 2, 2), $firstSubscriptionTypeItem->vat);
+
+        $secondPayment = $this->paymentsRepository->copyPayment($firstPayment);
+
+        $this->assertNotEquals(
+            $firstPayment->related('payment_items')->fetchPairs('amount', 'subscription_type_item_id'),
+            $secondPayment->related('payment_items')->fetchPairs('amount', 'subscription_type_item_id'),
+        );
+
+        $this->assertEquals($firstPayment->amount, $secondPayment->amount);
+    }
 }

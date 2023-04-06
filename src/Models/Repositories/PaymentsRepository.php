@@ -180,7 +180,7 @@ class PaymentsRepository extends Repository
             'referer' => '',
         ]);
 
-        $totalPricesAreSame = true;
+        $totalPricesEqual = true;
         $paymentItems = $payment->related('payment_items');
         $hasOnlySubscriptionTypePaymentItems = empty(array_filter($paymentItems->fetchPairs('id', 'type'), function ($type) {
             return $type !== SubscriptionTypePaymentItem::TYPE;
@@ -197,17 +197,27 @@ class PaymentsRepository extends Repository
             $paymentTotalPriceWithoutVAT = round($paymentItemContainer->totalPriceWithoutVAT(), 2);
             $subscriptionTypeTotalPriceWithoutVAT = round($subscriptionTypePaymentItemContainer->totalPriceWithoutVAT(), 2);
 
-            $totalPricesAreSame = round($subscriptionTypePaymentItemContainer->totalPrice(), 2) === round($payment->amount, 2);
+            $totalPricesEqual = round($subscriptionTypePaymentItemContainer->totalPrice(), 2) === round($payment->amount, 2);
+            $totalPricesWithoutVatEqual = $paymentTotalPriceWithoutVAT === $subscriptionTypeTotalPriceWithoutVAT;
+            $totalItemsCountEqual = count($paymentItemContainer->items()) === count($subscriptionTypePaymentItemContainer->items());
 
-            // subscription type items could have changed VAT, if total price without VAT isn't equal payment items will be made from subscription type
-            // also the total amount of subscription type items and payment must be same
-            if ($paymentTotalPriceWithoutVAT !== $subscriptionTypeTotalPriceWithoutVAT && $totalPricesAreSame) {
-                $this->paymentItemsRepository->add($newPayment, $subscriptionTypePaymentItemContainer);
-                return $newPayment;
+            // To use items from the subscription type we need to make sure that the $totalAmounts are the same.
+            // Otherwise, user would be charged different amount which we don't want.
+            if ($totalPricesEqual) {
+                // 1) Subscription type items could have changed their VATs. If total price without VAT isn't equal,
+                // payment items should be created from the subscription type, so we get current (correct) amounts
+                // without VAT and not charge the user old VAT.
+                //
+                // 2) We can only copy original items if the amount of items equals. If it changed (e.g. one item was
+                // split into two separate items), let's use the current (correct) items from the subscription type.
+                if (!$totalPricesWithoutVatEqual || !$totalItemsCountEqual) {
+                    $this->paymentItemsRepository->add($newPayment, $subscriptionTypePaymentItemContainer);
+                    return $newPayment;
+                }
             }
         }
 
-        $fromSubscriptionType = $totalPricesAreSame;
+        $fromSubscriptionType = $totalPricesEqual;
         foreach ($paymentItems as $paymentItem) {
             // change new payment's status to failed if it's not possible to copy payment items (payment would be incomplete)
             try {
