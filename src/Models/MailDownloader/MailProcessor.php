@@ -214,12 +214,12 @@ class MailProcessor
             $fields['TRES'] = 'OK';
         }
 
-        // TODO toto je ultra mega hack
-        foreach ($fields as $k => $v) {
-            $_GET[$k] = $v;
-        }
-
         try {
+            // TODO toto je ultra mega hack
+            foreach ($fields as $k => $v) {
+                $_GET[$k] = $v;
+            }
+
             $this->paymentProcessor->complete($payment, function ($payment, GatewayAbstract $gateway) {
                 if ($payment->status === PaymentsRepository::STATUS_PAID) {
                     $this->logBuilder->setState(ParsedMailLogsRepository::STATE_CHANGED_TO_PAID)->save();
@@ -229,6 +229,10 @@ class MailProcessor
             $this->output->writeln(" * Couldn't complete payment: <info>{$payment->variable_symbol}</info>. Email validation failed.");
             Debugger::log("Couldn't complete mail processed payment: " . $exception->getMessage(), ILogger::ERROR);
             throw $exception;
+        } finally {
+            foreach ($fields as $k => $v) {
+                unset($_GET[$k]);
+            }
         }
 
         return true;
