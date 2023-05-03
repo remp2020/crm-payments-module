@@ -15,6 +15,7 @@ use Crm\PaymentsModule\PaymentsHistogramFactory;
 use Crm\PaymentsModule\Repository\PaymentGatewaysRepository;
 use Crm\PaymentsModule\Repository\PaymentItemMetaRepository;
 use Crm\PaymentsModule\Repository\PaymentsRepository;
+use Crm\PaymentsModule\Repository\RecurrentPaymentsRepository;
 use Crm\SubscriptionsModule\PaymentItem\SubscriptionTypePaymentItem;
 use Crm\SubscriptionsModule\Repository\SubscriptionTypesRepository;
 use Crm\UsersModule\Repository\UsersRepository;
@@ -25,29 +26,32 @@ use Tomaj\Hermes\Emitter;
 
 class PaymentsAdminPresenter extends AdminPresenter
 {
-    /** @var PaymentsRepository @inject */
-    public $paymentsRepository;
+    /** @inject */
+    public PaymentsRepository $paymentsRepository;
 
-    /** @var PaymentItemMetaRepository @inject */
-    public $paymentItemMetaRepository;
+    /** @inject */
+    public PaymentItemMetaRepository $paymentItemMetaRepository;
 
-    /** @var PaymentGatewaysRepository @inject */
-    public $paymentGatewaysRepository;
+    /** @inject */
+    public PaymentGatewaysRepository $paymentGatewaysRepository;
 
-    /** @var SubscriptionTypesRepository @inject */
-    public $subscriptionTypesRepository;
+    /** @inject */
+    public SubscriptionTypesRepository $subscriptionTypesRepository;
 
-    /** @var UsersRepository @inject */
-    public $usersRepository;
+    /** @inject */
+    public UsersRepository $usersRepository;
 
-    /** @var PaymentFormFactory @inject */
-    public $factory;
+    /** @inject */
+    public PaymentFormFactory $factory;
 
-    /** @var DataProviderManager @inject */
-    public $dataProviderManager;
+    /** @inject */
+    public DataProviderManager $dataProviderManager;
 
-    /** @var PaymentsHistogramFactory @inject */
-    public $paymentsHistogramFactory;
+    /** @inject */
+    public PaymentsHistogramFactory $paymentsHistogramFactory;
+
+    /** @inject */
+    public RecurrentPaymentsRepository $recurrentPaymentsRepository;
 
     /** @persistent */
     public $month;
@@ -246,6 +250,22 @@ class PaymentsAdminPresenter extends AdminPresenter
         ]), HermesMessage::PRIORITY_LOW);
 
         $this->flashMessage($this->translator->translate('payments.admin.payments.export.exported'));
+    }
+
+    /**
+     * @admin-access-level read
+     */
+    public function renderShow($id)
+    {
+        $payment = $this->paymentsRepository->find($id);
+        if (!$payment) {
+            throw new BadRequestException();
+        }
+        $this->template->payment = $payment;
+        if ($payment->payment_gateway->is_recurrent) {
+            $this->template->recurrent_previous = $this->recurrentPaymentsRepository->findByPayment($payment);
+            $this->template->recurrent_next = $this->recurrentPaymentsRepository->recurrent($payment);
+        }
     }
 
     /**

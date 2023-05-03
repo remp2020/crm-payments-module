@@ -88,9 +88,10 @@
           {foreach $payments as $payment}
 		    <tr>
 		      <td>
-		      	<code>{$payment->variable_symbol}</code>
-		      	<i n:if="$payment->note" class="fa fa-info-circle text-danger fa-wh" data-toggle="tooltip" data-placement="top" title="{$payment->note|breaklines}"></i>
-				<span n:if="$payment->recurrent_charge" class="label label-warning">{_payments.admin.payments.recurrent_charge}</span>
+						<a href="{link :Payments:PaymentsAdmin:Show $payment->id}" title="{_system.show}"><i class="fa fa-eye"></i></a>
+						<code>{$payment->variable_symbol}</code>
+						<i n:if="$payment->note" class="fa fa-info-circle text-danger fa-wh" data-toggle="tooltip" data-placement="top" title="{$payment->note|breaklines}"></i>
+						<span n:if="$payment->recurrent_charge" class="label label-warning">{_payments.admin.payments.recurrent_charge}</span>
 		      </td>
 		      <td><a href="{link :Users:UsersAdmin:Show $payment->user_id}">{$payment->user->public_name}</a></td>
 		      <td>
@@ -153,14 +154,34 @@
 					</ul>
 				</td>
 
-		      <td style="white-space: nowrap">
-			    <div style="margin-bottom: 2px">
-		          <a href="{link :Payments:PaymentsAdmin:Edit $payment->id, $payment->user_id}" class="btn btn-primary btn-sm"><i class="fa fa-edit"></i> {_payments.admin.payments.edit}</a>
-				</div>
+        <td style="white-space: nowrap">
+          <div style="margin-bottom: 2px">
 
-				{control simpleWidget 'admin.payments.listing.action', $payment}
+            <a href="{link :Payments:PaymentsAdmin:Show $payment->id}" class="btn btn-sm btn-info"
+               title="{_payments.admin.payments.show.menu_link}" data-toggle="tooltip" data-placement="top">
+              <i class="fa fa-eye"></i>
+            </a>
+            <a href="{link :Payments:PaymentsAdmin:Edit $payment->id, $payment->user_id}" class="btn btn-primary btn-sm"
+               title="{_payments.admin.payments.edit}" data-toggle="tooltip" data-placement="top">
+              <i class="fa fa-edit"></i>
+            </a>
 
-		      </td>
+            <div class="btn-group" style="margin-bottom: 2px">
+              <button type="button" class="btn btn-default btn-sm dropdown-toggle"
+                      data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"
+                      title="{_system.more_actions}" data-toggle-second="tooltip" data-placement="top">
+                <i class="fa fa-ellipsis-h"></i>
+              </button>
+
+              <ul class="dropdown-menu dropdown-menu-right">
+                {control simpleWidget 'admin.payments.listing.action.menu', $payment}
+              </ul>
+            </div>
+          </div>
+
+          {control simpleWidget 'admin.payments.listing.action', $payment}
+
+        </td>
 		    </tr>
 	      {/foreach}
         </tbody>
@@ -177,5 +198,17 @@
   </div>
 
  </div>
+
+<script>
+  // hacking tooltip for dropdown menu; otherwise dropdown menu has slow native title tooltip with delay
+  $('[data-toggle-second="tooltip"]').tooltip();
+</script>
+
+<style>
+  li.menuitem-header {
+    padding: 0.3em 1em 0.3em 1.5em;
+    background-color: #f5f5f5;
+  }
+</style>
 
 {/block}

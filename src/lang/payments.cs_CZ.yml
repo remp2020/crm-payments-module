@@ -229,6 +229,13 @@ admin:
             success: Změna typu předplatného byla úspěšná
             warning: Změna typu předplatného smaže všechny související platební položky a vytvoří nové z položek typu předplatného.
 
+        payment_to_subscription_menu:
+            header: Platba
+
+        subscription_detail_widget:
+            header: Detail platby
+            payment_id: ID platby
+
     donation: Dar k předplatnému
 
     arpu:
@@ -402,6 +409,7 @@ admin:
         items: Položky
         status: Stav
         created_at: Vytvořeno
+        modified_at: Upraveno
         actions: Akce
         recurrent_charge: Automaticky obnoveno
         donation: Dar
@@ -425,6 +433,16 @@ admin:
             exported: 'Export přidán do fronty a bude dostupný mezi <a href="/payments/exports-admin/" class="link">exporty</a>.'
             modal_title: Export plateb
             modal_body: 'Export bude obsahovat vyfiltrované platby a bude dostupný mezi <a href="/payments/exports-admin/" class="link">exporty</a>.'
+        show:
+            header: Platba
+            menu_link: Detail platby
+            back: zpět na uživatele
+            subscription_id: ID předplatného
+            payment_items: Položky platby
+            recurrent_payment: Rekurentní platba
+            recurrent_charge: Obnovená platba
+            recurrent_previous: Vytvořeno rekurentní platbou
+            recurrent_next: Následující rekurentní platba
 
     report:
         no_recurrent_charge:

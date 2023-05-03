@@ -272,6 +272,15 @@ class PaymentsModule extends CrmModule
             'payments.admin.user_payments.listing.recurrent.actions',
             \Crm\PaymentsModule\Components\ReactivateFailedRecurrentPaymentWidget\ReactivateFailedRecurrentPaymentWidget::class,
         );
+        $widgetManager->registerWidget(
+            'admin.subscriptions.show.right',
+            \Crm\PaymentsModule\Components\SubscriptionDetailWidget\SubscriptionDetailWidget::class
+        );
+
+        $widgetManager->registerWidget(
+            'subscriptions.admin.user_subscriptions_listing.action.menu',
+            \Crm\PaymentsModule\Components\PaymentToSubscriptionMenu::class,
+        );
     }
 
     public function registerCommands(CommandsContainerInterface $commandsContainer)

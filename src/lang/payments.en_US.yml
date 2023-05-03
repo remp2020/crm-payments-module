@@ -229,6 +229,13 @@ admin:
             success: Change of subscription type was successful
             warning: Change of subscription type will delete all related payment items and create new ones from subscription type items.
 
+        payment_to_subscription_menu:
+            header: Payment
+
+        subscription_detail_widget:
+            header: Payment's details
+            payment_id: ID of payment
+
     donation: Donation
 
     arpu:
@@ -407,6 +414,7 @@ admin:
         items: Items
         status: Status
         created_at: Created at
+        modified_at: Updated at
         actions: Actions
         recurrent_charge: Recurrent charge
         donation: Donation
@@ -430,6 +438,16 @@ admin:
             exported: 'Export added to queue and will be available in <a href="/payments/exports-admin/" class="link">exports</a>.'
             modal_title: Payments export
             modal_body: 'Export will contain filtered payments and will be available in <a href="/payments/exports-admin/" class="link">exports</a>.'
+        show:
+            header: Payment
+            menu_link: Payment's details
+            back: back to user
+            subscription_id: ID of subscription
+            payment_items: Payment items
+            recurrent_payment: Recurrent payment
+            recurrent_charge: Automatically charged payment
+            recurrent_previous: Created by recurrent payment
+            recurrent_next: Created payment
 
     report:
         no_recurrent_charge:

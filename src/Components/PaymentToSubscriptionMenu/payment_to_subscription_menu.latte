@@ -1,0 +1,11 @@
+<li class="menuitem-header">{_payments.admin.component.payment_to_subscription_menu.header}</li>
+<li role="menuitem">
+  <a href="{plink :Payments:PaymentsAdmin:Show $payment->id}" title="{_payments.admin.payments.show.menu_link}">
+    <i class="fa fa-eye"></i> {_payments.admin.payments.show.menu_link}
+  </a>
+</li>
+<li role="menuitem">
+   <a href="{plink :Payments:PaymentsAdmin:Edit $payment->id, $payment->user_id}" title="{_payments.admin.payments.edit}">
+       <i class="fa fa-edit"></i> {_payments.admin.payments.edit}
+   </a>
+</li>

@@ -1,0 +1,182 @@
+{block #title}[#{$payment->id}] {_payments.admin.payments.show.header} VS {$payment->variable_symbol}]{/block}
+
+{block #head}
+  <style>
+      .label {
+          vertical-align: middle;
+      }
+
+      .note-formated {
+          display:inline-block;
+          white-space: pre-line;
+          vertical-align: top;
+      }
+  </style>
+{/block}
+
+{block #content}
+
+<div class="row">
+  <div class="col-md-12">
+    <a n:href=":Users:UsersAdmin:Show $payment->user->id">
+      <i class="fa fa-angle-left"></i> {_payments.admin.payments.show.back}
+    </a>
+    <div class="page-header">
+      <h1>
+        <small>
+          [#{$payment->id}]
+        </small>
+        {_payments.admin.payments.show.header}
+        VS {$payment->variable_symbol}
+        <a href="{plink :Payments:PaymentsAdmin:edit $payment->id, userId => $payment->user_id}" class="btn btn-primary btn-lg pull-right" title="{_payments.admin.payments.edit}">
+          <i class="fa fa-edit"></i> {_payments.admin.payments.edit}
+        </a>
+      </h1>
+    </div>
+  </div>
+</div>
+
+<div class="row">
+
+  <!-- left column -->
+  <div class="col-md-6">
+    <ul class="list-group">
+
+      <li class="list-group-item">
+        <b>{_payments.form.payment.amount.label}:</b>&nbsp;
+        <strong style="font-size: 1.5em; line-height: 2em; vertical-align: middle;">{$payment->amount|price}</strong>
+        <span style="padding: 5px; margin-left: 1em; vertical-align: text-top;" n:if="$payment->additional_type" class="label label-default">
+          {$payment->additional_amount|price} {_"payments.admin.component.user_payments_listing.payment.badge_donation"}
+          {if $payment->additional_type == 'recurrent'} {$payment->additional_type}{/if}
+        </span>
+      </li>
+
+      <li class="list-group-item">
+        {if $payment->status == \Crm\PaymentsModule\Repository\PaymentsRepository::STATUS_PAID || $payment->status == \Crm\PaymentsModule\Repository\PaymentsRepository::STATUS_IMPORTED}
+          {var $btnClass = 'btn-success'}
+        {elseif $payment->status == \Crm\PaymentsModule\Repository\PaymentsRepository::STATUS_FORM}
+          {var $btnClass = 'btn-info'}
+        {elseif $payment->status == \Crm\PaymentsModule\Repository\PaymentsRepository::STATUS_FAIL || $payment->status == \Crm\PaymentsModule\Repository\PaymentsRepository::STATUS_TIMEOUT}
+          {var $btnClass = 'btn-danger'}
+        {else}
+          {var $btnClass = 'btn-default'}
+        {/if}
+        <b>{_payments.form.payment.status.label}:</b>&nbsp;
+        <span class="label {$btnClass}">{$payment->status|firstUpper}</span>
+      </li>
+
+      <li class="list-group-item">
+        <b>{_payments.form.payment.variable_symbol.label}:</b>&nbsp;
+        {$payment->variable_symbol}
+      </li>
+
+      <li class="list-group-item">
+        <b>{_payments.form.payment.payment_gateway_id.label}:</b>&nbsp;
+        {$payment->payment_gateway->name}
+      </li>
+
+      <li class="list-group-item">
+        <b>{_payments.form.payment.paid_at.label}:</b>&nbsp;
+        {if $payment->paid_at}
+          {$payment->paid_at|userDate}
+        {else}
+          -
+        {/if}
+      </li>
+
+      <li class="list-group-item" n:if="$payment->created_at">
+        <b>{_payments.admin.payments.created_at}:</b>&nbsp;
+        {$payment->created_at|userDate}
+      </li>
+
+      <li class="list-group-item" n:if="$payment->modified_at">
+        <b>{_payments.admin.payments.modified_at}:</b>&nbsp;
+        {$payment->modified_at|userDate}
+      </li>
+
+      <li class="list-group-item" n:if="$payment->subscription_start_at">
+        <b>{_payments.form.payment.subscription_start_at.label}:</b>&nbsp;
+        {$payment->subscription_start_at|userDate}
+      </li>
+
+      <li class="list-group-item" n:if="$payment->subscription_end_at">
+        <b>{_payments.form.payment.subscription_end_at.label}:</b>&nbsp;
+        {$payment->subscription_end_at|userDate}
+      </li>
+
+      <li class="list-group-item" n:if="$payment->subscription_id">
+        <b>{_payments.admin.payments.show.subscription_id}:</b>&nbsp;
+        <a href="{plink :Subscriptions:SubscriptionsAdmin:show $payment->subscription_id}">
+          #{$payment->subscription_id}
+        </a>
+      </li>
+
+      <li class="list-group-item" n:if="$payment->address_id">
+        <b>{_payments.form.payment.address_id.label}:</b>&nbsp;
+        <a href="{plink :Users:AddressAdmin:edit $payment->address_id}">#{$payment->address_id}</a>
+      </li>
+
+    </ul>
+
+    <ul class="list-group" n:if="$payment->note">
+      <li class="list-group-item">
+        <b>{_payments.form.payment.note.label}:</b>&nbsp;
+        <span n:if="$payment->note" class="note-formated">{$payment->note}</span>
+      </li>
+    </ul>
+
+    <ul class="list-group">
+      <li class="list-group-item">
+        <b>{_payments.form.payment.referer.label}:</b>&nbsp;
+        <a n:if="$payment->referer" href="{$payment->referer|checkUrl}">{$payment->referer}</a>
+      </li>
+
+      {* this widgets add own LI items *}
+      {control simpleWidget 'payments.admin.payment_source_listing', $payment}
+    </ul>
+
+    {control simpleWidget 'admin.payments.show.left', $payment}
+
+  </div>
+
+  <!-- right column -->
+  <div class="col-md-6">
+    <h3 class="page-header" style="margin-top:12px;">{_payments.admin.payments.show.payment_items}</h3>
+    <ul class="list-group" n:if="$payment->related('payment_items')">
+      {foreach $payment->related('payment_items') as $paymentItem}
+        <li class="list-group-item">
+          {control simpleWidget 'payments.admin.payment_item_listing', $paymentItem}
+        </li>
+      {/foreach}
+    </ul>
+
+    {if $payment->payment_gateway->is_recurrent}
+    <h3 class="page-header">{_payments.admin.payments.show.recurrent_payment}</h3>
+    <ul class="list-group">
+      <li class="list-group-item">
+        <b>{_payments.admin.payments.show.recurrent_charge}:</b>
+        {if $payment->recurrent_charge}
+          <span class="label label-success">{_system.yes}</span>
+        {else}
+          <span class="label label-default">{_system.no}</span>
+        {/if}
+      </li>
+      <li class="list-group-item" n:if="$recurrent_previous">
+        <b>{_payments.admin.payments.show.recurrent_previous}:</b>
+        #{$recurrent_previous->id}
+      </li>
+      <li class="list-group-item" n:if="$recurrent_next">
+        <b>{_payments.admin.payments.show.recurrent_next}:</b>
+        #{$recurrent_next->id}
+        &nbsp;<a href="{plink :Payments:PaymentsRecurrentAdmin:Edit $recurrent_next->id}">
+          <i class="fa fa-edit"></i> {_"payments.admin.component.user_payments_listing.edit"}
+        </a>
+      </li>
+    </ul>
+    {/if}
+
+    {control simpleWidget 'admin.payments.show.right', $payment}
+  </div>
+</div>
+
+{control simpleWidget 'admin.payments.show.bottom', $payment}

@@ -47,6 +47,8 @@ services:
 	- Crm\PaymentsModule\Components\AddressWidget
 	- Crm\PaymentsModule\Components\ChangePaymentSubscriptionTypeWidget
 	- Crm\PaymentsModule\Components\PaymentDonationLabelWidget
+	- Crm\PaymentsModule\Components\PaymentToSubscriptionMenu
+	- Crm\PaymentsModule\Components\SubscriptionDetailWidget\SubscriptionDetailWidget
 	- Crm\PaymentsModule\Commands\RecurrentPaymentsCardCheck
 	- Crm\PaymentsModule\Commands\RecurrentPaymentsChargeCommand
 	- Crm\PaymentsModule\Commands\CsobMailConfirmationCommand
