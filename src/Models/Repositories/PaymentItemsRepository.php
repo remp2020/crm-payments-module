@@ -5,8 +5,10 @@ namespace Crm\PaymentsModule\Repository;
 use Crm\ApplicationModule\Config\ApplicationConfig;
 use Crm\ApplicationModule\DataProvider\DataProviderManager;
 use Crm\ApplicationModule\Repository;
+use Crm\ApplicationModule\Repository\AuditLogRepository;
 use Crm\ApplicationModule\Selection;
 use Crm\PaymentsModule\DataProvider\CanUpdatePaymentItemDataProviderInterface;
+use Crm\PaymentsModule\Events\BeforeRemovePaymentItemEvent;
 use Crm\PaymentsModule\Events\NewPaymentItemEvent;
 use Crm\PaymentsModule\PaymentItem\PaymentItemContainer;
 use Crm\PaymentsModule\PaymentItem\PaymentItemInterface;
@@ -33,6 +35,8 @@ class PaymentItemsRepository extends Repository
 
     private SubscriptionTypeItemsRepository $subscriptionTypeItemsRepository;
 
+    private $dbContext;
+
     public function __construct(
         Explorer $database,
         ApplicationConfig $applicationConfig,
@@ -40,6 +44,8 @@ class PaymentItemsRepository extends Repository
         PaymentItemMetaRepository $paymentItemMetaRepository,
         DataProviderManager $dataProviderManager,
         SubscriptionTypeItemsRepository $subscriptionTypeItemsRepository,
+        AuditLogRepository $auditLogRepository,
+        Explorer $dbContext,
         Storage $cacheStorage = null
     ) {
         parent::__construct($database, $cacheStorage);
@@ -48,6 +54,8 @@ class PaymentItemsRepository extends Repository
         $this->paymentItemMetaRepository = $paymentItemMetaRepository;
         $this->dataProviderManager = $dataProviderManager;
         $this->subscriptionTypeItemsRepository = $subscriptionTypeItemsRepository;
+        $this->auditLogRepository = $auditLogRepository;
+        $this->dbContext = $dbContext;
     }
 
     final public function add(ActiveRow $payment, PaymentItemContainer $container): array
@@ -91,18 +99,26 @@ class PaymentItemsRepository extends Repository
 
     final public function deleteByPayment(ActiveRow $payment)
     {
-        // remove payment item meta
-        $paymentItemMetas = $this->paymentItemMetaRepository->getTable()
-            ->where(['payment_item.payment_id' => $payment->id])
-            ->fetchAll();
-        foreach ($paymentItemMetas as $paymentItemMeta) {
-            $this->paymentItemMetaRepository->delete($paymentItemMeta);
+        $this->dbContext->beginTransaction();
+
+        try {
+            // remove payment item meta
+            $this->paymentItemMetaRepository->deleteByPayment($payment);
+
+            $paymentItems = $this->getTable()
+                ->where('payment_id', $payment->id);
+            foreach ($paymentItems as $paymentItem) {
+                $this->emitter->emit(new BeforeRemovePaymentItemEvent($paymentItem));
+                $this->delete($paymentItem);
+            }
+        } catch (\Exception $exception) {
+            $this->dbContext->rollBack();
+            throw $exception;
         }
 
-        $q = $this->getTable()
-            ->where('payment_id', $payment->id);
+        $this->dbContext->commit();
 
-        return $q->delete();
+        return true;
     }
 
     /**
@@ -111,13 +127,22 @@ class PaymentItemsRepository extends Repository
      */
     final public function deletePaymentItem(ActiveRow $paymentItem): int
     {
-        // remove payment item meta
-        $paymentItemMetas = $this->paymentItemMetaRepository->findByPaymentItem($paymentItem);
-        foreach ($paymentItemMetas as $paymentItemMeta) {
-            $this->paymentItemMetaRepository->delete($paymentItemMeta);
+        $this->dbContext->beginTransaction();
+
+        try {
+            // remove payment item meta
+            $this->paymentItemMetaRepository->deleteByPaymentItem($paymentItem);
+
+            $this->emitter->emit(new BeforeRemovePaymentItemEvent($paymentItem));
+            $result = $this->delete($paymentItem);
+        } catch (\Exception $exception) {
+            $this->dbContext->rollBack();
+            throw $exception;
         }
 
-        return $this->getTable()->where('id', $paymentItem->id)->delete();
+        $this->dbContext->commit();
+
+        return $result;
     }
 
     /**

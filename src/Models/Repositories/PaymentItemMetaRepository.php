@@ -55,4 +55,28 @@ class PaymentItemMetaRepository extends Repository
     {
         return $this->getTable()->where(['payment_item_id' => $paymentItem->id]);
     }
+
+    final public function deleteByPayment(ActiveRow $payment)
+    {
+        $paymentItemMetas = $this->getTable()
+            ->where(['payment_item.payment_id' => $payment->id]);
+
+        foreach ($paymentItemMetas as $paymentItemMeta) {
+            $this->delete($paymentItemMeta);
+        }
+
+        return true;
+    }
+
+    final public function deleteByPaymentItem(ActiveRow $paymentItem)
+    {
+        $paymentItemMetas = $this->getTable()
+            ->where(['payment_item_id' => $paymentItem->id]);
+
+        foreach ($paymentItemMetas as $paymentItemMeta) {
+            $this->delete($paymentItemMeta);
+        }
+
+        return true;
+    }
 }
