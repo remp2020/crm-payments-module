@@ -601,7 +601,7 @@ frontend:
         account_number: Číslo účtu
         variable_symbol: Variabilný symbol
         recipient_message: Správa pre prijímateľa
-        delay_info: Pripísanie platby na účet môže trvať 1 až 2 pracovné dni. Predplatné sa aktivuje až po pripísaní platby na náš účet.
+        delay_info: "Pripísanie platby na účet môže trvať 1 až 2 pracovné dni. Nákup Vám bude potvrdený až po pripísaní platby na náš účet."
     select_card:
         title: 'Vyberte kartu na dokončenie platby'
         lead: 'Pamätáme si Vami použité karty, takže ich číslo nemusíte zadávať znova.'

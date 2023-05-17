@@ -585,7 +585,7 @@ frontend:
         cancel: "Ne, ještě si to promyslím"
         confirm: "Ano, zastavit opakované platby"
         success: "Opakovaná platba byla zastavena."
-        invalid: Neplatn7 požadavek o zastavení automatické platby. Zkuste to prosím znovu.
+        invalid: Neplatný požadavek o zastavení automatické platby. Zkuste to prosím znovu.
     reactivate:
         success: 'Automatická platba byla obnovena.'
         error: 'Automatickou platbu není možné obnovit.'
@@ -596,7 +596,7 @@ frontend:
         account_number: Číslo účtu
         variable_symbol: Variabilní symbol
         recipient_message: Zpráva pro příjemce
-        delay_info: Připsání platby na účet může trvat 1 až 2 pracovní dny. Předplatné se aktivuje až po připsání platby na náš účet.
+        delay_info: "Připsání platby na účet může trvat 1 až 2 pracovní dny. Nákup vám bude potvrzen po připsání platby na náš účet."
     select_card:
         title: 'Vyberte kartu k dokončení platby'
         lead: 'Pamatujeme si Vámi použité karty, takže ich číslo nemusíte zadávat znovu.'
