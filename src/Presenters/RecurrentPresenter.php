@@ -6,6 +6,7 @@ use Crm\ApplicationModule\Presenters\FrontendPresenter;
 use Crm\PaymentsModule\CannotProcessPayment;
 use Crm\PaymentsModule\GatewayFactory;
 use Crm\PaymentsModule\Gateways\RecurrentPaymentInterface;
+use Crm\PaymentsModule\Gateways\ReusableCardPaymentInterface;
 use Crm\PaymentsModule\Model\PaymentCompleteRedirectManager;
 use Crm\PaymentsModule\Model\PaymentCompleteRedirectResolver;
 use Crm\PaymentsModule\PaymentProcessor;
@@ -48,17 +49,22 @@ class RecurrentPresenter extends FrontendPresenter
 
         $user = $this->getUser();
         $this->checkPaymentBelongsToUser($user, $payment);
+        $gateway = $this->gatewayFactory->getGateway($payment->payment_gateway->code);
 
         $allUserCards = $this->recurrentPaymentsRepository
             ->userRecurrentPayments($user->id)
             ->where(['payment_gateway.code = ?' => $payment->ref('payment_gateway')->code])
             ->where(['cid IS NOT NULL AND expires_at > ?' => new DateTime()])
-            ->order('id DESC, charge_at DESC')
-            ->fetchAll();
+            ->where('state != ?', RecurrentPaymentsRepository::STATE_SYSTEM_STOP)
+            ->order('id DESC, charge_at DESC');
 
         $cardsByExpiration = [];
 
         foreach ($allUserCards as $card) {
+            if (($gateway instanceof ReusableCardPaymentInterface) && !$gateway->isCardReusable($card)) {
+                continue;
+            }
+
             $expiration = $card->expires_at->format(DateTime::RFC3339);
             if (!array_key_exists($expiration, $cardsByExpiration) || $cardsByExpiration[$expiration]->created_at < $card->created_at) {
                 $cardsByExpiration[$expiration] = $card;

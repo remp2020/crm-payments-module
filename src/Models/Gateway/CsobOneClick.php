@@ -21,7 +21,7 @@ use OndraKoupil\Csob\Exception;
 use Psr\Log\LoggerInterface;
 use Tracy\Debugger;
 
-class CsobOneClick extends GatewayAbstract implements RecurrentPaymentInterface
+class CsobOneClick extends GatewayAbstract implements RecurrentPaymentInterface, ReusableCardPaymentInterface
 {
     public const GATEWAY_CODE = 'csob_one_click';
 
@@ -320,5 +320,15 @@ class CsobOneClick extends GatewayAbstract implements RecurrentPaymentInterface
             0,
             45
         ));
+    }
+
+    public function isCardReusable(ActiveRow $recurrentPayment): bool
+    {
+        if (!isset($recurrentPayment->parent_payment->paid_at)) {
+            return false;
+        }
+
+        // CSOB deactivates card token after 365 days without payment
+        return $recurrentPayment->parent_payment->paid_at > new DateTime('-365 days');
     }
 }

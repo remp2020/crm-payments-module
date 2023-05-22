@@ -15,6 +15,7 @@ use Crm\PaymentsModule\Events\RecurrentPaymentStoppedByAdminEvent;
 use Crm\PaymentsModule\Events\RecurrentPaymentStoppedByUserEvent;
 use Crm\PaymentsModule\GatewayFactory;
 use Crm\PaymentsModule\Gateways\RecurrentPaymentInterface;
+use Crm\PaymentsModule\Gateways\ReusableCardPaymentInterface;
 use Crm\PaymentsModule\Models\Gateway;
 use DateTime;
 use Exception;
@@ -500,13 +501,20 @@ class RecurrentPaymentsRepository extends Repository
             return false;
         }
 
-        $usableRecurrentsCount = $this->userRecurrentPayments($user->id)
+        $usableRecurrents = $this->userRecurrentPayments($user->id)
             ->where(['payment_gateway.code = ?' => $paymentGateway->code])
             ->where(['cid IS NOT NULL AND expires_at > ?' => new DateTime()])
-            ->order('id DESC, charge_at DESC')
-            ->count();
+            ->where('state != ?', self::STATE_SYSTEM_STOP)
+            ->order('id DESC, charge_at DESC');
 
-        return $usableRecurrentsCount > 0;
+        foreach ($usableRecurrents as $usableRecurrent) {
+            if (($gateway instanceof ReusableCardPaymentInterface) && !$gateway->isCardReusable($usableRecurrent)) {
+                continue;
+            }
+            return true;
+        }
+
+        return false;
     }
 
     final public function totalCount($allowCached = false, $forceCacheUpdate = false): int
