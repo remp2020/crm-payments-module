@@ -34,6 +34,8 @@ class RecurrentPaymentsChargeCommand extends Command
 {
     use DecoratedCommandTrait;
 
+    private int $fastChargeThreshold = 0;
+
     public function __construct(
         private RecurrentPaymentsRepository $recurrentPaymentsRepository,
         private PaymentsRepository $paymentsRepository,
@@ -323,9 +325,14 @@ class RecurrentPaymentsChargeCommand extends Command
             return;
         }
 
-        $diff = $parentRecurrentPayment->charge_at->diff(new DateTime());
+        // if threshold is set to 0 - fast charge check is disabled
+        if (!$this->fastChargeThreshold) {
+            return;
+        }
 
-        if ($diff->days == 0 || $parentRecurrentPayment->charge_at === $recurrentPayment->charge_at) {
+        $diffHours = ((new DateTime())->getTimestamp() - $parentRecurrentPayment->charge_at->getTimestamp()) / 3600;
+
+        if ($diffHours < $this->fastChargeThreshold || $parentRecurrentPayment->charge_at === $recurrentPayment->charge_at) {
             $this->recurrentPaymentsRepository->update($recurrentPayment, [
                 'state' => RecurrentPaymentsRepository::STATE_SYSTEM_STOP,
                 'note' => 'Fast charge',
@@ -333,5 +340,10 @@ class RecurrentPaymentsChargeCommand extends Command
 
             throw new RecurrentPaymentFastCharge();
         }
+    }
+
+    public function setFastChargeThreshold(int $threshold): void
+    {
+        $this->fastChargeThreshold = $threshold;
     }
 }

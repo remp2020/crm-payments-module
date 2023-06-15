@@ -20,6 +20,7 @@ final class PaymentsModuleExtension extends CompilerExtension implements Transla
     {
         return Expect::structure([
             'gateway_test_host' => Expect::string()->dynamic(),
+            'fastcharge_threshold' => Expect::int()->default(24)
         ]);
     }
 
@@ -32,6 +33,10 @@ final class PaymentsModuleExtension extends CompilerExtension implements Transla
 
         foreach ($builder->findByType(\Crm\PaymentsModule\Gateways\GatewayAbstract::class) as $definition) {
             $definition->addSetup('setTestHost', [$this->config->gateway_test_host]);
+        }
+
+        foreach ($builder->findByType(\Crm\PaymentsModule\Commands\RecurrentPaymentsChargeCommand::class) as $definition) {
+            $definition->addSetup('setFastChargeThreshold', [$this->config->fastcharge_threshold]);
         }
     }
 

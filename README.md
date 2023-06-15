@@ -36,10 +36,23 @@ Add following commands to your scheduler (e.g. *crontab*) and change the path to
 You can configure time before which `application:cleanup` deletes old repository data and column which it uses by using (in your project configuration file):
 
 ```neon
-paymentLogsRepository:
-	setup:
-		- setRetentionThreshold('-2 months', 'created_at')
+services:
+    paymentLogsRepository:
+        setup:
+            - setRetentionThreshold('-2 months', 'created_at')
 ```
+
+#### Fast charge check configuration
+
+You can configure fast charge threshold check by adding this to your configuration:
+
+```neon
+payments:
+    fastcharge_threshold: 24 # default: 24; number of hours (if set to 0 fast charge check is disabled)
+```
+
+Fast charge check is done by `RecurrentPaymentsChargeCommand::validateRecurrentPayment` and it prevents system
+from repeated charging if error occurs while charging.
 
 ### Scheduled commands
 
