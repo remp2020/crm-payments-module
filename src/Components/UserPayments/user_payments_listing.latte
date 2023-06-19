@@ -231,6 +231,7 @@
           <a href="{plink :Payments:PaymentsRecurrentAdmin:Edit $recurrentPayment->id}" class="btn btn-sm btn-primary">
             <i class="fa fa-edit"></i> {_"payments.admin.component.user_payments_listing.edit"}
           </a>
+          {control simpleWidget 'payments.admin.user_payments.listing.recurrent.actions', $recurrentPayment}
         </td>
       </tr>
     </tbody>

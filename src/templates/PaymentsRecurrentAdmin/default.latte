@@ -70,6 +70,7 @@
               </td>
               <td>
                   <a n:href=":Payments:PaymentsRecurrentAdmin:Edit $recurrentPayment->id" class="btn btn-sm btn-primary"><i class="fa fa-edit"></i> {_payments.admin.payments_recurrent.edit}</a>
+                  {control simpleWidget 'recurrent_payments.admin.listing.actions', $recurrentPayment}
               </td>
 		    </tr>
 	      {/foreach}
