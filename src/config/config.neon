@@ -50,6 +50,7 @@ services:
 	- Crm\PaymentsModule\Components\MonthToDateDonationAmountStatWidget
 	- Crm\PaymentsModule\Components\AddressWidget
 	- Crm\PaymentsModule\Components\ChangePaymentSubscriptionTypeWidget
+	- Crm\PaymentsModule\Components\PaymentDonationLabelWidget
 	- Crm\PaymentsModule\Commands\RecurrentPaymentsCardCheck
 	- Crm\PaymentsModule\Commands\RecurrentPaymentsChargeCommand
 	- Crm\PaymentsModule\Commands\CsobMailConfirmationCommand

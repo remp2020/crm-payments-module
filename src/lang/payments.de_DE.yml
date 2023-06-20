@@ -351,7 +351,7 @@ admin:
         title: Zahlungen
         amount: Summe
         donation: Spende
-        donation_recurrent: wiederholend
+        donation_recurrent: Wiederholend Spende
         paid_at: Bezahlt
         source: Herkunft
         no_records: Keine Datensätze entsprechen den Filterbedingungen

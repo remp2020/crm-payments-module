@@ -240,6 +240,10 @@ class PaymentsModule extends CrmModule
             \Crm\PaymentsModule\Components\DeviceUserListingWidget::class
         );
         $widgetManager->registerWidget(
+            'payments.admin.listing.sum',
+            \Crm\PaymentsModule\Components\PaymentDonationLabelWidget::class
+        );
+        $widgetManager->registerWidget(
             'payments.frontend.payments_my.top',
             \Crm\PaymentsModule\Components\MyNextRecurrentPayment::class
         );

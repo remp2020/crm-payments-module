@@ -329,8 +329,8 @@ admin:
         created_at: Létrehozva
         actions: Műveletek
         recurrent_charge: Ismétlődő díj
-        donation: adomány
-        donation_recurrent: ismétlődő
+        donation: Adomány
+        donation_recurrent: Ismétlődő adomány
         paid_at: Fizetve
         source: Forrás
         no_records: Nincs találat

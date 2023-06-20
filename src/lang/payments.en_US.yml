@@ -404,8 +404,8 @@ admin:
         created_at: Created at
         actions: Actions
         recurrent_charge: Recurrent charge
-        donation: donation
-        donation_recurrent: recurrent
+        donation: Donation
+        donation_recurrent: Recurrent donation
         paid_at: Paid at
         source: Source
         no_records: No records match selected filter

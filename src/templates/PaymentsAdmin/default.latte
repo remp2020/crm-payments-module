@@ -94,11 +94,9 @@
 		      </td>
 		      <td><a href="{link :Users:UsersAdmin:Show $payment->user_id}">{$payment->user->public_name}</a></td>
 		      <td>
-				  <span style="white-space: nowrap;">{$payment->amount|price}</span>
-				<span n:if="$payment->additional_type" class="label label-primary">
-                  {$payment->additional_amount|price} {_payments.admin.payments.donation}
-                  {if $payment->additional_type == 'recurrent'} ({_payments.admin.payments.donation_recurrent}){/if}
-                </span>
+				<div style="white-space: nowrap;">{$payment->amount|price}</div>
+
+				{control simpleWidget 'payments.admin.listing.sum', $payment}
 			  </td>
 			  <td><a href="{plink :Payments:PaymentGatewaysAdmin:Show $payment->payment_gateway_id}">{$payment->payment_gateway->name}</a></td>
 			  <td>

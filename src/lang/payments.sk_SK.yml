@@ -404,8 +404,8 @@ admin:
         created_at: Vytvorené
         actions: Akcie
         recurrent_charge: Automaticky obnovené
-        donation: dar
-        donation_recurrent: opakovaný
+        donation: Dar
+        donation_recurrent: Opakovaný dar
         paid_at: Zaplatené
         source: Zdroj
         no_records: Nenašli sa žiadne záznamy ktoré by zodpovedali filtru

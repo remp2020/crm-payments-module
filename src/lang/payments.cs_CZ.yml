@@ -399,8 +399,8 @@ admin:
         created_at: Vytvořeno
         actions: Akce
         recurrent_charge: Automaticky obnoveno
-        donation: dar
-        donation_recurrent: opakovaný
+        donation: Dar
+        donation_recurrent: Opakovaný dar
         paid_at: Zaplaceno
         source: Zdroj
         no_records: "Nebyly nalezeny žádné záznamy, které by odpovídaly filtru"

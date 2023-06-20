@@ -33,11 +33,8 @@
         </td>
 
         <td>
-          {$payment->amount|price}
-          <span n:if="$payment->additional_type" class="label label-primary">
-            {$payment->additional_amount|price} {_"payments.admin.component.user_payments_listing.payment.badge_donation"}
-            {if $payment->additional_type == 'recurrent'} {$payment->additional_type}{/if}
-          </span>
+          <div style="white-space: nowrap;">{$payment->amount|price}</div>
+          {control simpleWidget 'payments.admin.listing.sum', $payment}
         </td>
 
         <td>{$payment->payment_gateway->name}</td>
