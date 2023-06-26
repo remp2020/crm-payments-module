@@ -16,36 +16,18 @@ use Tomaj\Form\Renderer\BootstrapRenderer;
 
 class ChangePaymentSubscriptionTypeFormFactory
 {
-    private Translator $translator;
-
-    private SubscriptionTypeHelper $subscriptionTypeHelper;
-
-    private SubscriptionTypesRepository $subscriptionTypesRepository;
-
-    private PaymentsRepository $paymentsRepository;
-
-    private PaymentItemsRepository $paymentItemsRepository;
-
-    private Explorer $database;
-
-    private ActiveRow $payment;
-
     public $onSave;
 
+    private ?ActiveRow $payment = null;
+
     public function __construct(
-        Translator $translator,
-        SubscriptionTypesRepository $subscriptionTypesRepository,
-        SubscriptionTypeHelper $subscriptionTypeHelper,
-        PaymentsRepository $paymentsRepository,
-        PaymentItemsRepository $paymentItemsRepository,
-        Explorer $database
+        private Translator $translator,
+        private SubscriptionTypesRepository $subscriptionTypesRepository,
+        private SubscriptionTypeHelper $subscriptionTypeHelper,
+        private PaymentsRepository $paymentsRepository,
+        private PaymentItemsRepository $paymentItemsRepository,
+        private Explorer $database
     ) {
-        $this->translator = $translator;
-        $this->subscriptionTypeHelper = $subscriptionTypeHelper;
-        $this->subscriptionTypesRepository = $subscriptionTypesRepository;
-        $this->paymentsRepository = $paymentsRepository;
-        $this->paymentItemsRepository = $paymentItemsRepository;
-        $this->database = $database;
     }
 
     public function setPayment(ActiveRow $payment): void
@@ -126,6 +108,8 @@ class ChangePaymentSubscriptionTypeFormFactory
         ]);
 
         $this->database->commit();
-        $this->onSave->__invoke();
+        if ($this->onSave) {
+            $this->onSave->__invoke();
+        }
     }
 }

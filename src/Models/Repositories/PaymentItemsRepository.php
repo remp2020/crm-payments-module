@@ -2,7 +2,6 @@
 
 namespace Crm\PaymentsModule\Repository;
 
-use Crm\ApplicationModule\Config\ApplicationConfig;
 use Crm\ApplicationModule\DataProvider\DataProviderManager;
 use Crm\ApplicationModule\Repository;
 use Crm\ApplicationModule\Repository\AuditLogRepository;
@@ -13,10 +12,10 @@ use Crm\PaymentsModule\Events\NewPaymentItemEvent;
 use Crm\PaymentsModule\PaymentItem\PaymentItemContainer;
 use Crm\PaymentsModule\PaymentItem\PaymentItemInterface;
 use Crm\SubscriptionsModule\PaymentItem\SubscriptionTypePaymentItem;
-use Crm\SubscriptionsModule\Repository\SubscriptionTypeItemsRepository;
 use Exception;
 use League\Event\Emitter;
 use Nette\Caching\Storage;
+use Nette\Database\DriverException;
 use Nette\Database\Explorer;
 use Nette\Database\Table\ActiveRow;
 use Nette\Utils\DateTime;
@@ -25,37 +24,17 @@ class PaymentItemsRepository extends Repository
 {
     protected $tableName = 'payment_items';
 
-    private $applicationConfig;
-
-    private $emitter;
-
-    private $paymentItemMetaRepository;
-
-    private $dataProviderManager;
-
-    private SubscriptionTypeItemsRepository $subscriptionTypeItemsRepository;
-
-    private $dbContext;
-
     public function __construct(
         Explorer $database,
-        ApplicationConfig $applicationConfig,
-        Emitter $emitter,
-        PaymentItemMetaRepository $paymentItemMetaRepository,
-        DataProviderManager $dataProviderManager,
-        SubscriptionTypeItemsRepository $subscriptionTypeItemsRepository,
+        private Emitter $emitter,
+        private PaymentItemMetaRepository $paymentItemMetaRepository,
+        private DataProviderManager $dataProviderManager,
         AuditLogRepository $auditLogRepository,
-        Explorer $dbContext,
+        private Explorer $dbContext,
         Storage $cacheStorage = null
     ) {
         parent::__construct($database, $cacheStorage);
-        $this->applicationConfig = $applicationConfig;
-        $this->emitter = $emitter;
-        $this->paymentItemMetaRepository = $paymentItemMetaRepository;
-        $this->dataProviderManager = $dataProviderManager;
-        $this->subscriptionTypeItemsRepository = $subscriptionTypeItemsRepository;
         $this->auditLogRepository = $auditLogRepository;
-        $this->dbContext = $dbContext;
     }
 
     final public function add(ActiveRow $payment, PaymentItemContainer $container): array
@@ -127,12 +106,16 @@ class PaymentItemsRepository extends Repository
      */
     final public function deletePaymentItem(ActiveRow $paymentItem): int
     {
-        $this->dbContext->beginTransaction();
+        $inTransaction = false;
+        try {
+            $this->dbContext->beginTransaction();
+            $inTransaction = true;
+        } catch (DriverException $e) {
+            // transaction already in progress, ignore exception
+        }
 
         try {
-            // remove payment item meta
             $this->paymentItemMetaRepository->deleteByPaymentItem($paymentItem);
-
             $this->emitter->emit(new BeforeRemovePaymentItemEvent($paymentItem));
             $result = $this->delete($paymentItem);
         } catch (\Exception $exception) {
@@ -140,7 +123,9 @@ class PaymentItemsRepository extends Repository
             throw $exception;
         }
 
-        $this->dbContext->commit();
+        if ($inTransaction) {
+            $this->dbContext->commit();
+        }
 
         return $result;
     }
