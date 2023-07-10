@@ -308,6 +308,11 @@ admin:
 
         updated: Recurrent profile was updated
 
+        reactivate_failed_payment:
+            action: Reactivate payment
+            incorrect_state: Retries reset of recurrent payment unavailable. Recurrent payment wasn't stopped by system.
+            success: Recurring payment has been activated. The next charge will occur at %next_charge_datetime%.
+
     retention_analysis:
         title: Retention analysis
         no_records: "No records were found"

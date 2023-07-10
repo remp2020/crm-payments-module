@@ -8,26 +8,31 @@ use Crm\ApplicationModule\Components\PreviousNextPaginator;
 use Crm\ApplicationModule\Graphs\Criteria;
 use Crm\ApplicationModule\Graphs\GraphData;
 use Crm\ApplicationModule\Graphs\GraphDataItem;
+use Crm\ApplicationModule\Helpers\UserDateHelper;
 use Crm\PaymentsModule\Components\DuplicateRecurrentPaymentsControlFactoryInterface;
 use Crm\PaymentsModule\Forms\RecurrentPaymentFormFactory;
 use Crm\PaymentsModule\Repository\RecurrentPaymentsRepository;
 use Crm\SubscriptionsModule\Repository\SubscriptionTypesRepository;
 use Nette\Application\UI\Form;
 use Tomaj\Form\Renderer\BootstrapInlineRenderer;
+use Tracy\Debugger;
 
 class PaymentsRecurrentAdminPresenter extends AdminPresenter
 {
     /** @inject */
     public GraphData $graphData;
 
-    /** @var SubscriptionTypesRepository @inject */
-    public $subscriptionTypesRepository;
+    /** @inject */
+    public SubscriptionTypesRepository $subscriptionTypesRepository;
 
-    /** @var  RecurrentPaymentsRepository @inject */
-    public $recurrentPaymentsRepository;
+    /** @inject */
+    public RecurrentPaymentsRepository $recurrentPaymentsRepository;
 
-    /** @var  RecurrentPaymentFormFactory @inject */
-    public $recurrentPaymentFormFactory;
+    /** @inject */
+    public RecurrentPaymentFormFactory $recurrentPaymentFormFactory;
+
+    /** @inject */
+    public UserDateHelper $userDateHelper;
 
     /** @persistent */
     public $subscription_type;
@@ -173,5 +178,27 @@ class PaymentsRecurrentAdminPresenter extends AdminPresenter
      */
     public function renderDuplicates()
     {
+    }
+
+    /**
+     * @admin-access-level write
+     */
+    public function actionReactivateFailedPayment(int $recurrentPaymentId)
+    {
+        $recurrentPayment = $this->recurrentPaymentsRepository->find($recurrentPaymentId);
+
+        try {
+            $recurrentPaymentReactivated = $this->recurrentPaymentsRepository->reactivateSystemStopped($recurrentPayment);
+        } catch (\Exception $exception) {
+            $this->flashMessage($this->translator->translate('payments.admin.payments_recurrent.reactivate_failed_payment.incorrect_state'));
+            Debugger::log($exception, Debugger::EXCEPTION);
+            $this->redirect(':Users:UsersAdmin:Show', $recurrentPayment->user_id);
+        }
+
+        $this->flashMessage($this->translator->translate(
+            'payments.admin.payments_recurrent.reactivate_failed_payment.success',
+            ['next_charge_datetime' => $this->userDateHelper->process($recurrentPaymentReactivated->charge_at)]
+        ));
+        $this->redirect(':Users:UsersAdmin:Show', $recurrentPaymentReactivated->user_id);
     }
 }

@@ -56,7 +56,7 @@ class RecurrentPaymentsRepository extends Repository
         $this->auditLogRepository = $auditLogRepository;
     }
 
-    final public function add($cid, $payment, $chargeAt, $customAmount, $retries)
+    final public function add($cid, $payment, $chargeAt, $customAmount, $retries, string $note = null)
     {
         return $this->insert([
             'cid' => $cid,
@@ -70,6 +70,7 @@ class RecurrentPaymentsRepository extends Repository
             'user_id' => $payment->user->id,
             'parent_payment_id' => $payment->id,
             'state' => self::STATE_ACTIVE,
+            'note' => $note,
         ]);
     }
 
@@ -213,6 +214,54 @@ class RecurrentPaymentsRepository extends Repository
             'approval' => null,
         ]);
         return $rp;
+    }
+
+    /**
+     * @return ActiveRow|null Returns new recurrent payment if reactivation was successful.
+     * @throws Exception Throws Exception if reactivation is unavailable.
+     */
+    final public function reactivateSystemStopped(ActiveRow $recurrentPayment): ?ActiveRow
+    {
+        if (!$this->canBeReactivatedAfterSystemStopped($recurrentPayment)) {
+            throw new Exception("Reactivation of recurrent payment unavailable. Recurrent payment ID [{$recurrentPayment->id}] wasn't stopped by system.");
+        }
+
+        // load retries from config
+        $retriesConfig = $this->applicationConfig->get('recurrent_payment_charges');
+        if ($retriesConfig) {
+            $retries = count(explode(',', $retriesConfig));
+        } else {
+            $retries = 1;
+        }
+
+        $newRecurrentPayment = $this->add(
+            $recurrentPayment->cid,
+            $recurrentPayment->payment,
+            (new DateTime())->modify('+24 hours'),
+            $recurrentPayment->custom_amount,
+            $retries - 1,
+            "Recurrent payment created by reactivation of system stopped recurrent payment [{$recurrentPayment->id}].",
+        );
+        return ($newRecurrentPayment instanceof ActiveRow) ? $newRecurrentPayment : null;
+    }
+
+    final public function canBeReactivatedAfterSystemStopped(ActiveRow $recurrentPayment): bool
+    {
+        // if recurrent payment cannot be stopped (by user or admin), we won't be able to reactivate when stopped by system
+        if (!$this->canBeStopped($recurrentPayment)) {
+            return false;
+        }
+
+        // only recurrent payments stopped by system after using all retries can be reactivated
+        if ($recurrentPayment->state !== RecurrentPaymentsRepository::STATE_SYSTEM_STOP || $recurrentPayment->retries > 0) {
+            return false;
+        }
+
+        // do not allow reactivation of old recurrent profiles
+        if ($recurrentPayment->charge_at < (new DateTime())->modify('-14 days')) {
+            return false;
+        }
+        return true;
     }
 
     final public function stoppedByUser($id, $userId)

@@ -267,6 +267,11 @@ class PaymentsModule extends CrmModule
             'payments.admin.edit_form.after',
             \Crm\PaymentsModule\Components\ChangePaymentSubscriptionTypeWidget::class
         );
+
+        $widgetManager->registerWidget(
+            'payments.admin.user_payments.listing.recurrent.actions',
+            \Crm\PaymentsModule\Components\ReactivateFailedRecurrentPaymentWidget\ReactivateFailedRecurrentPaymentWidget::class,
+        );
     }
 
     public function registerCommands(CommandsContainerInterface $commandsContainer)

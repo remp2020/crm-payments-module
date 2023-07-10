@@ -303,6 +303,11 @@ admin:
 
         updated: Rekurentní profil byl upraven
 
+        reactivate_failed_payment:
+            action: Reaktivuj platbu
+            incorrect_state: Reset stavu rekurentní platby nedostupný. Rekurentní platba nebyla zastavena systémem.
+            success: Rekurentní platba byla aktivována. Nejbližší obnovení nastane %next_charge_datetime%.
+
     retention_analysis:
         title: Analýza retence
         no_records: "Nebyly nalezeny žádné vypracované analýzy"
