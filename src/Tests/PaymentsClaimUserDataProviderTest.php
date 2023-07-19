@@ -71,7 +71,7 @@ class PaymentsClaimUserDataProviderTest extends DatabaseTestCase
         $this->gatewayFactory->registerGateway(Paypal::GATEWAY_CODE);
 
         $this->unclaimedUserObj = $this->unclaimedUser->createUnclaimedUser();
-        $this->loggedUser = $this->usersRepository->getByEmail('admin@admin.sk');
+        $this->loggedUser = $this->usersRepository->getByEmail(UsersSeeder::USER_ADMIN);
     }
 
     public function testWrongArguments(): void

@@ -106,7 +106,7 @@ class RecurrentPaymentsClaimUserDataProviderTest extends DatabaseTestCase
             ->save();
 
         $this->unclaimedUserObj = $this->unclaimedUser->createUnclaimedUser();
-        $this->loggedUser = $this->usersRepository->getByEmail('admin@admin.sk');
+        $this->loggedUser = $this->usersRepository->getByEmail(UsersSeeder::USER_ADMIN);
 
         $this->payment = $this->paymentsRepository->add($subscriptionType, $paymentGateway, $this->unclaimedUserObj, new PaymentItemContainer(), null, 1, null, null, null, 1, null, '154');
     }
