@@ -707,20 +707,25 @@ SQL;
     public function followingSubscriptions(ActiveRow $subscription, array $includeSubscriptionTypeIds = []): array
     {
         $currentSubscription = $subscription;
-        $includeSubscriptionTypeIds[] = $subscription->subscription_type_id;
 
         $followingSubscriptions = [];
         while (true) {
-            $followingPayment = $this->getTable()
+            $followingPaymentSelection = $this->getTable()
                 ->where([
                     'payments.user_id' => $currentSubscription->user_id,
                     'subscription.start_time' => $currentSubscription->end_time,
-                    'subscription.subscription_type_id' => $includeSubscriptionTypeIds,
                 ])
-                ->where('subscription.start_time > ?', $currentSubscription->start_time)
-                ->fetch();
+                ->where('subscription.start_time > ?', $currentSubscription->start_time);
 
-            if (!$followingPayment) {
+            if (count($includeSubscriptionTypeIds)) {
+                $includeSubscriptionTypeIds[] = $subscription->subscription_type_id;
+                $followingPaymentSelection->where([
+                    'subscription.subscription_type_id' => $includeSubscriptionTypeIds,
+                ]);
+            }
+
+            $followingPayment = $followingPaymentSelection->fetch();
+            if ($followingPayment === null) {
                 break;
             }
 
