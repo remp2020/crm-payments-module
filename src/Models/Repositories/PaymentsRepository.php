@@ -292,7 +292,7 @@ class PaymentsRepository extends Repository
             }
 
             if (in_array($payment->status, [self::STATUS_PAID, self::STATUS_PREPAID, self::STATUS_AUTHORIZED], true) && $data['status'] == static::STATUS_FAIL) {
-                Debugger::log("attempt to make change payment status from [{$payment->status}] to [fail]");
+                Debugger::log("attempt to make change status of payment #[{$payment->id}] from [{$payment->status}] to [fail]", Debugger::ERROR);
                 return false;
             }
 
