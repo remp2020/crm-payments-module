@@ -239,7 +239,7 @@ Vaše ČSOB
         $csobMailParser = new CsobMailParser();
         $mailContents = $csobMailParser->parseMulti($email);
 
-        $this->assertCount(0, $mailContents);
+        $this->assertCount(1, $mailContents);
     }
 
 

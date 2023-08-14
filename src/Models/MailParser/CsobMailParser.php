@@ -29,7 +29,7 @@ class CsobMailParser implements ParserInterface
     {
         $mailContent = new MailContent();
 
-        $pattern1 = '/(.*) byl(?:a)? na účtu ([a-zA-Z0-9]+) (?:zaúčtovaná|zaúčtována|zaúčtovaný) (?:transakce typu: )?(Došlá platba|Příchozí úhrada|Došlá úhrada|SEPA převod)/m';
+        $pattern1 = '/(.*) byl(?:a)? na účtu ([a-zA-Z0-9]+) (?:zaúčtovaná|zaúčtována|zaúčtovaný) (?:transakce typu: |transakce )?(Došlá platba|Příchozí úhrada|Došlá úhrada|SEPA převod|platební kartou)/mu';
         $res = preg_match($pattern1, $content, $result);
         if (!$res) {
             return null;
@@ -38,7 +38,7 @@ class CsobMailParser implements ParserInterface
         $mailContent->setTransactionDate(strtotime($result[1]));
         $mailContent->setAccountNumber($result[2]);
 
-        $pattern2 = '/Částka: ([+-])(.*?) ([A-Z]+)/m';
+        $pattern2 = '/Částka: ([+-])(.*?) ([A-Z]+)/mu';
         $res = preg_match($pattern2, $content, $result);
         if ($res) {
             // there's unicode non-breaking space (u00A0) in mime encoded version of email, unicode regex switched is necessary
@@ -51,7 +51,7 @@ class CsobMailParser implements ParserInterface
             $mailContent->setCurrency($currency);
         }
 
-        $pattern3 = '/Zpráva příjemci: (.*)/m';
+        $pattern3 = '/Zpráva příjemci: (.*)/mu';
         $res = preg_match($pattern3, $content, $result);
         if ($res) {
             $mailContent->setReceiverMessage(trim($result[1]));
@@ -73,7 +73,7 @@ class CsobMailParser implements ParserInterface
             $mailContent->setVs($result[1]);
         }
 
-        $pattern5 = '/Konstantní symbol: ([0-9]{1,10})/m';
+        $pattern5 = '/Konstantní symbol: ([0-9]{1,10})/mu';
         $res = preg_match($pattern5, $content, $result);
         if ($res) {
             $mailContent->setKs($result[1]);
