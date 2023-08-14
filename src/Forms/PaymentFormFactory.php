@@ -508,6 +508,10 @@ class PaymentFormFactory
                 $values['subscription_end_at'] = $subscriptionEndAt;
             }
 
+            // TODO [crm#2693]: DataProvider needs to remove this field. Interface could provide list of columns excluded from update?
+            // unset or update fails
+            unset($values['vat_country']);
+
             if ($payment && $payment->status === 'form' && $allowEditPaymentItems) {
                 $this->paymentsRepository->update($payment, $values, $paymentItemContainer);
             } else {
