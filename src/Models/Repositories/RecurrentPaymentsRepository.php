@@ -427,12 +427,16 @@ class RecurrentPaymentsRepository extends Repository
         $subscriptionType = $payment->subscription_type;
         $subscription = $payment->subscription;
 
-        $endTime = clone $subscription->end_time;
+        if (!$subscription) {
+            $endTime = (clone $payment->paid_at)->add(new \DateInterval("P{$payment->subscription_type->length}D"));
+        } else {
+            $endTime = clone $subscription->end_time;
+        }
 
         if ($endTime <= $this->getNow()) {
             throw new Exception(
                 "Calculated next charge of recurrent payment would be in the past." .
-                " Check payment [{$payment->id}] and subscription [{$subscription->id}]."
+                " Check payment [{$payment->id}] and subscription [{$subscription?->id}]."
             );
         }
 
@@ -449,17 +453,33 @@ class RecurrentPaymentsRepository extends Repository
             }
         }
         if ($chargeBefore) {
+            if (!$subscription) {
+                // charge before is not allowed for payments without subscription, because in this case:
+                // `charge_at` is calculated from `payment->paid_at`, so with chargeBefore set to value other than zero
+                // payments would be shifted by `chargeBefore` value, every time we charge
+                throw new Exception(
+                    "Trying to set chargeBefore for payment charge without subscription." .
+                    " Check payment [{$payment->id}]."
+                );
+            }
+
             $newEndTime = (clone $endTime)->sub(new \DateInterval("PT{$chargeBefore}H"));
             if ($newEndTime < $subscription->start_time) {
                 throw new Exception(
                     "Calculated next charge of recurrent payment would be before subscription's start time." .
-                    " Check payment [{$payment->id}] and subscription [{$subscription->id}]."
+                    " Check payment [{$payment->id}] and subscription [{$subscription?->id}]."
+                );
+            }
+            if ($newEndTime < $payment->paid_at) {
+                throw new Exception(
+                    "Calculated next charge of recurrent payment would be before payment's paid_at time." .
+                    " Check payment [{$payment->id}]."
                 );
             }
             if ($newEndTime <= $this->getNow()) {
                 throw new Exception(
                     "Calculated next charge of recurrent payment would be in the past." .
-                    " Check payment [{$payment->id}] and subscription [{$subscription->id}]."
+                    " Check payment [{$payment->id}] and subscription [{$subscription?->id}]."
                 );
             }
             $endTime = $newEndTime;
