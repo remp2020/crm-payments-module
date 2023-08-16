@@ -19,6 +19,7 @@ use Nette\Application\UI\Form;
 use Nette\Database\Table\ActiveRow;
 use Nette\Forms\Controls\TextInput;
 use Nette\Localization\Translator;
+use Nette\Utils\ArrayHash;
 use Nette\Utils\DateTime;
 use Nette\Utils\Html;
 use Nette\Utils\Json;
@@ -508,9 +509,15 @@ class PaymentFormFactory
                 $values['subscription_end_at'] = $subscriptionEndAt;
             }
 
-            // TODO [crm#2693]: DataProvider needs to remove this field. Interface could provide list of columns excluded from update?
-            // unset or update fails
-            unset($values['vat_country']);
+            // Unset array values or update fails.
+            // Can be utilized by data providers which can store components within containers
+            // which results in $values['container_name']['component_name'].
+            // See commit message for details.
+            foreach ($values as $i => $value) {
+                if ($value instanceof ArrayHash) {
+                    unset($values[$i]);
+                }
+            }
 
             if ($payment && $payment->status === 'form' && $allowEditPaymentItems) {
                 $this->paymentsRepository->update($payment, $values, $paymentItemContainer);
