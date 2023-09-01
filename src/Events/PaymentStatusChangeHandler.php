@@ -141,6 +141,11 @@ class PaymentStatusChangeHandler extends AbstractListener
             return;
         }
 
+        if ($recurrentPaymentRow->cid === $newCid) {
+            // Nothing to update. We'd just bloat the note field.
+            return;
+        }
+
         $note = "Changed CID from: {$recurrentPaymentRow->cid} to: $newCid";
         $this->recurrentPaymentsRepository->update($recurrentPaymentRow, [
             'cid' => $newCid,
