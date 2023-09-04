@@ -316,6 +316,17 @@ The implementation is not universal yet and you'd need to create your own comman
 a look at two implementations that we included within this package: confirmation commands for [Tatra banka](extensions/payments-module/src/Commands/TatraBankaMailConfirmationCommand.php)
 and for [CSOB](extensions/payments-module/src/Commands/CsobMailConfirmationCommand.php).
 
+### Mail downloaders
+
+By default, our mail processing commands (e.g.: [Tatra banka](extensions/payments-module/src/Commands/TatraBankaMailConfirmationCommand.php), [CSOB](extensions/payments-module/src/Commands/CsobMailConfirmationCommand.php)) are using our implementation of mail downloader: [ImapMailDownloader](extensions/payments-module/src/Models/MailDownloader/ImapMailDownloader.php). You can replace this downloader if needed by:
+
+1. creating your own mail downloader which must implement [MailDownloaderInterface](extensions/payments-module/src/Models/MailDownloader/MailDownloaderInterface.php)
+2. replacing default implementation with your own in your app config neon file:
+```neon
+services:
+	mailDownloader: Crm\YourModule\Models\MailDownloader\YourMailDownloader
+```
+
 ## Upgrades
 
 Payments module provides a very basic way how to handle the upgrades. The upgrades are not currently configurable and

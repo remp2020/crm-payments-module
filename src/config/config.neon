@@ -32,11 +32,7 @@ services:
 	- Crm\PaymentsModule\AdminFilterFormData
 	- Crm\PaymentsModule\Models\AverageMonthPayment
 	- Crm\PaymentsModule\Models\PaymentItem\PaymentItemHelper
-
-	- Crm\PaymentsModule\MailConfirmation\TatraBankaMailDownloader
-	- Crm\PaymentsModule\MailConfirmation\CsobMailDownloader
-	- Crm\PaymentsModule\MailConfirmation\SkCsobMailDownloader
-	- Crm\PaymentsModule\MailConfirmation\TatraBankaStatementMailDownloader
+	mailDownloader: Crm\PaymentsModule\Models\MailDownloader\ImapMailDownloader
 	- Crm\PaymentsModule\MailConfirmation\MailProcessor
 	- Crm\PaymentsModule\Components\ChangePaymentStatusFactoryInterface
 	- Crm\PaymentsModule\Components\DuplicateRecurrentPaymentsControlFactoryInterface

@@ -2,28 +2,30 @@
 
 namespace Crm\PaymentsModule\Commands;
 
-use Crm\PaymentsModule\MailConfirmation\CsobMailDownloader;
+use Crm\ApplicationModule\Config\ApplicationConfig;
 use Crm\PaymentsModule\MailConfirmation\MailProcessor;
+use Crm\PaymentsModule\MailParser\CsobMailParser;
+use Crm\PaymentsModule\Models\MailDownloader\EmailInterface;
+use Crm\PaymentsModule\Models\MailDownloader\MailDownloaderInterface;
 use Nette\Utils\DateTime;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
+use Tomaj\ImapMailDownloader\MailCriteria;
+use Tracy\Debugger;
 
 class CsobMailConfirmationCommand extends Command
 {
     public const TERMINAL_PAYMENT_CONST_SYMBOLS = ['1176', '1178'];
 
-    private $mailDownloader;
-
-    private $mailProcessor;
+    private OutputInterface $output;
 
     public function __construct(
-        CsobMailDownloader $mailDownloader,
-        MailProcessor $mailProcessor
+        private MailDownloaderInterface $mailDownloader,
+        private MailProcessor $mailProcessor,
+        private ApplicationConfig $applicationConfig,
     ) {
         parent::__construct();
-        $this->mailDownloader = $mailDownloader;
-        $this->mailProcessor = $mailProcessor;
     }
 
     protected function configure()
@@ -34,16 +36,50 @@ class CsobMailConfirmationCommand extends Command
 
     protected function execute(InputInterface $input, OutputInterface $output)
     {
-        $this->mailDownloader->download(function ($mailContents) use ($output) {
-            return $this->markMailProcessed($mailContents, $output);
+        $this->output = $output;
+
+        $connectionOptions = [
+            'imapHost' => $this->applicationConfig->get('csob_confirmation_host'),
+            'imapPort' => $this->applicationConfig->get('csob_confirmation_port'),
+            'username' => $this->applicationConfig->get('csob_confirmation_username'),
+            'password' => $this->applicationConfig->get('csob_confirmation_password'),
+            'processedFolder' => $this->applicationConfig->get('csob_confirmation_processed_folder'),
+        ];
+
+        $criteria = new MailCriteria();
+        $criteria->setFrom('notification@csob.cz');
+        $criteria->setSubject('CEB Info: Zaúčtování platby');
+        $criteria->setUnseen(true);
+        $connectionOptions['criteria'] = $criteria;
+
+        $this->mailDownloader->download($connectionOptions, function (EmailInterface $email) {
+            $csobMailParser = new CsobMailParser();
+
+            // csob changed encoding for some emails and ImapDownloader doesn't provide the header
+            // this is a dummy check to verify what encoding was used to encode the content of email
+            $mailContent = $csobMailParser->parseMulti(base64_decode($email->getBody()));
+            if (!empty($mailContent)) {
+                $this->processEmail($mailContent);
+                return;
+            }
+
+            $mailContent = $csobMailParser->parseMulti(quoted_printable_decode($email->getBody()));
+            if (!empty($mailContent)) {
+                $this->processEmail($mailContent);
+                return;
+            }
+
+            Debugger::log(
+                'Unable to parse CSOB statement (CEB Info: Zaúčtování platby) email from: ' . $email->getDate(),
+                Debugger::ERROR
+            );
         });
 
         return Command::SUCCESS;
     }
 
-    private function markMailProcessed(array $mailContents, OutputInterface $output)
+    private function processEmail(array $mailContents): void
     {
-        $result = true;
         foreach ($mailContents as $mailContent) {
             if (in_array($mailContent->getKs(), self::TERMINAL_PAYMENT_CONST_SYMBOLS, true)) {
                 if ($mailContent->getTransactionDate()) {
@@ -51,16 +87,12 @@ class CsobMailConfirmationCommand extends Command
                 } else {
                     $transactionDate = new DateTime();
                 }
-                $output->writeln(" * Skipping email (terminal payment) <info>{$transactionDate->format('d.m.Y H:i')}</info>");
-                $output->writeln("    -> VS - <info>{$mailContent->getVS()}</info> {$mailContent->getAmount()} {$mailContent->getCurrency()}");
+                $this->output->writeln(" * Skipping email (terminal payment) <info>{$transactionDate->format('d.m.Y H:i')}</info>");
+                $this->output->writeln("    -> VS - <info>{$mailContent->getVS()}</info> {$mailContent->getAmount()} {$mailContent->getCurrency()}");
                 continue;
             }
 
-            $processed = $this->mailProcessor->processMail($mailContent, $output);
-            if (!$processed) {
-                $result = false;
-            }
+            $this->mailProcessor->processMail($mailContent, $this->output);
         }
-        return $result;
     }
 }

@@ -2,25 +2,27 @@
 
 namespace Crm\PaymentsModule\Commands;
 
+use Crm\ApplicationModule\Config\ApplicationConfig;
 use Crm\PaymentsModule\MailConfirmation\MailProcessor;
-use Crm\PaymentsModule\MailConfirmation\SkCsobMailDownloader;
+use Crm\PaymentsModule\MailParser\SkCsobMailParser;
+use Crm\PaymentsModule\Models\MailDownloader\EmailInterface;
+use Crm\PaymentsModule\Models\MailDownloader\MailDownloaderInterface;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
+use Tomaj\ImapMailDownloader\MailCriteria;
+use Tracy\Debugger;
 
 class SkCsobMailConfirmationCommand extends Command
 {
-    private $mailDownloader;
-
-    private $mailProcessor;
+    private OutputInterface $output;
 
     public function __construct(
-        SkCsobMailDownloader $mailDownloader,
-        MailProcessor $mailProcessor
+        private MailDownloaderInterface $mailDownloader,
+        private MailProcessor $mailProcessor,
+        private ApplicationConfig $applicationConfig,
     ) {
         parent::__construct();
-        $this->mailDownloader = $mailDownloader;
-        $this->mailProcessor = $mailProcessor;
     }
 
     protected function configure()
@@ -31,23 +33,52 @@ class SkCsobMailConfirmationCommand extends Command
 
     protected function execute(InputInterface $input, OutputInterface $output)
     {
-        $this->mailDownloader->download(function ($mailContent) use ($output) {
-            return $this->markMailProcessed($mailContent, $output);
+        $this->output = $output;
+
+        $connectionOptions = [
+            'imapHost' => $this->applicationConfig->get('sk_csob_confirmation_host'),
+            'imapPort' => $this->applicationConfig->get('sk_csob_confirmation_port'),
+            'username' => $this->applicationConfig->get('sk_csob_confirmation_username'),
+            'password' => $this->applicationConfig->get('sk_csob_confirmation_password'),
+            'processedFolder' => $this->applicationConfig->get('sk_csob_confirmation_processed_folder'),
+        ];
+
+        $criteria = new MailCriteria();
+        $criteria->setFrom('AdminTBS@csob.sk');
+        $criteria->setSubject('ČSOB Info 24 - Avízo');
+        $criteria->setUnseen(true);
+        $connectionOptions['criteria'] = $criteria;
+
+        $this->mailDownloader->download($connectionOptions, function (EmailInterface $email) {
+            $skCsobMailParser = new SkCsobMailParser();
+
+            // csob changed encoding for some emails and ImapDownloader doesn't provide the header
+            // this is a dummy check to verify what encoding was used to encode the content of email
+            $mailContent = $skCsobMailParser->parseMulti(base64_decode($email->getBody()));
+            if (!empty($mailContent)) {
+                $this->processEmail($mailContent);
+                return;
+            }
+
+            $mailContent = $skCsobMailParser->parseMulti(quoted_printable_decode($email->getBody()));
+            if (!empty($mailContent)) {
+                $this->processEmail($mailContent);
+                return;
+            }
+
+            Debugger::log(
+                'Unable to parse CSOB statement (ČSOB Info 24 - Avízo) email from: ' . $email->getDate(),
+                Debugger::ERROR
+            );
         });
 
         return Command::SUCCESS;
     }
 
-    private function markMailProcessed(array $mailContents, OutputInterface $output)
+    private function processEmail(array $mailContents): void
     {
-        $result = true;
         foreach ($mailContents as $mailContent) {
-            $processed = $this->mailProcessor->processMail($mailContent, $output);
-            if (!$processed) {
-                $result = false;
-            }
-        };
-
-        return $result;
+            $this->mailProcessor->processMail($mailContent, $this->output);
+        }
     }
 }
