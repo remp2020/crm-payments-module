@@ -99,7 +99,7 @@ class RecurrentPaymentsResolver
             $nextRecurrent = $this->recurrentPaymentsRepository->recurrent($recurrentPayment->payment);
             $recurrentPayment = $this->resolveFailedRecurrent($nextRecurrent);
         }
-        if ($recurrentPayment->state === RecurrentPaymentsRepository::STATE_SYSTEM_STOP) {
+        if ($recurrentPayment->state === RecurrentPaymentsRepository::STATE_SYSTEM_STOP && $recurrentPayment->payment_id) {
             $nextRecurrent = $this->recurrentPaymentsRepository->recurrent($recurrentPayment->payment);
             if ($nextRecurrent) {
                 // In case of reactivation scenario, there might be following recurrent payment even when there was
