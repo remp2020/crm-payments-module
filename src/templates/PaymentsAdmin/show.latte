@@ -2,15 +2,20 @@
 
 {block #head}
   <style>
-      .label {
-          vertical-align: middle;
-      }
+    .label {
+      vertical-align: middle;
+    }
 
-      .note-formated {
-          display:inline-block;
-          white-space: pre-line;
-          vertical-align: top;
-      }
+    .note-formated {
+      display:inline-block;
+      white-space: pre-line;
+      vertical-align: top;
+    }
+
+    /* fix useless margin of header in right column */
+    .right-column > h3.page-header:first-of-type {
+      margin-top: 12px;
+    }
   </style>
 {/block}
 
@@ -140,8 +145,8 @@
   </div>
 
   <!-- right column -->
-  <div class="col-md-6">
-    <h3 class="page-header" style="margin-top:12px;">{_payments.admin.payments.show.payment_items}</h3>
+  <div class="col-md-6 right-column">
+    <h3 class="page-header">{_payments.admin.payments.show.payment_items}</h3>
     <ul class="list-group" n:if="$payment->related('payment_items')">
       {foreach $payment->related('payment_items') as $paymentItem}
         <li class="list-group-item">
@@ -171,6 +176,16 @@
         &nbsp;<a href="{plink :Payments:PaymentsRecurrentAdmin:Edit $recurrent_next->id}">
           <i class="fa fa-edit"></i> {_"payments.admin.component.user_payments_listing.edit"}
         </a>
+      </li>
+    </ul>
+    {/if}
+
+    {if $payment->related('payment_meta')->count('*') > 0}
+    <h3 class="page-header">{_payments.admin.payments.show.payment_meta.header}</h3>
+    <ul class="list-group">
+      <li n:foreach="$payment->related('payment_meta') as $paymentMeta" class="list-group-item">
+        {$paymentMeta->key}:
+        <code class="muted">{$paymentMeta->value}</code>
       </li>
     </ul>
     {/if}

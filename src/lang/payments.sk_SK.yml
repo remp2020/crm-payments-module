@@ -448,6 +448,8 @@ admin:
             recurrent_charge: Obnovená platba
             recurrent_previous: Vytvorené rekurentnou platbou
             recurrent_next: Nasledujúca rekurentná platba
+            payment_meta:
+                header: Meta
 
     report:
         no_recurrent_charge:

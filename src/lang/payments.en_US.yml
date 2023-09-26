@@ -448,6 +448,8 @@ admin:
             recurrent_charge: Automatically charged payment
             recurrent_previous: Created by recurrent payment
             recurrent_next: Created payment
+            payment_meta:
+                header: Meta
 
     report:
         no_recurrent_charge:
