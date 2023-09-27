@@ -60,7 +60,6 @@ use Crm\PaymentsModule\Seeders\PaymentGatewaysSeeder;
 use Crm\PaymentsModule\Seeders\SegmentsSeeder;
 use Crm\SubscriptionsModule\DataProvider\SubscriptionFormDataProviderInterface;
 use Crm\UsersModule\Auth\UserTokenAuthorization;
-use League\Event\Emitter;
 use Nette\Application\Routers\RouteList;
 use Nette\DI\Container;
 use Symfony\Component\Console\Output\OutputInterface;
@@ -445,24 +444,24 @@ class PaymentsModule extends CrmModule
         );
     }
 
-    public function registerEventHandlers(Emitter $emitter)
+    public function registerLazyEventHandlers(\Crm\ApplicationModule\Event\LazyEventEmitter $emitter)
     {
         $emitter->addListener(
             \Crm\PaymentsModule\Events\PaymentChangeStatusEvent::class,
-            $this->getInstance(\Crm\PaymentsModule\Events\PaymentStatusChangeHandler::class),
+            \Crm\PaymentsModule\Events\PaymentStatusChangeHandler::class,
             500
         );
         $emitter->addListener(
             \Crm\SubscriptionsModule\Events\SubscriptionPreUpdateEvent::class,
-            $this->getInstance(\Crm\PaymentsModule\Events\SubscriptionPreUpdateHandler::class)
+            \Crm\PaymentsModule\Events\SubscriptionPreUpdateHandler::class
         );
         $emitter->addListener(
             \Crm\PaymentsModule\Events\RecurrentPaymentCardExpiredEvent::class,
-            $this->getInstance(\Crm\PaymentsModule\Events\RecurrentPaymentCardExpiredEventHandler::class)
+            \Crm\PaymentsModule\Events\RecurrentPaymentCardExpiredEventHandler::class
         );
         $emitter->addListener(
             \Crm\SubscriptionsModule\Events\SubscriptionMovedEvent::class,
-            $this->getInstance(\Crm\PaymentsModule\Events\SubscriptionMovedHandler::class)
+            \Crm\PaymentsModule\Events\SubscriptionMovedHandler::class
         );
     }
 
