@@ -2,7 +2,6 @@
 
 namespace Crm\PaymentsModule\Tests;
 
-use Crm\ApplicationModule\ActiveRow;
 use Crm\ApplicationModule\Tests\DatabaseTestCase;
 use Crm\PaymentsModule\Gateways\Paypal;
 use Crm\PaymentsModule\PaymentItem\PaymentItemContainer;
@@ -19,6 +18,7 @@ use Crm\SubscriptionsModule\Seeders\SubscriptionLengthMethodSeeder;
 use Crm\SubscriptionsModule\Seeders\SubscriptionTypeNamesSeeder;
 use Crm\UsersModule\Auth\UserManager;
 use Crm\UsersModule\Repository\UsersRepository;
+use Nette\Database\Table\ActiveRow;
 
 class RecurrentPaymentSubscriptionTypeContentAccessCriteriaTest extends DatabaseTestCase
 {
@@ -128,6 +128,7 @@ class RecurrentPaymentSubscriptionTypeContentAccessCriteriaTest extends Database
 
         $paymentRow = $this->paymentsRepository->updateStatus($paymentRow, PaymentsRepository::STATUS_PAID);
         $recurrentPaymentRow = $this->recurrentPaymentsRepository->createFromPayment($paymentRow, 'recurrentToken');
+        $this->assertNotNull($recurrentPaymentRow);
         return $recurrentPaymentRow;
     }
 }
