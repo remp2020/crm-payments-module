@@ -100,11 +100,7 @@ class PaymentItemsRepository extends Repository
         return true;
     }
 
-    /**
-     * @param ActiveRow $paymentItem
-     * @return int
-     */
-    final public function deletePaymentItem(ActiveRow $paymentItem): int
+    final public function deletePaymentItem(ActiveRow $paymentItem): bool
     {
         $inTransaction = false;
         try {
