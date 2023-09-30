@@ -11,7 +11,7 @@ class TransactionPayload
 
     private int $amount;
 
-    private string $currency;
+    private int $currency;
 
     private ?string $variableSymbol;
 
@@ -74,7 +74,7 @@ class TransactionPayload
         return $this;
     }
 
-    public function getCurrency(): string
+    public function getCurrency(): int
     {
         return $this->currency;
     }
