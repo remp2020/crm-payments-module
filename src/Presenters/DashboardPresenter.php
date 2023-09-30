@@ -63,7 +63,7 @@ class DashboardPresenter extends AdminPresenter
     {
         $filters = ['paymentItemTypes' => [], 'paymentItemTypesDefaultFilter' => []];
 
-        /** @var PaymentItemTypesFilterDataProviderInterface $providers */
+        /** @var PaymentItemTypesFilterDataProviderInterface[] $providers */
         $providers = $this->dataProviderManager->getProviders('payments.dataprovider.dashboard', PaymentItemTypesFilterDataProviderInterface::class);
         foreach ($providers as $sorting => $provider) {
             $filters = $provider->provide($filters);
@@ -433,7 +433,7 @@ class DashboardPresenter extends AdminPresenter
         }
 
         $filter = [];
-         /** @var PaymentItemTypesFilterDataProviderInterface $providers */
+         /** @var PaymentItemTypesFilterDataProviderInterface[] $providers */
         $providers = $this->dataProviderManager->getProviders('payments.dataprovider.dashboard', PaymentItemTypesFilterDataProviderInterface::class);
         foreach ($providers as $sorting => $provider) {
             $filter[] = $provider->filter($selectedTypes);

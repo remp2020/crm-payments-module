@@ -114,6 +114,7 @@ class ReturnPresenter extends FrontendPresenter
         }
 
         // Chance to override gateway code before check
+        /** @var PaymentReturnGatewayDataProviderInterface[] $providers */
         $providers = $this->dataProviderManager->getProviders('payments.dataprovider.payment_return_gateway', PaymentReturnGatewayDataProviderInterface::class);
         foreach ($providers as $provider) {
             $gatewayCode = $provider->provide(['payment' => $payment]);
