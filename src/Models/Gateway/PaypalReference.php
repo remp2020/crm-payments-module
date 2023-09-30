@@ -154,7 +154,7 @@ class PaypalReference extends GatewayAbstract implements RecurrentPaymentInterfa
         return $data['BILLINGAGREEMENTID'];
     }
 
-    public function getResultCode()
+    public function getResultCode(): ?string
     {
         $data = $this->getResponseData();
         if (!isset($data['ACK'])) {
@@ -164,7 +164,7 @@ class PaypalReference extends GatewayAbstract implements RecurrentPaymentInterfa
         return $data['ACK'];
     }
 
-    public function getResultMessage()
+    public function getResultMessage(): ?string
     {
         $data = $this->getResponseData();
         if (!isset($data['ACK'])) {

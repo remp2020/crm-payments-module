@@ -62,13 +62,7 @@ interface RecurrentPaymentInterface
      */
     public function getRecurrentToken();
 
-    /**
-     * @return string
-     */
-    public function getResultCode();
+    public function getResultCode(): ?string;
 
-    /**
-     * @return string
-     */
-    public function getResultMessage();
+    public function getResultMessage(): ?string;
 }

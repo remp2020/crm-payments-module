@@ -56,12 +56,12 @@ class TestRecurrentGateway extends GatewayAbstract implements RecurrentPaymentIn
         return 'test_recurrent_token';
     }
 
-    public function getResultCode()
+    public function getResultCode(): ?string
     {
         return 'test_result_code';
     }
 
-    public function getResultMessage()
+    public function getResultMessage(): ?string
     {
         return 'test_result_message';
     }

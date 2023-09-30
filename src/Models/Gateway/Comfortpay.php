@@ -179,13 +179,13 @@ class Comfortpay extends GatewayAbstract implements RecurrentPaymentInterface
         return $data['CID'];
     }
 
-    public function getResultCode()
+    public function getResultCode(): ?string
     {
         $data = $this->getResponseData();
-        return isset($data['transactionStatus']) ? $data['transactionStatus'] : false;
+        return isset($data['transactionStatus']) ? $data['transactionStatus'] : null;
     }
 
-    public function getResultMessage()
+    public function getResultMessage(): ?string
     {
         $data = $this->getResponseData();
         if (!isset($data['transactionApproval'])) {

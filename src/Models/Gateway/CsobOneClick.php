@@ -306,19 +306,13 @@ class CsobOneClick extends GatewayAbstract implements RecurrentPaymentInterface,
         return $data['payId'];
     }
 
-    /**
-     * @return string
-     */
-    public function getResultCode()
+    public function getResultCode(): ?string
     {
         $data = $this->getResponseData();
         return $data['resultCode'] ?? $this->resultCode;
     }
 
-    /**
-     * @return string
-     */
-    public function getResultMessage()
+    public function getResultMessage(): ?string
     {
         $data = $this->getResponseData();
         return $data['resultMessage'] ?? $this->resultMessage;
