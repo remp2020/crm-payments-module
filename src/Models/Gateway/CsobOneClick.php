@@ -245,6 +245,20 @@ class CsobOneClick extends GatewayAbstract implements RecurrentPaymentInterface,
             $oneClickPaymentRequest['clientIp'] = $initialPaymentMeta->payment->ip;
         }
 
+        // temp debug; remp/crm#2990
+        if ($oneClickPaymentRequest['clientIp'] === 'cli') {
+            $metaData = [];
+            if ($initialPaymentMeta === null) {
+                $metaData['error'] = "Unable to find payment meta for token [{$token}]";
+            } else {
+                $metaData['initial_payment_id'] = $initialPaymentMeta->payment_id;
+                $metaData['initial_client_ip'] = $initialPaymentMeta->payment->ip;
+                $metaData['initial_payment_data'] = $initialPaymentMeta->payment->toArray();
+            }
+            $dmd = print_r($metaData, true);
+            Debugger::log("CSOB One Click: clientIp cannot be 'cli'. PayId: [{$token}]. Initial payment: [{$dmd}]", Debugger::ERROR);
+        }
+
         if (!empty($payment->user->last_name)) {
             $oneClickPaymentRequest['name'] = $this->getUserName($payment->user);
         }
