@@ -450,6 +450,8 @@ admin:
             recurrent_next: Nasledujúca rekurentná platba
             payment_meta:
                 header: Meta
+            ip: IP adresa
+            user_agent: User-Agent
 
     report:
         no_recurrent_charge:

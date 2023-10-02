@@ -450,6 +450,8 @@ admin:
             recurrent_next: Created payment
             payment_meta:
                 header: Meta
+            ip: IP address
+            user_agent: User-Agent
 
     report:
         no_recurrent_charge:

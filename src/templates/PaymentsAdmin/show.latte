@@ -136,6 +136,16 @@
         <a n:if="$payment->referer" href="{$payment->referer|checkUrl}">{$payment->referer}</a>
       </li>
 
+      <li class="list-group-item">
+        <b>{_payments.admin.payments.show.ip}:</b>&nbsp;
+        <span>{$payment->ip}</span>
+      </li>
+
+      <li class="list-group-item">
+        <b>{_payments.admin.payments.show.user_agent}:</b>&nbsp;
+        <span>{$payment->user_agent}</span>
+      </li>
+
       {* this widgets add own LI items *}
       {control simpleWidget 'payments.admin.payment_source_listing', $payment}
     </ul>
