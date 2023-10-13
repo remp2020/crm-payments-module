@@ -190,6 +190,8 @@ admin:
                 send: Filter
                 cancel: Zruš filter
                 more: Viac možností
+            external_id:
+                label: Externé ID
 
         recurrent_payment_form:
             charge_at:

@@ -190,6 +190,8 @@ admin:
                 send: Filter
                 cancel: Cancel filter
                 more: More options
+            external_id:
+                label: External ID
 
         recurrent_payment_form:
             charge_at:

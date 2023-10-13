@@ -171,6 +171,9 @@ admin:
             paid_at_from:
                 label: Zahlungsdatum ab
                 placeholder: zum Beispiel 31.7.2020 15:30
+            external_id:
+                label: Extern ID
+
         recurrent_payment_form:
             charge_at:
                 label: Datum der nächsten Abbuchung

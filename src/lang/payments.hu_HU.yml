@@ -176,11 +176,12 @@ admin:
                 placeholder: pl. 1.8.2020 15:30
             referer:
                 label: Hivatkozó
-
             filter:
                 send: Szűrés
                 cancel: Visszaállítás
                 more: További lehetőségek
+            external_id:
+                label: Külső ID
 
         recurrent_payment_form:
             charge_at:

@@ -71,7 +71,8 @@ class AdminFilterFormData
             'status' => $this->getStatus(),
             'donation' => $this->getDonation(),
             'recurrent_charge' => $this->getRecurrentCharge(),
-            'referer' => $this->getReferer()
+            'referer' => $this->getReferer(),
+            'external_id' => $this->getExternalId(),
         ];
     }
 
@@ -123,6 +124,11 @@ class AdminFilterFormData
     private function getReferer()
     {
         return $this->formData['referer'] ?? null;
+    }
+
+    private function getExternalId()
+    {
+        return $this->formData['external_id'] ?? null;
     }
 
     private function getRecurrentChargeFilterValue()

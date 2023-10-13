@@ -156,6 +156,8 @@ class PaymentsAdminPresenter extends AdminPresenter
             ->setHtmlAttribute('class', 'flatpickr')
             ->setHtmlAttribute('flatpickr_datetime', "1");
 
+        $form->addText('external_id', 'payments.admin.component.admin_filter_form.external_id.label');
+
         $subscriptionTypes = $this->subscriptionTypesRepository->getAllActive()->fetchPairs('id', 'name');
         $subscriptionType = $form->addSelect(
             'subscription_type',
