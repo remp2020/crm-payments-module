@@ -225,7 +225,7 @@ class PaymentFormFactory
         if ($payment && !isset($statusPairs[$payment->status])) {
             $statusPairs[$payment->status] = $payment->status;
         }
-        $status = $form->addSelect('status', 'payments.form.payment.status.label', $this->paymentsRepository->getStatusPairs());
+        $status = $form->addSelect('status', 'payments.form.payment.status.label', $statusPairs);
 
         $paidAt = $form->addText('paid_at', 'payments.form.payment.paid_at.label')
             ->setHtmlAttribute('placeholder', 'payments.form.payment.paid_at.placeholder');
