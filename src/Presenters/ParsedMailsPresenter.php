@@ -42,7 +42,6 @@ class ParsedMailsPresenter extends AdminPresenter
         $pnp->setActualItemCount(count($logs));
 
         $this->template->logs = $logs;
-        $this->template->logs_sum = $this->parsedMailLogsRepository->totalCount();
     }
 
     public function createComponentFilterForm()

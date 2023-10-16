@@ -34,10 +34,10 @@ class ParsedMailLogsRepository extends Repository
     {
         $where = [];
         if ($vs !== null) {
-            $where['variable_symbol LIKE ?'] = "%{$vs}%";
+            $where["{$this->tableName}.variable_symbol LIKE ?"] = "%{$vs}%";
         }
         if ($state !== null) {
-            $where['state'] = $state;
+            $where["{$this->tableName}.state"] = $state;
         }
         if ($paymentStatus !== null) {
             $where['payment.status'] = $paymentStatus;
