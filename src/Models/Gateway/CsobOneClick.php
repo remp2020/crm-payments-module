@@ -47,6 +47,8 @@ class CsobOneClick extends GatewayAbstract implements RecurrentPaymentInterface,
 
     private $resultMessage;
 
+    private bool $purchaseMode = false;
+
     protected $cancelErrorCodes = [
         self::PAYMENT_NOT_AUTHORIZED_ONECLICK_EXPIRED,
         self::ONECLICK_TEMPLATE_PAYMENT_EXPIRED,
@@ -92,7 +94,7 @@ class CsobOneClick extends GatewayAbstract implements RecurrentPaymentInterface,
     {
         $this->initialize();
 
-        $checkoutRequest = [
+        $requestParams = [
             'returnUrl' => $this->generateReturnUrl($payment, [
                 'VS' => $payment->variable_symbol,
             ]),
@@ -105,10 +107,14 @@ class CsobOneClick extends GatewayAbstract implements RecurrentPaymentInterface,
         ];
 
         if (!empty($payment->user->last_name)) {
-            $checkoutRequest['name'] = $this->getUserName($payment->user);
+            $requestParams['name'] = $this->getUserName($payment->user);
         }
 
-        $this->response = $this->gateway->checkout($checkoutRequest)->send();
+        if ($this->purchaseMode) {
+            $this->response = $this->gateway->purchase($requestParams)->send();
+        } else {
+            $this->response = $this->gateway->checkout($requestParams)->send();
+        }
 
         $this->paymentMetaRepository->add($payment, 'pay_id', $this->response->getTransactionReference());
     }
@@ -184,6 +190,11 @@ class CsobOneClick extends GatewayAbstract implements RecurrentPaymentInterface,
     public function checkValid($token)
     {
         throw new InvalidRequestException("csob one click gateway doesn't support checking if token is still valid");
+    }
+
+    public function usePurchaseMode(): void
+    {
+        $this->purchaseMode = true;
     }
 
     /**
