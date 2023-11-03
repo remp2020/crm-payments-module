@@ -62,6 +62,7 @@ services:
 	- Crm\PaymentsModule\Commands\TatraBankaStatementMailConfirmationCommand
 	- Crm\PaymentsModule\Commands\CancelAuthorizationCommand
 	- Crm\PaymentsModule\Commands\FillReferenceToSubscriptionTypeItemInPaymentItemsCommand
+	- Crm\PaymentsModule\Commands\ConfirmCsobPaymentsCommand
 	- Crm\PaymentsModule\Api\VariableSymbolApiHandler
 	- Crm\PaymentsModule\Api\ListRecurrentPaymentsApiHandler
 	- Crm\PaymentsModule\Api\ReactivateRecurrentPaymentApiHandler
