@@ -2,7 +2,7 @@
     <link rel="stylesheet" type="text/css" href="{$basePath}/layouts/default/css/thank-you.css?v=2">
 {/block}
 
-<div id="address-forms" class="row" style="margin-top: 1em">
+<div class="row" style="margin-top: 1em">
     <div class="col-md-12">
         <div class="additionalform">
             <div id="address-forms">
@@ -21,7 +21,6 @@
 
   function registerFormCallback(callback) {
     finishCallbacks.push(callback);
-    console.log("registered callback")
   }
 
   function finishCallback() {
