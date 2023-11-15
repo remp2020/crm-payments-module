@@ -625,7 +625,7 @@ frontend:
         error: 'Automatickú platbu nie je možné obnoviť.'
         error_create_new: 'Automatickú platbu nie je možné obnoviť. Prosím vytvorte novú.'
     banktransfer:
-        title: Údaje pre trvalý príkaz alebo platbu prevodom
+        title: Tu si skopírujte údaje pre trvalý príkaz alebo platbu prevodom
         amount: Suma
         account_number: Číslo účtu
         variable_symbol: Variabilný symbol
