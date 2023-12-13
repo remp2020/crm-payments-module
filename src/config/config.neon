@@ -173,13 +173,13 @@ services:
 		setup:
 			- setOnTheFly(true, 5)
 
-	paymentsExportsAdapter:
-		factory: League\Flysystem\Adapter\Local
+	paymentsExportVisibility:
+		factory: League\Flysystem\UnixVisibility\PortableVisibilityConverter
 		arguments:
-			root: '%appDir%/../content/payments-exports'
-			permissions: [dir: [public: 0o777]]
+			directoryPublic: 0777
+	paymentsExportsAdapter: League\Flysystem\Local\LocalFilesystemAdapter('%appDir%/../content/payments-exports', @paymentsExportVisibility)
 	paymentsExportFileSystem: League\Flysystem\Filesystem(@paymentsExportsAdapter)
 
-	applicationMountManager:
+	mountManagerConfig:
 		setup:
 			- mountFilesystem(Crm\PaymentsModule\Models\FileSystem::PAYMENTS_EXPORTS_BUCKET_NAME, @paymentsExportFileSystem, 'payments')

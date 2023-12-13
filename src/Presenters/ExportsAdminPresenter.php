@@ -6,7 +6,7 @@ use Crm\AdminModule\Presenters\AdminPresenter;
 use Crm\ApplicationModule\Components\PreviousNextPaginator;
 use Crm\ApplicationModule\DataProvider\DataProviderManager;
 use Crm\ApplicationModule\Models\ApplicationMountManager;
-use League\Flysystem\FileNotFoundException;
+use League\Flysystem\UnableToDeleteFile;
 use Nette\Application\Responses\CallbackResponse;
 use Nette\Application\UI\Form;
 use Tomaj\Form\Renderer\BootstrapInlineRenderer;
@@ -88,9 +88,8 @@ class ExportsAdminPresenter extends AdminPresenter
     /**
      * @admin-access-level read
      */
-    public function handleDownloadExport($bucket, $fileName)
+    public function handleDownloadExport($path)
     {
-        $path = $this->applicationMountManager->getFilePath($bucket, $fileName);
         $exists = $this->applicationMountManager->has($path);
         if (!$exists) {
             throw new \Exception('Missing payments export with path ' . $path);
@@ -98,7 +97,7 @@ class ExportsAdminPresenter extends AdminPresenter
 
         $this->getHttpResponse()->addHeader('Content-Encoding', 'windows-1250');
         $this->getHttpResponse()->addHeader('Content-Type', 'application/octet-stream; charset=windows-1250');
-        $this->getHttpResponse()->addHeader('Content-Disposition', "attachment; filename=" . $fileName);
+        $this->getHttpResponse()->addHeader('Content-Disposition', "attachment; filename=" . $this->applicationMountManager->getFileName($path));
 
         $response = new CallbackResponse(function () use ($path) {
             echo $this->applicationMountManager->read($path);
@@ -109,22 +108,17 @@ class ExportsAdminPresenter extends AdminPresenter
     /**
      * @admin-access-level write
      */
-    public function handleDeleteExport($bucket, $fileName)
+    public function handleDeleteExport($path)
     {
-        $path = $this->applicationMountManager->getFilePath($bucket, $fileName);
         $exists = $this->applicationMountManager->has($path);
         if (!$exists) {
             throw new \Exception('Missing payments export with path ' . $path);
         }
 
         try {
-            $isDeleted = $this->applicationMountManager->delete($path);
-            if ($isDeleted) {
-                $this->flashMessage($this->translator->translate('payments.admin.exports.deleted'));
-            } else {
-                $this->flashMessage($this->translator->translate('payments.admin.exports.delete_error'), 'error');
-            }
-        } catch (FileNotFoundException $e) {
+            $this->applicationMountManager->delete($path);
+            $this->flashMessage($this->translator->translate('payments.admin.exports.deleted'));
+        } catch (UnableToDeleteFile $e) {
             $this->flashMessage($this->translator->translate('payments.admin.exports.delete_error'), 'error');
         }
 
