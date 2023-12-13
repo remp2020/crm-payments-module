@@ -3,6 +3,7 @@
 namespace Crm\PaymentsModule\Components;
 
 use Crm\ApplicationModule\Widget\BaseLazyWidget;
+use DeviceDetector\DeviceDetector;
 use Nette\Database\Table\ActiveRow;
 
 /**
@@ -26,14 +27,14 @@ class DeviceUserListingWidget extends BaseLazyWidget
             return;
         }
 
-        $userAgent = new \Sinergi\BrowserDetector\UserAgent($payment->user_agent);
-        $device = new \Sinergi\BrowserDetector\Device($userAgent);
+        $deviceDetector = new DeviceDetector($payment->user_agent);
+        $deviceDetector->parse();
 
-        if ($device->getName() === 'unknown') {
+        if ($deviceDetector->getModel() === '') {
             return;
         }
 
-        $this->template->device = $device;
+        $this->template->device = $deviceDetector->getModel();
         $this->template->setFile(__DIR__ . DIRECTORY_SEPARATOR . $this->templateName);
         $this->template->render();
     }
