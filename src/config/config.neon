@@ -173,11 +173,10 @@ services:
 		setup:
 			- setOnTheFly(true, 5)
 
-	paymentsExportVisibility:
-		factory: League\Flysystem\UnixVisibility\PortableVisibilityConverter
-		arguments:
-			directoryPublic: 0777
-	paymentsExportsAdapter: League\Flysystem\Local\LocalFilesystemAdapter('%appDir%/../content/payments-exports', @paymentsExportVisibility)
+	paymentsExportsAdapter: League\Flysystem\Local\LocalFilesystemAdapter(
+		'%appDir%/../content/payments-exports',
+		League\Flysystem\UnixVisibility\PortableVisibilityConverter(0777)
+	)
 	paymentsExportFileSystem: League\Flysystem\Filesystem(@paymentsExportsAdapter)
 
 	mountManagerConfig:

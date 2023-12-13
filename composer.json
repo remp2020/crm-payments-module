@@ -12,7 +12,7 @@
     "tomaj/imap-mail-downloader": "^1.2.0",
     "rootpd/omnipay-csob": "~4.2",
     "rootpd/omnipay-paypal-reference": "^4.0.0",
-    "rootpd/openpgp-php": "~0.5",
+    "singpolyma/openpgp-php": "^0.6",
     "tomaj/omnipay-tatra": "4.2.1"
   },
   "minimum-stability": "dev",
