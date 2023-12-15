@@ -16,6 +16,7 @@ use Crm\SubscriptionsModule\Seeders\SubscriptionLengthMethodSeeder;
 use Crm\SubscriptionsModule\Seeders\SubscriptionTypeNamesSeeder;
 use Crm\UsersModule\Auth\UserManager;
 use Crm\UsersModule\Repository\UsersRepository;
+use PHPUnit\Framework\Attributes\DataProvider;
 
 class PaymentIsRecurrentChargeCriteriaTest extends DatabaseTestCase
 {
@@ -39,9 +40,7 @@ class PaymentIsRecurrentChargeCriteriaTest extends DatabaseTestCase
         ];
     }
 
-    /**
-     * @dataProvider dataProviderForTestIsRecurrentCharge
-     */
+    #[DataProvider('dataProviderForTestIsRecurrentCharge')]
     public function testIsRecurrentCharge(bool $isRecurrentCharge, bool $selectedValue, bool $expectedValue): void
     {
         [$paymentSelection, $paymentRow] = $this->prepareData($isRecurrentCharge);
@@ -57,7 +56,7 @@ class PaymentIsRecurrentChargeCriteriaTest extends DatabaseTestCase
         }
     }
 
-    public function dataProviderForTestIsRecurrentCharge(): array
+    public static function dataProviderForTestIsRecurrentCharge(): array
     {
         return [
             [true, true, true],

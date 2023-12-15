@@ -18,6 +18,7 @@ use Crm\SubscriptionsModule\Seeders\SubscriptionLengthMethodSeeder;
 use Crm\SubscriptionsModule\Seeders\SubscriptionTypeNamesSeeder;
 use Crm\UsersModule\Auth\UserManager;
 use Crm\UsersModule\Repository\UsersRepository;
+use PHPUnit\Framework\Attributes\DataProvider;
 
 class DonationAmountCriteriaTest extends DatabaseTestCase
 {
@@ -42,9 +43,7 @@ class DonationAmountCriteriaTest extends DatabaseTestCase
         ];
     }
 
-    /**
-     * @dataProvider dataProviderForTestDonationAmountCriteria
-     */
+    #[DataProvider('dataProviderForTestDonationAmountCriteria')]
     public function testDonationAmountCriteria($donatedAmount, $operator, $moreThenRule, $expectedValue)
     {
         [$paymentSelection, $paymentRow] = $this->prepareData($donatedAmount);
@@ -61,7 +60,7 @@ class DonationAmountCriteriaTest extends DatabaseTestCase
     }
 
 
-    public function dataProviderForTestDonationAmountCriteria(): array
+    public static function dataProviderForTestDonationAmountCriteria(): array
     {
         return [
             [10, '>', 5, true],

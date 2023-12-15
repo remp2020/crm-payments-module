@@ -8,6 +8,7 @@ use Crm\PaymentsModule\Scenarios\PaymentHasSubscriptionCriteria;
 use Crm\SubscriptionsModule\Builder\SubscriptionTypeBuilder;
 use Crm\SubscriptionsModule\Repository\SubscriptionTypesRepository;
 use Crm\SubscriptionsModule\Repository\SubscriptionsRepository;
+use PHPUnit\Framework\Attributes\DataProvider;
 
 class PaymentHasSubscriptionCriteriaTest extends PaymentsTestCase
 {
@@ -19,7 +20,7 @@ class PaymentHasSubscriptionCriteriaTest extends PaymentsTestCase
         ]);
     }
 
-    public function dataProviderForTestPaymentHasSubscriptionCriteria(): array
+    public static function dataProviderForTestPaymentHasSubscriptionCriteria(): array
     {
         return [
             [true, true, true],
@@ -29,9 +30,7 @@ class PaymentHasSubscriptionCriteriaTest extends PaymentsTestCase
         ];
     }
 
-    /**
-     * @dataProvider dataProviderForTestPaymentHasSubscriptionCriteria
-     */
+    #[DataProvider('dataProviderForTestPaymentHasSubscriptionCriteria')]
     public function testPaymentHasSubscriptionCriteria($hasSubscription, $shoudHaveSubscription, $expectedResult)
     {
         [$paymentSelection, $paymentRow] = $this->prepareData($hasSubscription);

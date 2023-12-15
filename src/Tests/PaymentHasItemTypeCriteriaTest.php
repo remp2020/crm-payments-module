@@ -19,6 +19,7 @@ use Crm\SubscriptionsModule\Seeders\SubscriptionLengthMethodSeeder;
 use Crm\SubscriptionsModule\Seeders\SubscriptionTypeNamesSeeder;
 use Crm\UsersModule\Builder\UserBuilder;
 use Crm\UsersModule\Repository\UsersRepository;
+use PHPUnit\Framework\Attributes\DataProvider;
 
 class PaymentHasItemTypeCriteriaTest extends DatabaseTestCase
 {
@@ -43,9 +44,7 @@ class PaymentHasItemTypeCriteriaTest extends DatabaseTestCase
         ];
     }
 
-    /**
-     * @dataProvider dataProvider
-     */
+    #[DataProvider('dataProvider')]
     public function testPaymentHasItemTypeCriteria($submittedItems, $checkedItems, $expectedValue)
     {
         [$paymentSelection, $paymentRow] = $this->prepareData($submittedItems);
@@ -62,7 +61,7 @@ class PaymentHasItemTypeCriteriaTest extends DatabaseTestCase
     }
 
 
-    public function dataProvider(): array
+    public static function dataProvider(): array
     {
         return [
             'matchesAll' => [
