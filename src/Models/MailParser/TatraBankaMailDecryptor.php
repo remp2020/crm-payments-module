@@ -24,15 +24,14 @@ class TatraBankaMailDecryptor
 
         $privateKey = \OpenPGP_Message::parse(file_get_contents($this->privateKeyPath));
         foreach ($privateKey as $p) {
-            if (!($p instanceof \OpenPGP_SecretKeyPacket)) {
+            if (!($p instanceof \OpenPGP_SecretKeyPacket || $p instanceof \OpenPGP_SecretSubkeyPacket)) {
                 continue;
             }
 
             $privateKey = \OpenPGP_Crypt_Symmetric::decryptSecretKey($this->passphrase, $p);
-            break;
         }
 
-        $msg =\OpenPGP_Message::parse(\OpenPGP::unarmor($contents, 'PGP MESSAGE'));
+        $msg = \OpenPGP_Message::parse(\OpenPGP::unarmor($contents, 'PGP MESSAGE'));
 
         $decryptor = new \OpenPGP_Crypt_RSA($privateKey);
         $decrypted = $decryptor->decrypt($msg);
