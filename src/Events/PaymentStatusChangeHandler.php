@@ -35,6 +35,11 @@ class PaymentStatusChangeHandler extends AbstractListener
             throw new \Exception("Invalid type of event received, 'PaymentEventInterface' expected: " . get_class($event));
         }
 
+        $sendEmail = true;
+        if ($event instanceof PaymentChangeStatusEvent) {
+            $sendEmail = $event->getSendEmail();
+        }
+
         $payment = $event->getPayment();
         // hard reload, other handlers could have alter the payment already
         $payment = $this->paymentsRepository->find($payment->id);
@@ -60,14 +65,14 @@ class PaymentStatusChangeHandler extends AbstractListener
         }
 
         if (in_array($payment->status, [PaymentsRepository::STATUS_PAID, PaymentsRepository::STATUS_PREPAID], true)) {
-            $this->createSubscriptionFromPayment($payment);
+            $this->createSubscriptionFromPayment($payment, $sendEmail);
         }
     }
 
     /**
      * @return bool|int|ActiveRow
      */
-    public function createSubscriptionFromPayment(ActiveRow $payment, bool $sendEmail = true, \DateTime $startTime = null, \DateTime $endTime = null)
+    public function createSubscriptionFromPayment(ActiveRow $payment, bool $sendEmail, \DateTime $startTime = null, \DateTime $endTime = null)
     {
         if ($startTime === null && $payment->subscription_start_at) {
             if ($payment->subscription_start_at > $payment->paid_at) {
