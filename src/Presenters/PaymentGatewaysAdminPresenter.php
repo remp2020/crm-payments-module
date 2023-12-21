@@ -10,15 +10,16 @@ use Crm\PaymentsModule\Components\LastPaymentsControlFactoryInterface;
 use Crm\PaymentsModule\Forms\PaymentGatewayFormFactory;
 use Crm\PaymentsModule\Repository\PaymentGatewaysRepository;
 use Crm\PaymentsModule\Repository\PaymentsRepository;
-use Nette;
+use Nette\Application\BadRequestException;
+use Nette\DI\Attributes\Inject;
 
 class PaymentGatewaysAdminPresenter extends AdminPresenter
 {
-    /** @var PaymentGatewaysRepository @inject */
-    public $paymentGatewaysRepository;
+    #[Inject]
+    public PaymentGatewaysRepository $paymentGatewaysRepository;
 
-    /** @var PaymentGatewayFormFactory @inject */
-    public $factory;
+    #[Inject]
+    public PaymentGatewayFormFactory $factory;
 
     /**
      * @admin-access-level read
@@ -42,7 +43,7 @@ class PaymentGatewaysAdminPresenter extends AdminPresenter
     {
         $paymentGateway = $this->paymentGatewaysRepository->find($id);
         if (!$paymentGateway) {
-            throw new Nette\Application\BadRequestException();
+            throw new BadRequestException();
         }
         $this->template->type = $paymentGateway;
     }
@@ -54,7 +55,7 @@ class PaymentGatewaysAdminPresenter extends AdminPresenter
     {
         $paymentGateway = $this->paymentGatewaysRepository->find($id);
         if (!$paymentGateway) {
-            throw new Nette\Application\BadRequestException();
+            throw new BadRequestException();
         }
         $this->template->type = $paymentGateway;
     }

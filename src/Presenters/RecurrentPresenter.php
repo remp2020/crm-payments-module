@@ -14,29 +14,30 @@ use Crm\PaymentsModule\RecurrentPaymentsProcessor;
 use Crm\PaymentsModule\Repository\PaymentsRepository;
 use Crm\PaymentsModule\Repository\RecurrentPaymentsRepository;
 use Nette\Application\BadRequestException;
+use Nette\DI\Attributes\Inject;
 use Nette\Database\Table\ActiveRow;
 use Nette\Security\User;
 use Nette\Utils\DateTime;
 
 class RecurrentPresenter extends FrontendPresenter
 {
-    /** @var PaymentsRepository @inject */
-    public $paymentsRepository;
+    #[Inject]
+    public PaymentsRepository $paymentsRepository;
 
-    /** @var RecurrentPaymentsRepository @inject */
-    public $recurrentPaymentsRepository;
+    #[Inject]
+    public RecurrentPaymentsRepository $recurrentPaymentsRepository;
 
-    /** @var PaymentProcessor @inject */
-    public $paymentProcessor;
+    #[Inject]
+    public PaymentProcessor $paymentProcessor;
 
-    /** @var RecurrentPaymentsProcessor @inject */
-    public $recurrentPaymentsProcessor;
+    #[Inject]
+    public RecurrentPaymentsProcessor $recurrentPaymentsProcessor;
 
-    /** @var GatewayFactory @inject */
-    public $gatewayFactory;
+    #[Inject]
+    public GatewayFactory $gatewayFactory;
 
-    /** @var PaymentCompleteRedirectManager @inject */
-    public $paymentCompleteRedirectManager;
+    #[Inject]
+    public PaymentCompleteRedirectManager $paymentCompleteRedirectManager;
 
     public function renderSelectCard(int $paymentId)
     {

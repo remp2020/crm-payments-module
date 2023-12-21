@@ -13,37 +13,39 @@ use Crm\PaymentsModule\Components\DuplicateRecurrentPaymentsControlFactoryInterf
 use Crm\PaymentsModule\Forms\RecurrentPaymentFormFactory;
 use Crm\PaymentsModule\Repository\RecurrentPaymentsRepository;
 use Crm\SubscriptionsModule\Repository\SubscriptionTypesRepository;
+use Nette\Application\Attributes\Persistent;
 use Nette\Application\UI\Form;
+use Nette\DI\Attributes\Inject;
 use Tomaj\Form\Renderer\BootstrapInlineRenderer;
 use Tracy\Debugger;
 
 class PaymentsRecurrentAdminPresenter extends AdminPresenter
 {
-    /** @inject */
+    #[Inject]
     public GraphData $graphData;
 
-    /** @inject */
+    #[Inject]
     public SubscriptionTypesRepository $subscriptionTypesRepository;
 
-    /** @inject */
+    #[Inject]
     public RecurrentPaymentsRepository $recurrentPaymentsRepository;
 
-    /** @inject */
+    #[Inject]
     public RecurrentPaymentFormFactory $recurrentPaymentFormFactory;
 
-    /** @inject */
+    #[Inject]
     public UserDateHelper $userDateHelper;
 
-    /** @persistent */
+    #[Persistent]
     public $subscription_type;
 
-    /** @persistent */
+    #[Persistent]
     public $status;
 
-    /** @persistent */
+    #[Persistent]
     public $problem;
 
-    /** @persistent */
+    #[Persistent]
     public $cid;
 
     /**

@@ -6,24 +6,26 @@ use Crm\AdminModule\Presenters\AdminPresenter;
 use Crm\ApplicationModule\Components\PreviousNextPaginator;
 use Crm\PaymentsModule\MailConfirmation\ParsedMailLogsRepository;
 use Crm\PaymentsModule\Repository\PaymentsRepository;
+use Nette\Application\Attributes\Persistent;
 use Nette\Application\UI\Form;
+use Nette\DI\Attributes\Inject;
 use Tomaj\Form\Renderer\BootstrapInlineRenderer;
 
 class ParsedMailsPresenter extends AdminPresenter
 {
-    /** @var ParsedMailLogsRepository @inject */
-    public $parsedMailLogsRepository;
+    #[Inject]
+    public ParsedMailLogsRepository $parsedMailLogsRepository;
 
-    /** @var PaymentsRepository @inject */
-    public $paymentsRepository;
+    #[Inject]
+    public PaymentsRepository $paymentsRepository;
 
-    /** @persistent */
+    #[Persistent]
     public $vs;
 
-    /** @persistent */
+    #[Persistent]
     public $state;
 
-    /** @persistent  */
+    #[Persistent]
     public $paymentStatus;
 
     /**

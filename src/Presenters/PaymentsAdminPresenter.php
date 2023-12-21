@@ -19,44 +19,46 @@ use Crm\PaymentsModule\Repository\RecurrentPaymentsRepository;
 use Crm\SubscriptionsModule\PaymentItem\SubscriptionTypePaymentItem;
 use Crm\SubscriptionsModule\Repository\SubscriptionTypesRepository;
 use Crm\UsersModule\Repository\UsersRepository;
+use Nette\Application\Attributes\Persistent;
 use Nette\Application\BadRequestException;
 use Nette\Application\UI\Form;
+use Nette\DI\Attributes\Inject;
 use Tomaj\Form\Renderer\BootstrapRenderer;
 use Tomaj\Hermes\Emitter;
 
 class PaymentsAdminPresenter extends AdminPresenter
 {
-    /** @inject */
+    #[Inject]
     public PaymentsRepository $paymentsRepository;
 
-    /** @inject */
+    #[Inject]
     public PaymentItemMetaRepository $paymentItemMetaRepository;
 
-    /** @inject */
+    #[Inject]
     public PaymentGatewaysRepository $paymentGatewaysRepository;
 
-    /** @inject */
+    #[Inject]
     public SubscriptionTypesRepository $subscriptionTypesRepository;
 
-    /** @inject */
+    #[Inject]
     public UsersRepository $usersRepository;
 
-    /** @inject */
+    #[Inject]
     public PaymentFormFactory $factory;
 
-    /** @inject */
+    #[Inject]
     public DataProviderManager $dataProviderManager;
 
-    /** @inject */
+    #[Inject]
     public PaymentsHistogramFactory $paymentsHistogramFactory;
 
-    /** @inject */
+    #[Inject]
     public RecurrentPaymentsRepository $recurrentPaymentsRepository;
 
-    /** @persistent */
+    #[Persistent]
     public $month;
 
-    /** @persistent */
+    #[Persistent]
     public $formData = [];
 
     private $adminFilterFormData;

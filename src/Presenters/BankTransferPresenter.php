@@ -6,15 +6,17 @@ use Crm\ApplicationModule\Presenters\FrontendPresenter;
 use Crm\PaymentsModule\Gateways\BankTransfer;
 use Crm\PaymentsModule\PaymentAwareInterface;
 use Crm\PaymentsModule\Repository\PaymentsRepository;
+use Nette\Application\Attributes\Persistent;
 use Nette\Application\BadRequestException;
+use Nette\DI\Attributes\Inject;
 use Nette\Database\Table\ActiveRow;
 
 class BankTransferPresenter extends FrontendPresenter implements PaymentAwareInterface
 {
-    /** @var PaymentsRepository @inject */
-    public $paymentsRepository;
+    #[Inject]
+    public PaymentsRepository $paymentsRepository;
 
-    /** @persistent  */
+    #[Persistent]
     public $id;
 
     public function renderInfo($id)

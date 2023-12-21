@@ -7,19 +7,21 @@ use Crm\ApplicationModule\Components\PreviousNextPaginator;
 use Crm\ApplicationModule\DataProvider\DataProviderManager;
 use Crm\ApplicationModule\Models\ApplicationMountManager;
 use League\Flysystem\UnableToDeleteFile;
+use Nette\Application\Attributes\Persistent;
 use Nette\Application\Responses\CallbackResponse;
 use Nette\Application\UI\Form;
+use Nette\DI\Attributes\Inject;
 use Tomaj\Form\Renderer\BootstrapInlineRenderer;
 
 class ExportsAdminPresenter extends AdminPresenter
 {
-    /** @var ApplicationMountManager @inject */
-    public $applicationMountManager;
+    #[Inject]
+    public ApplicationMountManager $applicationMountManager;
 
-    /** @var DataProviderManager @inject */
-    public $dataProviderManager;
+    #[Inject]
+    public DataProviderManager $dataProviderManager;
 
-    /** @persistent */
+    #[Persistent]
     public $file_system;
 
     /**

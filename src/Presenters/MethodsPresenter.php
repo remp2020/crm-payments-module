@@ -16,17 +16,17 @@ use Nette\Application\BadRequestException;
 
 class MethodsPresenter extends FrontendPresenter
 {
-    private $paymentGatewaysRepository;
+    private PaymentGatewaysRepository $paymentGatewaysRepository;
 
-    private $userManager;
+    private UserManager $userManager;
 
-    private $paymentProcessor;
+    private PaymentProcessor $paymentProcessor;
 
-    private $gatewayFactory;
+    private GatewayFactory $gatewayFactory;
 
-    private $paymentsRepository;
+    private PaymentsRepository $paymentsRepository;
 
-    private $recurrentPaymentsRepository;
+    private RecurrentPaymentsRepository $recurrentPaymentsRepository;
 
     public function __construct(
         PaymentGatewaysRepository $paymentGatewaysRepository,

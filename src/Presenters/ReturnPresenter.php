@@ -16,35 +16,37 @@ use Crm\UsersModule\Repository\UserMetaRepository;
 use Crm\UsersModule\Repository\UsersRepository;
 use Crm\UsersModule\User\UserData;
 use Crm\ViamoModule\Gateways\Viamo;
+use Nette\Application\Attributes\Persistent;
+use Nette\DI\Attributes\Inject;
 use Nette\Database\Table\ActiveRow;
 
 class ReturnPresenter extends FrontendPresenter
 {
-    /** @var PaymentsRepository @inject */
-    public $paymentsRepository;
+    #[Inject]
+    public PaymentsRepository $paymentsRepository;
 
-    /** @var PaymentLogsRepository @inject */
-    public $paymentLogsRepository;
+    #[Inject]
+    public PaymentLogsRepository $paymentLogsRepository;
 
-    /** @var PaymentProcessor @inject */
-    public $paymentProcessor;
+    #[Inject]
+    public PaymentProcessor $paymentProcessor;
 
-    /** @var UserMetaRepository @inject */
-    public $userMetaRepository;
+    #[Inject]
+    public UserMetaRepository $userMetaRepository;
 
-    /** @var PaymentMetaRepository @inject */
-    public $paymentMetaRepository;
+    #[Inject]
+    public PaymentMetaRepository $paymentMetaRepository;
 
-    /** @var PaymentCompleteRedirectManager @inject */
-    public $paymentCompleteRedirectManager;
+    #[Inject]
+    public PaymentCompleteRedirectManager $paymentCompleteRedirectManager;
 
-    /** @var UserData @inject */
-    public $userData;
+    #[Inject]
+    public UserData $userData;
 
-    /** @var DataProviderManager @inject */
+    #[Inject]
     public DataProviderManager $dataProviderManager;
 
-    /** @persistent */
+    #[Persistent]
     public $VS;
 
     public function startup()

@@ -12,6 +12,8 @@ use Crm\ApplicationModule\Graphs\GraphDataItem;
 use Crm\PaymentsModule\DataProvider\PaymentItemTypesFilterDataProviderInterface;
 use Crm\PaymentsModule\Repository\PaymentItemsRepository;
 use Crm\PaymentsModule\Repository\PaymentsRepository;
+use Nette\Application\Attributes\Persistent;
+use Nette\DI\Attributes\Inject;
 use Nette\Utils\DateTime;
 use Nette\Utils\Json;
 
@@ -22,26 +24,26 @@ class DashboardPresenter extends AdminPresenter
         PaymentsRepository::STATUS_PREPAID,
     ];
 
-    /** @var PaymentItemsRepository @inject */
-    public $paymentItemsRepository;
+    #[Inject]
+    public PaymentItemsRepository $paymentItemsRepository;
 
-    /** @persistent */
+    #[Persistent]
     public $dateFrom;
 
-    /** @persistent */
+    #[Persistent]
     public $dateTo;
 
-    /** @persistent */
+    #[Persistent]
     public $recurrentCharge;
 
-    /** @persistent */
+    #[Persistent]
     public $paymentItemTypes;
 
-    private $dataProviderManager;
+    private DataProviderManager $dataProviderManager;
 
-    private $availablePaymentItemTypesFilter = [];
+    private array $availablePaymentItemTypesFilter = [];
 
-    private $defaultPaymentItemTypesFilter = [];
+    private array $defaultPaymentItemTypesFilter = [];
 
     public function __construct(
         DataProviderManager $dataProviderManager
