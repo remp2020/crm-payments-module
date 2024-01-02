@@ -175,9 +175,9 @@ class PaymentsRepository extends Repository
             'created_at' => new DateTime(),
             'modified_at' => new DateTime(),
             'variable_symbol' => $payment->variable_symbol,
-            'ip' => '',
-            'user_agent' => '',
-            'referer' => '',
+            'ip' => null,
+            'user_agent' => null,
+            'referer' => null,
         ]);
 
         $totalPricesEqual = true;
