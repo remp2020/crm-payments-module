@@ -175,8 +175,8 @@ class PaymentsRepository extends Repository
             'created_at' => new DateTime(),
             'modified_at' => new DateTime(),
             'variable_symbol' => $payment->variable_symbol,
-            'ip' => null,
-            'user_agent' => null,
+            'ip' => Request::getIp(),
+            'user_agent' => Request::getUserAgent(),
             'referer' => null,
         ]);
 
