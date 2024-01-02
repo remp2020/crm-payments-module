@@ -9,6 +9,7 @@ use Crm\ApplicationModule\Selection;
 use Crm\PaymentsModule\DataProvider\CanUpdatePaymentItemDataProviderInterface;
 use Crm\PaymentsModule\Events\BeforeRemovePaymentItemEvent;
 use Crm\PaymentsModule\Events\NewPaymentItemEvent;
+use Crm\PaymentsModule\Models\PaymentItem\PaymentItemHelper;
 use Crm\PaymentsModule\PaymentItem\PaymentItemContainer;
 use Crm\PaymentsModule\PaymentItem\PaymentItemInterface;
 use Crm\SubscriptionsModule\PaymentItem\SubscriptionTypePaymentItem;
@@ -162,17 +163,25 @@ class PaymentItemsRepository extends Repository
 
         $newPaymentItemMetaArray = $paymentItem->related('payment_item_meta')->fetchPairs('key', 'value');
 
-        if ($paymentItemArray['type'] === SubscriptionTypePaymentItem::TYPE && $paymentItem->subscription_type_item_id && $fromSubscriptionType) {
+        if ($paymentItemArray['type'] === SubscriptionTypePaymentItem::TYPE && $paymentItem->subscription_type_item_id) {
             $subscriptionTypeItem = $paymentItem->subscription_type_item;
             if (!$subscriptionTypeItem) {
                 throw new Exception("No `subscription_type_item`: ({$newPaymentItemMetaArray['subscription_type_item_id']}) found by copying payment: {$oldPaymentId} - to payment: {$newPayment->id}");
             }
             $subscriptionTypePaymentItem = SubscriptionTypePaymentItem::fromSubscriptionTypeItem($subscriptionTypeItem, $paymentItemArray['count']);
 
-            $paymentItemArray['name'] = $subscriptionTypePaymentItem->name();
-            $paymentItemArray['amount'] = $subscriptionTypePaymentItem->unitPrice();
-            $paymentItemArray['vat'] = $subscriptionTypePaymentItem->vat();
-            $paymentItemArray['amount_without_vat'] = $subscriptionTypePaymentItem->unitPriceWithoutVAT();
+            if ($fromSubscriptionType) {
+                $paymentItemArray['name'] = $subscriptionTypePaymentItem->name();
+                $paymentItemArray['amount'] = $subscriptionTypePaymentItem->unitPrice();
+                $paymentItemArray['vat'] = $subscriptionTypePaymentItem->vat();
+                $paymentItemArray['amount_without_vat'] = $subscriptionTypePaymentItem->unitPriceWithoutVAT();
+            } elseif ($subscriptionTypeItem->vat !== $paymentItemArray['vat']) {
+                $paymentItemArray['vat'] = $subscriptionTypeItem->vat;
+                $paymentItemArray['amount_without_vat'] = PaymentItemHelper::getPriceWithoutVAT(
+                    unitPrice: $paymentItemArray['amount'],
+                    vat: $subscriptionTypeItem->vat,
+                );
+            }
         }
 
         $newPaymentItem = $this->insert($paymentItemArray);
