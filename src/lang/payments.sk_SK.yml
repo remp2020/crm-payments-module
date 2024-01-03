@@ -553,6 +553,7 @@ form:
             label: Čas zaplatenia
             placeholder: napríklad 14.2.2016 14:21
             required: Položka je povinná.
+            no_future_paid_at: Čas zaplatenia nemôže byť v budúcnosti.
         send_notification:
             label: Odoslať notifikáciu
         manual_subscription:

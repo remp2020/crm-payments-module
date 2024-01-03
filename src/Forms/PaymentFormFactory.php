@@ -228,7 +228,10 @@ class PaymentFormFactory
         $status = $form->addSelect('status', 'payments.form.payment.status.label', $statusPairs);
 
         $paidAt = $form->addText('paid_at', 'payments.form.payment.paid_at.label')
-            ->setHtmlAttribute('placeholder', 'payments.form.payment.paid_at.placeholder');
+            ->setHtmlAttribute('placeholder', 'payments.form.payment.paid_at.placeholder')
+            ->setHtmlAttribute('class', 'flatpickr')
+            ->setHtmlAttribute('flatpickr_datetime', "1")
+            ->setHtmlAttribute('flatpickr_maxdatetime', (new DateTime())->format(DateTime::ATOM));
         $paidAt->setOption('id', 'paid-at');
         $paidAt->addConditionOn($status, Form::EQUAL, PaymentsRepository::STATUS_PAID)
             ->setRequired('payments.form.payment.paid_at.required');
@@ -395,6 +398,10 @@ class PaymentFormFactory
         if (isset($values['paid_at'])) {
             if ($values['paid_at']) {
                 $values['paid_at'] = DateTime::from(strtotime($values['paid_at']));
+
+                if ($values['paid_at'] > new DateTime()) {
+                    $form['paid_at']->addError('payments.form.payment.paid_at.no_future_paid_at');
+                }
             } else {
                 $values['paid_at'] = null;
             }

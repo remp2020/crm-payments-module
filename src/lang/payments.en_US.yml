@@ -553,6 +553,7 @@ form:
             label: Paid at
             placeholder: e.g. 14.2.2016 14:21
             required: Field paid at is required.
+            no_future_paid_at: Paid at cannot be in the future.
         send_notification:
             label: Send notification
         manual_subscription:
