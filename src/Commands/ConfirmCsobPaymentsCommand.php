@@ -49,6 +49,7 @@ class ConfirmCsobPaymentsCommand extends Command
             ]);
 
         foreach ($unconfirmedPayments as $unconfirmedPayment) {
+            $output->writeln("Processing {$unconfirmedPayment->variable_symbol}");
             $this->paymentProcessor->complete($unconfirmedPayment, function () {
                 // no need to do anything...
             });
