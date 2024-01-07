@@ -2,7 +2,7 @@
 
 namespace Crm\PaymentsModule\Api;
 
-use Crm\ApiModule\Api\ApiHandler;
+use Crm\ApiModule\Models\Api\ApiHandler;
 use Crm\PaymentsModule\VariableSymbolInterface;
 use Nette\Http\Response;
 use Tomaj\NetteApi\Response\JsonApiResponse;

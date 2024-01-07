@@ -2,9 +2,9 @@
 
 namespace Crm\PaymentsModule\Api;
 
-use Crm\ApiModule\Api\ApiHandler;
-use Crm\ApiModule\Api\ApiParamsValidatorInterface;
-use Crm\ApiModule\Api\EmptyResponse;
+use Crm\ApiModule\Models\Api\ApiHandler;
+use Crm\ApiModule\Models\Api\ApiParamsValidatorInterface;
+use Crm\ApiModule\Models\Response\EmptyResponse;
 use Crm\ApplicationModule\Config\ApplicationConfig;
 use Crm\PaymentsModule\Gateways\GatewayAbstract;
 use Crm\PaymentsModule\PaymentProcessor;
