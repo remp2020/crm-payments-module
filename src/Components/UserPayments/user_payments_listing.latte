@@ -187,7 +187,7 @@
           <small>#{$recurrentPayment->id}</small>
           <i n:if="$recurrentPayment->note" class="fa fa-info-circle text-danger fa-wh" data-toggle="tooltip" data-placement="top" title="{$recurrentPayment->note|breaklines}"></i>
         </td>
-        <td><code>{$recurrentPayment->cid}</code></td>
+        <td><code class="clip cid-truncated" data-clipboard-text="{$recurrentPayment->cid}">{$recurrentPayment->cid}</code></td>
         <td class="text-muted">{$recurrentPayment->created_at|userDate}</td>
         <td class="text-muted">{$recurrentPayment->updated_at|userDate}</td>
         <td>{$recurrentPayment->charge_at|userDate}</td>
@@ -314,14 +314,47 @@
   </table>
 {/if}
 
+<script src="https://cdnjs.cloudflare.com/ajax/libs/clipboard.js/2.0.0/clipboard.min.js"></script>
 <script>
   // hacking tooltip for dropdown menu; otherwise dropdown menu has slow native title tooltip with delay
   $('[data-toggle-second="tooltip"]').tooltip();
+
+$(document).ready(function() {
+    var clipboard = new ClipboardJS('.clip');
+
+    $('.clip').tooltip({
+        trigger: 'click',
+        placement: 'right'
+        });
+
+        function showTooltip(element, message) {
+        $(element).tooltip('hide')
+            .attr('data-original-title', message)
+            .tooltip('show');
+
+        setTimeout(function() {
+            $(element).tooltip('hide');
+        }, 1000);
+    }
+
+    clipboard.on('success', function(element) {
+        showTooltip(element.trigger, {_"system.copied_to_clipboard"});
+    });
+  });
 </script>
 
 <style>
   li.menuitem-header {
     padding: 0.3em 1em 0.3em 1.5em;
     background-color: #f5f5f5;
+  }
+
+  .cid-truncated {
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    max-width: 30ch;
+    display: inline-block;
+    cursor: pointer;
   }
 </style>
