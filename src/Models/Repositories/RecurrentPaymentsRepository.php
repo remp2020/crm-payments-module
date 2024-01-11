@@ -463,7 +463,13 @@ class RecurrentPaymentsRepository extends Repository
                 );
             }
 
-            $newEndTime = (clone $endTime)->sub(new \DateInterval("PT{$chargeBefore}H"));
+            if ($chargeBefore < 0) {
+                $chargeBefore = abs($chargeBefore);
+                $newEndTime = (clone $endTime)->add(new \DateInterval("PT{$chargeBefore}H"));
+            } else {
+                $newEndTime = (clone $endTime)->sub(new \DateInterval("PT{$chargeBefore}H"));
+            }
+
             if ($newEndTime < $subscription->start_time) {
                 throw new Exception(
                     "Calculated next charge of recurrent payment would be before subscription's start time." .
