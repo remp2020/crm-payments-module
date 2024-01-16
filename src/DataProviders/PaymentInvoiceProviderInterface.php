@@ -2,8 +2,8 @@
 
 namespace Crm\PaymentsModule\DataProvider;
 
-use Crm\InvoicesModule\InvoiceGenerationException;
-use Crm\InvoicesModule\PaymentNotInvoiceableException;
+use Crm\InvoicesModule\Models\Generator\InvoiceGenerationException;
+use Crm\InvoicesModule\Models\Generator\PaymentNotInvoiceableException;
 use Nette\Database\Table\ActiveRow;
 
 interface PaymentInvoiceProviderInterface

@@ -2,7 +2,7 @@
 
 namespace Crm\PaymentsModule\DataProvider;
 
-use Crm\InvoicesModule\PaymentNotInvoiceableException;
+use Crm\InvoicesModule\Models\Generator\PaymentNotInvoiceableException;
 use Nette\Database\Table\ActiveRow;
 use Tracy\Debugger;
 
