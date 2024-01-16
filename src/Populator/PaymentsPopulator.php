@@ -5,11 +5,12 @@ namespace Crm\PaymentsModule\Populator;
 use Crm\ApplicationModule\Populator\AbstractPopulator;
 use Crm\PaymentsModule\Repository\PaymentsRepository;
 use Crm\PaymentsModule\Repository\RecurrentPaymentsRepository;
+use Symfony\Component\Console\Helper\ProgressBar;
 
 class PaymentsPopulator extends AbstractPopulator
 {
     /**
-     * @param \Symfony\Component\Console\Helper\ProgressBar $progressBar
+     * @param ProgressBar $progressBar
      */
     public function seed($progressBar)
     {

@@ -5,7 +5,9 @@ use Crm\ApplicationModule\Cache\CacheRepository;
 use Crm\ApplicationModule\Graphs\Criteria;
 use Crm\ApplicationModule\Graphs\GraphData;
 use Crm\ApplicationModule\Graphs\GraphDataItem;
+use Nette\Utils\DateTime;
 use Nette\Utils\Json;
+use Nette\Utils\JsonException;
 
 class PaymentsHistogramFactory
 {
@@ -25,7 +27,7 @@ class PaymentsHistogramFactory
      * @param bool $forceCacheUpdate
      *
      * @return mixed
-     * @throws \Nette\Utils\JsonException
+     * @throws JsonException
      */
     public function paymentsLastMonthDailyHistogram($status, $forceCacheUpdate = false)
     {
@@ -48,7 +50,7 @@ class PaymentsHistogramFactory
         return Json::decode($this->cacheRepository->loadAndUpdate(
             $cacheKey,
             $callable,
-            \Nette\Utils\DateTime::from(CacheRepository::REFRESH_TIME_5_MINUTES),
+            DateTime::from(CacheRepository::REFRESH_TIME_5_MINUTES),
             $forceCacheUpdate
         ), Json::FORCE_ARRAY);
     }

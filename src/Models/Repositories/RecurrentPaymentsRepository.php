@@ -8,6 +8,7 @@ use Crm\ApplicationModule\Hermes\HermesMessage;
 use Crm\ApplicationModule\NowTrait;
 use Crm\ApplicationModule\Repository;
 use Crm\ApplicationModule\Repository\AuditLogRepository;
+use Crm\ApplicationModule\Selection;
 use Crm\PaymentsModule\Events\RecurrentPaymentCreatedEvent;
 use Crm\PaymentsModule\Events\RecurrentPaymentRenewedEvent;
 use Crm\PaymentsModule\Events\RecurrentPaymentStateChangedEvent;
@@ -177,7 +178,7 @@ class RecurrentPaymentsRepository extends Repository
 
     /**
      * @param $userId
-     * @return \Crm\ApplicationModule\Selection
+     * @return Selection
      */
     final public function getUserActiveRecurrentPayments($userId)
     {
@@ -193,7 +194,7 @@ class RecurrentPaymentsRepository extends Repository
 
     /**
      * @param $userId
-     * @return \Crm\ApplicationModule\Selection
+     * @return Selection
      */
     final public function userRecurrentPayments($userId)
     {

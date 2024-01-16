@@ -3,8 +3,12 @@
 namespace Crm\PaymentsModule\DI;
 
 use Contributte\Translation\DI\TranslationProviderInterface;
+use Crm\PaymentsModule\Commands\RecurrentPaymentsChargeCommand;
+use Crm\PaymentsModule\Gateways\GatewayAbstract;
+use Nette\Application\IPresenterFactory;
 use Nette\DI\CompilerExtension;
 use Nette\Schema\Expect;
+use Nette\Schema\Schema;
 
 final class PaymentsModuleExtension extends CompilerExtension implements TranslationProviderInterface
 {
@@ -16,7 +20,7 @@ final class PaymentsModuleExtension extends CompilerExtension implements Transla
         );
     }
 
-    public function getConfigSchema(): \Nette\Schema\Schema
+    public function getConfigSchema(): Schema
     {
         return Expect::structure([
             'gateway_test_host' => Expect::string()->dynamic(),
@@ -28,14 +32,14 @@ final class PaymentsModuleExtension extends CompilerExtension implements Transla
     {
         $builder = $this->getContainerBuilder();
         // load presenters from extension to Nette
-        $builder->getDefinition($builder->getByType(\Nette\Application\IPresenterFactory::class))
+        $builder->getDefinition($builder->getByType(IPresenterFactory::class))
             ->addSetup('setMapping', [['Payments' => 'Crm\PaymentsModule\Presenters\*Presenter']]);
 
-        foreach ($builder->findByType(\Crm\PaymentsModule\Gateways\GatewayAbstract::class) as $definition) {
+        foreach ($builder->findByType(GatewayAbstract::class) as $definition) {
             $definition->addSetup('setTestHost', [$this->config->gateway_test_host]);
         }
 
-        foreach ($builder->findByType(\Crm\PaymentsModule\Commands\RecurrentPaymentsChargeCommand::class) as $definition) {
+        foreach ($builder->findByType(RecurrentPaymentsChargeCommand::class) as $definition) {
             $definition->addSetup('setFastChargeThreshold', [$this->config->fastcharge_threshold]);
         }
     }

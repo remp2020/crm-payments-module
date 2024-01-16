@@ -354,7 +354,7 @@ class PaymentsRepository extends Repository
 
     /**
      * @param int $userId
-     * @return \Nette\Database\Table\Selection
+     * @return Selection
      */
     final public function userPayments($userId)
     {
@@ -363,7 +363,7 @@ class PaymentsRepository extends Repository
 
     /**
      * @param int $userId
-     * @return \Nette\Database\Table\Selection
+     * @return Selection
      */
     final public function userRefundPayments($userId)
     {

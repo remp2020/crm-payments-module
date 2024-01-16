@@ -4,6 +4,7 @@ namespace Crm\PaymentsModule;
 
 use Contributte\Translation\Translator;
 use Crm\ApiModule\Api\ApiRoutersContainerInterface;
+use Crm\ApiModule\Authorization\AdminLoggedAuthorization;
 use Crm\ApiModule\Authorization\NoAuthorization;
 use Crm\ApiModule\Router\ApiIdentifier;
 use Crm\ApiModule\Router\ApiRoute;
@@ -14,11 +15,17 @@ use Crm\ApplicationModule\Criteria\ScenariosCriteriaStorage;
 use Crm\ApplicationModule\CrmModule;
 use Crm\ApplicationModule\DataProvider\DataProviderManager;
 use Crm\ApplicationModule\Event\EventsStorage;
+use Crm\ApplicationModule\Event\LazyEventEmitter;
 use Crm\ApplicationModule\Menu\MenuContainerInterface;
 use Crm\ApplicationModule\Menu\MenuItem;
 use Crm\ApplicationModule\SeederManager;
 use Crm\ApplicationModule\User\UserDataRegistrator;
 use Crm\ApplicationModule\Widget\LazyWidgetManagerInterface;
+use Crm\PaymentsModule\Api\ListRecurrentPaymentsApiHandler;
+use Crm\PaymentsModule\Api\PaypalIpnHandler;
+use Crm\PaymentsModule\Api\ReactivateRecurrentPaymentApiHandler;
+use Crm\PaymentsModule\Api\StopRecurrentPaymentApiHandler;
+use Crm\PaymentsModule\Api\VariableSymbolApiHandler;
 use Crm\PaymentsModule\Commands\CalculateAveragesCommand;
 use Crm\PaymentsModule\Commands\CancelAuthorizationCommand;
 use Crm\PaymentsModule\Commands\CidGetterCommand;
@@ -34,14 +41,57 @@ use Crm\PaymentsModule\Commands\StopRecurrentPaymentsExpiresCommand;
 use Crm\PaymentsModule\Commands\TatraBankaMailConfirmationCommand;
 use Crm\PaymentsModule\Commands\TatraBankaStatementMailConfirmationCommand;
 use Crm\PaymentsModule\Commands\UpdateRecurrentPaymentsExpiresCommand;
+use Crm\PaymentsModule\Components\ActualFreeSubscribersStatWidget;
+use Crm\PaymentsModule\Components\ActualPaidSubscribersStatWidget;
+use Crm\PaymentsModule\Components\AddressWidget;
+use Crm\PaymentsModule\Components\AuthorizationPaymentItemListWidget;
+use Crm\PaymentsModule\Components\AvgMonthPaymentWidget;
+use Crm\PaymentsModule\Components\AvgSubscriptionPaymentWidget;
+use Crm\PaymentsModule\Components\ChangePaymentSubscriptionTypeWidget;
+use Crm\PaymentsModule\Components\DeviceUserListingWidget;
+use Crm\PaymentsModule\Components\DonationPaymentItemsListWidget;
+use Crm\PaymentsModule\Components\MonthAmountStatWidget;
+use Crm\PaymentsModule\Components\MonthToDateAmountStatWidget;
+use Crm\PaymentsModule\Components\MyNextRecurrentPayment;
+use Crm\PaymentsModule\Components\PaidSubscriptionsWithoutExtensionEndingWithinPeriodWidget;
+use Crm\PaymentsModule\Components\ParsedMailsFailedNotification;
+use Crm\PaymentsModule\Components\PaymentDonationLabelWidget;
+use Crm\PaymentsModule\Components\PaymentItemsListWidget;
+use Crm\PaymentsModule\Components\PaymentToSubscriptionMenu;
+use Crm\PaymentsModule\Components\ReactivateFailedRecurrentPaymentWidget\ReactivateFailedRecurrentPaymentWidget;
+use Crm\PaymentsModule\Components\RefundPaymentsListWidget;
+use Crm\PaymentsModule\Components\SubscribersWithPaymentWidgetFactory;
+use Crm\PaymentsModule\Components\SubscriptionDetailWidget\SubscriptionDetailWidget;
+use Crm\PaymentsModule\Components\SubscriptionTypeReports;
+use Crm\PaymentsModule\Components\SubscriptionsWithActiveUnchargedRecurrentEndingWithinPeriodWidget;
+use Crm\PaymentsModule\Components\SubscriptionsWithoutExtensionEndingWithinPeriodWidget;
+use Crm\PaymentsModule\Components\TodayAmountStatWidget;
+use Crm\PaymentsModule\Components\TotalAmountStatWidget;
+use Crm\PaymentsModule\Components\TotalUserPayments;
+use Crm\PaymentsModule\Components\UserPaymentsListing;
 use Crm\PaymentsModule\DataProvider\CanDeleteAddressDataProvider;
 use Crm\PaymentsModule\DataProvider\PaymentFromVariableSymbolDataProvider;
+use Crm\PaymentsModule\DataProvider\PaymentItemTypesFilterDataProvider;
 use Crm\PaymentsModule\DataProvider\PaymentsClaimUserDataProvider;
 use Crm\PaymentsModule\DataProvider\RecurrentPaymentsClaimUserDataProvider;
 use Crm\PaymentsModule\DataProvider\SubscriptionFormDataProvider;
 use Crm\PaymentsModule\DataProvider\SubscriptionsWithActiveUnchargedRecurrentEndingWithinPeriodDataProvider;
 use Crm\PaymentsModule\DataProvider\SubscriptionsWithoutExtensionEndingWithinPeriodDataProvider;
 use Crm\PaymentsModule\DataProvider\UniversalSearchDataProvider;
+use Crm\PaymentsModule\Events\BeforeRecurrentPaymentChargeEvent;
+use Crm\PaymentsModule\Events\NewPaymentEvent;
+use Crm\PaymentsModule\Events\PaymentChangeStatusEvent;
+use Crm\PaymentsModule\Events\PaymentStatusChangeHandler;
+use Crm\PaymentsModule\Events\RecurrentPaymentCardExpiredEvent;
+use Crm\PaymentsModule\Events\RecurrentPaymentCardExpiredEventHandler;
+use Crm\PaymentsModule\Events\RecurrentPaymentFailEvent;
+use Crm\PaymentsModule\Events\RecurrentPaymentFailTryEvent;
+use Crm\PaymentsModule\Events\RecurrentPaymentRenewedEvent;
+use Crm\PaymentsModule\Events\RecurrentPaymentStateChangedEvent;
+use Crm\PaymentsModule\Events\SubscriptionMovedHandler;
+use Crm\PaymentsModule\Events\SubscriptionPreUpdateHandler;
+use Crm\PaymentsModule\Hermes\ExportPaymentsHandler;
+use Crm\PaymentsModule\Hermes\RetentionAnalysisJobHandler;
 use Crm\PaymentsModule\MailConfirmation\ParsedMailLogsRepository;
 use Crm\PaymentsModule\Models\AverageMonthPayment;
 use Crm\PaymentsModule\Repository\PaymentLogsRepository;
@@ -59,7 +109,17 @@ use Crm\PaymentsModule\Scenarios\RecurrentPaymentSubscriptionTypeContentAccessCr
 use Crm\PaymentsModule\Seeders\ConfigsSeeder;
 use Crm\PaymentsModule\Seeders\PaymentGatewaysSeeder;
 use Crm\PaymentsModule\Seeders\SegmentsSeeder;
+use Crm\PaymentsModule\Segment\AmountCriteria;
+use Crm\PaymentsModule\Segment\PaymentCountsCriteria;
+use Crm\PaymentsModule\Segment\PaymentCriteria;
+use Crm\PaymentsModule\Segment\RecurrentPaymentCriteria;
+use Crm\PaymentsModule\Segment\ReferenceCriteria;
+use Crm\PaymentsModule\Segment\StatusCriteria;
+use Crm\PaymentsModule\User\PaymentsUserDataProvider;
+use Crm\PaymentsModule\User\RecurrentPaymentsUserDataProvider;
 use Crm\SubscriptionsModule\DataProvider\SubscriptionFormDataProviderInterface;
+use Crm\SubscriptionsModule\Events\SubscriptionMovedEvent;
+use Crm\SubscriptionsModule\Events\SubscriptionPreUpdateEvent;
 use Crm\UsersModule\Auth\UserTokenAuthorization;
 use Nette\Application\Routers\RouteList;
 use Nette\DI\Container;
@@ -145,141 +205,141 @@ class PaymentsModule extends CrmModule
     {
         $widgetManager->registerWidget(
             'admin.user.detail.bottom',
-            \Crm\PaymentsModule\Components\UserPaymentsListing::class,
+            UserPaymentsListing::class,
             200
         );
         $widgetManager->registerWidget(
             'admin.user.detail.box',
-            \Crm\PaymentsModule\Components\TotalUserPayments::class,
+            TotalUserPayments::class,
             200
         );
         $widgetManager->registerWidget(
             'admin.payments.top',
-            \Crm\PaymentsModule\Components\ParsedMailsFailedNotification::class,
+            ParsedMailsFailedNotification::class,
             1000
         );
         $widgetManager->registerWidget(
             'dashboard.singlestat.totals',
-            \Crm\PaymentsModule\Components\TotalAmountStatWidget::class,
+            TotalAmountStatWidget::class,
             700
         );
         $widgetManager->registerWidget(
             'dashboard.singlestat.actuals.subscribers',
-            \Crm\PaymentsModule\Components\ActualPaidSubscribersStatWidget::class,
+            ActualPaidSubscribersStatWidget::class,
             500
         );
         $widgetManager->registerWidget(
             'dashboard.singlestat.actuals.subscribers',
-            \Crm\PaymentsModule\Components\ActualFreeSubscribersStatWidget::class,
+            ActualFreeSubscribersStatWidget::class,
             600
         );
         $widgetManager->registerWidget(
             'dashboard.singlestat.today',
-            \Crm\PaymentsModule\Components\TodayAmountStatWidget::class,
+            TodayAmountStatWidget::class,
             700
         );
         $widgetManager->registerWidget(
             'dashboard.singlestat.month',
-            \Crm\PaymentsModule\Components\MonthAmountStatWidget::class,
+            MonthAmountStatWidget::class,
             700
         );
         $widgetManager->registerWidget(
             'dashboard.singlestat.mtd',
-            \Crm\PaymentsModule\Components\MonthToDateAmountStatWidget::class,
+            MonthToDateAmountStatWidget::class,
             700
         );
         $widgetManager->registerWidget(
             'subscriptions.endinglist',
-            \Crm\PaymentsModule\Components\SubscriptionsWithActiveUnchargedRecurrentEndingWithinPeriodWidget::class,
+            SubscriptionsWithActiveUnchargedRecurrentEndingWithinPeriodWidget::class,
             700
         );
         $widgetManager->registerWidget(
             'subscriptions.endinglist',
-            \Crm\PaymentsModule\Components\SubscriptionsWithoutExtensionEndingWithinPeriodWidget::class,
+            SubscriptionsWithoutExtensionEndingWithinPeriodWidget::class,
             800
         );
         $widgetManager->registerWidget(
             'subscriptions.endinglist',
-            \Crm\PaymentsModule\Components\PaidSubscriptionsWithoutExtensionEndingWithinPeriodWidget::class,
+            PaidSubscriptionsWithoutExtensionEndingWithinPeriodWidget::class,
             900
         );
         $widgetManager->registerWidgetWithInstance(
             'dashboard.singlestat.actuals.system',
-            $this->getInstance(\Crm\PaymentsModule\Components\SubscribersWithPaymentWidgetFactory::class)->create()->setDateModifier('-1 day'),
+            $this->getInstance(SubscribersWithPaymentWidgetFactory::class)->create()->setDateModifier('-1 day'),
             500
         );
         $widgetManager->registerWidgetWithInstance(
             'dashboard.singlestat.actuals.system',
-            $this->getInstance(\Crm\PaymentsModule\Components\SubscribersWithPaymentWidgetFactory::class)->create()->setDateModifier('-7 days'),
+            $this->getInstance(SubscribersWithPaymentWidgetFactory::class)->create()->setDateModifier('-7 days'),
             600
         );
         $widgetManager->registerWidgetWithInstance(
             'dashboard.singlestat.actuals.system',
-            $this->getInstance(\Crm\PaymentsModule\Components\SubscribersWithPaymentWidgetFactory::class)->create()->setDateModifier('-30 days'),
+            $this->getInstance(SubscribersWithPaymentWidgetFactory::class)->create()->setDateModifier('-30 days'),
             600
         );
         $widgetManager->registerWidget(
             'admin.subscription_types.show.bottom_stats',
-            \Crm\PaymentsModule\Components\SubscriptionTypeReports::class,
+            SubscriptionTypeReports::class,
             500
         );
         $widgetManager->registerWidget(
             'payments.admin.payment_item_listing',
-            \Crm\PaymentsModule\Components\PaymentItemsListWidget::class
+            PaymentItemsListWidget::class
         );
         $widgetManager->registerWidget(
             'payments.admin.payment_item_listing',
-            \Crm\PaymentsModule\Components\DonationPaymentItemsListWidget::class
+            DonationPaymentItemsListWidget::class
         );
         $widgetManager->registerWidget(
             'payments.admin.payment_item_listing',
-            \Crm\PaymentsModule\Components\AuthorizationPaymentItemListWidget::class
+            AuthorizationPaymentItemListWidget::class
         );
         $widgetManager->registerWidget(
             'payments.admin.payment_source_listing',
-            \Crm\PaymentsModule\Components\DeviceUserListingWidget::class
+            DeviceUserListingWidget::class
         );
         $widgetManager->registerWidget(
             'payments.admin.listing.sum',
-            \Crm\PaymentsModule\Components\PaymentDonationLabelWidget::class
+            PaymentDonationLabelWidget::class
         );
         $widgetManager->registerWidget(
             'payments.frontend.payments_my.top',
-            \Crm\PaymentsModule\Components\MyNextRecurrentPayment::class
+            MyNextRecurrentPayment::class
         );
         $widgetManager->registerWidget(
             'payments.frontend.payments_my.bottom',
-            \Crm\PaymentsModule\Components\RefundPaymentsListWidget::class
+            RefundPaymentsListWidget::class
         );
         $widgetManager->registerWidget(
             'frontend.payment.success.bottom',
-            \Crm\PaymentsModule\Components\AddressWidget::class
+            AddressWidget::class
         );
         $widgetManager->registerWidget(
             'segment.detail.statspanel.row',
-            \Crm\PaymentsModule\Components\AvgMonthPaymentWidget::class
+            AvgMonthPaymentWidget::class
         );
         $widgetManager->registerWidget(
             'segment.detail.statspanel.row',
-            \Crm\PaymentsModule\Components\AvgSubscriptionPaymentWidget::class
+            AvgSubscriptionPaymentWidget::class
         );
         $widgetManager->registerWidget(
             'payments.admin.edit_form.after',
-            \Crm\PaymentsModule\Components\ChangePaymentSubscriptionTypeWidget::class
+            ChangePaymentSubscriptionTypeWidget::class
         );
 
         $widgetManager->registerWidget(
             'payments.admin.user_payments.listing.recurrent.actions',
-            \Crm\PaymentsModule\Components\ReactivateFailedRecurrentPaymentWidget\ReactivateFailedRecurrentPaymentWidget::class,
+            ReactivateFailedRecurrentPaymentWidget::class,
         );
         $widgetManager->registerWidget(
             'admin.subscriptions.show.right',
-            \Crm\PaymentsModule\Components\SubscriptionDetailWidget\SubscriptionDetailWidget::class
+            SubscriptionDetailWidget::class
         );
 
         $widgetManager->registerWidget(
             'subscriptions.admin.user_subscriptions_listing.action.menu',
-            \Crm\PaymentsModule\Components\PaymentToSubscriptionMenu::class,
+            PaymentToSubscriptionMenu::class,
         );
     }
 
@@ -307,15 +367,15 @@ class PaymentsModule extends CrmModule
         $apiRoutersContainer->attachRouter(
             new ApiRoute(
                 new ApiIdentifier('1', 'payments', 'variable-symbol'),
-                \Crm\PaymentsModule\Api\VariableSymbolApiHandler::class,
-                \Crm\ApiModule\Authorization\AdminLoggedAuthorization::class
+                VariableSymbolApiHandler::class,
+                AdminLoggedAuthorization::class
             )
         );
 
         $apiRoutersContainer->attachRouter(
             new ApiRoute(
                 new ApiIdentifier('1', 'users', 'recurrent-payments'),
-                \Crm\PaymentsModule\Api\ListRecurrentPaymentsApiHandler::class,
+                ListRecurrentPaymentsApiHandler::class,
                 UserTokenAuthorization::class
             )
         );
@@ -323,7 +383,7 @@ class PaymentsModule extends CrmModule
         $apiRoutersContainer->attachRouter(
             new ApiRoute(
                 new ApiIdentifier('1', 'recurrent-payment', 'reactivate'),
-                \Crm\PaymentsModule\Api\ReactivateRecurrentPaymentApiHandler::class,
+                ReactivateRecurrentPaymentApiHandler::class,
                 UserTokenAuthorization::class
             )
         );
@@ -331,7 +391,7 @@ class PaymentsModule extends CrmModule
         $apiRoutersContainer->attachRouter(
             new ApiRoute(
                 new ApiIdentifier('1', 'recurrent-payment', 'stop'),
-                \Crm\PaymentsModule\Api\StopRecurrentPaymentApiHandler::class,
+                StopRecurrentPaymentApiHandler::class,
                 UserTokenAuthorization::class
             )
         );
@@ -339,7 +399,7 @@ class PaymentsModule extends CrmModule
         $apiRoutersContainer->attachRouter(
             new ApiRoute(
                 new ApiIdentifier('1', 'payments', 'paypal-ipn'),
-                \Crm\PaymentsModule\Api\PaypalIpnHandler::class,
+                PaypalIpnHandler::class,
                 NoAuthorization::class
             )
         );
@@ -356,19 +416,19 @@ class PaymentsModule extends CrmModule
 
     public function registerUserData(UserDataRegistrator $dataRegistrator)
     {
-        $dataRegistrator->addUserDataProvider($this->getInstance(\Crm\PaymentsModule\User\PaymentsUserDataProvider::class));
-        $dataRegistrator->addUserDataProvider($this->getInstance(\Crm\PaymentsModule\User\RecurrentPaymentsUserDataProvider::class));
+        $dataRegistrator->addUserDataProvider($this->getInstance(PaymentsUserDataProvider::class));
+        $dataRegistrator->addUserDataProvider($this->getInstance(RecurrentPaymentsUserDataProvider::class));
     }
 
     public function registerSegmentCriteria(CriteriaStorage $criteriaStorage)
     {
-        $criteriaStorage->register('users', 'payment', $this->getInstance(\Crm\PaymentsModule\Segment\PaymentCriteria::class));
-        $criteriaStorage->register('users', 'payment_counts', $this->getInstance(\Crm\PaymentsModule\Segment\PaymentCountsCriteria::class));
-        $criteriaStorage->register('users', 'recurrent_payment', $this->getInstance(\Crm\PaymentsModule\Segment\RecurrentPaymentCriteria::class));
+        $criteriaStorage->register('users', 'payment', $this->getInstance(PaymentCriteria::class));
+        $criteriaStorage->register('users', 'payment_counts', $this->getInstance(PaymentCountsCriteria::class));
+        $criteriaStorage->register('users', 'recurrent_payment', $this->getInstance(RecurrentPaymentCriteria::class));
 
-        $criteriaStorage->register('payments', 'amount', $this->getInstance(\Crm\PaymentsModule\Segment\AmountCriteria::class));
-        $criteriaStorage->register('payments', 'status', $this->getInstance(\Crm\PaymentsModule\Segment\StatusCriteria::class));
-        $criteriaStorage->register('payments', 'reference', $this->getInstance(\Crm\PaymentsModule\Segment\ReferenceCriteria::class));
+        $criteriaStorage->register('payments', 'amount', $this->getInstance(AmountCriteria::class));
+        $criteriaStorage->register('payments', 'status', $this->getInstance(StatusCriteria::class));
+        $criteriaStorage->register('payments', 'reference', $this->getInstance(ReferenceCriteria::class));
 
         $criteriaStorage->setDefaultFields('payments', ['id']);
         $criteriaStorage->setFields('payments', [
@@ -432,7 +492,7 @@ class PaymentsModule extends CrmModule
         );
         $dataProviderManager->registerDataProvider(
             'payments.dataprovider.dashboard',
-            $this->getInstance(\Crm\PaymentsModule\DataProvider\PaymentItemTypesFilterDataProvider::class)
+            $this->getInstance(PaymentItemTypesFilterDataProvider::class)
         );
 
         $dataProviderManager->registerDataProvider(
@@ -446,24 +506,24 @@ class PaymentsModule extends CrmModule
         );
     }
 
-    public function registerLazyEventHandlers(\Crm\ApplicationModule\Event\LazyEventEmitter $emitter)
+    public function registerLazyEventHandlers(LazyEventEmitter $emitter)
     {
         $emitter->addListener(
-            \Crm\PaymentsModule\Events\PaymentChangeStatusEvent::class,
-            \Crm\PaymentsModule\Events\PaymentStatusChangeHandler::class,
+            PaymentChangeStatusEvent::class,
+            PaymentStatusChangeHandler::class,
             500
         );
         $emitter->addListener(
-            \Crm\SubscriptionsModule\Events\SubscriptionPreUpdateEvent::class,
-            \Crm\PaymentsModule\Events\SubscriptionPreUpdateHandler::class
+            SubscriptionPreUpdateEvent::class,
+            SubscriptionPreUpdateHandler::class
         );
         $emitter->addListener(
-            \Crm\PaymentsModule\Events\RecurrentPaymentCardExpiredEvent::class,
-            \Crm\PaymentsModule\Events\RecurrentPaymentCardExpiredEventHandler::class
+            RecurrentPaymentCardExpiredEvent::class,
+            RecurrentPaymentCardExpiredEventHandler::class
         );
         $emitter->addListener(
-            \Crm\SubscriptionsModule\Events\SubscriptionMovedEvent::class,
-            \Crm\PaymentsModule\Events\SubscriptionMovedHandler::class
+            SubscriptionMovedEvent::class,
+            SubscriptionMovedHandler::class
         );
     }
 
@@ -471,24 +531,24 @@ class PaymentsModule extends CrmModule
     {
         $dispatcher->registerHandler(
             'retention-analysis-job',
-            $this->getInstance(\Crm\PaymentsModule\Hermes\RetentionAnalysisJobHandler::class)
+            $this->getInstance(RetentionAnalysisJobHandler::class)
         );
         $dispatcher->registerHandler(
             'export-payments',
-            $this->getInstance(\Crm\PaymentsModule\Hermes\ExportPaymentsHandler::class)
+            $this->getInstance(ExportPaymentsHandler::class)
         );
     }
 
     public function registerEvents(EventsStorage $eventsStorage)
     {
-        $eventsStorage->register('new_payment', Events\NewPaymentEvent::class, true);
-        $eventsStorage->register('payment_change_status', Events\PaymentChangeStatusEvent::class, true);
-        $eventsStorage->register('recurrent_payment_fail', Events\RecurrentPaymentFailEvent::class);
-        $eventsStorage->register('recurrent_payment_fail_try', Events\RecurrentPaymentFailTryEvent::class);
-        $eventsStorage->register('recurrent_payment_renewed', Events\RecurrentPaymentRenewedEvent::class, true);
-        $eventsStorage->register('card_expires_this_month', Events\RecurrentPaymentCardExpiredEvent::class);
-        $eventsStorage->register('recurrent_payment_state_changed', Events\RecurrentPaymentStateChangedEvent::class, true);
-        $eventsStorage->register('before_recurrent_payment_charge', Events\BeforeRecurrentPaymentChargeEvent::class, true);
+        $eventsStorage->register('new_payment', NewPaymentEvent::class, true);
+        $eventsStorage->register('payment_change_status', PaymentChangeStatusEvent::class, true);
+        $eventsStorage->register('recurrent_payment_fail', RecurrentPaymentFailEvent::class);
+        $eventsStorage->register('recurrent_payment_fail_try', RecurrentPaymentFailTryEvent::class);
+        $eventsStorage->register('recurrent_payment_renewed', RecurrentPaymentRenewedEvent::class, true);
+        $eventsStorage->register('card_expires_this_month', RecurrentPaymentCardExpiredEvent::class);
+        $eventsStorage->register('recurrent_payment_state_changed', RecurrentPaymentStateChangedEvent::class, true);
+        $eventsStorage->register('before_recurrent_payment_charge', BeforeRecurrentPaymentChargeEvent::class, true);
     }
 
     public function cache(OutputInterface $output, array $tags = [])

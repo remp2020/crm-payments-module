@@ -4,11 +4,12 @@ namespace Crm\PaymentsModule\Populator;
 
 use Crm\ApplicationModule\Populator\AbstractPopulator;
 use Crm\PaymentsModule\MailConfirmation\ParsedMailLogsRepository;
+use Symfony\Component\Console\Helper\ProgressBar;
 
 class ParsedEmailsPopulator extends AbstractPopulator
 {
     /**
-     * @param \Symfony\Component\Console\Helper\ProgressBar $progressBar
+     * @param ProgressBar $progressBar
      */
     public function seed($progressBar)
     {

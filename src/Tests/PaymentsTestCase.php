@@ -31,13 +31,13 @@ class PaymentsTestCase extends DatabaseTestCase
     /** @var  Container */
     protected $container;
 
-    /** @var  \Crm\PaymentsModule\Repository\PaymentsRepository */
+    /** @var PaymentsRepository */
     protected $paymentsRepository;
 
-    /** @var  \Crm\PaymentsModule\Repository\RecurrentPaymentsRepository */
+    /** @var RecurrentPaymentsRepository */
     protected $recurrentPaymentsRepository;
 
-    /** @var  \Crm\PaymentsModule\Repository\PaymentGatewaysRepository */
+    /** @var PaymentGatewaysRepository */
     protected $paymentGatewaysRepository;
 
     /** @var AccessTokensRepository */

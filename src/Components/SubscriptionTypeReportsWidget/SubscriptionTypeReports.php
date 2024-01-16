@@ -53,9 +53,9 @@ class SubscriptionTypeReports extends BaseLazyWidget
         $reportTable
             ->addReport(new TotalPaidSubscriptionsReport('', $this->translator))
             ->addReport(new TotalRecurrentSubscriptionsReport('', $this->translator))
-            ->addReport(new NoRecurrentChargeReport('', $this->translator), [\Crm\PaymentsModule\Report\TotalRecurrentSubscriptionsReport::class])
-            ->addReport(new StoppedOnFirstSubscriptionReport('', $this->translator), [\Crm\PaymentsModule\Report\TotalRecurrentSubscriptionsReport::class])
-            ->addReport(new PaidNextSubscriptionReport('', $this->translator, 1), [\Crm\PaymentsModule\Report\TotalRecurrentSubscriptionsReport::class])
+            ->addReport(new NoRecurrentChargeReport('', $this->translator), [TotalRecurrentSubscriptionsReport::class])
+            ->addReport(new StoppedOnFirstSubscriptionReport('', $this->translator), [TotalRecurrentSubscriptionsReport::class])
+            ->addReport(new PaidNextSubscriptionReport('', $this->translator, 1), [TotalRecurrentSubscriptionsReport::class])
             ->addReport(new PaidNextSubscriptionReport('', $this->translator, 2))
             ->addReport(new PaidNextSubscriptionReport('', $this->translator, 3))
         ;

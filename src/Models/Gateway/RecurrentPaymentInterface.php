@@ -2,6 +2,10 @@
 
 namespace Crm\PaymentsModule\Gateways;
 
+use Crm\PaymentsModule\GatewayFail;
+use Crm\PaymentsModule\RecurrentPaymentFailStop;
+use Crm\PaymentsModule\RecurrentPaymentFailTry;
+
 interface RecurrentPaymentInterface
 {
     /**
@@ -32,9 +36,9 @@ interface RecurrentPaymentInterface
      * @param string $token
      * @return string One of CHARGE_* constants defined at `RecurrentPaymentInterface`
      *
-     * @throws \Crm\PaymentsModule\GatewayFail
-     * @throws \Crm\PaymentsModule\RecurrentPaymentFailStop
-     * @throws \Crm\PaymentsModule\RecurrentPaymentFailTry
+     * @throws GatewayFail
+     * @throws RecurrentPaymentFailStop
+     * @throws RecurrentPaymentFailTry
      */
     public function charge($payment, $token): string;
 

@@ -3,6 +3,7 @@
 namespace Crm\PaymentsModule\Forms;
 
 use Crm\ApplicationModule\Config\ApplicationConfig;
+use Crm\ApplicationModule\DataProvider\DataProviderException;
 use Crm\ApplicationModule\DataProvider\DataProviderManager;
 use Crm\PaymentsModule\DataProvider\PaymentFormDataProviderInterface;
 use Crm\PaymentsModule\PaymentItem\DonationPaymentItem;
@@ -23,6 +24,7 @@ use Nette\Utils\ArrayHash;
 use Nette\Utils\DateTime;
 use Nette\Utils\Html;
 use Nette\Utils\Json;
+use Nette\Utils\JsonException;
 use Tomaj\Form\Renderer\BootstrapRenderer;
 
 class PaymentFormFactory
@@ -84,8 +86,8 @@ class PaymentFormFactory
      * @param int $paymentId
      * @param ActiveRow $user
      * @return Form
-     * @throws \Crm\ApplicationModule\DataProvider\DataProviderException
-     * @throws \Nette\Utils\JsonException
+     * @throws DataProviderException
+     * @throws JsonException
      */
     public function create($paymentId, ActiveRow $user = null)
     {

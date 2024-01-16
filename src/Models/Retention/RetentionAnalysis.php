@@ -12,6 +12,7 @@ use Crm\SubscriptionsModule\Repository\SubscriptionsRepository;
 use Nette\Database\Table\ActiveRow;
 use Nette\Utils\DateTime;
 use Nette\Utils\Json;
+use Nette\Utils\JsonException;
 use Tracy\Debugger;
 use Tracy\ILogger;
 
@@ -51,7 +52,7 @@ SQL;
      * @param ActiveRow $job
      *
      * @return bool
-     * @throws \Nette\Utils\JsonException
+     * @throws JsonException
      */
     public function runJob(ActiveRow $job): bool
     {

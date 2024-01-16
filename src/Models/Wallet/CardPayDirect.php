@@ -2,7 +2,7 @@
 
 namespace Crm\PaymentsModule\Models\Wallet;
 
-use GuzzleHttp;
+use GuzzleHttp\Client;
 use GuzzleHttp\Exception\ClientException;
 use GuzzleHttp\Exception\ServerException;
 use GuzzleHttp\HandlerStack;
@@ -79,7 +79,7 @@ class CardPayDirect
         $serializer = new PayloadSerializer();
         $data = $serializer->serialize($payload);
 
-        $client = new GuzzleHttp\Client($this->clientOptions());
+        $client = new Client($this->clientOptions());
         try {
             $result = $client->request('POST', $this->getUrl(), [
                 'headers' => [
@@ -138,7 +138,7 @@ class CardPayDirect
     {
         $url = $this->getUrl() . '/' . $processingId;
 
-        $client = new GuzzleHttp\Client($this->clientOptions());
+        $client = new Client($this->clientOptions());
 
         $timestamp = DateTime::from('now')->format('dmYHis');
 
