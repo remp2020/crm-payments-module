@@ -2,7 +2,7 @@
 
 namespace Crm\PaymentsModule\Components;
 
-use Crm\SegmentsModule\Widget\DashboardSegmentValueBaseWidget;
+use Crm\SegmentModule\Components\DashboardSegmentValueBaseWidget\DashboardSegmentValueBaseWidget;
 
 /**
  * This widget loads number of free subscribers and renders line with

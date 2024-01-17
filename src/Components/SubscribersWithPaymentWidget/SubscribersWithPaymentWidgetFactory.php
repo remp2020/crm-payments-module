@@ -3,8 +3,8 @@
 namespace Crm\PaymentsModule\Components;
 
 use Crm\ApplicationModule\Widget\LazyWidgetManager;
-use Crm\SegmentModule\Repository\SegmentsRepository;
-use Crm\SegmentModule\Repository\SegmentsValuesRepository;
+use Crm\SegmentModule\Repositories\SegmentsRepository;
+use Crm\SegmentModule\Repositories\SegmentsValuesRepository;
 
 class SubscribersWithPaymentWidgetFactory
 {

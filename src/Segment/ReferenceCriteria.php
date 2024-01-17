@@ -3,8 +3,8 @@
 namespace Crm\PaymentsModule\Segment;
 
 use Crm\ApplicationModule\Criteria\CriteriaInterface;
-use Crm\SegmentModule\Params\ParamsBag;
-use Crm\SegmentModule\Params\StringParam;
+use Crm\SegmentModule\Models\Params\ParamsBag;
+use Crm\SegmentModule\Models\Params\StringParam;
 
 class ReferenceCriteria implements CriteriaInterface
 {

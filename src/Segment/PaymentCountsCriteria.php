@@ -3,9 +3,9 @@
 namespace Crm\PaymentsModule\Segment;
 
 use Crm\ApplicationModule\Criteria\CriteriaInterface;
-use Crm\SegmentModule\Criteria\Fields;
-use Crm\SegmentModule\Params\NumberParam;
-use Crm\SegmentModule\Params\ParamsBag;
+use Crm\SegmentModule\Models\Criteria\Fields;
+use Crm\SegmentModule\Models\Params\NumberParam;
+use Crm\SegmentModule\Models\Params\ParamsBag;
 
 class PaymentCountsCriteria implements CriteriaInterface
 {

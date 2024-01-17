@@ -4,9 +4,9 @@ namespace Crm\PaymentsModule\Segment;
 
 use Crm\ApplicationModule\Criteria\CriteriaInterface;
 use Crm\PaymentsModule\Repository\RecurrentPaymentsRepository;
-use Crm\SegmentModule\Criteria\Fields;
-use Crm\SegmentModule\Params\BooleanParam;
-use Crm\SegmentModule\Params\ParamsBag;
+use Crm\SegmentModule\Models\Criteria\Fields;
+use Crm\SegmentModule\Models\Params\BooleanParam;
+use Crm\SegmentModule\Models\Params\ParamsBag;
 
 class RecurrentPaymentCriteria implements CriteriaInterface
 {

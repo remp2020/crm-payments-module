@@ -4,8 +4,8 @@ namespace Crm\PaymentsModule\Segment;
 
 use Crm\ApplicationModule\Criteria\CriteriaInterface;
 use Crm\PaymentsModule\Repository\PaymentsRepository;
-use Crm\SegmentModule\Params\ParamsBag;
-use Crm\SegmentModule\Params\StringArrayParam;
+use Crm\SegmentModule\Models\Params\ParamsBag;
+use Crm\SegmentModule\Models\Params\StringArrayParam;
 
 class StatusCriteria implements CriteriaInterface
 {

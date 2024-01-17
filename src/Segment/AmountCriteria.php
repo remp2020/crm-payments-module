@@ -3,8 +3,8 @@
 namespace Crm\PaymentsModule\Segment;
 
 use Crm\ApplicationModule\Criteria\CriteriaInterface;
-use Crm\SegmentModule\Params\DecimalParam;
-use Crm\SegmentModule\Params\ParamsBag;
+use Crm\SegmentModule\Models\Params\DecimalParam;
+use Crm\SegmentModule\Models\Params\ParamsBag;
 
 class AmountCriteria implements CriteriaInterface
 {

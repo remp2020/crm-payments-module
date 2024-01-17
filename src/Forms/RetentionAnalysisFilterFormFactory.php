@@ -6,7 +6,7 @@ use Crm\ApplicationModule\DataProvider\DataProviderManager;
 use Crm\PaymentsModule\DataProvider\RetentionAnalysisDataProviderInterface;
 use Crm\PaymentsModule\Repository\PaymentsRepository;
 use Crm\PaymentsModule\Retention\RetentionAnalysis;
-use Crm\SegmentModule\Repository\SegmentsRepository;
+use Crm\SegmentModule\Repositories\SegmentsRepository;
 use Crm\UsersModule\Repository\UsersRepository;
 use Nette\Application\UI\Form;
 use Nette\Localization\Translator;

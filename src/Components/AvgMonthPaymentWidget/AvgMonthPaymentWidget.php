@@ -5,7 +5,7 @@ namespace Crm\PaymentsModule\Components;
 use Crm\ApplicationModule\Cache\CacheRepository;
 use Crm\ApplicationModule\Widget\BaseLazyWidget;
 use Crm\ApplicationModule\Widget\LazyWidgetManager;
-use Crm\SegmentModule\SegmentWidgetInterface;
+use Crm\SegmentModule\Models\SegmentWidgetInterface;
 use Crm\UsersModule\Repository\UserStatsRepository;
 use Nette\Database\Table\ActiveRow;
 
