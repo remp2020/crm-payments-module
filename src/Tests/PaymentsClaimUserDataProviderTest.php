@@ -11,10 +11,10 @@ use Crm\PaymentsModule\PaymentItem\PaymentItemContainer;
 use Crm\PaymentsModule\Repository\PaymentGatewaysRepository;
 use Crm\PaymentsModule\Repository\PaymentsRepository;
 use Crm\PaymentsModule\Seeders\PaymentGatewaysSeeder;
-use Crm\UsersModule\Repository\UserMetaRepository;
-use Crm\UsersModule\Repository\UsersRepository;
+use Crm\UsersModule\Models\User\UnclaimedUser;
+use Crm\UsersModule\Repositories\UserMetaRepository;
+use Crm\UsersModule\Repositories\UsersRepository;
 use Crm\UsersModule\Seeders\UsersSeeder;
-use Crm\UsersModule\User\UnclaimedUser;
 
 class PaymentsClaimUserDataProviderTest extends DatabaseTestCase
 {

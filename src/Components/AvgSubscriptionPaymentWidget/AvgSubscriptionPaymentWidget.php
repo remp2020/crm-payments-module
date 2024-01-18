@@ -6,7 +6,7 @@ use Crm\ApplicationModule\Cache\CacheRepository;
 use Crm\ApplicationModule\Widget\BaseLazyWidget;
 use Crm\ApplicationModule\Widget\LazyWidgetManager;
 use Crm\SegmentModule\Models\SegmentWidgetInterface;
-use Crm\UsersModule\Repository\UserStatsRepository;
+use Crm\UsersModule\Repositories\UserStatsRepository;
 use Nette\Database\Table\ActiveRow;
 
 class AvgSubscriptionPaymentWidget extends BaseLazyWidget implements SegmentWidgetInterface

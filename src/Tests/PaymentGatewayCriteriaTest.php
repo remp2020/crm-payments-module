@@ -9,8 +9,8 @@ use Crm\PaymentsModule\Repository\PaymentGatewaysRepository;
 use Crm\PaymentsModule\Repository\PaymentsRepository;
 use Crm\PaymentsModule\Scenarios\PaymentGatewayCriteria;
 use Crm\PaymentsModule\Seeders\PaymentGatewaysSeeder;
-use Crm\UsersModule\Auth\UserManager;
-use Crm\UsersModule\Repository\UsersRepository;
+use Crm\UsersModule\Models\Auth\UserManager;
+use Crm\UsersModule\Repositories\UsersRepository;
 
 class PaymentGatewayCriteriaTest extends DatabaseTestCase
 {

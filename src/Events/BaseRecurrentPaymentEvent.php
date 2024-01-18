@@ -2,7 +2,7 @@
 
 namespace Crm\PaymentsModule\Events;
 
-use Crm\UsersModule\User\IUserGetter;
+use Crm\UsersModule\Models\User\IUserGetter;
 use League\Event\AbstractEvent;
 use Nette\Database\Table\ActiveRow;
 

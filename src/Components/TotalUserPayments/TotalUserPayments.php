@@ -6,7 +6,7 @@ use Crm\ApplicationModule\Widget\BaseLazyWidget;
 use Crm\ApplicationModule\Widget\LazyWidgetManager;
 use Crm\PaymentsModule\Models\AverageMonthPayment;
 use Crm\PaymentsModule\Repository\PaymentsRepository;
-use Crm\UsersModule\Repository\UserStatsRepository;
+use Crm\UsersModule\Repositories\UserStatsRepository;
 
 /**
  * Display total amount spent by one user.

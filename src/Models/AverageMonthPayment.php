@@ -3,7 +3,7 @@
 namespace Crm\PaymentsModule\Models;
 
 use Crm\ApplicationModule\Cache\CacheRepository;
-use Crm\UsersModule\Repository\UserStatsRepository;
+use Crm\UsersModule\Repositories\UserStatsRepository;
 use Nette\Utils\DateTime;
 
 class AverageMonthPayment

@@ -120,7 +120,7 @@ use Crm\PaymentsModule\User\RecurrentPaymentsUserDataProvider;
 use Crm\SubscriptionsModule\DataProviders\SubscriptionFormDataProviderInterface;
 use Crm\SubscriptionsModule\Events\SubscriptionMovedEvent;
 use Crm\SubscriptionsModule\Events\SubscriptionPreUpdateEvent;
-use Crm\UsersModule\Auth\UserTokenAuthorization;
+use Crm\UsersModule\Models\Auth\UserTokenAuthorization;
 use Nette\Application\Routers\RouteList;
 use Nette\DI\Container;
 use Symfony\Component\Console\Output\OutputInterface;

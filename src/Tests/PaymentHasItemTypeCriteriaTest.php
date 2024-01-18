@@ -17,8 +17,8 @@ use Crm\SubscriptionsModule\Repositories\SubscriptionTypesRepository;
 use Crm\SubscriptionsModule\Seeders\SubscriptionExtensionMethodsSeeder;
 use Crm\SubscriptionsModule\Seeders\SubscriptionLengthMethodSeeder;
 use Crm\SubscriptionsModule\Seeders\SubscriptionTypeNamesSeeder;
-use Crm\UsersModule\Builder\UserBuilder;
-use Crm\UsersModule\Repository\UsersRepository;
+use Crm\UsersModule\Models\Builder\UserBuilder;
+use Crm\UsersModule\Repositories\UsersRepository;
 use PHPUnit\Framework\Attributes\DataProvider;
 
 class PaymentHasItemTypeCriteriaTest extends DatabaseTestCase
