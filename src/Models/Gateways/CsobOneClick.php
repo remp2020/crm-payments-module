@@ -4,10 +4,10 @@ namespace Crm\PaymentsModule\Models\Gateways;
 
 use Crm\ApplicationModule\Config\ApplicationConfig;
 use Crm\ApplicationModule\Request;
-use Crm\PaymentsModule\GatewayFail;
-use Crm\PaymentsModule\RecurrentPaymentFailStop;
-use Crm\PaymentsModule\RecurrentPaymentFailTry;
-use Crm\PaymentsModule\Repository\PaymentMetaRepository;
+use Crm\PaymentsModule\Models\GatewayFail;
+use Crm\PaymentsModule\Models\RecurrentPaymentFailStop;
+use Crm\PaymentsModule\Models\RecurrentPaymentFailTry;
+use Crm\PaymentsModule\Repositories\PaymentMetaRepository;
 use Crm\UsersModule\Models\Auth\UserManager;
 use Nette\Application\LinkGenerator;
 use Nette\Database\Table\ActiveRow;

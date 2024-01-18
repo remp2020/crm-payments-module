@@ -3,7 +3,7 @@
 namespace Crm\PaymentsModule\DataProviders;
 
 use Crm\ApplicationModule\DataProvider\DataProviderException;
-use Crm\PaymentsModule\Repository\PaymentsRepository;
+use Crm\PaymentsModule\Repositories\PaymentsRepository;
 use Crm\UsersModule\DataProviders\ClaimUserDataProviderInterface;
 
 class PaymentsClaimUserDataProvider implements ClaimUserDataProviderInterface

@@ -2,7 +2,7 @@
 
 namespace Crm\PaymentsModule\Events;
 
-use Crm\PaymentsModule\Repository\PaymentsRepository;
+use Crm\PaymentsModule\Repositories\PaymentsRepository;
 use League\Event\AbstractEvent;
 use Nette\Database\Table\ActiveRow;
 

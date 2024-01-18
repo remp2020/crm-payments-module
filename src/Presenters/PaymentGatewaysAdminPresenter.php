@@ -6,10 +6,10 @@ use Crm\AdminModule\Presenters\AdminPresenter;
 use Crm\ApplicationModule\Components\Graphs\GoogleLineGraphGroupControlFactoryInterface;
 use Crm\ApplicationModule\Graphs\Criteria;
 use Crm\ApplicationModule\Graphs\GraphDataItem;
-use Crm\PaymentsModule\Components\LastPaymentsControlFactoryInterface;
+use Crm\PaymentsModule\Components\LastPayments\LastPaymentsControlFactoryInterface;
 use Crm\PaymentsModule\Forms\PaymentGatewayFormFactory;
-use Crm\PaymentsModule\Repository\PaymentGatewaysRepository;
-use Crm\PaymentsModule\Repository\PaymentsRepository;
+use Crm\PaymentsModule\Repositories\PaymentGatewaysRepository;
+use Crm\PaymentsModule\Repositories\PaymentsRepository;
 use Nette\Application\BadRequestException;
 use Nette\DI\Attributes\Inject;
 

@@ -4,8 +4,8 @@ namespace Crm\PaymentsModule\Commands;
 
 use Crm\ApplicationModule\ActiveRow;
 use Crm\ApplicationModule\ActiveRowFactory;
-use Crm\PaymentsModule\Repository\PaymentGatewaysRepository;
-use Crm\PaymentsModule\Repository\PaymentsRepository;
+use Crm\PaymentsModule\Repositories\PaymentGatewaysRepository;
+use Crm\PaymentsModule\Repositories\PaymentsRepository;
 use Crm\UsersModule\Events\NotificationEvent;
 use League\Event\Emitter;
 use Nette\Utils\DateTime;

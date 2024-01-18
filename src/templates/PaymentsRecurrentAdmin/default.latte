@@ -54,17 +54,17 @@
 		      <td>{$recurrentPayment->retries}</td>
 		      <td>{$recurrentPayment->status}</td>
               <td>
-                  {if $recurrentPayment->state == \Crm\PaymentsModule\Repository\RecurrentPaymentsRepository::STATE_ACTIVE && $recurrentPayment->status == NULL}
+                  {if $recurrentPayment->state == \Crm\PaymentsModule\Repositories\RecurrentPaymentsRepository::STATE_ACTIVE && $recurrentPayment->status == NULL}
                       <span class="label label-primary">{_"payments.admin.component.user_payments_listing.recurrent_profile.active"}</span>
-                  {elseif $recurrentPayment->state == \Crm\PaymentsModule\Repository\RecurrentPaymentsRepository::STATE_USER_STOP}
+                  {elseif $recurrentPayment->state == \Crm\PaymentsModule\Repositories\RecurrentPaymentsRepository::STATE_USER_STOP}
                       <span class="label label-info">{_"payments.admin.component.user_payments_listing.recurrent_profile.user_stop"}</span>
-                  {elseif $recurrentPayment->state == \Crm\PaymentsModule\Repository\RecurrentPaymentsRepository::STATE_ADMIN_STOP}
+                  {elseif $recurrentPayment->state == \Crm\PaymentsModule\Repositories\RecurrentPaymentsRepository::STATE_ADMIN_STOP}
                       <span class="label label-info">{_"payments.admin.component.user_payments_listing.recurrent_profile.admin_stop"}</span>
-                  {elseif $recurrentPayment->state == \Crm\PaymentsModule\Repository\RecurrentPaymentsRepository::STATE_SYSTEM_STOP}
+                  {elseif $recurrentPayment->state == \Crm\PaymentsModule\Repositories\RecurrentPaymentsRepository::STATE_SYSTEM_STOP}
                       <span class="label label-danger">{_"payments.admin.component.user_payments_listing.recurrent_profile.system_stop"}</span>
-                  {elseif $recurrentPayment->state == \Crm\PaymentsModule\Repository\RecurrentPaymentsRepository::STATE_CHARGED}
+                  {elseif $recurrentPayment->state == \Crm\PaymentsModule\Repositories\RecurrentPaymentsRepository::STATE_CHARGED}
                       <span class="label label-success">{_"payments.admin.component.user_payments_listing.recurrent_profile.charged"}</span>
-                  {elseif $recurrentPayment->state == \Crm\PaymentsModule\Repository\RecurrentPaymentsRepository::STATE_CHARGE_FAILED}
+                  {elseif $recurrentPayment->state == \Crm\PaymentsModule\Repositories\RecurrentPaymentsRepository::STATE_CHARGE_FAILED}
                       <span class="label label-warning">{_"payments.admin.component.user_payments_listing.recurrent_profile.charge_failed"}</span>
                   {/if}
               </td>

@@ -4,8 +4,8 @@ namespace Crm\PaymentsModule\Presenters;
 
 use Crm\AdminModule\Presenters\AdminPresenter;
 use Crm\ApplicationModule\Components\PreviousNextPaginator;
-use Crm\PaymentsModule\MailConfirmation\ParsedMailLogsRepository;
-use Crm\PaymentsModule\Repository\PaymentsRepository;
+use Crm\PaymentsModule\Repositories\ParsedMailLogsRepository;
+use Crm\PaymentsModule\Repositories\PaymentsRepository;
 use Nette\Application\Attributes\Persistent;
 use Nette\Application\UI\Form;
 use Nette\DI\Attributes\Inject;

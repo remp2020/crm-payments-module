@@ -4,7 +4,7 @@ namespace Crm\PaymentsModule\Components\LastPayments;
 
 use Crm\ApplicationModule\Widget\BaseLazyWidget;
 use Crm\ApplicationModule\Widget\LazyWidgetManager;
-use Crm\PaymentsModule\Repository\PaymentsRepository;
+use Crm\PaymentsModule\Repositories\PaymentsRepository;
 
 /**
  * This widgest fetches last payments for specific for payment gateway
@@ -20,7 +20,7 @@ class LastPayments extends BaseLazyWidget
 
     private $limit;
 
-    /** @var  PaymentsRepository */
+    /** @var PaymentsRepository */
     private $paymentsRepository;
 
     public function __construct(

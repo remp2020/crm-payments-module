@@ -3,7 +3,7 @@
 namespace Crm\PaymentsModule\Components\DonationPaymentItemsListWidget;
 
 use Crm\ApplicationModule\Widget\BaseLazyWidget;
-use Crm\PaymentsModule\PaymentItem\DonationPaymentItem;
+use Crm\PaymentsModule\Models\PaymentItem\DonationPaymentItem;
 use Nette\Database\Table\ActiveRow;
 
 /**

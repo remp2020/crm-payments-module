@@ -2,10 +2,10 @@
 
 namespace Crm\PaymentsModule\Commands;
 
-use Crm\PaymentsModule\Gateways\Csob;
-use Crm\PaymentsModule\Gateways\CsobOneClick;
-use Crm\PaymentsModule\PaymentProcessor;
-use Crm\PaymentsModule\Repository\PaymentsRepository;
+use Crm\PaymentsModule\Models\Gateways\Csob;
+use Crm\PaymentsModule\Models\Gateways\CsobOneClick;
+use Crm\PaymentsModule\Models\PaymentProcessor;
+use Crm\PaymentsModule\Repositories\PaymentsRepository;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;

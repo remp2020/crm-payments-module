@@ -2,10 +2,11 @@
 
 namespace Crm\PaymentsModule\Models\MailConfirmation;
 
-use Crm\PaymentsModule\Builder\ParsedMailLogsBuilder;
-use Crm\PaymentsModule\Gateways\GatewayAbstract;
-use Crm\PaymentsModule\PaymentProcessor;
-use Crm\PaymentsModule\Repository\PaymentsRepository;
+use Crm\PaymentsModule\Models\Builder\ParsedMailLogsBuilder;
+use Crm\PaymentsModule\Models\Gateways\GatewayAbstract;
+use Crm\PaymentsModule\Models\PaymentProcessor;
+use Crm\PaymentsModule\Repositories\ParsedMailLogsRepository;
+use Crm\PaymentsModule\Repositories\PaymentsRepository;
 use DateInterval;
 use Nette\Database\Table\ActiveRow;
 use Nette\Utils\DateTime;

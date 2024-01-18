@@ -2,9 +2,9 @@
 
 namespace Crm\PaymentsModule\Tests;
 
+use Crm\PaymentsModule\Models\PaymentItem\DonationPaymentItem;
+use Crm\PaymentsModule\Models\PaymentItem\PaymentItemContainer;
 use Crm\PaymentsModule\Models\PaymentItem\PaymentItemHelper;
-use Crm\PaymentsModule\PaymentItem\DonationPaymentItem;
-use Crm\PaymentsModule\PaymentItem\PaymentItemContainer;
 use Crm\SubscriptionsModule\Models\PaymentItem\SubscriptionTypePaymentItem;
 use Crm\SubscriptionsModule\Repositories\SubscriptionTypeItemsRepository;
 use Crm\SubscriptionsModule\Repositories\SubscriptionTypesRepository;

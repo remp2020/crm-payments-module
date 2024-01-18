@@ -4,7 +4,7 @@ namespace Crm\PaymentsModule\Scenarios;
 
 use Crm\ApplicationModule\Criteria\ScenarioParams\BooleanParam;
 use Crm\ApplicationModule\Criteria\ScenariosCriteriaInterface;
-use Crm\PaymentsModule\Repository\RecurrentPaymentsRepository;
+use Crm\PaymentsModule\Repositories\RecurrentPaymentsRepository;
 use Nette\Database\Table\ActiveRow;
 use Nette\Database\Table\Selection;
 

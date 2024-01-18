@@ -3,9 +3,9 @@
 namespace Crm\PaymentsModule\Forms;
 
 use Crm\ApplicationModule\DataProvider\DataProviderManager;
-use Crm\PaymentsModule\DataProvider\RetentionAnalysisDataProviderInterface;
-use Crm\PaymentsModule\Repository\PaymentsRepository;
-use Crm\PaymentsModule\Retention\RetentionAnalysis;
+use Crm\PaymentsModule\DataProviders\RetentionAnalysisDataProviderInterface;
+use Crm\PaymentsModule\Models\Retention\RetentionAnalysis;
+use Crm\PaymentsModule\Repositories\PaymentsRepository;
 use Crm\SegmentModule\Repositories\SegmentsRepository;
 use Crm\UsersModule\Repositories\UsersRepository;
 use Nette\Application\UI\Form;

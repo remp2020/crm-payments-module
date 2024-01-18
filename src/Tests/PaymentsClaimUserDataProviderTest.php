@@ -4,12 +4,12 @@ namespace Crm\PaymentsModule\Tests;
 
 use Crm\ApplicationModule\DataProvider\DataProviderException;
 use Crm\ApplicationModule\Tests\DatabaseTestCase;
-use Crm\PaymentsModule\DataProvider\PaymentsClaimUserDataProvider;
-use Crm\PaymentsModule\GatewayFactory;
-use Crm\PaymentsModule\Gateways\Paypal;
-use Crm\PaymentsModule\PaymentItem\PaymentItemContainer;
-use Crm\PaymentsModule\Repository\PaymentGatewaysRepository;
-use Crm\PaymentsModule\Repository\PaymentsRepository;
+use Crm\PaymentsModule\DataProviders\PaymentsClaimUserDataProvider;
+use Crm\PaymentsModule\Models\GatewayFactory;
+use Crm\PaymentsModule\Models\Gateways\Paypal;
+use Crm\PaymentsModule\Models\PaymentItem\PaymentItemContainer;
+use Crm\PaymentsModule\Repositories\PaymentGatewaysRepository;
+use Crm\PaymentsModule\Repositories\PaymentsRepository;
 use Crm\PaymentsModule\Seeders\PaymentGatewaysSeeder;
 use Crm\UsersModule\Models\User\UnclaimedUser;
 use Crm\UsersModule\Repositories\UserMetaRepository;

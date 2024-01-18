@@ -3,9 +3,9 @@
 namespace Crm\PaymentsModule\Forms;
 
 use Crm\ApplicationModule\ActiveRow;
-use Crm\PaymentsModule\PaymentItem\PaymentItemContainer;
-use Crm\PaymentsModule\Repository\PaymentItemsRepository;
-use Crm\PaymentsModule\Repository\PaymentsRepository;
+use Crm\PaymentsModule\Models\PaymentItem\PaymentItemContainer;
+use Crm\PaymentsModule\Repositories\PaymentItemsRepository;
+use Crm\PaymentsModule\Repositories\PaymentsRepository;
 use Crm\SubscriptionsModule\Models\PaymentItem\SubscriptionTypePaymentItem;
 use Crm\SubscriptionsModule\Models\Subscription\SubscriptionTypeHelper;
 use Crm\SubscriptionsModule\Repositories\SubscriptionTypesRepository;

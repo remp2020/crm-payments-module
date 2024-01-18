@@ -3,7 +3,7 @@
 namespace Crm\PaymentsModule\DataProviders;
 
 use Crm\ApplicationModule\DataProvider\DataProviderInterface;
-use Crm\PaymentsModule\PaymentItem\PaymentItemInterface;
+use Crm\PaymentsModule\Models\PaymentItem\PaymentItemInterface;
 use Nette\Application\UI\Form;
 use Nette\Database\Table\ActiveRow;
 

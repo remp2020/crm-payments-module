@@ -4,52 +4,52 @@ services:
 			- addModule(Crm\PaymentsModule\PaymentsModule())
 
 	gatewayFactory:
-		factory: Crm\PaymentsModule\GatewayFactory
+		factory: Crm\PaymentsModule\Models\GatewayFactory
 		setup:
-			- registerGateway('bank_transfer', Crm\PaymentsModule\Gateways\BankTransfer)
+			- registerGateway('bank_transfer', Crm\PaymentsModule\Models\Gateways\BankTransfer)
 
-	paymentGatewaysRepository: Crm\PaymentsModule\Repository\PaymentGatewaysRepository
-	paymentGatewayMetaRepository: Crm\PaymentsModule\Repository\PaymentGatewayMetaRepository
-	paymentsRepository: Crm\PaymentsModule\Repository\PaymentsRepository
-	paymentLogsRepository: Crm\PaymentsModule\Repository\PaymentLogsRepository
-	paymentMetaRepository: Crm\PaymentsModule\Repository\PaymentMetaRepository
-	recurrentPaymentsRepository: Crm\PaymentsModule\Repository\RecurrentPaymentsRepository
-	parsedMailLogsRepository: Crm\PaymentsModule\MailConfirmation\ParsedMailLogsRepository
-	paymentItemsRepository: Crm\PaymentsModule\Repository\PaymentItemsRepository
-	paymentItemMetaRepository: Crm\PaymentsModule\Repository\PaymentItemMetaRepository
-	retentionAnalysisJobsRepository: Crm\PaymentsModule\Repository\RetentionAnalysisJobsRepository
+	paymentGatewaysRepository: Crm\PaymentsModule\Repositories\PaymentGatewaysRepository
+	paymentGatewayMetaRepository: Crm\PaymentsModule\Repositories\PaymentGatewayMetaRepository
+	paymentsRepository: Crm\PaymentsModule\Repositories\PaymentsRepository
+	paymentLogsRepository: Crm\PaymentsModule\Repositories\PaymentLogsRepository
+	paymentMetaRepository: Crm\PaymentsModule\Repositories\PaymentMetaRepository
+	recurrentPaymentsRepository: Crm\PaymentsModule\Repositories\RecurrentPaymentsRepository
+	parsedMailLogsRepository: Crm\PaymentsModule\Repositories\ParsedMailLogsRepository
+	paymentItemsRepository: Crm\PaymentsModule\Repositories\PaymentItemsRepository
+	paymentItemMetaRepository: Crm\PaymentsModule\Repositories\PaymentItemMetaRepository
+	retentionAnalysisJobsRepository: Crm\PaymentsModule\Repositories\RetentionAnalysisJobsRepository
 
 	- Crm\PaymentsModule\Forms\PaymentFormFactory
 	- Crm\PaymentsModule\Forms\PaymentGatewayFormFactory
-	- Crm\PaymentsModule\PaymentsHistogramFactory
-	recurrentPaymentsResolver: Crm\PaymentsModule\RecurrentPaymentsResolver
+	- Crm\PaymentsModule\Models\PaymentsHistogramFactory
+	recurrentPaymentsResolver: Crm\PaymentsModule\Models\RecurrentPaymentsResolver
 	- Crm\PaymentsModule\Forms\RecurrentPaymentFormFactory
 	- Crm\PaymentsModule\Forms\RetentionAnalysisFilterFormFactory
 	- Crm\PaymentsModule\Forms\ChangePaymentSubscriptionTypeFormFactory
-	- Crm\PaymentsModule\PaymentProcessor
-	- Crm\PaymentsModule\RecurrentPaymentsProcessor
-	- Crm\PaymentsModule\Builder\ParsedMailLogsBuilder
-	- Crm\PaymentsModule\AdminFilterFormData
+	- Crm\PaymentsModule\Models\PaymentProcessor
+	- Crm\PaymentsModule\Models\RecurrentPaymentsProcessor
+	- Crm\PaymentsModule\Models\Builder\ParsedMailLogsBuilder
+	- Crm\PaymentsModule\Models\AdminFilterFormData
 	- Crm\PaymentsModule\Models\AverageMonthPayment
 	- Crm\PaymentsModule\Models\PaymentItem\PaymentItemHelper
-	mailDownloader: Crm\PaymentsModule\Models\MailDownloader\ImapMailDownloader
-	- Crm\PaymentsModule\MailConfirmation\MailProcessor
-	- Crm\PaymentsModule\Components\ChangePaymentStatusFactoryInterface
-	- Crm\PaymentsModule\Components\DuplicateRecurrentPaymentsControlFactoryInterface
-	- Crm\PaymentsModule\Components\LastPaymentsControlFactoryInterface
-	- Crm\PaymentsModule\Components\TotalUserPayments
-	- Crm\PaymentsModule\Components\PaymentItemsListWidget
-	- Crm\PaymentsModule\Components\DonationPaymentItemsListWidget
-	- Crm\PaymentsModule\Components\AuthorizationPaymentItemListWidget
-	- Crm\PaymentsModule\Components\DeviceUserListingWidget
-	- Crm\PaymentsModule\Components\MonthDonationAmountStatWidget
-	- Crm\PaymentsModule\Components\MonthToDateDonationAmountStatWidget
-	- Crm\PaymentsModule\Components\AddressWidget
-	- Crm\PaymentsModule\Components\ChangePaymentSubscriptionTypeWidget
-	- Crm\PaymentsModule\Components\PaymentDonationLabelWidget
-	- Crm\PaymentsModule\Components\PaymentToSubscriptionMenu
+	mailDownloader: Crm\PaymentsModule\Models\MailConfirmation\ImapMailDownloader
+	- Crm\PaymentsModule\Models\MailConfirmation\MailProcessor
+	- Crm\PaymentsModule\Components\ChangePaymentStatus\ChangePaymentStatusFactoryInterface
+	- Crm\PaymentsModule\Components\DuplicateRecurrentPayments\DuplicateRecurrentPaymentsControlFactoryInterface
+	- Crm\PaymentsModule\Components\LastPayments\LastPaymentsControlFactoryInterface
+	- Crm\PaymentsModule\Components\TotalUserPayments\TotalUserPayments
+	- Crm\PaymentsModule\Components\PaymentItemsListWidget\PaymentItemsListWidget
+	- Crm\PaymentsModule\Components\DonationPaymentItemsListWidget\DonationPaymentItemsListWidget
+	- Crm\PaymentsModule\Components\AuthorizationPaymentItemListWidget\AuthorizationPaymentItemListWidget
+	- Crm\PaymentsModule\Components\DeviceUserListingWidget\DeviceUserListingWidget
+	- Crm\PaymentsModule\Components\MonthDonationAmountStatWidget\MonthDonationAmountStatWidget
+	- Crm\PaymentsModule\Components\MonthToDateDonationAmountStatWidget\MonthToDateDonationAmountStatWidget
+	- Crm\PaymentsModule\Components\AddressWidget\AddressWidget
+	- Crm\PaymentsModule\Components\ChangePaymentSubscriptionTypeWidget\ChangePaymentSubscriptionTypeWidget
+	- Crm\PaymentsModule\Components\PaymentDonationLabelWidget\PaymentDonationLabelWidget
+	- Crm\PaymentsModule\Components\PaymentToSubscriptionMenu\PaymentToSubscriptionMenu
 	- Crm\PaymentsModule\Components\SubscriptionDetailWidget\SubscriptionDetailWidget
-	- Crm\PaymentsModule\Commands\RecurrentPaymentsCardCheck
+	- Crm\PaymentsModule\Commands\RecurrentPaymentsCardCheckCommand
 	- Crm\PaymentsModule\Commands\RecurrentPaymentsChargeCommand
 	- Crm\PaymentsModule\Commands\CsobMailConfirmationCommand
 	- Crm\PaymentsModule\Commands\TatraBankaMailConfirmationCommand
@@ -68,30 +68,30 @@ services:
 	- Crm\PaymentsModule\Api\ReactivateRecurrentPaymentApiHandler
 	- Crm\PaymentsModule\Api\StopRecurrentPaymentApiHandler
 	- Crm\PaymentsModule\Api\PaypalIpnHandler
-	- Crm\PaymentsModule\MailConfirmation\CidGetterDownloader
+	- Crm\PaymentsModule\Models\MailConfirmation\CidGetterDownloader
 	variableSymbol:
-		factory: Crm\PaymentsModule\Repository\VariableSymbol
+		factory: Crm\PaymentsModule\Repositories\VariableSymbolRepository
 	- Crm\PaymentsModule\Commands\CalculateAveragesCommand
-	- Crm\PaymentsModule\Gateways\Paypal
-	- Crm\PaymentsModule\Gateways\PaypalReference
-	- Crm\PaymentsModule\Gateways\Tatrapay
-	- Crm\PaymentsModule\Gateways\Cardpay
-	- Crm\PaymentsModule\Gateways\Comfortpay
-	- Crm\PaymentsModule\Gateways\BankTransfer
-	- Crm\PaymentsModule\Gateways\Free
+	- Crm\PaymentsModule\Models\Gateways\Paypal
+	- Crm\PaymentsModule\Models\Gateways\PaypalReference
+	- Crm\PaymentsModule\Models\Gateways\Tatrapay
+	- Crm\PaymentsModule\Models\Gateways\Cardpay
+	- Crm\PaymentsModule\Models\Gateways\Comfortpay
+	- Crm\PaymentsModule\Models\Gateways\BankTransfer
+	- Crm\PaymentsModule\Models\Gateways\Free
 	csobLogger: Monolog\Logger('csob-logger')
-	csobGateway: Crm\PaymentsModule\Gateways\Csob(@csobLogger)
-	csobOneClickGateway: Crm\PaymentsModule\Gateways\CsobOneClick(@csobLogger)
-	- Crm\PaymentsModule\Gateways\CardPayAuthorization
+	csobGateway: Crm\PaymentsModule\Models\Gateways\Csob(@csobLogger)
+	csobOneClickGateway: Crm\PaymentsModule\Models\Gateways\CsobOneClick(@csobLogger)
+	- Crm\PaymentsModule\Models\Gateways\CardPayAuthorization
 	- Crm\PaymentsModule\Segment\PaymentCriteria
 	- Crm\PaymentsModule\Segment\PaymentCountsCriteria
 	- Crm\PaymentsModule\Segment\RecurrentPaymentCriteria
-	- Crm\PaymentsModule\User\PaymentsUserDataProvider
-	- Crm\PaymentsModule\User\RecurrentPaymentsUserDataProvider
-	- Crm\PaymentsModule\DataProvider\CanDeleteAddressDataProvider
-	- Crm\PaymentsModule\DataProvider\PaymentsClaimUserDataProvider
-	- Crm\PaymentsModule\DataProvider\RecurrentPaymentsClaimUserDataProvider
-	- Crm\PaymentsModule\DataProvider\UniversalSearchDataProvider
+	- Crm\PaymentsModule\DataProviders\PaymentsUserDataProvider
+	- Crm\PaymentsModule\DataProviders\RecurrentPaymentsUserDataProvider
+	- Crm\PaymentsModule\DataProviders\CanDeleteAddressDataProvider
+	- Crm\PaymentsModule\DataProviders\PaymentsClaimUserDataProvider
+	- Crm\PaymentsModule\DataProviders\RecurrentPaymentsClaimUserDataProvider
+	- Crm\PaymentsModule\DataProviders\UniversalSearchDataProvider
 	- Crm\PaymentsModule\Scenarios\PaymentStatusCriteria
 	- Crm\PaymentsModule\Scenarios\RecurrentPaymentStatusCriteria
 	- Crm\PaymentsModule\Scenarios\PaymentIsRecurrentChargeCriteria
@@ -116,7 +116,7 @@ services:
 	- Crm\PaymentsModule\Events\SubscriptionMovedHandler
 
 	subscribersWithPaymentWidgetFactory:
-		factory: Crm\PaymentsModule\Components\SubscribersWithPaymentWidgetFactory
+		factory: Crm\PaymentsModule\Components\SubscribersWithPaymentWidget\SubscribersWithPaymentWidgetFactory
 
 	retentionAnalysisJobHandler:
 		factory: Crm\PaymentsModule\Hermes\RetentionAnalysisJobHandler
@@ -124,37 +124,37 @@ services:
 	- Crm\PaymentsModule\Hermes\ExportPaymentsHandler
 
 	paymentCompleteRedirect:
-		factory: Crm\PaymentsModule\Model\PaymentCompleteRedirectManager
+		factory: Crm\PaymentsModule\Models\SuccessPageResolver\PaymentCompleteRedirectManager
 		setup:
-			- registerRedirectResolver(Crm\PaymentsModule\BankTransferPaymentCompleteRedirectResolver(), 10)
+			- registerRedirectResolver(Crm\PaymentsModule\Models\SuccessPageResolver\BankTransferPaymentCompleteRedirectResolver(), 10)
 			- registerRedirectResolver(Crm\PaymentsModule\Models\RedirectResolver\AuthorizationPaymentCompleteRedirectResolver(), 600)
 
 	paymentInvoiceProvider:
-		factory: Crm\PaymentsModule\DataProvider\PaymentInvoiceProviderManager
+		factory: Crm\PaymentsModule\DataProviders\PaymentInvoiceProviderManager
 
-	- Crm\PaymentsModule\Retention\RetentionAnalysis
+	- Crm\PaymentsModule\Models\Retention\RetentionAnalysis
 
 	# widgets
-	- Crm\PaymentsModule\Components\AvgMonthPaymentWidget
-	- Crm\PaymentsModule\Components\AvgSubscriptionPaymentWidget
-	- Crm\PaymentsModule\Components\UserPaymentsListing
-	- Crm\PaymentsModule\Components\ParsedMailsFailedNotification
-	- Crm\PaymentsModule\Components\TotalAmountStatWidget
-	- Crm\PaymentsModule\Components\TodayAmountStatWidget
-	- Crm\PaymentsModule\Components\MonthAmountStatWidget
-	- Crm\PaymentsModule\Components\MonthToDateAmountStatWidget
-	- Crm\PaymentsModule\Components\SubscriptionsWithActiveUnchargedRecurrentEndingWithinPeriodWidget
-	- Crm\PaymentsModule\Components\SubscriptionsWithoutExtensionEndingWithinPeriodWidget
-	- Crm\PaymentsModule\Components\PaidSubscriptionsWithoutExtensionEndingWithinPeriodWidget
-	- Crm\PaymentsModule\Components\SubscriptionTypeReports
-	- Crm\PaymentsModule\Components\MyNextRecurrentPayment
-	- Crm\PaymentsModule\Components\RefundPaymentsListWidget
+	- Crm\PaymentsModule\Components\AvgMonthPaymentWidget\AvgMonthPaymentWidget
+	- Crm\PaymentsModule\Components\AvgSubscriptionPaymentWidget\AvgSubscriptionPaymentWidget
+	- Crm\PaymentsModule\Components\UserPaymentsListing\UserPaymentsListing
+	- Crm\PaymentsModule\Components\ParsedMailsFailedNotification\ParsedMailsFailedNotification
+	- Crm\PaymentsModule\Components\TotalAmountStatWidget\TotalAmountStatWidget
+	- Crm\PaymentsModule\Components\TodayAmountStatWidget\TodayAmountStatWidget
+	- Crm\PaymentsModule\Components\MonthAmountStatWidget\MonthAmountStatWidget
+	- Crm\PaymentsModule\Components\MonthToDateAmountStatWidget\MonthToDateAmountStatWidget
+	- Crm\PaymentsModule\Components\SubscriptionsWithActiveUnchargedRecurrentEndingWithinPeriodWidget\SubscriptionsWithActiveUnchargedRecurrentEndingWithinPeriodWidget
+	- Crm\PaymentsModule\Components\SubscriptionsWithoutExtensionEndingWithinPeriodWidget\SubscriptionsWithoutExtensionEndingWithinPeriodWidget
+	- Crm\PaymentsModule\Components\PaidSubscriptionsWithoutExtensionEndingWithinPeriodWidget\PaidSubscriptionsWithoutExtensionEndingWithinPeriodWidget
+	- Crm\PaymentsModule\Components\SubscriptionTypeReports\SubscriptionTypeReports
+	- Crm\PaymentsModule\Components\MyNextRecurrentPayment\MyNextRecurrentPayment
+	- Crm\PaymentsModule\Components\RefundPaymentsListWidget\RefundPaymentsListWidget
 	- Crm\PaymentsModule\Components\ReactivateFailedRecurrentPaymentWidget\ReactivateFailedRecurrentPaymentWidget
-	- Crm\PaymentsModule\DataProvider\PaymentFromVariableSymbolDataProvider
-	- Crm\PaymentsModule\DataProvider\SubscriptionsWithActiveUnchargedRecurrentEndingWithinPeriodDataProvider
-	- Crm\PaymentsModule\DataProvider\SubscriptionsWithoutExtensionEndingWithinPeriodDataProvider
-	- Crm\PaymentsModule\DataProvider\PaymentItemTypesFilterDataProvider
-	- Crm\PaymentsModule\DataProvider\SubscriptionFormDataProvider
+	- Crm\PaymentsModule\DataProviders\PaymentFromVariableSymbolDataProvider
+	- Crm\PaymentsModule\DataProviders\SubscriptionsWithActiveUnchargedRecurrentEndingWithinPeriodDataProvider
+	- Crm\PaymentsModule\DataProviders\SubscriptionsWithoutExtensionEndingWithinPeriodDataProvider
+	- Crm\PaymentsModule\DataProviders\PaymentItemTypesFilterDataProvider
+	- Crm\PaymentsModule\DataProviders\SubscriptionFormDataProvider
 
 	cardPayDirectLogger:
 		factory: Monolog\Logger('card-pay-direct')
@@ -164,12 +164,12 @@ services:
 	cardPayDirectService: Crm\PaymentsModule\Models\Wallet\CardPayDirectService(@cardPayDirectLogger)
 
 	actualPaidSubscribersStatWidget:
-		factory: Crm\PaymentsModule\Components\ActualPaidSubscribersStatWidget
+		factory: Crm\PaymentsModule\Components\ActualPaidSubscribersStatWidget\ActualPaidSubscribersStatWidget
 		setup:
 			- setOnTheFly(true, 5)
 
 	actualFreeSubscribersStatWidget:
-		factory: Crm\PaymentsModule\Components\ActualFreeSubscribersStatWidget
+		factory: Crm\PaymentsModule\Components\ActualFreeSubscribersStatWidget\ActualFreeSubscribersStatWidget
 		setup:
 			- setOnTheFly(true, 5)
 

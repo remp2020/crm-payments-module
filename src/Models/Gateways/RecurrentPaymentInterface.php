@@ -2,9 +2,9 @@
 
 namespace Crm\PaymentsModule\Models\Gateways;
 
-use Crm\PaymentsModule\GatewayFail;
-use Crm\PaymentsModule\RecurrentPaymentFailStop;
-use Crm\PaymentsModule\RecurrentPaymentFailTry;
+use Crm\PaymentsModule\Models\GatewayFail;
+use Crm\PaymentsModule\Models\RecurrentPaymentFailStop;
+use Crm\PaymentsModule\Models\RecurrentPaymentFailTry;
 
 interface RecurrentPaymentInterface
 {

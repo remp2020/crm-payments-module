@@ -4,7 +4,7 @@ namespace Crm\PaymentsModule\Components\TotalAmountStatWidget;
 
 use Crm\ApplicationModule\Widget\BaseLazyWidget;
 use Crm\ApplicationModule\Widget\LazyWidgetManager;
-use Crm\PaymentsModule\Repository\PaymentsRepository;
+use Crm\PaymentsModule\Repositories\PaymentsRepository;
 
 /**
  * This widget fetches total amount of payments and renders line with

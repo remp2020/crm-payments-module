@@ -3,14 +3,14 @@
 namespace Crm\PaymentsModule\Presenters;
 
 use Crm\ApplicationModule\Presenters\FrontendPresenter;
-use Crm\PaymentsModule\GatewayFactory;
-use Crm\PaymentsModule\Gateways\AuthorizationInterface;
-use Crm\PaymentsModule\PaymentItem\AuthorizationPaymentItem;
-use Crm\PaymentsModule\PaymentItem\PaymentItemContainer;
-use Crm\PaymentsModule\PaymentProcessor;
-use Crm\PaymentsModule\Repository\PaymentGatewaysRepository;
-use Crm\PaymentsModule\Repository\PaymentsRepository;
-use Crm\PaymentsModule\Repository\RecurrentPaymentsRepository;
+use Crm\PaymentsModule\Models\GatewayFactory;
+use Crm\PaymentsModule\Models\Gateways\AuthorizationInterface;
+use Crm\PaymentsModule\Models\PaymentItem\AuthorizationPaymentItem;
+use Crm\PaymentsModule\Models\PaymentItem\PaymentItemContainer;
+use Crm\PaymentsModule\Models\PaymentProcessor;
+use Crm\PaymentsModule\Repositories\PaymentGatewaysRepository;
+use Crm\PaymentsModule\Repositories\PaymentsRepository;
+use Crm\PaymentsModule\Repositories\RecurrentPaymentsRepository;
 use Crm\UsersModule\Models\Auth\UserManager;
 use Nette\Application\BadRequestException;
 

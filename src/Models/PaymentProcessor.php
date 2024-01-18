@@ -3,12 +3,12 @@
 namespace Crm\PaymentsModule\Models;
 
 use Crm\PaymentsModule\Events\BeforePaymentBeginEvent;
-use Crm\PaymentsModule\Gateways\AuthorizationInterface;
-use Crm\PaymentsModule\Gateways\GatewayAbstract;
-use Crm\PaymentsModule\Gateways\RecurrentPaymentInterface;
-use Crm\PaymentsModule\Repository\PaymentLogsRepository;
-use Crm\PaymentsModule\Repository\PaymentsRepository;
-use Crm\PaymentsModule\Repository\RecurrentPaymentsRepository;
+use Crm\PaymentsModule\Models\Gateways\AuthorizationInterface;
+use Crm\PaymentsModule\Models\Gateways\GatewayAbstract;
+use Crm\PaymentsModule\Models\Gateways\RecurrentPaymentInterface;
+use Crm\PaymentsModule\Repositories\PaymentLogsRepository;
+use Crm\PaymentsModule\Repositories\PaymentsRepository;
+use Crm\PaymentsModule\Repositories\RecurrentPaymentsRepository;
 use League\Event\Emitter;
 use Nette\Http\Request;
 use Nette\Utils\Json;

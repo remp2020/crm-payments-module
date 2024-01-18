@@ -4,8 +4,8 @@ namespace Crm\PaymentsModule\Components\MyNextRecurrentPayment;
 
 use Crm\ApplicationModule\Widget\BaseLazyWidget;
 use Crm\ApplicationModule\Widget\LazyWidgetManager;
-use Crm\PaymentsModule\RecurrentPaymentsResolver;
-use Crm\PaymentsModule\Repository\RecurrentPaymentsRepository;
+use Crm\PaymentsModule\Models\RecurrentPaymentsResolver;
+use Crm\PaymentsModule\Repositories\RecurrentPaymentsRepository;
 
 /**
  * This widget fetches last active recurrent payment for specific user

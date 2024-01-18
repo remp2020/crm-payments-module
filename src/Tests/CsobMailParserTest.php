@@ -2,7 +2,7 @@
 
 namespace Crm\PaymentsModule\Tests;
 
-use Crm\PaymentsModule\MailParser\CsobMailParser;
+use Crm\PaymentsModule\Models\MailParser\CsobMailParser;
 
 class CsobMailParserTest extends PaymentsTestCase
 {

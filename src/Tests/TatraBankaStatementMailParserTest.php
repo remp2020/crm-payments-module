@@ -2,8 +2,8 @@
 
 namespace Crm\PaymentsModule\Tests;
 
-use Crm\PaymentsModule\MailParser\TatraBankaMailDecryptor;
-use Crm\PaymentsModule\MailParser\TatraBankaStatementMailParser;
+use Crm\PaymentsModule\Models\MailParser\TatraBankaMailDecryptor;
+use Crm\PaymentsModule\Models\MailParser\TatraBankaStatementMailParser;
 
 class TatraBankaStatementMailParserTest extends PaymentsTestCase
 {

@@ -3,7 +3,7 @@
 namespace Crm\PaymentsModule\Components\AuthorizationPaymentItemListWidget;
 
 use Crm\ApplicationModule\Widget\BaseLazyWidget;
-use Crm\PaymentsModule\PaymentItem\AuthorizationPaymentItem;
+use Crm\PaymentsModule\Models\PaymentItem\AuthorizationPaymentItem;
 use Nette\Database\Table\ActiveRow;
 
 class AuthorizationPaymentItemListWidget extends BaseLazyWidget

@@ -4,8 +4,8 @@ namespace Crm\PaymentsModule\Components\MonthToDateDonationAmountStatWidget;
 
 use Crm\ApplicationModule\Widget\BaseLazyWidget;
 use Crm\ApplicationModule\Widget\LazyWidgetManager;
-use Crm\PaymentsModule\PaymentItem\DonationPaymentItem;
-use Crm\PaymentsModule\Repository\PaymentsRepository;
+use Crm\PaymentsModule\Models\PaymentItem\DonationPaymentItem;
+use Crm\PaymentsModule\Repositories\PaymentsRepository;
 use Nette\Utils\DateTime;
 
 /**

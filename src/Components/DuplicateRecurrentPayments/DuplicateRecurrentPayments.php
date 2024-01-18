@@ -4,7 +4,7 @@ namespace Crm\PaymentsModule\Components\DuplicateRecurrentPayments;
 
 use Crm\ApplicationModule\Widget\BaseLazyWidget;
 use Crm\ApplicationModule\Widget\LazyWidgetManager;
-use Crm\PaymentsModule\Repository\RecurrentPaymentsRepository;
+use Crm\PaymentsModule\Repositories\RecurrentPaymentsRepository;
 use Nette\Application\BadRequestException;
 use Nette\Localization\Translator;
 

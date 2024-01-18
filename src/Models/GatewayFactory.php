@@ -1,7 +1,7 @@
 <?php
 namespace Crm\PaymentsModule\Models;
 
-use Crm\PaymentsModule\Gateways\PaymentInterface;
+use Crm\PaymentsModule\Models\Gateways\PaymentInterface;
 use Nette\DI\Container;
 
 class GatewayFactory

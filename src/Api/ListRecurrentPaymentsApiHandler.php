@@ -5,7 +5,7 @@ namespace Crm\PaymentsModule\Api;
 use Crm\ApiModule\Models\Api\ApiHandler;
 use Crm\ApiModule\Models\Params\InputParam;
 use Crm\ApiModule\Models\Params\ParamsProcessor;
-use Crm\PaymentsModule\Repository\RecurrentPaymentsRepository;
+use Crm\PaymentsModule\Repositories\RecurrentPaymentsRepository;
 use Nette\Http\Response;
 use Nette\Utils\DateTime;
 use Tomaj\NetteApi\Response\JsonApiResponse;

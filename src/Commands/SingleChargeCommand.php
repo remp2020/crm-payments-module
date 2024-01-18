@@ -3,10 +3,10 @@
 namespace Crm\PaymentsModule\Commands;
 
 use Crm\PaymentsModule\Events\BeforeRecurrentPaymentChargeEvent;
-use Crm\PaymentsModule\GatewayFactory;
-use Crm\PaymentsModule\PaymentItem\PaymentItemContainer;
-use Crm\PaymentsModule\Repository\PaymentsRepository;
-use Crm\PaymentsModule\Repository\RecurrentPaymentsRepository;
+use Crm\PaymentsModule\Models\GatewayFactory;
+use Crm\PaymentsModule\Models\PaymentItem\PaymentItemContainer;
+use Crm\PaymentsModule\Repositories\PaymentsRepository;
+use Crm\PaymentsModule\Repositories\RecurrentPaymentsRepository;
 use Crm\SubscriptionsModule\Models\PaymentItem\SubscriptionTypePaymentItem;
 use Crm\SubscriptionsModule\Repositories\SubscriptionTypesRepository;
 use League\Event\Emitter;

@@ -3,7 +3,7 @@
 namespace Crm\PaymentsModule\Events;
 
 use Crm\ApplicationModule\ActiveRowFactory;
-use Crm\PaymentsModule\Repository\RecurrentPaymentsRepository;
+use Crm\PaymentsModule\Repositories\RecurrentPaymentsRepository;
 use Crm\UsersModule\Events\NotificationEvent;
 use League\Event\AbstractListener;
 use League\Event\Emitter;

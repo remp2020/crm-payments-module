@@ -57,11 +57,11 @@
       </li>
 
       <li class="list-group-item">
-        {if $payment->status == \Crm\PaymentsModule\Repository\PaymentsRepository::STATUS_PAID || $payment->status == \Crm\PaymentsModule\Repository\PaymentsRepository::STATUS_IMPORTED}
+        {if $payment->status == \Crm\PaymentsModule\Repositories\PaymentsRepository::STATUS_PAID || $payment->status == \Crm\PaymentsModule\Repositories\PaymentsRepository::STATUS_IMPORTED}
           {var $btnClass = 'btn-success'}
-        {elseif $payment->status == \Crm\PaymentsModule\Repository\PaymentsRepository::STATUS_FORM}
+        {elseif $payment->status == \Crm\PaymentsModule\Repositories\PaymentsRepository::STATUS_FORM}
           {var $btnClass = 'btn-info'}
-        {elseif $payment->status == \Crm\PaymentsModule\Repository\PaymentsRepository::STATUS_FAIL || $payment->status == \Crm\PaymentsModule\Repository\PaymentsRepository::STATUS_TIMEOUT}
+        {elseif $payment->status == \Crm\PaymentsModule\Repositories\PaymentsRepository::STATUS_FAIL || $payment->status == \Crm\PaymentsModule\Repositories\PaymentsRepository::STATUS_TIMEOUT}
           {var $btnClass = 'btn-danger'}
         {else}
           {var $btnClass = 'btn-default'}

@@ -5,7 +5,7 @@ namespace Crm\PaymentsModule\Components\TotalUserPayments;
 use Crm\ApplicationModule\Widget\BaseLazyWidget;
 use Crm\ApplicationModule\Widget\LazyWidgetManager;
 use Crm\PaymentsModule\Models\AverageMonthPayment;
-use Crm\PaymentsModule\Repository\PaymentsRepository;
+use Crm\PaymentsModule\Repositories\PaymentsRepository;
 use Crm\UsersModule\Repositories\UserStatsRepository;
 
 /**

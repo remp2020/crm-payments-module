@@ -6,7 +6,7 @@ use Contributte\Translation\Translator;
 use Crm\ApplicationModule\Config\ApplicationConfig;
 use Crm\ApplicationModule\Criteria\ScenarioParams\NumberParam;
 use Crm\ApplicationModule\Criteria\ScenariosCriteriaInterface;
-use Crm\PaymentsModule\PaymentItem\DonationPaymentItem;
+use Crm\PaymentsModule\Models\PaymentItem\DonationPaymentItem;
 use Nette\Database\Table\ActiveRow;
 use Nette\Database\Table\Selection;
 

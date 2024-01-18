@@ -4,8 +4,8 @@ namespace Crm\PaymentsModule\Tests;
 
 use Crm\ApiModule\Tests\ApiTestTrait;
 use Crm\PaymentsModule\Api\ListRecurrentPaymentsApiHandler;
-use Crm\PaymentsModule\PaymentItem\PaymentItemContainer;
-use Crm\PaymentsModule\Repository\RecurrentPaymentsRepository;
+use Crm\PaymentsModule\Models\PaymentItem\PaymentItemContainer;
+use Crm\PaymentsModule\Repositories\RecurrentPaymentsRepository;
 use Crm\SubscriptionsModule\Models\PaymentItem\SubscriptionTypePaymentItem;
 use Crm\UsersModule\Tests\TestUserTokenAuthorization;
 use Nette\Database\Table\ActiveRow;

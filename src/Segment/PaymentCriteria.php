@@ -3,8 +3,8 @@
 namespace Crm\PaymentsModule\Segment;
 
 use Crm\ApplicationModule\Criteria\CriteriaInterface;
-use Crm\PaymentsModule\Repository\PaymentItemsRepository;
-use Crm\PaymentsModule\Repository\PaymentsRepository;
+use Crm\PaymentsModule\Repositories\PaymentItemsRepository;
+use Crm\PaymentsModule\Repositories\PaymentsRepository;
 use Crm\SegmentModule\Models\Criteria\Fields;
 use Crm\SegmentModule\Models\Params\BooleanParam;
 use Crm\SegmentModule\Models\Params\DateTimeParam;

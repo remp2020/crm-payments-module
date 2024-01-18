@@ -2,8 +2,8 @@
 
 namespace Crm\PaymentsModule\Commands;
 
-use Crm\PaymentsModule\MailConfirmation\CidGetterDownloader;
-use Crm\PaymentsModule\MailConfirmation\MailProcessor;
+use Crm\PaymentsModule\Models\MailConfirmation\CidGetterDownloader;
+use Crm\PaymentsModule\Models\MailConfirmation\MailProcessor;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;

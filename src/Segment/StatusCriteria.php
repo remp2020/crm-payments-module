@@ -3,7 +3,7 @@
 namespace Crm\PaymentsModule\Segment;
 
 use Crm\ApplicationModule\Criteria\CriteriaInterface;
-use Crm\PaymentsModule\Repository\PaymentsRepository;
+use Crm\PaymentsModule\Repositories\PaymentsRepository;
 use Crm\SegmentModule\Models\Params\ParamsBag;
 use Crm\SegmentModule\Models\Params\StringArrayParam;
 

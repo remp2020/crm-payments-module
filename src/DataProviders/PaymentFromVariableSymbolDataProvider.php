@@ -3,7 +3,7 @@
 namespace Crm\PaymentsModule\DataProviders;
 
 use Crm\ApplicationModule\DataProvider\DataProviderException;
-use Crm\PaymentsModule\Repository\PaymentsRepository;
+use Crm\PaymentsModule\Repositories\PaymentsRepository;
 use Crm\SubscriptionsModule\DataProviders\PaymentFromVariableSymbolDataProviderInterface;
 use Nette\Database\Table\ActiveRow;
 

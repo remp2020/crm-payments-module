@@ -2,9 +2,9 @@
 
 namespace Crm\PaymentsModule\Models;
 
-use Crm\PaymentsModule\PaymentItem\DonationPaymentItem;
-use Crm\PaymentsModule\Repository\PaymentsRepository;
-use Crm\PaymentsModule\Repository\RecurrentPaymentsRepository;
+use Crm\PaymentsModule\Models\PaymentItem\DonationPaymentItem;
+use Crm\PaymentsModule\Repositories\PaymentsRepository;
+use Crm\PaymentsModule\Repositories\RecurrentPaymentsRepository;
 use Crm\SubscriptionsModule\Repositories\SubscriptionTypesRepository;
 use Nette\Database\Table\ActiveRow;
 use Nette\Utils\DateTime;

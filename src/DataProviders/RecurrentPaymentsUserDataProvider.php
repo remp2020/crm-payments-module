@@ -3,7 +3,7 @@
 namespace Crm\PaymentsModule\DataProviders;
 
 use Crm\ApplicationModule\User\UserDataProviderInterface;
-use Crm\PaymentsModule\Repository\RecurrentPaymentsRepository;
+use Crm\PaymentsModule\Repositories\RecurrentPaymentsRepository;
 
 class RecurrentPaymentsUserDataProvider implements UserDataProviderInterface
 {

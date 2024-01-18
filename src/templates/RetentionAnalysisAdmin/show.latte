@@ -17,11 +17,11 @@
         <ul class="list-group">
             <li class="list-group-item"><b>{_payments.admin.retention_analysis.analysis_name}:</b> {$job->name}</li>
             <li class="list-group-item"><b>{_payments.admin.retention_analysis.state}:</b>
-                {if $job->state == \Crm\PaymentsModule\Repository\RetentionAnalysisJobsRepository::STATE_STARTED}
+                {if $job->state == \Crm\PaymentsModule\Repositories\RetentionAnalysisJobsRepository::STATE_STARTED}
                     <span class="label label-primary">{$job->state}</span>
-                {elseif $job->state == \Crm\PaymentsModule\Repository\RetentionAnalysisJobsRepository::STATE_FINISHED}
+                {elseif $job->state == \Crm\PaymentsModule\Repositories\RetentionAnalysisJobsRepository::STATE_FINISHED}
                     <span class="label label-success">{$job->state}</span>
-                {elseif $job->state == \Crm\PaymentsModule\Repository\RetentionAnalysisJobsRepository::STATE_FAILED}
+                {elseif $job->state == \Crm\PaymentsModule\Repositories\RetentionAnalysisJobsRepository::STATE_FAILED}
                     <span class="label label-danger">{$job->state}</span>
                 {else}
                     <span class="label label-info">{$job->state}</span>
@@ -39,7 +39,7 @@
         {control disabledFilterForm}
     </div>
 
-        {if $job->state == \Crm\PaymentsModule\Repository\RetentionAnalysisJobsRepository::STATE_FINISHED}
+        {if $job->state == \Crm\PaymentsModule\Repositories\RetentionAnalysisJobsRepository::STATE_FINISHED}
             <h2>{_payments.admin.retention_analysis.results}</h2>
             <div class="col-md-12">
                 <p style="font-weight: bold">{_payments.admin.retention_analysis.continue_method_explanation}</p>

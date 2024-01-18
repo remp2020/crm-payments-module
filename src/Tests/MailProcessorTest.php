@@ -2,10 +2,10 @@
 
 namespace Crm\PaymentsModule\Tests;
 
-use Crm\PaymentsModule\MailConfirmation\MailProcessor;
-use Crm\PaymentsModule\MailConfirmation\ParsedMailLogsRepository;
+use Crm\PaymentsModule\Models\MailConfirmation\MailProcessor;
 use Crm\PaymentsModule\Models\PaymentItem\PaymentItemHelper;
-use Crm\PaymentsModule\Repository\PaymentsRepository;
+use Crm\PaymentsModule\Repositories\ParsedMailLogsRepository;
+use Crm\PaymentsModule\Repositories\PaymentsRepository;
 use Crm\SubscriptionsModule\Repositories\SubscriptionTypeItemsRepository;
 use DateTime;
 use Tomaj\BankMailsParser\MailContent;

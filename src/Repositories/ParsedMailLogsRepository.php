@@ -3,8 +3,7 @@
 namespace Crm\PaymentsModule\Repositories;
 
 use Crm\ApplicationModule\Repository;
-use Crm\PaymentsModule\Repository\PaymentsRepository;
-use Crm\PaymentsModule\VariableSymbolVariant;
+use Crm\PaymentsModule\Models\VariableSymbolVariant;
 use Nette\Caching\Storage;
 use Nette\Database\Explorer;
 

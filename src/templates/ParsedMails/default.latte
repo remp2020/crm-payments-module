@@ -45,22 +45,22 @@
               {/if}
             </td>
             <td>
-              {if $log->state == \Crm\PaymentsModule\MailConfirmation\ParsedMailLogsRepository::STATE_CHANGED_TO_PAID}
+              {if $log->state == \Crm\PaymentsModule\Repositories\ParsedMailLogsRepository::STATE_CHANGED_TO_PAID}
                 <span class="label label-primary">{$log->state}</span>
-              {elseif $log->state == \Crm\PaymentsModule\MailConfirmation\ParsedMailLogsRepository::STATE_ALREADY_PAID}
+              {elseif $log->state == \Crm\PaymentsModule\Repositories\ParsedMailLogsRepository::STATE_ALREADY_PAID}
                 <span class="label label-primary">{$log->state}</span>
-              {elseif $log->state == \Crm\PaymentsModule\MailConfirmation\ParsedMailLogsRepository::STATE_DIFFERENT_AMOUNT}
+              {elseif $log->state == \Crm\PaymentsModule\Repositories\ParsedMailLogsRepository::STATE_DIFFERENT_AMOUNT}
                 <span class="label label-danger">{$log->state}</span>
-              {elseif $log->state == \Crm\PaymentsModule\MailConfirmation\ParsedMailLogsRepository::STATE_WITHOUT_VS}
+              {elseif $log->state == \Crm\PaymentsModule\Repositories\ParsedMailLogsRepository::STATE_WITHOUT_VS}
                  <span class="label label-warning">{$log->state}</span>
               {else}
                 <span class="label label-default">{$log->state}</span>
               {/if}
             </td>
             <td>
-                {if $log->payment?->status == \Crm\PaymentsModule\Repository\PaymentsRepository::STATUS_PAID}
+                {if $log->payment?->status == \Crm\PaymentsModule\Repositories\PaymentsRepository::STATUS_PAID}
                     <span class="label label-success">{$log->payment->status}</span>
-                {elseif $log->payment?->status == \Crm\PaymentsModule\Repository\PaymentsRepository::STATUS_FAIL}
+                {elseif $log->payment?->status == \Crm\PaymentsModule\Repositories\PaymentsRepository::STATUS_FAIL}
                     <span class="label label-danger">{$log->payment->status}</span>
                 {else}
                     <span class="label label-default">{$log->payment?->status}</span>

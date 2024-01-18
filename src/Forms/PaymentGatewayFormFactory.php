@@ -2,7 +2,7 @@
 
 namespace Crm\PaymentsModule\Forms;
 
-use Crm\PaymentsModule\Repository\PaymentGatewaysRepository;
+use Crm\PaymentsModule\Repositories\PaymentGatewaysRepository;
 use Nette\Application\UI\Form;
 use Nette\Localization\Translator;
 use Tomaj\Form\Renderer\BootstrapRenderer;

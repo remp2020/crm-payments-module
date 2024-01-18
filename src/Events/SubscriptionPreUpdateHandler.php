@@ -2,7 +2,7 @@
 
 namespace Crm\PaymentsModule\Events;
 
-use Crm\PaymentsModule\Repository\PaymentsRepository;
+use Crm\PaymentsModule\Repositories\PaymentsRepository;
 use Crm\SubscriptionsModule\Events\SubscriptionPreUpdateEvent;
 use League\Event\AbstractListener;
 use League\Event\EventInterface;

@@ -2,7 +2,7 @@
 
 namespace Crm\PaymentsModule\Commands;
 
-use Crm\PaymentsModule\Repository\PaymentItemsRepository;
+use Crm\PaymentsModule\Repositories\PaymentItemsRepository;
 use Crm\SubscriptionsModule\Models\PaymentItem\SubscriptionTypePaymentItem;
 use Crm\SubscriptionsModule\Repositories\SubscriptionTypeItemsRepository;
 use Nette\Database\Table\ActiveRow;

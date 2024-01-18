@@ -3,10 +3,10 @@
 namespace Crm\PaymentsModule\Commands;
 
 use Crm\ApplicationModule\Config\ApplicationConfig;
-use Crm\PaymentsModule\MailConfirmation\MailProcessor;
-use Crm\PaymentsModule\MailParser\CsobMailParser;
-use Crm\PaymentsModule\Models\MailDownloader\EmailInterface;
-use Crm\PaymentsModule\Models\MailDownloader\MailDownloaderInterface;
+use Crm\PaymentsModule\Models\MailConfirmation\EmailInterface;
+use Crm\PaymentsModule\Models\MailConfirmation\MailDownloaderInterface;
+use Crm\PaymentsModule\Models\MailConfirmation\MailProcessor;
+use Crm\PaymentsModule\Models\MailParser\CsobMailParser;
 use Nette\Utils\DateTime;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;

@@ -3,7 +3,7 @@
 namespace Crm\PaymentsModule\Repositories;
 
 use Crm\ApplicationModule\Repository;
-use Crm\PaymentsModule\GatewayFactory;
+use Crm\PaymentsModule\Models\GatewayFactory;
 use DateTime;
 use Nette\Caching\Storage;
 use Nette\Database\Explorer;

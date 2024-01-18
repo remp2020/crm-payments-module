@@ -5,21 +5,21 @@ namespace Crm\PaymentsModule\Commands;
 use Crm\ApplicationModule\Commands\DecoratedCommandTrait;
 use Crm\ApplicationModule\Config\ApplicationConfig;
 use Crm\PaymentsModule\Events\BeforeRecurrentPaymentChargeEvent;
-use Crm\PaymentsModule\GatewayFactory;
-use Crm\PaymentsModule\GatewayFail;
-use Crm\PaymentsModule\Gateways\ExternallyChargedRecurrentPaymentInterface;
-use Crm\PaymentsModule\Gateways\GatewayAbstract;
-use Crm\PaymentsModule\Gateways\RecurrentPaymentInterface;
-use Crm\PaymentsModule\PaymentItem\DonationPaymentItem;
-use Crm\PaymentsModule\PaymentItem\PaymentItemContainer;
-use Crm\PaymentsModule\RecurrentPaymentFailStop;
-use Crm\PaymentsModule\RecurrentPaymentFailTry;
-use Crm\PaymentsModule\RecurrentPaymentFastCharge;
-use Crm\PaymentsModule\RecurrentPaymentsProcessor;
-use Crm\PaymentsModule\RecurrentPaymentsResolver;
-use Crm\PaymentsModule\Repository\PaymentLogsRepository;
-use Crm\PaymentsModule\Repository\PaymentsRepository;
-use Crm\PaymentsModule\Repository\RecurrentPaymentsRepository;
+use Crm\PaymentsModule\Models\GatewayFactory;
+use Crm\PaymentsModule\Models\GatewayFail;
+use Crm\PaymentsModule\Models\Gateways\ExternallyChargedRecurrentPaymentInterface;
+use Crm\PaymentsModule\Models\Gateways\GatewayAbstract;
+use Crm\PaymentsModule\Models\Gateways\RecurrentPaymentInterface;
+use Crm\PaymentsModule\Models\PaymentItem\DonationPaymentItem;
+use Crm\PaymentsModule\Models\PaymentItem\PaymentItemContainer;
+use Crm\PaymentsModule\Models\RecurrentPaymentFailStop;
+use Crm\PaymentsModule\Models\RecurrentPaymentFailTry;
+use Crm\PaymentsModule\Models\RecurrentPaymentFastCharge;
+use Crm\PaymentsModule\Models\RecurrentPaymentsProcessor;
+use Crm\PaymentsModule\Models\RecurrentPaymentsResolver;
+use Crm\PaymentsModule\Repositories\PaymentLogsRepository;
+use Crm\PaymentsModule\Repositories\PaymentsRepository;
+use Crm\PaymentsModule\Repositories\RecurrentPaymentsRepository;
 use Crm\SubscriptionsModule\Models\PaymentItem\SubscriptionTypePaymentItem;
 use League\Event\Emitter;
 use Nette\Localization\Translator;
@@ -202,7 +202,6 @@ class RecurrentPaymentsChargeCommand extends Command
     {
         $this->emitter->emit(new BeforeRecurrentPaymentChargeEvent($recurrentPayment->payment, $recurrentPayment->cid)); // ability to modify payment
         $payment = $this->paymentsRepository->find($recurrentPayment->payment_id); // reload
-
         /** @var RecurrentPaymentInterface $gateway */
         $gateway = $this->gatewayFactory->getGateway($payment->payment_gateway->code);
         if (!$gateway instanceof GatewayAbstract) {

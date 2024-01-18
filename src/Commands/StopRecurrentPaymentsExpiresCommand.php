@@ -3,7 +3,7 @@
 namespace Crm\PaymentsModule\Commands;
 
 use Crm\PaymentsModule\Events\RecurrentPaymentCardExpiredEvent;
-use Crm\PaymentsModule\Repository\RecurrentPaymentsRepository;
+use Crm\PaymentsModule\Repositories\RecurrentPaymentsRepository;
 use League\Event\Emitter;
 use Nette\Utils\DateTime;
 use Symfony\Component\Console\Command\Command;

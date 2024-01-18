@@ -2,8 +2,8 @@
 
 namespace Crm\PaymentsModule\Models\Gateways;
 
-use Crm\PaymentsModule\CannotCheckExpiration;
-use Crm\PaymentsModule\GatewayFail;
+use Crm\PaymentsModule\Models\CannotCheckExpiration;
+use Crm\PaymentsModule\Models\GatewayFail;
 use Nette\Utils\DateTime;
 use Nette\Utils\Json;
 use Nette\Utils\Strings;

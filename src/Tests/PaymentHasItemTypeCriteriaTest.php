@@ -3,12 +3,12 @@
 namespace Crm\PaymentsModule\Tests;
 
 use Crm\ApplicationModule\Tests\DatabaseTestCase;
-use Crm\PaymentsModule\Gateways\Paypal;
-use Crm\PaymentsModule\PaymentItem\DonationPaymentItem;
-use Crm\PaymentsModule\PaymentItem\PaymentItemContainer;
-use Crm\PaymentsModule\Repository\PaymentGatewaysRepository;
-use Crm\PaymentsModule\Repository\PaymentItemsRepository;
-use Crm\PaymentsModule\Repository\PaymentsRepository;
+use Crm\PaymentsModule\Models\Gateways\Paypal;
+use Crm\PaymentsModule\Models\PaymentItem\DonationPaymentItem;
+use Crm\PaymentsModule\Models\PaymentItem\PaymentItemContainer;
+use Crm\PaymentsModule\Repositories\PaymentGatewaysRepository;
+use Crm\PaymentsModule\Repositories\PaymentItemsRepository;
+use Crm\PaymentsModule\Repositories\PaymentsRepository;
 use Crm\PaymentsModule\Scenarios\PaymentHasItemTypeCriteria;
 use Crm\PaymentsModule\Seeders\PaymentGatewaysSeeder;
 use Crm\SubscriptionsModule\Models\Builder\SubscriptionTypeBuilder;

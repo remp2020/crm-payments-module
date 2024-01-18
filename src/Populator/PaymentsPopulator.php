@@ -3,8 +3,8 @@
 namespace Crm\PaymentsModule\Populator;
 
 use Crm\ApplicationModule\Populator\AbstractPopulator;
-use Crm\PaymentsModule\Repository\PaymentsRepository;
-use Crm\PaymentsModule\Repository\RecurrentPaymentsRepository;
+use Crm\PaymentsModule\Repositories\PaymentsRepository;
+use Crm\PaymentsModule\Repositories\RecurrentPaymentsRepository;
 use Symfony\Component\Console\Helper\ProgressBar;
 
 class PaymentsPopulator extends AbstractPopulator

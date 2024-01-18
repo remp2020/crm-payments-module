@@ -5,7 +5,7 @@ namespace Crm\PaymentsModule\Components\ReactivateFailedRecurrentPaymentWidget;
 use Crm\ApplicationModule\ActiveRow;
 use Crm\ApplicationModule\Widget\BaseLazyWidget;
 use Crm\ApplicationModule\Widget\LazyWidgetManager;
-use Crm\PaymentsModule\Repository\RecurrentPaymentsRepository;
+use Crm\PaymentsModule\Repositories\RecurrentPaymentsRepository;
 
 class ReactivateFailedRecurrentPaymentWidget extends BaseLazyWidget
 {

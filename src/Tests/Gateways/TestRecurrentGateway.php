@@ -2,8 +2,8 @@
 
 namespace Crm\PaymentsModule\Tests\Gateways;
 
-use Crm\PaymentsModule\Gateways\GatewayAbstract;
-use Crm\PaymentsModule\Gateways\RecurrentPaymentInterface;
+use Crm\PaymentsModule\Models\Gateways\GatewayAbstract;
+use Crm\PaymentsModule\Models\Gateways\RecurrentPaymentInterface;
 use Omnipay\Common\Exception\InvalidRequestException;
 
 /**

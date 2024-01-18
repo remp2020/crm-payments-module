@@ -4,7 +4,7 @@ namespace Crm\PaymentsModule\Components\ParsedMailsFailedNotification;
 
 use Crm\ApplicationModule\Widget\BaseLazyWidget;
 use Crm\ApplicationModule\Widget\LazyWidgetManager;
-use Crm\PaymentsModule\MailConfirmation\ParsedMailLogsRepository;
+use Crm\PaymentsModule\Repositories\ParsedMailLogsRepository;
 
 /**
  * This widgets fetches all parsed mail logs with wrong payment amount

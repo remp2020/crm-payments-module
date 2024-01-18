@@ -2,9 +2,9 @@
 
 namespace Crm\PaymentsModule\Models\RedirectResolver;
 
-use Crm\PaymentsModule\GatewayFactory;
-use Crm\PaymentsModule\Gateways\AuthorizationInterface;
-use Crm\PaymentsModule\Model\PaymentCompleteRedirectResolver;
+use Crm\PaymentsModule\Models\GatewayFactory;
+use Crm\PaymentsModule\Models\Gateways\AuthorizationInterface;
+use Crm\PaymentsModule\Models\SuccessPageResolver\PaymentCompleteRedirectResolver;
 use Nette\Database\Table\ActiveRow;
 
 class AuthorizationPaymentCompleteRedirectResolver implements PaymentCompleteRedirectResolver

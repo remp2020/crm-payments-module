@@ -3,17 +3,17 @@
 namespace Crm\PaymentsModule\Tests;
 
 use Crm\ApplicationModule\Tests\DatabaseTestCase;
-use Crm\PaymentsModule\MailConfirmation\ParsedMailLogsRepository;
-use Crm\PaymentsModule\PaymentItem\PaymentItemContainer;
-use Crm\PaymentsModule\Repository\PaymentGatewayMetaRepository;
-use Crm\PaymentsModule\Repository\PaymentGatewaysRepository;
-use Crm\PaymentsModule\Repository\PaymentItemMetaRepository;
-use Crm\PaymentsModule\Repository\PaymentItemsRepository;
-use Crm\PaymentsModule\Repository\PaymentMetaRepository;
-use Crm\PaymentsModule\Repository\PaymentsRepository;
-use Crm\PaymentsModule\Repository\RecurrentPaymentsRepository;
+use Crm\PaymentsModule\Models\PaymentItem\PaymentItemContainer;
+use Crm\PaymentsModule\Models\VariableSymbolInterface;
+use Crm\PaymentsModule\Repositories\ParsedMailLogsRepository;
+use Crm\PaymentsModule\Repositories\PaymentGatewayMetaRepository;
+use Crm\PaymentsModule\Repositories\PaymentGatewaysRepository;
+use Crm\PaymentsModule\Repositories\PaymentItemMetaRepository;
+use Crm\PaymentsModule\Repositories\PaymentItemsRepository;
+use Crm\PaymentsModule\Repositories\PaymentMetaRepository;
+use Crm\PaymentsModule\Repositories\PaymentsRepository;
+use Crm\PaymentsModule\Repositories\RecurrentPaymentsRepository;
 use Crm\PaymentsModule\Seeders\PaymentGatewaysSeeder;
-use Crm\PaymentsModule\VariableSymbolInterface;
 use Crm\SubscriptionsModule\Models\Builder\SubscriptionTypeBuilder;
 use Crm\SubscriptionsModule\Models\PaymentItem\SubscriptionTypePaymentItem;
 use Crm\SubscriptionsModule\Repositories\SubscriptionTypeItemsRepository;

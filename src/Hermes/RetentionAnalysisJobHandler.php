@@ -2,8 +2,8 @@
 
 namespace Crm\PaymentsModule\Hermes;
 
-use Crm\PaymentsModule\Repository\RetentionAnalysisJobsRepository;
-use Crm\PaymentsModule\Retention\RetentionAnalysis;
+use Crm\PaymentsModule\Models\Retention\RetentionAnalysis;
+use Crm\PaymentsModule\Repositories\RetentionAnalysisJobsRepository;
 use Nette\Localization\Translator;
 use Psr\Log\LoggerAwareTrait;
 use Tomaj\Hermes\Handler\HandlerInterface;

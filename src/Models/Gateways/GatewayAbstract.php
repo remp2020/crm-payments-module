@@ -3,9 +3,9 @@
 namespace Crm\PaymentsModule\Models\Gateways;
 
 use Crm\ApplicationModule\Config\ApplicationConfig;
-use Crm\PaymentsModule\CannotProcessPayment;
-use Crm\PaymentsModule\RecurrentPaymentFailStop;
-use Crm\PaymentsModule\RecurrentPaymentFailTry;
+use Crm\PaymentsModule\Models\CannotProcessPayment;
+use Crm\PaymentsModule\Models\RecurrentPaymentFailStop;
+use Crm\PaymentsModule\Models\RecurrentPaymentFailTry;
 use Nette\Application\LinkGenerator;
 use Nette\Http\Response;
 use Nette\Localization\Translator;

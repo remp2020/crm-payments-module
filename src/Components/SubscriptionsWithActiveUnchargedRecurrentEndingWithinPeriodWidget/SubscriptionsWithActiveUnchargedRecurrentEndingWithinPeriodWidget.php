@@ -4,7 +4,7 @@ namespace Crm\PaymentsModule\Components\SubscriptionsWithActiveUnchargedRecurren
 
 use Crm\ApplicationModule\Widget\BaseLazyWidget;
 use Crm\ApplicationModule\Widget\LazyWidgetManager;
-use Crm\PaymentsModule\Repository\PaymentsRepository;
+use Crm\PaymentsModule\Repositories\PaymentsRepository;
 use Crm\SubscriptionsModule\Components\WidgetLegendInterface;
 use Nette\Localization\Translator;
 use Nette\Utils\DateTime;

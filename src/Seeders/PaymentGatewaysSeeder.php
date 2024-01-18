@@ -3,17 +3,17 @@
 namespace Crm\PaymentsModule\Seeders;
 
 use Crm\ApplicationModule\Seeders\ISeeder;
-use Crm\PaymentsModule\Gateways\BankTransfer;
-use Crm\PaymentsModule\Gateways\CardPayAuthorization;
-use Crm\PaymentsModule\Gateways\Cardpay;
-use Crm\PaymentsModule\Gateways\Comfortpay;
-use Crm\PaymentsModule\Gateways\Csob;
-use Crm\PaymentsModule\Gateways\CsobOneClick;
-use Crm\PaymentsModule\Gateways\Free;
-use Crm\PaymentsModule\Gateways\Paypal;
-use Crm\PaymentsModule\Gateways\PaypalReference;
-use Crm\PaymentsModule\Gateways\Tatrapay;
-use Crm\PaymentsModule\Repository\PaymentGatewaysRepository;
+use Crm\PaymentsModule\Models\Gateways\BankTransfer;
+use Crm\PaymentsModule\Models\Gateways\CardPayAuthorization;
+use Crm\PaymentsModule\Models\Gateways\Cardpay;
+use Crm\PaymentsModule\Models\Gateways\Comfortpay;
+use Crm\PaymentsModule\Models\Gateways\Csob;
+use Crm\PaymentsModule\Models\Gateways\CsobOneClick;
+use Crm\PaymentsModule\Models\Gateways\Free;
+use Crm\PaymentsModule\Models\Gateways\Paypal;
+use Crm\PaymentsModule\Models\Gateways\PaypalReference;
+use Crm\PaymentsModule\Models\Gateways\Tatrapay;
+use Crm\PaymentsModule\Repositories\PaymentGatewaysRepository;
 use Symfony\Component\Console\Output\OutputInterface;
 
 class PaymentGatewaysSeeder implements ISeeder

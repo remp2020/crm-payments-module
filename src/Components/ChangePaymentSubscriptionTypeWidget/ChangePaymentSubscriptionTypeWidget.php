@@ -6,7 +6,7 @@ use Crm\ApplicationModule\ActiveRow;
 use Crm\ApplicationModule\Widget\BaseLazyWidget;
 use Crm\ApplicationModule\Widget\LazyWidgetManager;
 use Crm\PaymentsModule\Forms\ChangePaymentSubscriptionTypeFormFactory;
-use Crm\PaymentsModule\Repository\PaymentsRepository;
+use Crm\PaymentsModule\Repositories\PaymentsRepository;
 use Nette\Application\UI\Form;
 use Nette\Localization\Translator;
 

@@ -3,7 +3,7 @@
 namespace Crm\PaymentsModule\Populator;
 
 use Crm\ApplicationModule\Populator\AbstractPopulator;
-use Crm\PaymentsModule\MailConfirmation\ParsedMailLogsRepository;
+use Crm\PaymentsModule\Repositories\ParsedMailLogsRepository;
 use Symfony\Component\Console\Helper\ProgressBar;
 
 class ParsedEmailsPopulator extends AbstractPopulator

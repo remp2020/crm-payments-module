@@ -3,9 +3,9 @@
 namespace Crm\PaymentsModule\Presenters;
 
 use Crm\ApplicationModule\Presenters\FrontendPresenter;
-use Crm\PaymentsModule\Gateways\BankTransfer;
-use Crm\PaymentsModule\PaymentAwareInterface;
-use Crm\PaymentsModule\Repository\PaymentsRepository;
+use Crm\PaymentsModule\Models\Gateways\BankTransfer;
+use Crm\PaymentsModule\Models\PaymentAwareInterface;
+use Crm\PaymentsModule\Repositories\PaymentsRepository;
 use Nette\Application\Attributes\Persistent;
 use Nette\Application\BadRequestException;
 use Nette\DI\Attributes\Inject;

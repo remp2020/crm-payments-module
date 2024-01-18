@@ -4,7 +4,7 @@ namespace Crm\PaymentsModule\DI;
 
 use Contributte\Translation\DI\TranslationProviderInterface;
 use Crm\PaymentsModule\Commands\RecurrentPaymentsChargeCommand;
-use Crm\PaymentsModule\Gateways\GatewayAbstract;
+use Crm\PaymentsModule\Models\Gateways\GatewayAbstract;
 use Nette\Application\IPresenterFactory;
 use Nette\DI\CompilerExtension;
 use Nette\Schema\Expect;

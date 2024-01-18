@@ -4,7 +4,7 @@ namespace Crm\PaymentsModule\Components\MonthToDateAmountStatWidget;
 
 use Crm\ApplicationModule\Widget\BaseLazyWidget;
 use Crm\ApplicationModule\Widget\LazyWidgetManager;
-use Crm\PaymentsModule\Repository\PaymentsRepository;
+use Crm\PaymentsModule\Repositories\PaymentsRepository;
 use Nette\Utils\DateTime;
 
 /**

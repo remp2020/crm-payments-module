@@ -2,8 +2,7 @@
 
 namespace Crm\PaymentsModule\Models\SuccessPageResolver;
 
-use Crm\PaymentsModule\Gateways\BankTransfer;
-use Crm\PaymentsModule\Model\PaymentCompleteRedirectResolver;
+use Crm\PaymentsModule\Models\Gateways\BankTransfer;
 use Nette\Database\Table\ActiveRow;
 
 class BankTransferPaymentCompleteRedirectResolver implements PaymentCompleteRedirectResolver

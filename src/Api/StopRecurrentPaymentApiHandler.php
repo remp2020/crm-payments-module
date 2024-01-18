@@ -4,7 +4,7 @@ namespace Crm\PaymentsModule\Api;
 
 use Crm\ApiModule\Models\Api\ApiHandler;
 use Crm\ApiModule\Models\Api\JsonValidationTrait;
-use Crm\PaymentsModule\Repository\RecurrentPaymentsRepository;
+use Crm\PaymentsModule\Repositories\RecurrentPaymentsRepository;
 use Nette\Http\Response;
 use Tomaj\NetteApi\Response\JsonApiResponse;
 use Tomaj\NetteApi\Response\ResponseInterface;

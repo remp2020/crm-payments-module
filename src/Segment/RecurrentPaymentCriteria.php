@@ -3,7 +3,7 @@
 namespace Crm\PaymentsModule\Segment;
 
 use Crm\ApplicationModule\Criteria\CriteriaInterface;
-use Crm\PaymentsModule\Repository\RecurrentPaymentsRepository;
+use Crm\PaymentsModule\Repositories\RecurrentPaymentsRepository;
 use Crm\SegmentModule\Models\Criteria\Fields;
 use Crm\SegmentModule\Models\Params\BooleanParam;
 use Crm\SegmentModule\Models\Params\ParamsBag;

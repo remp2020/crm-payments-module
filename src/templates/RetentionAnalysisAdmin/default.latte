@@ -52,11 +52,11 @@
 		      <td>#{$job->id}</td>
 		      <td>{$job->name}</td>
 		      <td>
-                  {if $job->state == \Crm\PaymentsModule\Repository\RetentionAnalysisJobsRepository::STATE_STARTED}
+                  {if $job->state == \Crm\PaymentsModule\Repositories\RetentionAnalysisJobsRepository::STATE_STARTED}
                     <span class="label label-primary">{$job->state}</span>
-                  {elseif $job->state == \Crm\PaymentsModule\Repository\RetentionAnalysisJobsRepository::STATE_FINISHED}
+                  {elseif $job->state == \Crm\PaymentsModule\Repositories\RetentionAnalysisJobsRepository::STATE_FINISHED}
                     <span class="label label-success">{$job->state}</span>
-                  {elseif $job->state == \Crm\PaymentsModule\Repository\RetentionAnalysisJobsRepository::STATE_FAILED}
+                  {elseif $job->state == \Crm\PaymentsModule\Repositories\RetentionAnalysisJobsRepository::STATE_FAILED}
                     <span class="label label-danger">{$job->state}</span>
                       {if $job->results}
                           <small>{\Nette\Utils\Json::decode($job->results)->error}</small>
@@ -71,10 +71,10 @@
               <td>
                   <p class="text-nowrap">
                       <a n:href="show $job->id" class="btn btn-sm btn-info" title="{_system.show}"><i class="fa fa-eye"></i></a>
-                      {if $job->state == \Crm\PaymentsModule\Repository\RetentionAnalysisJobsRepository::STATE_FINISHED}
+                      {if $job->state == \Crm\PaymentsModule\Repositories\RetentionAnalysisJobsRepository::STATE_FINISHED}
                           <a n:href="addToComparison! $job->id" class="btn btn-sm btn-info" title="{_payments.admin.retention_analysis.add_to_comparison}"><i class="fa fa-exchange-alt"></i></a>
                       {/if}
-                      {if $job->state == \Crm\PaymentsModule\Repository\RetentionAnalysisJobsRepository::STATE_FINISHED || $job->state == \Crm\PaymentsModule\Repository\RetentionAnalysisJobsRepository::STATE_FAILED}
+                      {if $job->state == \Crm\PaymentsModule\Repositories\RetentionAnalysisJobsRepository::STATE_FINISHED || $job->state == \Crm\PaymentsModule\Repositories\RetentionAnalysisJobsRepository::STATE_FAILED}
                           <a n:href="rerunJob! $job->id" class="btn btn-sm btn-warning" title="{_payments.admin.retention_analysis.rerun_job}"><i class="fa fa-play"></i></a>
                           <a n:href="removeJob! $job->id" class="btn btn-sm btn-danger" title="{_payments.admin.retention_analysis.remove_job}"><i class="fa fa-trash"></i></a>
                       {/if}

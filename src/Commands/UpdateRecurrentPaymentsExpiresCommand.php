@@ -3,10 +3,10 @@
 namespace Crm\PaymentsModule\Commands;
 
 use Crm\ApplicationModule\Commands\DecoratedCommandTrait;
-use Crm\PaymentsModule\GatewayFactory;
-use Crm\PaymentsModule\Gateways\RecurrentPaymentInterface;
-use Crm\PaymentsModule\Repository\PaymentGatewaysRepository;
-use Crm\PaymentsModule\Repository\RecurrentPaymentsRepository;
+use Crm\PaymentsModule\Models\GatewayFactory;
+use Crm\PaymentsModule\Models\Gateways\RecurrentPaymentInterface;
+use Crm\PaymentsModule\Repositories\PaymentGatewaysRepository;
+use Crm\PaymentsModule\Repositories\RecurrentPaymentsRepository;
 use Nette\Utils\DateTime;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;

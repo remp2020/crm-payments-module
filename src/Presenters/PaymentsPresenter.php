@@ -3,9 +3,9 @@
 namespace Crm\PaymentsModule\Presenters;
 
 use Crm\ApplicationModule\Presenters\FrontendPresenter;
-use Crm\PaymentsModule\RecurrentPaymentsResolver;
-use Crm\PaymentsModule\Repository\PaymentsRepository;
-use Crm\PaymentsModule\Repository\RecurrentPaymentsRepository;
+use Crm\PaymentsModule\Models\RecurrentPaymentsResolver;
+use Crm\PaymentsModule\Repositories\PaymentsRepository;
+use Crm\PaymentsModule\Repositories\RecurrentPaymentsRepository;
 use Nette\Utils\DateTime;
 
 class PaymentsPresenter extends FrontendPresenter

@@ -3,7 +3,7 @@
 namespace Crm\PaymentsModule\Models\Gateways;
 
 use Crm\ApplicationModule\Config\ApplicationConfig;
-use Crm\PaymentsModule\Repository\PaymentMetaRepository;
+use Crm\PaymentsModule\Repositories\PaymentMetaRepository;
 use Nette\Application\LinkGenerator;
 use Nette\Http\Response;
 use Nette\Localization\Translator;

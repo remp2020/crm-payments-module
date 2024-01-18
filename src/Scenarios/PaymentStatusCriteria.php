@@ -4,7 +4,7 @@ namespace Crm\PaymentsModule\Scenarios;
 
 use Crm\ApplicationModule\Criteria\ScenarioParams\StringLabeledArrayParam;
 use Crm\ApplicationModule\Criteria\ScenariosCriteriaInterface;
-use Crm\PaymentsModule\Repository\PaymentsRepository;
+use Crm\PaymentsModule\Repositories\PaymentsRepository;
 use Nette\Database\Table\ActiveRow;
 use Nette\Database\Table\Selection;
 

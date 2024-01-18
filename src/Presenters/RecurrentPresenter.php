@@ -3,16 +3,16 @@
 namespace Crm\PaymentsModule\Presenters;
 
 use Crm\ApplicationModule\Presenters\FrontendPresenter;
-use Crm\PaymentsModule\CannotProcessPayment;
-use Crm\PaymentsModule\GatewayFactory;
-use Crm\PaymentsModule\Gateways\RecurrentPaymentInterface;
-use Crm\PaymentsModule\Gateways\ReusableCardPaymentInterface;
-use Crm\PaymentsModule\Model\PaymentCompleteRedirectManager;
-use Crm\PaymentsModule\Model\PaymentCompleteRedirectResolver;
-use Crm\PaymentsModule\PaymentProcessor;
-use Crm\PaymentsModule\RecurrentPaymentsProcessor;
-use Crm\PaymentsModule\Repository\PaymentsRepository;
-use Crm\PaymentsModule\Repository\RecurrentPaymentsRepository;
+use Crm\PaymentsModule\Models\CannotProcessPayment;
+use Crm\PaymentsModule\Models\GatewayFactory;
+use Crm\PaymentsModule\Models\Gateways\RecurrentPaymentInterface;
+use Crm\PaymentsModule\Models\Gateways\ReusableCardPaymentInterface;
+use Crm\PaymentsModule\Models\PaymentProcessor;
+use Crm\PaymentsModule\Models\RecurrentPaymentsProcessor;
+use Crm\PaymentsModule\Models\SuccessPageResolver\PaymentCompleteRedirectManager;
+use Crm\PaymentsModule\Models\SuccessPageResolver\PaymentCompleteRedirectResolver;
+use Crm\PaymentsModule\Repositories\PaymentsRepository;
+use Crm\PaymentsModule\Repositories\RecurrentPaymentsRepository;
 use Nette\Application\BadRequestException;
 use Nette\DI\Attributes\Inject;
 use Nette\Database\Table\ActiveRow;

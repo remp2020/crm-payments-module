@@ -3,9 +3,9 @@
 namespace Crm\PaymentsModule\Models\Retention;
 
 use Crm\ApplicationModule\DataProvider\DataProviderManager;
-use Crm\PaymentsModule\DataProvider\RetentionAnalysisDataProviderInterface;
-use Crm\PaymentsModule\Repository\PaymentsRepository;
-use Crm\PaymentsModule\Repository\RetentionAnalysisJobsRepository;
+use Crm\PaymentsModule\DataProviders\RetentionAnalysisDataProviderInterface;
+use Crm\PaymentsModule\Repositories\PaymentsRepository;
+use Crm\PaymentsModule\Repositories\RetentionAnalysisJobsRepository;
 use Crm\SegmentModule\Models\Segment;
 use Crm\SegmentModule\Models\SegmentFactoryInterface;
 use Crm\SubscriptionsModule\Repositories\SubscriptionsRepository;

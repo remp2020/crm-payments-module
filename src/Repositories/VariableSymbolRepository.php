@@ -3,7 +3,7 @@
 namespace Crm\PaymentsModule\Repositories;
 
 use Crm\ApplicationModule\Repository;
-use Crm\PaymentsModule\VariableSymbolInterface;
+use Crm\PaymentsModule\Models\VariableSymbolInterface;
 use Nette\Database\Table\ActiveRow;
 
 class VariableSymbolRepository extends Repository implements VariableSymbolInterface

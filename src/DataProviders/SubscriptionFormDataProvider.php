@@ -4,7 +4,7 @@ namespace Crm\PaymentsModule\DataProviders;
 
 use Crm\ApplicationModule\DataProvider\DataProviderException;
 use Crm\ApplicationModule\Helpers\UserDateHelper;
-use Crm\PaymentsModule\Repository\PaymentsRepository;
+use Crm\PaymentsModule\Repositories\PaymentsRepository;
 use Crm\SubscriptionsModule\DataProviders\SubscriptionFormDataProviderInterface;
 use Crm\SubscriptionsModule\Repositories\SubscriptionsRepository;
 use Nette\Application\UI\Form;

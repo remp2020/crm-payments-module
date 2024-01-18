@@ -9,9 +9,9 @@ use Crm\ApplicationModule\Components\Graphs\GoogleLineGraphGroupControlFactoryIn
 use Crm\ApplicationModule\DataProvider\DataProviderManager;
 use Crm\ApplicationModule\Graphs\Criteria;
 use Crm\ApplicationModule\Graphs\GraphDataItem;
-use Crm\PaymentsModule\DataProvider\PaymentItemTypesFilterDataProviderInterface;
-use Crm\PaymentsModule\Repository\PaymentItemsRepository;
-use Crm\PaymentsModule\Repository\PaymentsRepository;
+use Crm\PaymentsModule\DataProviders\PaymentItemTypesFilterDataProviderInterface;
+use Crm\PaymentsModule\Repositories\PaymentItemsRepository;
+use Crm\PaymentsModule\Repositories\PaymentsRepository;
 use Nette\Application\Attributes\Persistent;
 use Nette\DI\Attributes\Inject;
 use Nette\Utils\DateTime;
