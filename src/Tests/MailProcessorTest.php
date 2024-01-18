@@ -22,7 +22,7 @@ class MailProcessorTest extends PaymentsTestCase
     {
         parent::setup();
 
-        $this->mailProcessor = $this->container->getByType(\Crm\PaymentsModule\MailConfirmation\MailProcessor::class);
+        $this->mailProcessor = $this->container->getByType(MailProcessor::class);
         $this->parsedMailLogsRepository = $this->getRepository(ParsedMailLogsRepository::class);
         $this->subscriptionTypeItemsRepository = $this->getRepository(SubscriptionTypeItemsRepository::class);
     }
