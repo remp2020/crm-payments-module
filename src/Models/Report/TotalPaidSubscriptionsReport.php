@@ -2,8 +2,8 @@
 
 namespace Crm\PaymentsModule\Report;
 
-use Crm\SubscriptionsModule\Report\BaseReport;
-use Crm\SubscriptionsModule\Report\ReportGroup;
+use Crm\SubscriptionsModule\Models\Report\BaseReport;
+use Crm\SubscriptionsModule\Models\Report\ReportGroup;
 
 class TotalPaidSubscriptionsReport extends BaseReport
 {

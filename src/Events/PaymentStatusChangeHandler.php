@@ -4,7 +4,7 @@ namespace Crm\PaymentsModule\Events;
 
 use Crm\PaymentsModule\Repository\PaymentsRepository;
 use Crm\PaymentsModule\Repository\RecurrentPaymentsRepository;
-use Crm\SubscriptionsModule\Repository\SubscriptionsRepository;
+use Crm\SubscriptionsModule\Repositories\SubscriptionsRepository;
 use League\Event\AbstractListener;
 use League\Event\EventInterface;
 use Nette\Database\Table\ActiveRow;

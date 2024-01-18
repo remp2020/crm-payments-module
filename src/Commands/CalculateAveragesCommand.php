@@ -4,7 +4,7 @@ namespace Crm\PaymentsModule\Commands;
 
 use Crm\ApplicationModule\Commands\DecoratedCommandTrait;
 use Crm\PaymentsModule\Repository\PaymentsRepository;
-use Crm\SubscriptionsModule\PaymentItem\SubscriptionTypePaymentItem;
+use Crm\SubscriptionsModule\Models\PaymentItem\SubscriptionTypePaymentItem;
 use Crm\UsersModule\Repository\UserMetaRepository;
 use Crm\UsersModule\Repository\UserStatsRepository;
 use Crm\UsersModule\Repository\UsersRepository;

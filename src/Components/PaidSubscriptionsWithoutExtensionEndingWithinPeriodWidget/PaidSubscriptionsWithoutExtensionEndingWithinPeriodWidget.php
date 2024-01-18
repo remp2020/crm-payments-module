@@ -5,7 +5,7 @@ namespace Crm\PaymentsModule\Components;
 use Crm\ApplicationModule\Widget\BaseLazyWidget;
 use Crm\ApplicationModule\Widget\LazyWidgetManager;
 use Crm\PaymentsModule\Repository\PaymentsRepository;
-use Crm\SubscriptionsModule\Components\IWidgetLegend;
+use Crm\SubscriptionsModule\Components\WidgetLegendInterface;
 use Nette\Localization\Translator;
 use Nette\Utils\DateTime;
 
@@ -15,7 +15,7 @@ use Nette\Utils\DateTime;
  *
  * @package Crm\PaymentsModule\Components
  */
-class PaidSubscriptionsWithoutExtensionEndingWithinPeriodWidget extends BaseLazyWidget implements IWidgetLegend
+class PaidSubscriptionsWithoutExtensionEndingWithinPeriodWidget extends BaseLazyWidget implements WidgetLegendInterface
 {
     private $templateName = 'paid_subscriptions_without_extension_ending_within_period.latte';
 

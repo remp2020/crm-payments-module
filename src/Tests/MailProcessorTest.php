@@ -6,7 +6,7 @@ use Crm\PaymentsModule\MailConfirmation\MailProcessor;
 use Crm\PaymentsModule\MailConfirmation\ParsedMailLogsRepository;
 use Crm\PaymentsModule\Models\PaymentItem\PaymentItemHelper;
 use Crm\PaymentsModule\Repository\PaymentsRepository;
-use Crm\SubscriptionsModule\Repository\SubscriptionTypeItemsRepository;
+use Crm\SubscriptionsModule\Repositories\SubscriptionTypeItemsRepository;
 use DateTime;
 use Tomaj\BankMailsParser\MailContent;
 

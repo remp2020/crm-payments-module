@@ -11,7 +11,7 @@ use Crm\SegmentModule\Models\Params\DateTimeParam;
 use Crm\SegmentModule\Models\Params\NumberArrayParam;
 use Crm\SegmentModule\Models\Params\ParamsBag;
 use Crm\SegmentModule\Models\Params\StringArrayParam;
-use Crm\SubscriptionsModule\Repository\SubscriptionTypesRepository;
+use Crm\SubscriptionsModule\Repositories\SubscriptionTypesRepository;
 
 class PaymentCriteria implements CriteriaInterface
 {

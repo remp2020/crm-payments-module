@@ -9,7 +9,7 @@ use Crm\PaymentsModule\Repository\PaymentGatewaysRepository;
 use Crm\PaymentsModule\Repository\PaymentsRepository;
 use Crm\PaymentsModule\Scenarios\PaymentIsRecurrentChargeCriteria;
 use Crm\PaymentsModule\Seeders\PaymentGatewaysSeeder;
-use Crm\SubscriptionsModule\Builder\SubscriptionTypeBuilder;
+use Crm\SubscriptionsModule\Models\Builder\SubscriptionTypeBuilder;
 use Crm\SubscriptionsModule\Seeders\ContentAccessSeeder;
 use Crm\SubscriptionsModule\Seeders\SubscriptionExtensionMethodsSeeder;
 use Crm\SubscriptionsModule\Seeders\SubscriptionLengthMethodSeeder;

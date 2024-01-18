@@ -10,9 +10,9 @@ use Crm\PaymentsModule\Report\PaidNextSubscriptionReport;
 use Crm\PaymentsModule\Report\StoppedOnFirstSubscriptionReport;
 use Crm\PaymentsModule\Report\TotalPaidSubscriptionsReport;
 use Crm\PaymentsModule\Report\TotalRecurrentSubscriptionsReport;
-use Crm\SubscriptionsModule\Report\ReportGroup;
-use Crm\SubscriptionsModule\Report\ReportTable;
-use Crm\SubscriptionsModule\Repository\SubscriptionTypesRepository;
+use Crm\SubscriptionsModule\Models\Report\ReportGroup;
+use Crm\SubscriptionsModule\Models\Report\ReportTable;
+use Crm\SubscriptionsModule\Repositories\SubscriptionTypesRepository;
 
 /**
  * This widget uses `ReportTable` to fetch different stats for specific subscription type

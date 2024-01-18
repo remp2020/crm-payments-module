@@ -20,7 +20,7 @@ use Crm\PaymentsModule\RecurrentPaymentsResolver;
 use Crm\PaymentsModule\Repository\PaymentLogsRepository;
 use Crm\PaymentsModule\Repository\PaymentsRepository;
 use Crm\PaymentsModule\Repository\RecurrentPaymentsRepository;
-use Crm\SubscriptionsModule\PaymentItem\SubscriptionTypePaymentItem;
+use Crm\SubscriptionsModule\Models\PaymentItem\SubscriptionTypePaymentItem;
 use League\Event\Emitter;
 use Nette\Localization\Translator;
 use Nette\Utils\DateTime;

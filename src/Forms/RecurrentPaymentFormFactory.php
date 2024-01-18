@@ -3,8 +3,8 @@
 namespace Crm\PaymentsModule\Forms;
 
 use Crm\PaymentsModule\Repository\RecurrentPaymentsRepository;
-use Crm\SubscriptionsModule\Repository\SubscriptionTypesRepository;
-use Crm\SubscriptionsModule\Subscription\SubscriptionTypeHelper;
+use Crm\SubscriptionsModule\Models\Subscription\SubscriptionTypeHelper;
+use Crm\SubscriptionsModule\Repositories\SubscriptionTypesRepository;
 use Nette\Application\UI\Form;
 use Nette\Localization\Translator;
 use Nette\Utils\DateTime;

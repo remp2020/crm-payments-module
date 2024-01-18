@@ -4,7 +4,7 @@ namespace Crm\PaymentsModule\DataProvider;
 
 use Crm\ApplicationModule\DataProvider\DataProviderException;
 use Crm\PaymentsModule\Repository\PaymentsRepository;
-use Crm\SubscriptionsModule\DataProvider\PaymentFromVariableSymbolDataProviderInterface;
+use Crm\SubscriptionsModule\DataProviders\PaymentFromVariableSymbolDataProviderInterface;
 use Nette\Database\Table\ActiveRow;
 
 class PaymentFromVariableSymbolDataProvider implements PaymentFromVariableSymbolDataProviderInterface

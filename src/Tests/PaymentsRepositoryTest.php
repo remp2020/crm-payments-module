@@ -5,9 +5,9 @@ namespace Crm\PaymentsModule\Tests;
 use Crm\PaymentsModule\Models\PaymentItem\PaymentItemHelper;
 use Crm\PaymentsModule\PaymentItem\DonationPaymentItem;
 use Crm\PaymentsModule\PaymentItem\PaymentItemContainer;
-use Crm\SubscriptionsModule\PaymentItem\SubscriptionTypePaymentItem;
-use Crm\SubscriptionsModule\Repository\SubscriptionTypeItemsRepository;
-use Crm\SubscriptionsModule\Repository\SubscriptionTypesRepository;
+use Crm\SubscriptionsModule\Models\PaymentItem\SubscriptionTypePaymentItem;
+use Crm\SubscriptionsModule\Repositories\SubscriptionTypeItemsRepository;
+use Crm\SubscriptionsModule\Repositories\SubscriptionTypesRepository;
 
 class PaymentsRepositoryTest extends PaymentsTestCase
 {

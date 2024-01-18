@@ -6,7 +6,7 @@ use Contributte\Translation\Translator;
 use Crm\ApplicationModule\Criteria\ScenarioParams\StringLabeledArrayParam;
 use Crm\ApplicationModule\Criteria\ScenariosCriteriaInterface;
 use Crm\PaymentsModule\RecurrentPaymentsResolver;
-use Crm\SubscriptionsModule\Repository\ContentAccessRepository;
+use Crm\SubscriptionsModule\Repositories\ContentAccessRepository;
 use Nette\Database\Table\ActiveRow;
 use Nette\Database\Table\Selection;
 

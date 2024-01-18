@@ -3,8 +3,8 @@
 namespace Crm\PaymentsModule\Commands;
 
 use Crm\PaymentsModule\Repository\PaymentItemsRepository;
-use Crm\SubscriptionsModule\PaymentItem\SubscriptionTypePaymentItem;
-use Crm\SubscriptionsModule\Repository\SubscriptionTypeItemsRepository;
+use Crm\SubscriptionsModule\Models\PaymentItem\SubscriptionTypePaymentItem;
+use Crm\SubscriptionsModule\Repositories\SubscriptionTypeItemsRepository;
 use Nette\Database\Table\ActiveRow;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;

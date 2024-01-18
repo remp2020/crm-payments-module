@@ -8,7 +8,7 @@ use Crm\PaymentsModule\Repository\PaymentsRepository;
 use Crm\PaymentsModule\Repository\RetentionAnalysisJobsRepository;
 use Crm\SegmentModule\Models\Segment;
 use Crm\SegmentModule\Models\SegmentFactoryInterface;
-use Crm\SubscriptionsModule\Repository\SubscriptionsRepository;
+use Crm\SubscriptionsModule\Repositories\SubscriptionsRepository;
 use Nette\Database\Table\ActiveRow;
 use Nette\Utils\DateTime;
 use Nette\Utils\Json;

@@ -5,7 +5,7 @@ namespace Crm\PaymentsModule\DataProvider;
 use Crm\ApplicationModule\DataProvider\DataProviderException;
 use Crm\ApplicationModule\Graphs\Criteria;
 use Crm\ApplicationModule\Graphs\GraphDataItem;
-use Crm\SubscriptionsModule\DataProvider\EndingSubscriptionsDataProviderInterface;
+use Crm\SubscriptionsModule\DataProviders\EndingSubscriptionsDataProviderInterface;
 use Nette\Localization\Translator;
 
 class SubscriptionsWithoutExtensionEndingWithinPeriodDataProvider implements EndingSubscriptionsDataProviderInterface

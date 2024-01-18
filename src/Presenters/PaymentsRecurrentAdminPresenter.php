@@ -12,7 +12,7 @@ use Crm\ApplicationModule\Helpers\UserDateHelper;
 use Crm\PaymentsModule\Components\DuplicateRecurrentPaymentsControlFactoryInterface;
 use Crm\PaymentsModule\Forms\RecurrentPaymentFormFactory;
 use Crm\PaymentsModule\Repository\RecurrentPaymentsRepository;
-use Crm\SubscriptionsModule\Repository\SubscriptionTypesRepository;
+use Crm\SubscriptionsModule\Repositories\SubscriptionTypesRepository;
 use Nette\Application\Attributes\Persistent;
 use Nette\Application\UI\Form;
 use Nette\DI\Attributes\Inject;

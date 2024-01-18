@@ -117,7 +117,7 @@ use Crm\PaymentsModule\Segment\ReferenceCriteria;
 use Crm\PaymentsModule\Segment\StatusCriteria;
 use Crm\PaymentsModule\User\PaymentsUserDataProvider;
 use Crm\PaymentsModule\User\RecurrentPaymentsUserDataProvider;
-use Crm\SubscriptionsModule\DataProvider\SubscriptionFormDataProviderInterface;
+use Crm\SubscriptionsModule\DataProviders\SubscriptionFormDataProviderInterface;
 use Crm\SubscriptionsModule\Events\SubscriptionMovedEvent;
 use Crm\SubscriptionsModule\Events\SubscriptionPreUpdateEvent;
 use Crm\UsersModule\Auth\UserTokenAuthorization;

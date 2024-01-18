@@ -6,7 +6,7 @@ use Crm\ApiModule\Tests\ApiTestTrait;
 use Crm\PaymentsModule\Api\ReactivateRecurrentPaymentApiHandler;
 use Crm\PaymentsModule\PaymentItem\PaymentItemContainer;
 use Crm\PaymentsModule\Repository\RecurrentPaymentsRepository;
-use Crm\SubscriptionsModule\PaymentItem\SubscriptionTypePaymentItem;
+use Crm\SubscriptionsModule\Models\PaymentItem\SubscriptionTypePaymentItem;
 use Crm\UsersModule\Auth\UserManager;
 use Crm\UsersModule\Tests\TestUserTokenAuthorization;
 use Nette\Database\Table\ActiveRow;

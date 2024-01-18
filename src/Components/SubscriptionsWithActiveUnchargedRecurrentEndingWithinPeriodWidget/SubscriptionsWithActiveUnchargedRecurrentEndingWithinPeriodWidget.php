@@ -5,7 +5,7 @@ namespace Crm\PaymentsModule\Components;
 use Crm\ApplicationModule\Widget\BaseLazyWidget;
 use Crm\ApplicationModule\Widget\LazyWidgetManager;
 use Crm\PaymentsModule\Repository\PaymentsRepository;
-use Crm\SubscriptionsModule\Components\IWidgetLegend;
+use Crm\SubscriptionsModule\Components\WidgetLegendInterface;
 use Nette\Localization\Translator;
 use Nette\Utils\DateTime;
 
@@ -15,7 +15,7 @@ use Nette\Utils\DateTime;
  *
  * @package Crm\PaymentsModule\Components
  */
-class SubscriptionsWithActiveUnchargedRecurrentEndingWithinPeriodWidget extends BaseLazyWidget implements IWidgetLegend
+class SubscriptionsWithActiveUnchargedRecurrentEndingWithinPeriodWidget extends BaseLazyWidget implements WidgetLegendInterface
 {
     private $templateName = 'subscriptions_with_active_uncharged_recurrent_ending_within_period.latte';
 

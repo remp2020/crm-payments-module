@@ -5,9 +5,9 @@ namespace Crm\PaymentsModule\Tests;
 use Crm\PaymentsModule\PaymentItem\PaymentItemContainer;
 use Crm\PaymentsModule\Repository\PaymentsRepository;
 use Crm\PaymentsModule\Scenarios\PaymentHasSubscriptionCriteria;
-use Crm\SubscriptionsModule\Builder\SubscriptionTypeBuilder;
-use Crm\SubscriptionsModule\Repository\SubscriptionTypesRepository;
-use Crm\SubscriptionsModule\Repository\SubscriptionsRepository;
+use Crm\SubscriptionsModule\Models\Builder\SubscriptionTypeBuilder;
+use Crm\SubscriptionsModule\Repositories\SubscriptionTypesRepository;
+use Crm\SubscriptionsModule\Repositories\SubscriptionsRepository;
 use PHPUnit\Framework\Attributes\DataProvider;
 
 class PaymentHasSubscriptionCriteriaTest extends PaymentsTestCase

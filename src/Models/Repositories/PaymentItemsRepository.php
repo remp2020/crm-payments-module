@@ -12,7 +12,7 @@ use Crm\PaymentsModule\Events\NewPaymentItemEvent;
 use Crm\PaymentsModule\Models\PaymentItem\PaymentItemHelper;
 use Crm\PaymentsModule\PaymentItem\PaymentItemContainer;
 use Crm\PaymentsModule\PaymentItem\PaymentItemInterface;
-use Crm\SubscriptionsModule\PaymentItem\SubscriptionTypePaymentItem;
+use Crm\SubscriptionsModule\Models\PaymentItem\SubscriptionTypePaymentItem;
 use Exception;
 use League\Event\Emitter;
 use Nette\Caching\Storage;
