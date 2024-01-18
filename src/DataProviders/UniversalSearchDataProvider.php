@@ -1,6 +1,6 @@
 <?php
 
-namespace Crm\PaymentsModule\DataProvider;
+namespace Crm\PaymentsModule\DataProviders;
 
 use Contributte\Translation\Translator;
 use Crm\AdminModule\Models\UniversalSearchDataProviderInterface;

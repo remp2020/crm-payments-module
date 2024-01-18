@@ -1,6 +1,6 @@
 <?php
 
-namespace Crm\PaymentsModule\Retention;
+namespace Crm\PaymentsModule\Models\Retention;
 
 use Crm\ApplicationModule\DataProvider\DataProviderManager;
 use Crm\PaymentsModule\DataProvider\RetentionAnalysisDataProviderInterface;

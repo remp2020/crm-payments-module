@@ -1,6 +1,6 @@
 <?php
 
-namespace Crm\PaymentsModule\Model;
+namespace Crm\PaymentsModule\Models\SuccessPageResolver;
 
 use Nette\Database\Table\ActiveRow;
 

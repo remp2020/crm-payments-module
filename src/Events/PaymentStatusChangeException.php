@@ -1,6 +1,6 @@
 <?php
 
-namespace Crm\PaymentsModule;
+namespace Crm\PaymentsModule\Events;
 
 class PaymentStatusChangeException extends \Exception
 {

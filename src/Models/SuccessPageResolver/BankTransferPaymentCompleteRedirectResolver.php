@@ -1,6 +1,6 @@
 <?php
 
-namespace Crm\PaymentsModule;
+namespace Crm\PaymentsModule\Models\SuccessPageResolver;
 
 use Crm\PaymentsModule\Gateways\BankTransfer;
 use Crm\PaymentsModule\Model\PaymentCompleteRedirectResolver;

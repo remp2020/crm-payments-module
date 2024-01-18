@@ -1,6 +1,6 @@
 <?php
 
-namespace Crm\PaymentsModule\Components;
+namespace Crm\PaymentsModule\Components\DeviceUserListingWidget;
 
 use Crm\ApplicationModule\Widget\BaseLazyWidget;
 use DeviceDetector\DeviceDetector;

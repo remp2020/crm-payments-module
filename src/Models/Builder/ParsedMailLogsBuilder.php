@@ -1,6 +1,6 @@
 <?php
 
-namespace Crm\PaymentsModule\Builder;
+namespace Crm\PaymentsModule\Models\Builder;
 
 use Crm\ApplicationModule\Builder\Builder;
 use Nette\Database\Table\ActiveRow;

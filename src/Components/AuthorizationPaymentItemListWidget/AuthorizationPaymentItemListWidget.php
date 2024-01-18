@@ -1,6 +1,6 @@
 <?php
 
-namespace Crm\PaymentsModule\Components;
+namespace Crm\PaymentsModule\Components\AuthorizationPaymentItemListWidget;
 
 use Crm\ApplicationModule\Widget\BaseLazyWidget;
 use Crm\PaymentsModule\PaymentItem\AuthorizationPaymentItem;

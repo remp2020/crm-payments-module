@@ -1,6 +1,6 @@
 <?php
 
-namespace Crm\PaymentsModule\PaymentItem;
+namespace Crm\PaymentsModule\Models\PaymentItem;
 
 use Crm\PaymentsModule\Models\PaymentItem\PaymentItemHelper;
 

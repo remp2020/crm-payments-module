@@ -1,6 +1,6 @@
 <?php
 
-namespace Crm\PaymentsModule\Components;
+namespace Crm\PaymentsModule\Components\ActualFreeSubscribersStatWidget;
 
 use Crm\SegmentModule\Components\DashboardSegmentValueBaseWidget\DashboardSegmentValueBaseWidget;
 

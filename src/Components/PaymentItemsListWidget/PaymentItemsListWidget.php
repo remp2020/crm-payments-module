@@ -1,6 +1,6 @@
 <?php
 
-namespace Crm\PaymentsModule\Components;
+namespace Crm\PaymentsModule\Components\PaymentItemsListWidget;
 
 use Crm\ApplicationModule\Widget\BaseLazyWidget;
 use Crm\SubscriptionsModule\Models\PaymentItem\SubscriptionTypePaymentItem;

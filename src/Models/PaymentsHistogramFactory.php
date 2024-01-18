@@ -1,5 +1,5 @@
 <?php
-namespace Crm\PaymentsModule;
+namespace Crm\PaymentsModule\Models;
 
 use Crm\ApplicationModule\Cache\CacheRepository;
 use Crm\ApplicationModule\Graphs\Criteria;

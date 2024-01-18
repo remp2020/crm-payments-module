@@ -1,6 +1,6 @@
 <?php
 
-namespace Crm\PaymentsModule\MailParser;
+namespace Crm\PaymentsModule\Models\MailParser;
 
 use Tomaj\BankMailsParser\MailContent;
 use Tomaj\BankMailsParser\Parser\ParserInterface;

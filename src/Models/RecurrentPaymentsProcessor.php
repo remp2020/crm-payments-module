@@ -1,6 +1,6 @@
 <?php
 
-namespace Crm\PaymentsModule;
+namespace Crm\PaymentsModule\Models;
 
 use Crm\ApplicationModule\Config\ApplicationConfig;
 use Crm\PaymentsModule\Events\BeforeRecurrentPaymentChargeEvent;

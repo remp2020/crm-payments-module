@@ -1,7 +1,7 @@
 <?php
 
 
-namespace Crm\PaymentsModule;
+namespace Crm\PaymentsModule\Models;
 
 use Crm\ApplicationModule\DataProvider\DataProviderManager;
 use Crm\PaymentsModule\DataProvider\AdminFilterFormDataProviderInterface;

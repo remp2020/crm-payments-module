@@ -1,6 +1,6 @@
 <?php
 
-namespace Crm\PaymentsModule\DataProvider;
+namespace Crm\PaymentsModule\DataProviders;
 
 use Crm\InvoicesModule\Models\Generator\PaymentNotInvoiceableException;
 use Nette\Database\Table\ActiveRow;

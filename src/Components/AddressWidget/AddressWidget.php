@@ -1,6 +1,6 @@
 <?php
 
-namespace Crm\PaymentsModule\Components;
+namespace Crm\PaymentsModule\Components\AddressWidget;
 
 use Crm\ApplicationModule\Widget\BaseLazyWidget;
 use Nette\Database\Table\ActiveRow;

@@ -1,6 +1,6 @@
 <?php
 
-namespace Crm\PaymentsModule;
+namespace Crm\PaymentsModule\Models;
 
 use Crm\PaymentsModule\Events\BeforePaymentBeginEvent;
 use Crm\PaymentsModule\Gateways\AuthorizationInterface;

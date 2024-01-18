@@ -1,5 +1,5 @@
 <?php
-namespace Crm\PaymentsModule;
+namespace Crm\PaymentsModule\Models;
 
 use Crm\PaymentsModule\Gateways\PaymentInterface;
 use Nette\DI\Container;

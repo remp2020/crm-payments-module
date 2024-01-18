@@ -1,6 +1,6 @@
 <?php
 
-namespace Crm\PaymentsModule\Report;
+namespace Crm\PaymentsModule\Models\Report;
 
 use Crm\SubscriptionsModule\Models\Report\BaseReport;
 use Crm\SubscriptionsModule\Models\Report\ReportGroup;

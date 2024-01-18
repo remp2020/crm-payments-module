@@ -1,6 +1,6 @@
 <?php
 
-namespace Crm\PaymentsModule\Components;
+namespace Crm\PaymentsModule\Components\ChangePaymentSubscriptionTypeWidget;
 
 use Crm\ApplicationModule\ActiveRow;
 use Crm\ApplicationModule\Widget\BaseLazyWidget;

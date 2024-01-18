@@ -1,6 +1,6 @@
 <?php
 
-namespace Crm\PaymentsModule;
+namespace Crm\PaymentsModule\Models;
 
 use Crm\PaymentsModule\PaymentItem\DonationPaymentItem;
 use Crm\PaymentsModule\Repository\PaymentsRepository;

@@ -9,7 +9,7 @@ use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 use Tracy\Debugger;
 
-class RecurrentPaymentsCardCheck extends Command
+class RecurrentPaymentsCardCheckCommand extends Command
 {
     private $recurrentPaymentsRepository;
 

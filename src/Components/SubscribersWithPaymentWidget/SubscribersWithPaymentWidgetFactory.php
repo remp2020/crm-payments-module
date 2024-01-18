@@ -1,6 +1,6 @@
 <?php
 
-namespace Crm\PaymentsModule\Components;
+namespace Crm\PaymentsModule\Components\SubscribersWithPaymentWidget;
 
 use Crm\ApplicationModule\Widget\LazyWidgetManager;
 use Crm\SegmentModule\Repositories\SegmentsRepository;
