@@ -2,9 +2,9 @@
 
 namespace Crm\PaymentsModule\Components\AvgSubscriptionPaymentWidget;
 
-use Crm\ApplicationModule\Cache\CacheRepository;
-use Crm\ApplicationModule\Widget\BaseLazyWidget;
-use Crm\ApplicationModule\Widget\LazyWidgetManager;
+use Crm\ApplicationModule\Models\Widget\BaseLazyWidget;
+use Crm\ApplicationModule\Models\Widget\LazyWidgetManager;
+use Crm\ApplicationModule\Repositories\CacheRepository;
 use Crm\SegmentModule\Models\SegmentWidgetInterface;
 use Crm\UsersModule\Repositories\UserStatsRepository;
 use Nette\Database\Table\ActiveRow;

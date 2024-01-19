@@ -2,10 +2,10 @@
 
 namespace Crm\PaymentsModule\Repositories;
 
-use Crm\ApplicationModule\DataProvider\DataProviderManager;
-use Crm\ApplicationModule\Repository;
-use Crm\ApplicationModule\Repository\AuditLogRepository;
-use Crm\ApplicationModule\Selection;
+use Crm\ApplicationModule\Models\DataProvider\DataProviderManager;
+use Crm\ApplicationModule\Models\Database\Repository;
+use Crm\ApplicationModule\Models\Database\Selection;
+use Crm\ApplicationModule\Repositories\AuditLogRepository;
 use Crm\PaymentsModule\DataProviders\CanUpdatePaymentItemDataProviderInterface;
 use Crm\PaymentsModule\Events\BeforeRemovePaymentItemEvent;
 use Crm\PaymentsModule\Events\NewPaymentItemEvent;

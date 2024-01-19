@@ -2,7 +2,7 @@
 
 namespace Crm\PaymentsModule\Models\Retention;
 
-use Crm\ApplicationModule\DataProvider\DataProviderManager;
+use Crm\ApplicationModule\Models\DataProvider\DataProviderManager;
 use Crm\PaymentsModule\DataProviders\RetentionAnalysisDataProviderInterface;
 use Crm\PaymentsModule\Repositories\PaymentsRepository;
 use Crm\PaymentsModule\Repositories\RetentionAnalysisJobsRepository;

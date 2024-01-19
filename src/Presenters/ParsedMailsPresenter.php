@@ -3,7 +3,7 @@
 namespace Crm\PaymentsModule\Presenters;
 
 use Crm\AdminModule\Presenters\AdminPresenter;
-use Crm\ApplicationModule\Components\PreviousNextPaginator;
+use Crm\ApplicationModule\Components\PreviousNextPaginator\PreviousNextPaginator;
 use Crm\PaymentsModule\Repositories\ParsedMailLogsRepository;
 use Crm\PaymentsModule\Repositories\PaymentsRepository;
 use Nette\Application\Attributes\Persistent;

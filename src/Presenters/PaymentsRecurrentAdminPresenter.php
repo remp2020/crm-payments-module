@@ -3,12 +3,12 @@
 namespace Crm\PaymentsModule\Presenters;
 
 use Crm\AdminModule\Presenters\AdminPresenter;
-use Crm\ApplicationModule\Components\Graphs\SmallBarGraphControlFactoryInterface;
-use Crm\ApplicationModule\Components\PreviousNextPaginator;
-use Crm\ApplicationModule\Graphs\Criteria;
-use Crm\ApplicationModule\Graphs\GraphData;
-use Crm\ApplicationModule\Graphs\GraphDataItem;
+use Crm\ApplicationModule\Components\Graphs\SmallBarGraph\SmallBarGraphControlFactoryInterface;
+use Crm\ApplicationModule\Components\PreviousNextPaginator\PreviousNextPaginator;
 use Crm\ApplicationModule\Helpers\UserDateHelper;
+use Crm\ApplicationModule\Models\Graphs\Criteria;
+use Crm\ApplicationModule\Models\Graphs\GraphData;
+use Crm\ApplicationModule\Models\Graphs\GraphDataItem;
 use Crm\PaymentsModule\Components\DuplicateRecurrentPayments\DuplicateRecurrentPaymentsControlFactoryInterface;
 use Crm\PaymentsModule\Forms\RecurrentPaymentFormFactory;
 use Crm\PaymentsModule\Repositories\RecurrentPaymentsRepository;

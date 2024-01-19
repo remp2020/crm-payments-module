@@ -2,7 +2,7 @@
 
 namespace Crm\PaymentsModule\Components\DeviceUserListingWidget;
 
-use Crm\ApplicationModule\Widget\BaseLazyWidget;
+use Crm\ApplicationModule\Models\Widget\BaseLazyWidget;
 use DeviceDetector\DeviceDetector;
 use Nette\Database\Table\ActiveRow;
 

@@ -3,7 +3,7 @@
 namespace Crm\PaymentsModule\Presenters;
 
 use Crm\AdminModule\Presenters\AdminPresenter;
-use Crm\ApplicationModule\Components\PreviousNextPaginator;
+use Crm\ApplicationModule\Components\PreviousNextPaginator\PreviousNextPaginator;
 use Crm\ApplicationModule\Hermes\HermesMessage;
 use Crm\PaymentsModule\Forms\RetentionAnalysisFilterFormFactory;
 use Crm\PaymentsModule\Models\Retention\RetentionAnalysis;

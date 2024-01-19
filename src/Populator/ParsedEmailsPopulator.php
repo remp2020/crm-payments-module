@@ -2,7 +2,7 @@
 
 namespace Crm\PaymentsModule\Populator;
 
-use Crm\ApplicationModule\Populator\AbstractPopulator;
+use Crm\ApplicationModule\Populators\AbstractPopulator;
 use Crm\PaymentsModule\Repositories\ParsedMailLogsRepository;
 use Symfony\Component\Console\Helper\ProgressBar;
 

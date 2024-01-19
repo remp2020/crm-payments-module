@@ -2,7 +2,7 @@
 
 namespace Crm\PaymentsModule\Components\SubscribersWithPaymentWidget;
 
-use Crm\ApplicationModule\Widget\LazyWidgetManager;
+use Crm\ApplicationModule\Models\Widget\LazyWidgetManager;
 use Crm\SegmentModule\Repositories\SegmentsRepository;
 use Crm\SegmentModule\Repositories\SegmentsValuesRepository;
 

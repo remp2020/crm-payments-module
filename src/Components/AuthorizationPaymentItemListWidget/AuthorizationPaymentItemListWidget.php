@@ -2,7 +2,7 @@
 
 namespace Crm\PaymentsModule\Components\AuthorizationPaymentItemListWidget;
 
-use Crm\ApplicationModule\Widget\BaseLazyWidget;
+use Crm\ApplicationModule\Models\Widget\BaseLazyWidget;
 use Crm\PaymentsModule\Models\PaymentItem\AuthorizationPaymentItem;
 use Nette\Database\Table\ActiveRow;
 

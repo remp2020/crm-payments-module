@@ -2,7 +2,7 @@
 
 namespace Crm\PaymentsModule\Forms;
 
-use Crm\ApplicationModule\ActiveRow;
+use Crm\ApplicationModule\Models\Database\ActiveRow;
 use Crm\PaymentsModule\Models\PaymentItem\PaymentItemContainer;
 use Crm\PaymentsModule\Repositories\PaymentItemsRepository;
 use Crm\PaymentsModule\Repositories\PaymentsRepository;

@@ -2,8 +2,8 @@
 
 namespace Crm\PaymentsModule\Commands;
 
-use Crm\ApplicationModule\ActiveRow;
-use Crm\ApplicationModule\ActiveRowFactory;
+use Crm\ApplicationModule\Models\Database\ActiveRow;
+use Crm\ApplicationModule\Models\Database\ActiveRowFactory;
 use Crm\PaymentsModule\Repositories\PaymentGatewaysRepository;
 use Crm\PaymentsModule\Repositories\PaymentsRepository;
 use Crm\UsersModule\Events\NotificationEvent;

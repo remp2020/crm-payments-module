@@ -3,9 +3,9 @@
 namespace Crm\PaymentsModule\Scenarios;
 
 use Contributte\Translation\Translator;
-use Crm\ApplicationModule\Config\ApplicationConfig;
-use Crm\ApplicationModule\Criteria\ScenarioParams\NumberParam;
-use Crm\ApplicationModule\Criteria\ScenariosCriteriaInterface;
+use Crm\ApplicationModule\Models\Config\ApplicationConfig;
+use Crm\ApplicationModule\Models\Criteria\ScenarioParams\NumberParam;
+use Crm\ApplicationModule\Models\Criteria\ScenariosCriteriaInterface;
 use Crm\PaymentsModule\Models\PaymentItem\DonationPaymentItem;
 use Nette\Database\Table\ActiveRow;
 use Nette\Database\Table\Selection;

@@ -3,7 +3,7 @@
 
 namespace Crm\PaymentsModule\Models;
 
-use Crm\ApplicationModule\DataProvider\DataProviderManager;
+use Crm\ApplicationModule\Models\DataProvider\DataProviderManager;
 use Crm\PaymentsModule\DataProviders\AdminFilterFormDataProviderInterface;
 use Crm\PaymentsModule\Repositories\PaymentsRepository;
 use Nette\Utils\DateTime;

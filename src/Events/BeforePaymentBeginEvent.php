@@ -2,7 +2,7 @@
 
 namespace Crm\PaymentsModule\Events;
 
-use Crm\ApplicationModule\ActiveRow;
+use Crm\ApplicationModule\Models\Database\ActiveRow;
 use League\Event\AbstractEvent;
 
 class BeforePaymentBeginEvent extends AbstractEvent implements PaymentEventInterface

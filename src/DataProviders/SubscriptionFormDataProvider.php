@@ -2,8 +2,8 @@
 
 namespace Crm\PaymentsModule\DataProviders;
 
-use Crm\ApplicationModule\DataProvider\DataProviderException;
 use Crm\ApplicationModule\Helpers\UserDateHelper;
+use Crm\ApplicationModule\Models\DataProvider\DataProviderException;
 use Crm\PaymentsModule\Repositories\PaymentsRepository;
 use Crm\SubscriptionsModule\DataProviders\SubscriptionFormDataProviderInterface;
 use Crm\SubscriptionsModule\Repositories\SubscriptionsRepository;

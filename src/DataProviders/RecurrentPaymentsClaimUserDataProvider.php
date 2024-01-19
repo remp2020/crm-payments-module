@@ -2,7 +2,7 @@
 
 namespace Crm\PaymentsModule\DataProviders;
 
-use Crm\ApplicationModule\DataProvider\DataProviderException;
+use Crm\ApplicationModule\Models\DataProvider\DataProviderException;
 use Crm\PaymentsModule\Repositories\RecurrentPaymentsRepository;
 use Crm\UsersModule\DataProviders\ClaimUserDataProviderInterface;
 

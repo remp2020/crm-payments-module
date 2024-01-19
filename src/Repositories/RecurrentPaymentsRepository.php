@@ -2,13 +2,13 @@
 
 namespace Crm\PaymentsModule\Repositories;
 
-use Crm\ApplicationModule\Cache\CacheRepository;
-use Crm\ApplicationModule\Config\ApplicationConfig;
 use Crm\ApplicationModule\Hermes\HermesMessage;
-use Crm\ApplicationModule\NowTrait;
-use Crm\ApplicationModule\Repository;
-use Crm\ApplicationModule\Repository\AuditLogRepository;
-use Crm\ApplicationModule\Selection;
+use Crm\ApplicationModule\Models\Config\ApplicationConfig;
+use Crm\ApplicationModule\Models\Database\Repository;
+use Crm\ApplicationModule\Models\Database\Selection;
+use Crm\ApplicationModule\Models\NowTrait;
+use Crm\ApplicationModule\Repositories\AuditLogRepository;
+use Crm\ApplicationModule\Repositories\CacheRepository;
 use Crm\PaymentsModule\Events\RecurrentPaymentCreatedEvent;
 use Crm\PaymentsModule\Events\RecurrentPaymentRenewedEvent;
 use Crm\PaymentsModule\Events\RecurrentPaymentStateChangedEvent;

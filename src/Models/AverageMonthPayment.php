@@ -2,7 +2,7 @@
 
 namespace Crm\PaymentsModule\Models;
 
-use Crm\ApplicationModule\Cache\CacheRepository;
+use Crm\ApplicationModule\Repositories\CacheRepository;
 use Crm\UsersModule\Repositories\UserStatsRepository;
 use Nette\Utils\DateTime;
 

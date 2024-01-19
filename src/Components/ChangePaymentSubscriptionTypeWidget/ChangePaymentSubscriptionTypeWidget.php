@@ -2,9 +2,9 @@
 
 namespace Crm\PaymentsModule\Components\ChangePaymentSubscriptionTypeWidget;
 
-use Crm\ApplicationModule\ActiveRow;
-use Crm\ApplicationModule\Widget\BaseLazyWidget;
-use Crm\ApplicationModule\Widget\LazyWidgetManager;
+use Crm\ApplicationModule\Models\Database\ActiveRow;
+use Crm\ApplicationModule\Models\Widget\BaseLazyWidget;
+use Crm\ApplicationModule\Models\Widget\LazyWidgetManager;
 use Crm\PaymentsModule\Forms\ChangePaymentSubscriptionTypeFormFactory;
 use Crm\PaymentsModule\Repositories\PaymentsRepository;
 use Nette\Application\UI\Form;

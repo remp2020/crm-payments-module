@@ -2,9 +2,9 @@
 
 namespace Crm\PaymentsModule\Forms;
 
-use Crm\ApplicationModule\Config\ApplicationConfig;
-use Crm\ApplicationModule\DataProvider\DataProviderException;
-use Crm\ApplicationModule\DataProvider\DataProviderManager;
+use Crm\ApplicationModule\Models\Config\ApplicationConfig;
+use Crm\ApplicationModule\Models\DataProvider\DataProviderException;
+use Crm\ApplicationModule\Models\DataProvider\DataProviderManager;
 use Crm\PaymentsModule\DataProviders\PaymentFormDataProviderInterface;
 use Crm\PaymentsModule\Models\PaymentItem\DonationPaymentItem;
 use Crm\PaymentsModule\Models\PaymentItem\PaymentItemContainer;

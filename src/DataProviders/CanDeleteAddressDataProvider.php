@@ -3,7 +3,7 @@
 namespace Crm\PaymentsModule\DataProviders;
 
 use Contributte\Translation\Translator;
-use Crm\ApplicationModule\DataProvider\DataProviderException;
+use Crm\ApplicationModule\Models\DataProvider\DataProviderException;
 use Crm\UsersModule\DataProviders\CanDeleteAddressDataProviderInterface;
 use Nette\Application\LinkGenerator;
 

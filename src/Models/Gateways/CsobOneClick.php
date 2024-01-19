@@ -2,8 +2,8 @@
 
 namespace Crm\PaymentsModule\Models\Gateways;
 
-use Crm\ApplicationModule\Config\ApplicationConfig;
-use Crm\ApplicationModule\Request;
+use Crm\ApplicationModule\Models\Config\ApplicationConfig;
+use Crm\ApplicationModule\Models\Request;
 use Crm\PaymentsModule\Models\GatewayFail;
 use Crm\PaymentsModule\Models\RecurrentPaymentFailStop;
 use Crm\PaymentsModule\Models\RecurrentPaymentFailTry;

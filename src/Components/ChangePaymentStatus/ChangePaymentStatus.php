@@ -2,8 +2,8 @@
 
 namespace Crm\PaymentsModule\Components\ChangePaymentStatus;
 
-use Crm\ApplicationModule\Widget\BaseLazyWidget;
-use Crm\ApplicationModule\Widget\LazyWidgetManager;
+use Crm\ApplicationModule\Models\Widget\BaseLazyWidget;
+use Crm\ApplicationModule\Models\Widget\LazyWidgetManager;
 use Crm\PaymentsModule\Repositories\PaymentsRepository;
 use Nette\Localization\Translator;
 

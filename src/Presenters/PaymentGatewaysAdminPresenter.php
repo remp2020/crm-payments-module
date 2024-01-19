@@ -3,9 +3,9 @@
 namespace Crm\PaymentsModule\Presenters;
 
 use Crm\AdminModule\Presenters\AdminPresenter;
-use Crm\ApplicationModule\Components\Graphs\GoogleLineGraphGroupControlFactoryInterface;
-use Crm\ApplicationModule\Graphs\Criteria;
-use Crm\ApplicationModule\Graphs\GraphDataItem;
+use Crm\ApplicationModule\Components\Graphs\GoogleLineGraphGroup\GoogleLineGraphGroupControlFactoryInterface;
+use Crm\ApplicationModule\Models\Graphs\Criteria;
+use Crm\ApplicationModule\Models\Graphs\GraphDataItem;
 use Crm\PaymentsModule\Components\LastPayments\LastPaymentsControlFactoryInterface;
 use Crm\PaymentsModule\Forms\PaymentGatewayFormFactory;
 use Crm\PaymentsModule\Repositories\PaymentGatewaysRepository;

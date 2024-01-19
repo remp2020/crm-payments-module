@@ -2,7 +2,7 @@
 
 namespace Crm\PaymentsModule\Commands;
 
-use Crm\ApplicationModule\Config\ApplicationConfig;
+use Crm\ApplicationModule\Models\Config\ApplicationConfig;
 use Crm\PaymentsModule\Models\MailConfirmation\EmailInterface;
 use Crm\PaymentsModule\Models\MailConfirmation\MailDownloaderInterface;
 use Crm\PaymentsModule\Models\MailConfirmation\MailProcessor;

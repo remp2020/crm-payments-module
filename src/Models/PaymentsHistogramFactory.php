@@ -1,10 +1,10 @@
 <?php
 namespace Crm\PaymentsModule\Models;
 
-use Crm\ApplicationModule\Cache\CacheRepository;
-use Crm\ApplicationModule\Graphs\Criteria;
-use Crm\ApplicationModule\Graphs\GraphData;
-use Crm\ApplicationModule\Graphs\GraphDataItem;
+use Crm\ApplicationModule\Models\Graphs\Criteria;
+use Crm\ApplicationModule\Models\Graphs\GraphData;
+use Crm\ApplicationModule\Models\Graphs\GraphDataItem;
+use Crm\ApplicationModule\Repositories\CacheRepository;
 use Nette\Utils\DateTime;
 use Nette\Utils\Json;
 use Nette\Utils\JsonException;

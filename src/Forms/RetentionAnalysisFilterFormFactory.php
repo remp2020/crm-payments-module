@@ -2,7 +2,7 @@
 
 namespace Crm\PaymentsModule\Forms;
 
-use Crm\ApplicationModule\DataProvider\DataProviderManager;
+use Crm\ApplicationModule\Models\DataProvider\DataProviderManager;
 use Crm\PaymentsModule\DataProviders\RetentionAnalysisDataProviderInterface;
 use Crm\PaymentsModule\Models\Retention\RetentionAnalysis;
 use Crm\PaymentsModule\Repositories\PaymentsRepository;

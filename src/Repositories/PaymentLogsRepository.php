@@ -2,8 +2,8 @@
 
 namespace Crm\PaymentsModule\Repositories;
 
-use Crm\ApplicationModule\Repository;
-use Crm\ApplicationModule\Repository\RetentionData;
+use Crm\ApplicationModule\Models\Database\Repository;
+use Crm\ApplicationModule\Models\Database\RetentionData;
 
 class PaymentLogsRepository extends Repository
 {

@@ -2,7 +2,7 @@
 
 namespace Crm\PaymentsModule\Presenters;
 
-use Crm\ApplicationModule\DataProvider\DataProviderManager;
+use Crm\ApplicationModule\Models\DataProvider\DataProviderManager;
 use Crm\ApplicationModule\Presenters\FrontendPresenter;
 use Crm\PaymentsModule\DataProviders\PaymentReturnGatewayDataProviderInterface;
 use Crm\PaymentsModule\Models\Gateways\GatewayAbstract;

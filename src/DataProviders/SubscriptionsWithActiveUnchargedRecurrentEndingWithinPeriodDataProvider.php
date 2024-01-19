@@ -2,9 +2,9 @@
 
 namespace Crm\PaymentsModule\DataProviders;
 
-use Crm\ApplicationModule\DataProvider\DataProviderException;
-use Crm\ApplicationModule\Graphs\Criteria;
-use Crm\ApplicationModule\Graphs\GraphDataItem;
+use Crm\ApplicationModule\Models\DataProvider\DataProviderException;
+use Crm\ApplicationModule\Models\Graphs\Criteria;
+use Crm\ApplicationModule\Models\Graphs\GraphDataItem;
 use Crm\SubscriptionsModule\DataProviders\EndingSubscriptionsDataProviderInterface;
 use Nette\Localization\Translator;
 

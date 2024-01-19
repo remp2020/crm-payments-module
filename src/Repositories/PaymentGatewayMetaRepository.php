@@ -2,7 +2,7 @@
 
 namespace Crm\PaymentsModule\Repositories;
 
-use Crm\ApplicationModule\Repository;
+use Crm\ApplicationModule\Models\Database\Repository;
 use Nette\Database\Table\ActiveRow;
 use Nette\Database\Table\Selection;
 

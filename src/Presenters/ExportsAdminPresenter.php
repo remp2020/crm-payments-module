@@ -3,9 +3,9 @@
 namespace Crm\PaymentsModule\Presenters;
 
 use Crm\AdminModule\Presenters\AdminPresenter;
-use Crm\ApplicationModule\Components\PreviousNextPaginator;
-use Crm\ApplicationModule\DataProvider\DataProviderManager;
-use Crm\ApplicationModule\Models\ApplicationMountManager;
+use Crm\ApplicationModule\Application\Managers\ApplicationMountManager;
+use Crm\ApplicationModule\Components\PreviousNextPaginator\PreviousNextPaginator;
+use Crm\ApplicationModule\Models\DataProvider\DataProviderManager;
 use League\Flysystem\UnableToDeleteFile;
 use Nette\Application\Attributes\Persistent;
 use Nette\Application\Responses\CallbackResponse;

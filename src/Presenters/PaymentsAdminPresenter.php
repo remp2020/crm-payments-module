@@ -3,10 +3,10 @@
 namespace Crm\PaymentsModule\Presenters;
 
 use Crm\AdminModule\Presenters\AdminPresenter;
-use Crm\ApplicationModule\Components\Graphs\SmallBarGraphControlFactoryInterface;
-use Crm\ApplicationModule\Components\PreviousNextPaginator;
-use Crm\ApplicationModule\DataProvider\DataProviderManager;
+use Crm\ApplicationModule\Components\Graphs\SmallBarGraph\SmallBarGraphControlFactoryInterface;
+use Crm\ApplicationModule\Components\PreviousNextPaginator\PreviousNextPaginator;
 use Crm\ApplicationModule\Hermes\HermesMessage;
+use Crm\ApplicationModule\Models\DataProvider\DataProviderManager;
 use Crm\PaymentsModule\Components\ChangePaymentStatus\ChangePaymentStatusFactoryInterface;
 use Crm\PaymentsModule\DataProviders\AdminFilterFormDataProviderInterface;
 use Crm\PaymentsModule\Forms\PaymentFormFactory;

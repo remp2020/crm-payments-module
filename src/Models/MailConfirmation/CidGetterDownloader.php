@@ -2,7 +2,7 @@
 
 namespace Crm\PaymentsModule\Models\MailConfirmation;
 
-use Crm\ApplicationModule\Config\ApplicationConfig;
+use Crm\ApplicationModule\Models\Config\ApplicationConfig;
 use Tomaj\BankMailsParser\Parser\TatraBanka\TatraBankaSimpleMailParser;
 use Tomaj\ImapMailDownloader\Downloader;
 use Tomaj\ImapMailDownloader\Email;

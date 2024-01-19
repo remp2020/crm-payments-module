@@ -2,7 +2,7 @@
 
 namespace Crm\PaymentsModule\Models\Gateways;
 
-use Crm\ApplicationModule\Config\ApplicationConfig;
+use Crm\ApplicationModule\Models\Config\ApplicationConfig;
 use Crm\PaymentsModule\Repositories\PaymentMetaRepository;
 use Crm\UsersModule\Models\Auth\UserManager;
 use Nette\Application\LinkGenerator;

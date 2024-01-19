@@ -2,7 +2,7 @@
 
 namespace Crm\PaymentsModule\Components\PaymentDonationLabelWidget;
 
-use Crm\ApplicationModule\Widget\BaseLazyWidget;
+use Crm\ApplicationModule\Models\Widget\BaseLazyWidget;
 use Nette\Database\Table\ActiveRow;
 
 class PaymentDonationLabelWidget extends BaseLazyWidget

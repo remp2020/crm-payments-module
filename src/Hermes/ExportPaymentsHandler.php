@@ -2,7 +2,7 @@
 
 namespace Crm\PaymentsModule\Hermes;
 
-use Crm\ApplicationModule\Models\ApplicationMountManager;
+use Crm\ApplicationModule\Application\Managers\ApplicationMountManager;
 use Crm\PaymentsModule\Models\AdminFilterFormData;
 use Crm\PaymentsModule\Models\FileSystem;
 use League\Csv\ByteSequence;

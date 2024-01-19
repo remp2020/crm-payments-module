@@ -2,7 +2,7 @@
 
 namespace Crm\PaymentsModule\Tests;
 
-use Crm\ApplicationModule\DataProvider\DataProviderException;
+use Crm\ApplicationModule\Models\DataProvider\DataProviderException;
 use Crm\ApplicationModule\Tests\DatabaseTestCase;
 use Crm\PaymentsModule\DataProviders\RecurrentPaymentsClaimUserDataProvider;
 use Crm\PaymentsModule\Models\GatewayFactory;

@@ -2,7 +2,7 @@
 
 namespace Crm\PaymentsModule\DataProviders;
 
-use Crm\ApplicationModule\DataProvider\DataProviderInterface;
+use Crm\ApplicationModule\Models\DataProvider\DataProviderInterface;
 
 interface PaymentReturnGatewayDataProviderInterface extends DataProviderInterface
 {

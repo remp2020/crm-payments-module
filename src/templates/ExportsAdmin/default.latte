@@ -31,8 +31,8 @@
           {foreach $exports as $export}
             <tr>
               <td>{date_timestamp_set(new Datetime(), $export['lastModified'])|userDate}</td>
-              <td><a href="{link downloadExport! $export['path']}">{\Crm\ApplicationModule\Models\ApplicationMountManager::getFileName($export['path'])}</a> <span class="label label-default">{$export['fileSize']|bytes}</span></td>
-              <td>{\Crm\ApplicationModule\Models\ApplicationMountManager::getFileName($export['path'])}</td>
+              <td><a href="{link downloadExport! $export['path']}">{\Crm\ApplicationModule\Application\Managers\ApplicationMountManager::getFileName($export['path'])}</a> <span class="label label-default">{$export['fileSize']|bytes}</span></td>
+              <td>{\Crm\ApplicationModule\Application\Managers\ApplicationMountManager::getFileName($export['path'])}</td>
               <td>
                 <a href="{link downloadExport! $export['path']}" class="btn btn-sm btn-info" title="{_payments.admin.exports.download}"><i class="fa fa-download"></i></a>
                 <a href="{link deleteExport! $export['path']}" class="btn btn-sm btn-danger" title="{_payments.admin.exports.delete}"><i class="fa fa-trash"></i></a>

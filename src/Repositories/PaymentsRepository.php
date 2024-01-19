@@ -2,13 +2,13 @@
 
 namespace Crm\PaymentsModule\Repositories;
 
-use Crm\ApplicationModule\Cache\CacheRepository;
 use Crm\ApplicationModule\Hermes\HermesMessage;
-use Crm\ApplicationModule\RedisClientFactory;
-use Crm\ApplicationModule\RedisClientTrait;
-use Crm\ApplicationModule\Repository;
-use Crm\ApplicationModule\Repository\AuditLogRepository;
-use Crm\ApplicationModule\Request;
+use Crm\ApplicationModule\Models\Database\Repository;
+use Crm\ApplicationModule\Models\Redis\RedisClientFactory;
+use Crm\ApplicationModule\Models\Redis\RedisClientTrait;
+use Crm\ApplicationModule\Models\Request;
+use Crm\ApplicationModule\Repositories\AuditLogRepository;
+use Crm\ApplicationModule\Repositories\CacheRepository;
 use Crm\PaymentsModule\Events\NewPaymentEvent;
 use Crm\PaymentsModule\Events\PaymentChangeStatusEvent;
 use Crm\PaymentsModule\Models\PaymentItem\PaymentItemContainer;
@@ -500,7 +500,7 @@ class PaymentsRepository extends Repository
      * @param DateTime $from
      * @param DateTime $to
      *
-     * @return \Crm\ApplicationModule\Selection
+     * @return \Crm\ApplicationModule\Models\Database\Selection
      */
     final public function paidBetween(DateTime $from, DateTime $to)
     {
@@ -691,7 +691,7 @@ SQL;
 
     /**
      * @param string $urlKey
-     * @return \Crm\ApplicationModule\Selection
+     * @return \Crm\ApplicationModule\Models\Database\Selection
      */
     final public function findBySalesFunnelUrlKey(string $urlKey)
     {

@@ -2,8 +2,8 @@
 
 namespace Crm\PaymentsModule\Repositories;
 
-use Crm\ApplicationModule\Repository;
-use Crm\ApplicationModule\Selection;
+use Crm\ApplicationModule\Models\Database\Repository;
+use Crm\ApplicationModule\Models\Database\Selection;
 use Nette\Database\Table\ActiveRow;
 use Nette\Utils\Json;
 

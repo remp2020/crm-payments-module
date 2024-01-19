@@ -2,7 +2,7 @@
 
 namespace Crm\PaymentsModule\Repositories;
 
-use Crm\ApplicationModule\Repository;
+use Crm\ApplicationModule\Models\Database\Repository;
 use Crm\PaymentsModule\Models\GatewayFactory;
 use DateTime;
 use Nette\Caching\Storage;
@@ -32,9 +32,9 @@ class PaymentGatewaysRepository extends Repository
             ->order('sorting');
     }
 
-    final public function find($id): ?\Crm\ApplicationModule\ActiveRow
+    final public function find($id): ?\Crm\ApplicationModule\Models\Database\ActiveRow
     {
-        /** @var \Crm\ApplicationModule\ActiveRow $result */
+        /** @var \Crm\ApplicationModule\Models\Database\ActiveRow $result */
         $result = $this->getTable()
             ->where(['id' => $id])
             ->where('code IN (?)', $this->gatewayFactory->getRegisteredCodes())
