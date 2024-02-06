@@ -2,10 +2,14 @@
 
 namespace Crm\PaymentsModule\Tests;
 
+use Crm\PaymentsModule\Models\Gateways\BankTransfer;
+use Crm\PaymentsModule\Models\Gateways\CsobOneClick;
 use Crm\PaymentsModule\Models\MailConfirmation\MailProcessor;
+use Crm\PaymentsModule\Models\PaymentItem\PaymentItemContainer;
 use Crm\PaymentsModule\Models\PaymentItem\PaymentItemHelper;
 use Crm\PaymentsModule\Repositories\ParsedMailLogsRepository;
 use Crm\PaymentsModule\Repositories\PaymentsRepository;
+use Crm\SubscriptionsModule\Models\PaymentItem\SubscriptionTypePaymentItem;
 use Crm\SubscriptionsModule\Repositories\SubscriptionTypeItemsRepository;
 use DateTime;
 use Tomaj\BankMailsParser\MailContent;
@@ -390,5 +394,34 @@ class MailProcessorTest extends PaymentsTestCase
 
         $log = $this->parsedMailLogsRepository->lastLog();
         $this->assertEquals(ParsedMailLogsRepository::STATE_ALREADY_REFUNDED, $log->state);
+    }
+
+    public function testPaymentFromOtherThanBankTransferGateway(): void
+    {
+        $amount = 10.2;
+        $variableSymbol = '7492857611';
+
+        $paymentItemContainer = $paymentItemContainer = (new PaymentItemContainer())->addItems(SubscriptionTypePaymentItem::fromSubscriptionType($this->getSubscriptionType()));
+        $csobOneClickGateway = $this->paymentGatewaysRepository->findBy('code', CsobOneClick::GATEWAY_CODE);
+
+        $payment = $this->paymentsRepository->add(
+            subscriptionType: $this->getSubscriptionType(),
+            paymentGateway: $csobOneClickGateway,
+            user: $this->getUser(),
+            paymentItemContainer: $paymentItemContainer,
+            amount: $amount,
+            variableSymbol: $variableSymbol,
+        );
+
+        $mailContent = new MailContent();
+        $mailContent->setAmount($amount);
+        $mailContent->setTransactionDate(time());
+        $mailContent->setVs($variableSymbol);
+
+        $result = $this->mailProcessor->processMail($mailContent, new TestOutput());
+        $payment = $this->paymentsRepository->find($payment->id);
+
+        $this->assertTrue($result);
+        $this->assertEquals(BankTransfer::GATEWAY_CODE, $payment->payment_gateway->code);
     }
 }

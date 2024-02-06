@@ -3,9 +3,11 @@
 namespace Crm\PaymentsModule\Models\MailConfirmation;
 
 use Crm\PaymentsModule\Models\Builder\ParsedMailLogsBuilder;
+use Crm\PaymentsModule\Models\Gateways\BankTransfer;
 use Crm\PaymentsModule\Models\Gateways\GatewayAbstract;
 use Crm\PaymentsModule\Models\PaymentProcessor;
 use Crm\PaymentsModule\Repositories\ParsedMailLogsRepository;
+use Crm\PaymentsModule\Repositories\PaymentGatewaysRepository;
 use Crm\PaymentsModule\Repositories\PaymentsRepository;
 use DateInterval;
 use Nette\Database\Table\ActiveRow;
@@ -28,7 +30,8 @@ class MailProcessor
         private PaymentsRepository $paymentsRepository,
         private PaymentProcessor $paymentProcessor,
         private ParsedMailLogsBuilder $parsedMailLogsBuilder,
-        private ParsedMailLogsRepository $parsedMailLogsRepository
+        private ParsedMailLogsRepository $parsedMailLogsRepository,
+        private PaymentGatewaysRepository $paymentGatewaysRepository,
     ) {
     }
 
@@ -130,7 +133,14 @@ class MailProcessor
         }
 
         if (in_array($payment->status, [PaymentsRepository::STATUS_FORM, PaymentsRepository::STATUS_FAIL, PaymentsRepository::STATUS_TIMEOUT], true)) {
-            $this->paymentsRepository->updateStatus($payment, PaymentsRepository::STATUS_PAID, true);
+            $payment = $this->paymentsRepository->updateStatus($payment, PaymentsRepository::STATUS_PAID, true);
+
+            if ($payment && $payment->payment_gateway->code !== BankTransfer::GATEWAY_CODE) {
+                $bankTransferPaymentGateway = $this->paymentGatewaysRepository->findByCode(BankTransfer::GATEWAY_CODE);
+                $this->paymentsRepository->update($payment, [
+                    'payment_gateway_id' => $bankTransferPaymentGateway->id,
+                ]);
+            }
 
             $state = ParsedMailLogsRepository::STATE_CHANGED_TO_PAID;
             if ($createdNewPayment) {
