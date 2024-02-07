@@ -31,16 +31,63 @@ class RecurrentPaymentsResolver
 
     /**
      * resolveSubscriptionType determines which subscriptionType will be used within the next charge.
+     *
+     * Returns:
+     * - $recurrent_payment.subscription_type
+     *   - If $subscription_type.trial_periods or $subscription_type.next_subscription_type are NOT set.
+     * - $recurrent_payment.subscription_type.next_subscription_type
+     *   - If $subscription_type.next_subscription_type is set
+     *     AND number of used trials is same or greater than $subscription_type.trial_periods.
+     * - $recurrent_payment.next_subscription_type
+     *   - If this is set. This is override of trial periods set on subscription type.
+     * - $recurrent_payment.next_subscription_type.next_subscription_type
+     *   - If this is set. This is override of trial periods set on subscription type.
+     *   - Note: This is kept, so we don't introduce breaking change. Until now, it worked this way in case
+     *           helpdesk manually set next subscription type to trial type. We wanted to skip second trial.
      */
     public function resolveSubscriptionType(ActiveRow $recurrentPayment): ActiveRow
     {
-        $subscriptionType = $this->subscriptionTypesRepository->find($recurrentPayment->subscription_type_id);
+        // if override is set directly on recurrent payment, return it
         if ($recurrentPayment->next_subscription_type_id) {
-            $subscriptionType = $this->subscriptionTypesRepository->find($recurrentPayment->next_subscription_type_id);
+            // TODO: consider removing this in the future (breaking change), it looks ridiculous
+            if ($recurrentPayment->next_subscription_type->next_subscription_type_id) {
+                return $recurrentPayment->next_subscription_type->next_subscription_type;
+            }
+            return $recurrentPayment->next_subscription_type;
         }
-        if ($subscriptionType->next_subscription_type_id) {
-            $subscriptionType = $this->subscriptionTypesRepository->find($subscriptionType->next_subscription_type_id);
+
+        /** @var ActiveRow $subscriptionType */
+        $subscriptionType = $this->subscriptionTypesRepository->find($recurrentPayment->subscription_type_id);
+
+        // next subscription OR trial periods NOT set; return current subscription type
+        if ($subscriptionType->next_subscription_type_id === null || $subscriptionType->trial_periods === 0) {
+            return $subscriptionType;
         }
+
+        // next_subscription_type_id is SET and there is single trial period (which was used by payment
+        // which created this recurrent) => return next subscription type
+        if ($subscriptionType->trial_periods === 1) {
+            return $subscriptionType->next_subscription_type;
+        }
+
+        $trialPeriodsUsed = 1; // $recurrentPayment already implies one used period
+        $previousRecurrentCharge = $recurrentPayment;
+        while ($previousRecurrentCharge) {
+            // $previousRecurrentCharge might be failed attempt, we need to find the latest successful attempt before continuing
+            $previousRecurrentCharge = $this->recurrentPaymentsRepository->latestSuccessfulRecurrentPayment($previousRecurrentCharge);
+            $previousRecurrentCharge = $this->recurrentPaymentsRepository->findByPayment($previousRecurrentCharge->parent_payment);
+            if (!$previousRecurrentCharge) {
+                break;
+            }
+            $trialPeriodsUsed += 1;
+        }
+
+        // return next non-trial subscription if user used all trials
+        // minus 1 because we are now creating recurrent payment which will affect next subscription
+        if ($trialPeriodsUsed >= $subscriptionType->trial_periods) {
+            return $subscriptionType->next_subscription_type;
+        }
+
         return $subscriptionType;
     }
 

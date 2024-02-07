@@ -6,6 +6,7 @@ use Crm\ApplicationModule\Components\Widgets\SimpleWidget\SimpleWidgetFactoryInt
 use Crm\ApplicationModule\Models\Widget\BaseLazyWidget;
 use Crm\ApplicationModule\Models\Widget\LazyWidgetManager;
 use Crm\PaymentsModule\Components\ChangePaymentStatus\ChangePaymentStatusFactoryInterface;
+use Crm\PaymentsModule\Models\RecurrentPaymentsResolver;
 use Crm\PaymentsModule\Repositories\ParsedMailLogsRepository;
 use Crm\PaymentsModule\Repositories\PaymentsRepository;
 use Crm\PaymentsModule\Repositories\RecurrentPaymentsRepository;
@@ -26,26 +27,15 @@ class UserPaymentsListing extends BaseLazyWidget
 {
     private $templateName = 'user_payments_listing.latte';
 
-    private $paymentsRepository;
-
-    private $recurrentPaymentsRepository;
-
-    private $parsedMailLogsRepository;
-
-    private $translator;
-
     public function __construct(
         LazyWidgetManager $lazyWidgetManager,
-        Translator $translator,
-        PaymentsRepository $paymentsRepository,
-        RecurrentPaymentsRepository $recurrentPaymentsRepository,
-        ParsedMailLogsRepository $parsedMailLogsRepository
+        private Translator $translator,
+        private PaymentsRepository $paymentsRepository,
+        private RecurrentPaymentsRepository $recurrentPaymentsRepository,
+        private ParsedMailLogsRepository $parsedMailLogsRepository,
+        private RecurrentPaymentsResolver $recurrentPaymentsResolver,
     ) {
         parent::__construct($lazyWidgetManager);
-        $this->paymentsRepository = $paymentsRepository;
-        $this->recurrentPaymentsRepository = $recurrentPaymentsRepository;
-        $this->parsedMailLogsRepository = $parsedMailLogsRepository;
-        $this->translator = $translator;
     }
 
     public function header($id = '')
@@ -89,6 +79,9 @@ class UserPaymentsListing extends BaseLazyWidget
         $this->template->totalRecurrentPayments = $recurrentPayments->count('*');
         $this->template->canBeStopped = function ($recurrentPayment) {
             return $this->recurrentPaymentsRepository->canBeStopped($recurrentPayment);
+        };
+        $this->template->nextSubscriptionTypeResolver = function ($recurrentPayment) {
+            return $this->recurrentPaymentsResolver->resolveSubscriptionType($recurrentPayment);
         };
 
         $this->template->setFile(__DIR__ . '/' . $this->templateName);

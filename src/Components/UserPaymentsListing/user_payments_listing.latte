@@ -194,14 +194,8 @@
         <td>
           <a href="{plink :Subscriptions:SubscriptionTypesAdmin:Show $recurrentPayment->subscription_type_id}">{$recurrentPayment->subscription_type->name}</a>
 
-          {var $nextSubscriptionType = $recurrentPayment->subscription_type}
-          {if $recurrentPayment->next_subscription_type_id}
-            {var $nextSubscriptionType = $recurrentPayment->next_subscription_type}
-          {/if}
-          {if $nextSubscriptionType->next_subscription_type_id}
-            {var $nextSubscriptionType = $nextSubscriptionType->next_subscription_type}
-          {/if}
-          {if $nextSubscriptionType && $recurrentPayment->subscription_type_id != $nextSubscriptionType->id}
+          {var $nextSubscriptionType = $nextSubscriptionTypeResolver($recurrentPayment)}
+          {if $recurrentPayment->subscription_type_id != $nextSubscriptionType->id}
             <br>
           {_"payments.admin.component.user_payments_listing.recurrent_profile.next_subscription"} <a href="{plink :Subscriptions:SubscriptionTypesAdmin:Show $nextSubscriptionType->id}">{$nextSubscriptionType->name}</a>
           {/if}
