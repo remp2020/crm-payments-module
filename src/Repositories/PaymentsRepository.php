@@ -274,9 +274,15 @@ class PaymentsRepository extends Repository
         // Updates of payment status may come from multiple sources simultaneously,
         // therefore we avoid running this code in parallel using mutex
         $mutex = new PredisMutex([$this->redis()], 'payments_repository_update_status_' . $payment->id, 10);
-        $updated = $mutex->synchronized(function () use ($payment, $status, $sendEmail, $note, $errorMessage, $salesFunnelId) {
+        $updated = $mutex->synchronized(function () use ($payment, $status, $note, $errorMessage) {
             // refresh payment since it may be stalled (because of waiting for mutex)
             $payment = $this->find($payment->id);
+
+            // prevention of obsolete update and event emitting
+            if ($payment->status === $status) {
+                return false;
+            }
+
             $data = [
                 'status' => $status,
                 'modified_at' => new DateTime()
@@ -298,6 +304,12 @@ class PaymentsRepository extends Repository
 
             parent::update($payment, $data);
 
+            return true;
+        });
+
+        if ($updated) {
+            $payment = $this->find($payment->id);
+
             $this->emitter->emit(new PaymentChangeStatusEvent($payment, $sendEmail));
             $this->hermesEmitter->emit(new HermesMessage('payment-status-change', [
                 'payment_id' => $payment->id,
@@ -305,10 +317,6 @@ class PaymentsRepository extends Repository
                 'send_email' => $sendEmail,
             ]), HermesMessage::PRIORITY_HIGH);
 
-            return true;
-        });
-
-        if ($updated) {
             return $this->find($payment->id);
         }
         return false;
