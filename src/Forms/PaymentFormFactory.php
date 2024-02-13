@@ -495,6 +495,7 @@ class PaymentFormFactory
             unset($values['payment_items']);
 
             $currentStatus = $payment->status;
+            $newStatus = $values['status'];
 
             // edit form doesn't contain donation form fields, set them from payment
             if (!isset($values['additional_amount']) || is_null($values['additional_amount'])) {
@@ -528,14 +529,17 @@ class PaymentFormFactory
                 }
             }
 
+            // We don't want "status" to be updated in mass update(), but rather via separate updateStatus() call.
+            unset($values['status']);
+
             if ($payment && $payment->status === 'form' && $allowEditPaymentItems) {
                 $this->paymentsRepository->update($payment, $values, $paymentItemContainer);
             } else {
                 $this->paymentsRepository->update($payment, $values);
             }
 
-            if ($currentStatus !== $values['status']) {
-                $this->paymentsRepository->updateStatus($payment, $values['status'], $sendNotification);
+            if ($currentStatus !== $newStatus) {
+                $this->paymentsRepository->updateStatus($payment, $newStatus, $sendNotification);
             }
 
             $this->onCallback = function () use ($form, $payment) {
