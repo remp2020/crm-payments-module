@@ -472,7 +472,7 @@ class PaymentFormFactory
                         $item->vat,
                         $item->count,
                         $meta,
-                        $item->subscription_type_item_id
+                        $item->subscription_type_item_id ?: null,
                     );
                     $paymentItemContainer->addItem($paymentItem);
                 }
