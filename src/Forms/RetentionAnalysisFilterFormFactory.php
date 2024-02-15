@@ -63,6 +63,9 @@ class RetentionAnalysisFilterFormFactory
             ->addRule(Form::MIN, 'payments.admin.retention_analysis.fields.period_length_invalid', 1)
             ->addRule(Form::MAX, 'payments.admin.retention_analysis.fields.period_length_invalid', 10000);
 
+        $form->addSelect('partition', 'payments.admin.retention_analysis.fields.partition', $this->getAvailablePartitionOptions())
+            ->setDisabled($disabled);
+
         $form->addSelect('previous_user_subscriptions', 'payments.admin.retention_analysis.fields.previous_user_subscriptions', [
             'without_previous_subscription' => $this->translator->translate('payments.admin.retention_analysis.fields.without_previous_subscription'),
             'with_previous_subscription_at_least_one_paid' => $this->translator->translate('payments.admin.retention_analysis.fields.with_previous_subscription_at_least_one_paid'),
@@ -106,5 +109,15 @@ class RetentionAnalysisFilterFormFactory
 
         $form->setDefaults($inputParams);
         return $form;
+    }
+
+    private function getAvailablePartitionOptions(): array
+    {
+        $options = [];
+        foreach (RetentionAnalysis::PARTITION_OPTIONS as $partitionOption) {
+            $options[$partitionOption] = 'payments.admin.retention_analysis.partition.' . $partitionOption;
+        }
+
+        return $options;
     }
 }

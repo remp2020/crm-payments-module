@@ -218,7 +218,7 @@ class RetentionAnalysisAdminPresenter extends AdminPresenter
         if ($this->getParameter('submitted')) {
             // Increase time limit for calculations
             set_time_limit(150);
-            $this->template->paymentCounts = $this->retentionAnalysis->precalculateMonthlyPaymentCounts($this->params);
+            $this->template->paymentCounts = $this->retentionAnalysis->precalculatePaymentCounts($this->params);
         }
     }
 
@@ -323,9 +323,13 @@ class RetentionAnalysisAdminPresenter extends AdminPresenter
     public function createComponentDisabledFilterForm(): Form
     {
         $job = $this->retentionAnalysisJobsRepository->find($this->params['job']);
-        $inputParams = Json::decode($job->params, Json::FORCE_ARRAY);
-        $results = Json::decode($job->results, Json::FORCE_ARRAY);
-        $version = (int) ($results['version'] ?? RetentionAnalysis::VERSION);
+        $inputParams = Json::decode($job->params, forceArrays: true);
+
+        $version = RetentionAnalysis::VERSION;
+        if (isset($job->results)) {
+            $results = Json::decode($job->results, forceArrays: true);
+            $version = (int) ($results['version'] ?? RetentionAnalysis::VERSION);
+        }
 
         return $this->retentionAnalysisFilterFormFactory->create($inputParams, true, $version);
     }
@@ -349,7 +353,7 @@ class RetentionAnalysisAdminPresenter extends AdminPresenter
 
     public function scheduleComputationSubmitted($form, $values)
     {
-        $params = array_filter(Json::decode($values['jsonParams'], Json::FORCE_ARRAY));
+        $params = array_filter(Json::decode($values['jsonParams'], forceArrays: true));
         unset($params['action'], $params['submitted']);
         $job = $this->retentionAnalysisJobsRepository->add($values['name'], Json::encode($params));
         $this->hermesEmitter->emit(new HermesMessage('retention-analysis-job', [

@@ -22,13 +22,13 @@
             <table class="table table-striped table-hover table-bordered">
                 <thead>
                 <tr>
-                    <th>{_payments.admin.retention_analysis.month}</th>
+                    <th>{_payments.admin.retention_analysis.span}</th>
                     <th>{_payments.admin.retention_analysis.payments_count}</th>
                 </tr>
                 </thead>
                 <tbody>
                 <tr n:foreach="$paymentCounts as $row">
-                    <td>{$row->paid_at_year}-{str_pad($row->paid_at_month, 2, "0", STR_PAD_LEFT)}</td>
+                    <td>{$row->paid_at_year}-{str_pad($row->paid_at_partition, 2, "0", STR_PAD_LEFT)}</td>
                     <td>{$row->count}</td>
                 </tr>
                 </tbody>

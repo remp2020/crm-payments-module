@@ -306,15 +306,18 @@ admin:
             without_previous_subscription: Ohne vorheriges Abonnement
             min_date_of_payment: Zahlungen ab (Datum)
             with_previous_subscription_all_unpaid: Mit früheren Abonnements - alle unbezahlt
+            partition: Partition
         errors:
             unexpected_error: Es gab einen unerwarteten Fehler. Die Einzelheiten des Fehlers wurden protokolliert.
             long_execution_time: Die Analyse wurde nicht innerhalb des Zeitlimits von %minutes% Minuten abgeschlossen. Bitte grenzen Sie die Parameter weiter ein.
+        partition:
+            month: Monat
+            week: Woche
         analyses_comparison: Vergleich der Analysen
         created_at: Angelegt am
         finished_at: Beendet
-        first_subscription_month_count: Monat des ersten Abonnements / Anzahl der Abonnenten
+        first_subscription_date_span_count: Monat des ersten Abonnements / Anzahl der Abonnenten
         compare: Vergleichen
-        month: Monatlich
         actions: Aktionen
         parameters: Parameter
         results: Ergebnisse

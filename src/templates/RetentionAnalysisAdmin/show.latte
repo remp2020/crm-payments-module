@@ -40,13 +40,13 @@
     </div>
 
         {if $job->state == \Crm\PaymentsModule\Repositories\RetentionAnalysisJobsRepository::STATE_FINISHED}
-            <h2>{_payments.admin.retention_analysis.results}</h2>
             <div class="col-md-12">
+                <h2>{_payments.admin.retention_analysis.results}</h2>
                 <p style="font-weight: bold">{_payments.admin.retention_analysis.continue_method_explanation}</p>
                     <table class="table table-hover table-borderless">
                         <thead>
                             <tr>
-                                <th rowspan="2" colspan="2">{_payments.admin.retention_analysis.first_subscription_month_count}</th>
+                                <th rowspan="2" colspan="2">{_payments.admin.retention_analysis.first_subscription_date_span_count}</th>
                                 <th style="text-align: center" colspan="{$colsCount}">{_payments.admin.retention_analysis.period_explanation}</th>
                             </tr>
                             <tr>

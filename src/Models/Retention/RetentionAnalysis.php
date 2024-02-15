@@ -3,6 +3,7 @@
 namespace Crm\PaymentsModule\Models\Retention;
 
 use Crm\ApplicationModule\Models\DataProvider\DataProviderManager;
+use Crm\ApplicationModule\Models\NowTrait;
 use Crm\PaymentsModule\DataProviders\RetentionAnalysisDataProviderInterface;
 use Crm\PaymentsModule\Repositories\PaymentsRepository;
 use Crm\PaymentsModule\Repositories\RetentionAnalysisJobsRepository;
@@ -18,7 +19,17 @@ use Tracy\ILogger;
 
 class RetentionAnalysis
 {
+    use NowTrait;
+
     public const VERSION = 2;
+
+    public const PARTITION_MONTH = 'month';
+    public const PARTITION_WEEK = 'week';
+
+    public const PARTITION_OPTIONS = [
+        RetentionAnalysis::PARTITION_MONTH,
+        RetentionAnalysis::PARTITION_WEEK,
+    ];
 
     public function __construct(
         private PaymentsRepository $paymentsRepository,
@@ -30,21 +41,43 @@ class RetentionAnalysis
     }
 
     /**
-     * Computes preview of monthly payment counts, used later as a basis for retention analysis.
+     * Computes preview of payment counts based parameters entered by users,
+     * used later as a basis for retention analysis.
      * @param array $inputParams Form parameters entered by users
      *
-     * @return array containing ActiveRows with attributes 'paid_at_year', 'paid_at_month', 'count'
+     * @return array containing ActiveRows with attributes 'paid_at_year', 'paid_at_partition', 'count'
      */
-    public function precalculateMonthlyPaymentCounts(array $inputParams): array
+    public function precalculatePaymentCounts(array $inputParams): array
     {
         [$innerSql, $innerSqlParams] = $this->loadPaymentsSql($inputParams);
 
+        $subQueryName = 't';
+        $partitionSql = $this->getSqlPartition($inputParams, $subQueryName);
         $sql = <<<SQL
-SELECT YEAR(t.paid_at) AS paid_at_year, MONTH(t.paid_at) AS paid_at_month, COUNT(*) AS count
-  FROM ({$innerSql}) t
-  GROUP BY YEAR(t.paid_at), MONTH(t.paid_at)
+SELECT {$partitionSql}, COUNT(*) AS count
+  FROM ({$innerSql}) {$subQueryName}
+  GROUP BY 1,2
+  ORDER BY 1,2
 SQL;
         return $this->paymentsRepository->getDatabase()->query($sql, ...$innerSqlParams)->fetchAll();
+    }
+
+    private function getSqlPartition($inputParams, $subQueryName)
+    {
+        if ($inputParams['partition'] === self::PARTITION_MONTH) {
+            return <<<SQL
+                YEAR({$subQueryName}.paid_at) AS paid_at_year, MONTH({$subQueryName}.paid_at) AS paid_at_partition
+                SQL;
+        }
+
+        if ($inputParams['partition'] === self::PARTITION_WEEK) {
+            return <<<SQL
+                YEARWEEK({$subQueryName}.paid_at) DIV 100 AS paid_at_year,
+                YEARWEEK({$subQueryName}.paid_at, 3) MOD 100 AS paid_at_partition
+                SQL;
+        }
+
+        throw new \InvalidArgumentException("parameter 'partition' has invalid value " . $inputParams['partition']);
     }
 
     /**
@@ -66,7 +99,7 @@ SQL;
             'started_at' => new \DateTime(),
         ]);
 
-        $jobParams = Json::decode($job->params, Json::FORCE_ARRAY);
+        $jobParams = Json::decode($job->params, forceArrays: true);
 
         // Fix missing params from previous versions
         $dirtyFlag = false;
@@ -78,13 +111,17 @@ SQL;
             $jobParams['period_length'] = 31;
             $dirtyFlag = true;
         }
+        if (!isset($jobParams['partition'])) {
+            $jobParams['partition'] = self::PARTITION_MONTH;
+            $dirtyFlag = true;
+        }
         if ($dirtyFlag) {
             $this->retentionAnalysisJobsRepository->update($job, [
                 'params' => Json::encode($jobParams)
             ]);
         }
 
-        $now = new DateTime();
+        $now = DateTime::from($this->getNow());
         [$sql, $sqlParams] = $this->loadPaymentsSql($jobParams);
 
         $payments = $this->paymentsRepository->getDatabase()->query($sql, ...$sqlParams);
@@ -92,7 +129,7 @@ SQL;
         $retention = [];
         foreach ($payments as $record) {
             [$periods, $lastIncomplete] = $this->getPeriods($record->paid_at, $now, $jobParams);
-            $paidAtKey = $record->paid_at->format('Y-m');
+            $paidAtKey = $this->getPartition($record->paid_at, $jobParams);
 
             foreach ($periods as $periodNumber => $period) {
                 if (!array_key_exists($paidAtKey, $retention)) {
@@ -205,6 +242,19 @@ SQL;
     GROUP BY payments.user_id
 SQL;
         return [$sql, $whereParams];
+    }
+
+    private function getPartition(DateTime $paidAt, array $jobParams): string
+    {
+        if ($jobParams['partition'] === self::PARTITION_WEEK) {
+            return $paidAt->format('o-W');
+        }
+
+        if ($jobParams['partition'] === self::PARTITION_MONTH) {
+            return $paidAt->format('Y-m');
+        }
+
+        throw new \InvalidArgumentException("parameter 'partition' has invalid value " . $jobParams['partition']);
     }
 
     private function getPeriods(DateTime $paidAt, DateTime $upTo, array $jobParams): array

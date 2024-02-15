@@ -330,7 +330,7 @@ admin:
         analysis_name: Názov analýzy
         state: Stav
         together: Spolu
-        month: Mesiac
+        span: "Obdobie (podľa zvoleného rozdelenia)"
         payments_count: "Počet používateľov s prvou platbou (podľa zvoleného filtra)"
         results_not_available: "Výsledky nie sú v tomto stave analýzy dostupné."
         actions: Akcie
@@ -343,7 +343,7 @@ admin:
         period_explanation: "PERIÓDA"
         continue_method_explanation: "Metóda CONTINUE - do výpočtu sú zahrnuté všetky predplatné, aj po prerušení."
         analysis_was_scheduled: "Analýza bola zadaná, výsledok sa objaví po dokončení v tabuľke."
-        first_subscription_month_count: "Mesiac prvého predplatného / počet predplatiteľov"
+        first_subscription_date_span_count: "Obdobie prvého predplatného / počet predplatiteľov"
         back: Späť na zoznam
         incomplete_period_explanation: "Perióda nie je dokončená pre všetkých užívateľov, niektoré predplatné ešte môžu byť obnovené."
         period_sum_ratio_help: "%retention_count% aktívnych predplatných z celkového počtu %users_count% užívateľov ktorí dosiahli danú periódu."
@@ -372,9 +372,13 @@ admin:
             without_previous_subscription: Bez predchádzajúceho predplatného
             with_previous_subscription_at_least_one_paid: S predchádzajúcim predplatným - aspoň jedno platené
             with_previous_subscription_all_unpaid: S predchádzajúcim predplatným - všetky neplatené
+            partition: Rozdelenie
         errors:
             long_execution_time: "Analýza sa nedokončila v časovom limite %minutes% minút. Zadajte prosím iné parametre."
             unexpected_error: "Nastala neočakávaná chyba. Detaily chyby boli zalogované."
+        partition:
+            month: Mesiac
+            week: Týždeň
 
     dashboard:
         recurrent_charge:
