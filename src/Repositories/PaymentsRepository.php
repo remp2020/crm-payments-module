@@ -333,6 +333,9 @@ class PaymentsRepository extends Repository
 
     private function variableSymbolVariants($variableSymbol)
     {
+        if (!is_numeric($variableSymbol)) {
+            return $variableSymbol;
+        }
         $variableSymbolVariant = new VariableSymbolVariant();
         return $variableSymbolVariant->variableSymbolVariants($variableSymbol);
     }
@@ -395,7 +398,7 @@ class PaymentsRepository extends Repository
     {
         $where = [];
         if ($text !== null && $text !== '') {
-            $where['variable_symbol LIKE ? OR note LIKE ?'] = ["%{$text}%", "%{$text}%"];
+            $where['variable_symbol IN (?)'] = $this->variableSymbolVariants($text);
         }
         if ($payment_gateway) {
             $where['payments.payment_gateway_id'] = $payment_gateway;
