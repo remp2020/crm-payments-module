@@ -55,6 +55,7 @@ class PaymentsPopulator extends AbstractPopulator
                 $recurrentPaymentData = [
                     'cid' => $this->faker->creditCardNumber(),
                     'created_at' => $this->faker->dateTimeBetween('-1 years'),
+                    'updated_at' => $this->faker->dateTimeBetween('-1 years'),
                     'payment_gateway_id' => 2,
                     'charge_at' => $this->faker->dateTimeBetween('-1 months'),
                     'expires_at' => $this->faker->dateTimeBetween('-1 years'),
