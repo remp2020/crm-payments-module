@@ -184,6 +184,10 @@ admin:
             paid_at_to:
                 label: Paid to
                 placeholder: e.g. 1.8.2020 15:30
+            amount_from:
+                label: Amount from (inclusive)
+            amount_to:
+                label: Amount to (inclusive)
             referer:
                 label: Referer
             filter:

@@ -50,6 +50,14 @@ class AdminFilterFormData
             $payments->where('paid_at < ?', DateTime::from($this->getPaidAtTo()));
         }
 
+        if ($this->getAmountFrom()) {
+            $payments->where('amount >= ?', $this->getAmountFrom());
+        }
+
+        if ($this->getAmountTo()) {
+            $payments->where('amount <= ?', $this->getAmountTo());
+        }
+
         /** @var AdminFilterFormDataProviderInterface[] $providers */
         $providers = $this->dataProviderManager->getProviders('payments.dataprovider.payments_filter_form', AdminFilterFormDataProviderInterface::class);
         foreach ($providers as $sorting => $provider) {
@@ -67,6 +75,8 @@ class AdminFilterFormData
             'payment_gateway' => $this->getPaymentGateway(),
             'paid_at_from' => $this->getPaidAtFrom(),
             'paid_at_to' => $this->getPaidAtTo(),
+            'amount_from' => $this->getAmountFrom(),
+            'amount_to' => $this->getAmountTo(),
             'subscription_type' => $this->getSubscriptionType(),
             'status' => $this->getStatus(),
             'donation' => $this->getDonation(),
@@ -119,6 +129,16 @@ class AdminFilterFormData
     private function getPaidAtTo()
     {
         return $this->formData['paid_at_to'] ?? null;
+    }
+
+    private function getAmountFrom(): ?float
+    {
+        return $this->formData['amount_from'] ?? null;
+    }
+
+    private function getAmountTo(): ?float
+    {
+        return $this->formData['amount_to'] ?? null;
     }
 
     private function getReferer()

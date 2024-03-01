@@ -184,6 +184,10 @@ admin:
             paid_at_to:
                 label: Dátum platby do
                 placeholder: napríklad 1.8.2020 15:30
+            amount_from:
+                label: Suma od (vrátane)
+            amount_to:
+                label: Suma do (vrátane)
             referer:
                 label: Referer
             filter:

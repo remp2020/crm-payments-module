@@ -158,6 +158,12 @@ class PaymentsAdminPresenter extends AdminPresenter
             ->setHtmlAttribute('class', 'flatpickr')
             ->setHtmlAttribute('flatpickr_datetime', "1");
 
+        $form->addText('amount_from', 'payments.admin.component.admin_filter_form.amount_from.label')
+            ->setHtmlAttribute('type', 'number');
+
+        $form->addText('amount_to', 'payments.admin.component.admin_filter_form.amount_to.label')
+            ->setHtmlAttribute('type', 'number');
+
         $form->addText('external_id', 'payments.admin.component.admin_filter_form.external_id.label');
 
         $subscriptionTypes = $this->subscriptionTypesRepository->getAllActive()->fetchPairs('id', 'name');
