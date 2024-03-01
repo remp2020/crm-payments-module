@@ -174,7 +174,7 @@ Vaše ČSOB
         $this->assertEquals(strtotime('18.8.2022'), $mailContent->getTransactionDate());
     }
 
-    public function testForeignTransferPayment()
+    public function testForeignTransferPaymentAlternativeSepa()
     {
         $email = 'Vážený kliente,
 
@@ -215,6 +215,198 @@ Vaše ČSOB
         $this->assertEquals(strtotime('18.8.2022'), $mailContent->getTransactionDate());
     }
 
+    public function testForeignTransferPaymentAlternativeZahranicni()
+    {
+        $email = 'Vážený kliente,
+
+dne 5.12.2023 byla na účtu 123456789 zaúčtována zahraniční transakce.
+
+Název smlouvy: CRM International a.s.
+Číslo smlouvy: 87654321
+Majitel smlouvy: Shmelina a.s.
+Účet: 123456789, CZK, CRM INTERNATION
+BIC: CEKOCZPP
+Částka: +3 300,00 CZK
+Účet protistrany/IBAN: SK99 1100 0000 7777 8888 9999
+BIC/SWIFT: TATRSKBX
+Název protistrany: NOVAK PETER
+Adresa protistrany: Veterna 13
+123 45  BRATISLAVA
+SLOVENSKO
+Kód poplatku: SHA
+Číslo transakce ČSOB: 4012345678
+Reference plátce: VI98765432100
+Účel platby: NOVAK PETER BRATISLAVA SLOVENSKO 6869282911
+
+Zůstatek na účtu po zaúčtování transakce: +12 345 678,90 CZK.
+
+S přáním krásného dne
+Vaše ČSOB
+';
+        $csobMailParser = new CsobMailParser();
+        $mailContents = $csobMailParser->parseMulti($email);
+
+        $this->assertCount(1, $mailContents);
+
+        $mailContent = $mailContents[0];
+        $this->assertEquals('123456789', $mailContent->getAccountNumber());
+        $this->assertEquals('CZK', $mailContent->getCurrency());
+        $this->assertEquals(3300, $mailContent->getAmount());
+        $this->assertEquals('6869282911', $mailContent->getVs());
+        $this->assertNull($mailContent->getKs());
+        $this->assertNull($mailContent->getSs());
+        $this->assertEquals(strtotime('5.12.2023'), $mailContent->getTransactionDate());
+    }
+
+    public function testForeignTransferPaymentAlternativeZahranicniWithMultilinePurpose()
+    {
+        $email = 'Vážený kliente,
+
+dne 5.12.2023 byla na účtu 123456789 zaúčtována zahraniční transakce.
+
+Název smlouvy: CRM International a.s.
+Číslo smlouvy: 87654321
+Majitel smlouvy: Shmelina a.s.
+Účet: 123456789, CZK, CRM INTERNATION
+BIC: CEKOCZPP
+Částka: +3 300,00 CZK
+Účet protistrany/IBAN: SK99 1100 0000 7777 8888 9999
+BIC/SWIFT: TATRSKBX
+Název protistrany: NOVAK PETER
+Adresa protistrany: Veterna 13
+123 45  BRATISLAVA
+SLOVENSKO
+Kód poplatku: SHA
+Číslo transakce ČSOB: 4012345678
+Reference plátce: VI98765432100
+Účel platby: NOVAK PETER BRATISLAVA SLOVENSKO V.S
+. 6869282912
+
+Zůstatek na účtu po zaúčtování transakce: +12 345 678,90 CZK.
+
+S přáním krásného dne
+Vaše ČSOB
+';
+        $csobMailParser = new CsobMailParser();
+        $mailContents = $csobMailParser->parseMulti($email);
+
+        $this->assertCount(1, $mailContents);
+
+        $mailContent = $mailContents[0];
+        $this->assertEquals('123456789', $mailContent->getAccountNumber());
+        $this->assertEquals('CZK', $mailContent->getCurrency());
+        $this->assertEquals(3300, $mailContent->getAmount());
+        $this->assertEquals('6869282912', $mailContent->getVs());
+        $this->assertNull($mailContent->getKs());
+        $this->assertNull($mailContent->getSs());
+        $this->assertEquals(strtotime('5.12.2023'), $mailContent->getTransactionDate());
+    }
+
+    public function testTransferPaymentWithPrefixedVariableSymbolInReceiverMessage()
+    {
+        $email = 'Vážený kliente,
+
+dne 21.2.2024 byla na účtu 123456789 zaúčtována zahraniční transakce.
+
+Název smlouvy: CRM International a.s.
+Číslo smlouvy: 87654321
+Majitel smlouvy: Shmelina a.s.
+Účet: 123456789, CZK, CRM INTERNATION
+Částka: +1 980,00 CZK
+Účet protistrany: 6012345678/2700
+Název protistrany: NETOPÍŘ KAREL
+Zpráva příjemci: vs3723199116
+
+Zůstatek na účtu po zaúčtování transakce: +12 345 678,90 CZK.
+
+S přáním krásného dne
+Vaše ČSOB
+';
+        $csobMailParser = new CsobMailParser();
+        $mailContents = $csobMailParser->parseMulti($email);
+
+        $this->assertCount(1, $mailContents);
+
+        $mailContent = $mailContents[0];
+        $this->assertEquals('123456789', $mailContent->getAccountNumber());
+        $this->assertEquals('CZK', $mailContent->getCurrency());
+        $this->assertEquals(1980.00, $mailContent->getAmount());
+        $this->assertEquals('3723199116', $mailContent->getVs());
+        $this->assertNull($mailContent->getKs());
+        $this->assertNull($mailContent->getSs());
+        $this->assertEquals(strtotime('21.2.2024'), $mailContent->getTransactionDate());
+    }
+
+    public function testTransferPaymentWithPrefixedWithDotsVariableSymbolInReceiverMessage()
+    {
+        $email = 'Vážený kliente,
+
+dne 21.2.2024 byla na účtu 123456789 zaúčtována zahraniční transakce.
+
+Název smlouvy: CRM International a.s.
+Číslo smlouvy: 87654321
+Majitel smlouvy: Shmelina a.s.
+Účet: 123456789, CZK, CRM INTERNATION
+Částka: +1 980,00 CZK
+Účet protistrany: 6012345678/2700
+Název protistrany: NETOPÍŘ KAREL
+Zpráva příjemci: v.s.3723199116
+
+Zůstatek na účtu po zaúčtování transakce: +12 345 678,90 CZK.
+
+S přáním krásného dne
+Vaše ČSOB
+';
+        $csobMailParser = new CsobMailParser();
+        $mailContents = $csobMailParser->parseMulti($email);
+
+        $this->assertCount(1, $mailContents);
+
+        $mailContent = $mailContents[0];
+        $this->assertEquals('123456789', $mailContent->getAccountNumber());
+        $this->assertEquals('CZK', $mailContent->getCurrency());
+        $this->assertEquals(1980.00, $mailContent->getAmount());
+        $this->assertEquals('3723199116', $mailContent->getVs());
+        $this->assertNull($mailContent->getKs());
+        $this->assertNull($mailContent->getSs());
+        $this->assertEquals(strtotime('21.2.2024'), $mailContent->getTransactionDate());
+    }
+
+    public function testTransferPaymentWithNotPrefixedVariableSymbolInReceiverMessage()
+    {
+        $email = 'Vážený kliente,
+
+dne 31.1.2024 byla na účtu 123456789 zaúčtována zahraniční transakce.
+
+Název smlouvy: CRM International a.s.
+Číslo smlouvy: 87654321
+Majitel smlouvy: Shmelina a.s.
+Účet: 123456789, CZK, CRM INTERNATION
+Částka: +2 700,00 CZK
+Účet protistrany: 6012345678/2700
+Název protistrany: KRAL CZECH REPUBLIC
+Zpráva příjemci: 3723199333
+
+Zůstatek na účtu po zaúčtování transakce: +12 345 678,90 CZK.
+
+S přáním krásného dne
+Vaše ČSOB
+';
+        $csobMailParser = new CsobMailParser();
+        $mailContents = $csobMailParser->parseMulti($email);
+
+        $this->assertCount(1, $mailContents);
+
+        $mailContent = $mailContents[0];
+        $this->assertEquals('123456789', $mailContent->getAccountNumber());
+        $this->assertEquals('CZK', $mailContent->getCurrency());
+        $this->assertEquals(2700.00, $mailContent->getAmount());
+        $this->assertEquals('3723199333', $mailContent->getVs());
+        $this->assertNull($mailContent->getKs());
+        $this->assertNull($mailContent->getSs());
+        $this->assertEquals(strtotime('31.1.2024'), $mailContent->getTransactionDate());
+    }
+
     public function testSingleCardpaySettlement()
     {
         $email = 'Vážený kliente,
@@ -241,7 +433,6 @@ Vaše ČSOB
 
         $this->assertCount(1, $mailContents);
     }
-
 
     public function testErrorEmail()
     {

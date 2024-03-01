@@ -29,7 +29,7 @@ class CsobMailParser implements ParserInterface
     {
         $mailContent = new MailContent();
 
-        $pattern1 = '/(.*) byl(?:a)? na účtu ([a-zA-Z0-9]+) (?:zaúčtovaná|zaúčtována|zaúčtovaný) (?:transakce typu: |transakce )?(Došlá platba|Příchozí úhrada|Došlá úhrada|SEPA převod|platební kartou)/mu';
+        $pattern1 = '/(.*) byl(?:a)? na účtu ([a-zA-Z0-9]+) (?:zaúčtovaná|zaúčtována|zaúčtovaný) (?:zahraniční transakce\.|(?:transakce typu: |transakce )?(Došlá platba|Příchozí úhrada|Došlá úhrada|SEPA převod|platební kartou))/mu';
         $res = preg_match($pattern1, $content, $result);
         if (!$res) {
             return null;
@@ -67,10 +67,55 @@ class CsobMailParser implements ParserInterface
         if ($res) {
             $mailContent->setVs($result[1]);
         }
-        $pattern4 = '/Účel platby: ([0-9]{1,10})/m';
-        $res = preg_match($pattern4, $content, $result);
-        if ($res) {
-            $mailContent->setVs($result[1]);
+
+        // search whole email for number with `vs` / `VS` prefix
+        if ($mailContent->getVs() === null) {
+            $pattern = '/vs([0-9]{1,10})/i';
+            $res = preg_match($pattern, $content, $result);
+            if ($res) {
+                $mailContent->setVs($result[1]);
+            }
+        }
+
+        // search whole email for number with `v.s.` / `V.S.` prefix
+        if ($mailContent->getVs() === null) {
+            $pattern = '/v\.s\.([0-9]{1,10})/i';
+            $res = preg_match($pattern, $content, $result);
+            if ($res) {
+                $mailContent->setVs($result[1]);
+            }
+        }
+
+        // if still no number (VS) found, check receiver message
+        // - some payers incorrectly set this field with VS number but without "VS" prefix
+        // - some banks send here variable symbol in Creditor Reference Information - SEPA XML format
+        // loads VS provided in formats:
+        // - Informacia pre prijemcu: 1234056789
+        // - Informacia pre prijemcu: (CdtrRefInf)(Tp)(CdOrPrtry)(Cd)SCOR(/Cd)(/CdOrPrtry)(/Tp)(Ref)1234056789(/Ref)(/CdtrRefInf)
+        if ($mailContent->getVs() === null) {
+            $pattern = '/Zpráva příjemci:.*\b([0-9]{1,10})\b.*/i';
+            $res = preg_match($pattern, $content, $result);
+            if ($res) {
+                $mailContent->setVs($result[1]);
+            }
+        }
+
+        // if still no number (VS) found, check payment purpose (some foreign payments use this field for variable symbol)
+        if ($mailContent->getVs() === null) {
+            $pattern4 = '/Účel platby: ([0-9]{1,10})/m';
+            $res = preg_match($pattern4, $content, $result);
+            if ($res) {
+                $mailContent->setVs($result[1]);
+            } else {
+                // Transaction description/purpose (Účel platby) is sometimes multiline element.
+                // For now it is always last entry before balance element. So check all lines until "Zůstatek".
+                // Use modifier `s` - single-line (dot matches newline).
+                $pattern4 = '/Účel platby:.*\b([0-9]{1,10})\b.*Zůstatek/s';
+                $res = preg_match($pattern4, $content, $result);
+                if ($res) {
+                    $mailContent->setVs($result[1]);
+                }
+            }
         }
 
         $pattern5 = '/Konstantní symbol: ([0-9]{1,10})/mu';
