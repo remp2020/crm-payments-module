@@ -302,6 +302,44 @@ Vaše ČSOB
         $this->assertEquals(strtotime('5.12.2023'), $mailContent->getTransactionDate());
     }
 
+    public function testForeignTransferPaymentWithVariableSymbolSetToNull()
+    {
+        $email = 'Vážený kliente,
+
+dne 1.3.2024 byla na účtu 123456789 zaúčtována transakce typu: Příchozí úhrada.
+
+Název smlouvy: CRM International a.s.
+Číslo smlouvy: 87654321
+Majitel smlouvy: Shmelina a.s.
+Účet: 123456789, CZK, CRM INTERNATION
+Částka: +1 440,00 CZK
+Účet protistrany: 2233445566/2600
+Název protistrany: WISE EUROPE SA
+Variabilní symbol: 0000000000
+Konstantní symbol: 0000
+Specifický symbol: 0000000000
+Zpráva příjemci: /Eva Adamova
+/P98765432
+/Random strasse 42 Berlin German
+/VS0449274899
+
+Zůstatek na účtu po zaúčtování transakce: +12 345 678,90 CZK.
+
+S přáním krásného dne
+Vaše ČSOB
+';
+        $csobMailParser = new CsobMailParser();
+        $mailContents = $csobMailParser->parseMulti($email);
+
+        $this->assertCount(1, $mailContents);
+
+        $mailContent = $mailContents[0];
+        $this->assertEquals('CZK', $mailContent->getCurrency());
+        $this->assertEquals(1440.00, $mailContent->getAmount());
+        $this->assertEquals('0449274899', $mailContent->getVs());
+        $this->assertEquals(strtotime('1.3.2024'), $mailContent->getTransactionDate());
+    }
+
     public function testTransferPaymentWithPrefixedVariableSymbolInReceiverMessage()
     {
         $email = 'Vážený kliente,

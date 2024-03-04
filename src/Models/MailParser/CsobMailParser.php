@@ -60,7 +60,11 @@ class CsobMailParser implements ParserInterface
         $pattern4 = '/Variabilní symbol: ([0-9]{1,10})/m';
         $res = preg_match($pattern4, $content, $result);
         if ($res) {
-            $mailContent->setVs($result[1]);
+            // check if variable symbol field is not filled with zeros (0000000000)
+            // (this can happen for foreign transfers which use receiver message for VS)
+            if ((int) $result[1] !== 0) {
+                $mailContent->setVs($result[1]);
+            }
         }
         $pattern4 = '/Identifikace: ([0-9]{1,10})/m';
         $res = preg_match($pattern4, $content, $result);
