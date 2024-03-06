@@ -134,7 +134,10 @@
               <i class="fa fa-edit"></i>
             </a>
 
-            <div class="btn-group" style="margin-bottom: 2px">
+          {capture $moreActions}
+            {control simpleWidget 'admin.payments.listing.action.menu', $payment}
+          {/capture}
+          <div n:if="($moreActions|trim)" class="btn-group" style="margin-bottom: 2px">
               <button type="button" class="btn btn-default btn-sm dropdown-toggle"
                       data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"
                       title="{_system.more_actions}" data-toggle-second="tooltip" data-placement="top">
@@ -142,7 +145,7 @@
               </button>
 
               <ul class="dropdown-menu dropdown-menu-right" role="menu">
-                {control simpleWidget 'admin.payments.listing.action.menu', $payment}
+                {$moreActions}
               </ul>
             </div>
           </div>
