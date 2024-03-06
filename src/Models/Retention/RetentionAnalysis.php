@@ -232,6 +232,28 @@ SQL;
             $whereParams[] = $inputParams['user_source'];
         }
 
+        if (isset($inputParams['subscription_type'])) {
+            $placeholders = [];
+            foreach ((array) $inputParams['subscription_type'] as $subscriptionTypeId) {
+                $whereParams[] = $subscriptionTypeId;
+                $placeholders[] = '?';
+            }
+
+            $joins[] = "JOIN subscription_types ON payments.subscription_type_id = subscription_types.id";
+            $wheres[] = 'subscription_types.id IN (' . implode(',', $placeholders) . ')';
+        }
+
+        if (isset($inputParams['subscription_type_tag'])) {
+            $placeholders = [];
+            foreach ((array) $inputParams['subscription_type_tag'] as $subscriptionTypeTag) {
+                $whereParams[] = $subscriptionTypeTag;
+                $placeholders[] = '?';
+            }
+
+            $joins[] = "JOIN subscription_type_tags ON payments.subscription_type_id = subscription_type_tags.subscription_type_id";
+            $wheres[] = 'subscription_type_tags.tag IN (' . implode(',', $placeholders) . ')';
+        }
+
         $joins = implode(' ', $joins);
         $wheres = implode(' AND ', $wheres);
 

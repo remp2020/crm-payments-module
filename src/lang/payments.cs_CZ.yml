@@ -372,6 +372,8 @@ admin:
             with_previous_subscription_at_least_one_paid: S předchozím předplatným - alespoň jedno placené
             with_previous_subscription_all_unpaid: S předchozím předplatným - všechny neplacené
             partition: Rozdělení
+            subscription_type: Typ předplatného
+            subscription_type_tag: Tag typu předplatného
         errors:
             long_execution_time: "Analýza se nedokončila v časovém limitu %minutes% minut. Zadejte prosím jiné parametry."
             unexpected_error: "Nastala neočekávaná chyba. Detaily chyby byly zalogované."

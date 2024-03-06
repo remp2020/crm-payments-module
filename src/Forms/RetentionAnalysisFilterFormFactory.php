@@ -7,6 +7,8 @@ use Crm\PaymentsModule\DataProviders\RetentionAnalysisDataProviderInterface;
 use Crm\PaymentsModule\Models\Retention\RetentionAnalysis;
 use Crm\PaymentsModule\Repositories\PaymentsRepository;
 use Crm\SegmentModule\Repositories\SegmentsRepository;
+use Crm\SubscriptionsModule\Repositories\SubscriptionTypeTagsRepository;
+use Crm\SubscriptionsModule\Repositories\SubscriptionTypesRepository;
 use Crm\UsersModule\Repositories\UsersRepository;
 use Nette\Application\UI\Form;
 use Nette\Localization\Translator;
@@ -19,7 +21,9 @@ class RetentionAnalysisFilterFormFactory
         private DataProviderManager $dataProviderManager,
         private SegmentsRepository $segmentsRepository,
         private UsersRepository $usersRepository,
-        private Translator $translator
+        private Translator $translator,
+        private SubscriptionTypesRepository $subscriptionTypesRepository,
+        private SubscriptionTypeTagsRepository $subscriptionTypeTagsRepository,
     ) {
     }
 
@@ -29,13 +33,13 @@ class RetentionAnalysisFilterFormFactory
         $form->setTranslator($this->translator);
         $form->setRenderer(new BootstrapRenderer());
 
-        $earliestPayment = $this->paymentsRepository->getTable()
-            ->select('MIN(paid_at) AS paid_at')
+        $isAnyPayment = $this->paymentsRepository->getTable()
             ->where('paid_at IS NOT NULL')
             ->where('subscription_id IS NOT NULL')
+            ->limit(1)
             ->fetch();
 
-        if (!$earliestPayment) {
+        if (!$isAnyPayment) {
             throw new \Exception('No payment, cannot render form');
         }
 
@@ -81,6 +85,19 @@ class RetentionAnalysisFilterFormFactory
 
         $form->addSelect('user_source', 'payments.admin.retention_analysis.fields.user_source', $this->usersRepository->getUserSources())
             ->setPrompt('--')
+            ->setDisabled($disabled)
+            ->getControlPrototype()->addAttributes(['class' => 'select2']);
+
+        $subscriptionTypes = [];
+        foreach ($this->subscriptionTypesRepository->all() as $row) {
+            $subscriptionTypes[$row->id] = "$row->code <small>({$row->id})</small>";
+        }
+        $form->addMultiSelect('subscription_type', 'payments.admin.retention_analysis.fields.subscription_type', $subscriptionTypes)
+            ->setDisabled($disabled)
+            ->getControlPrototype()->addAttributes(['class' => 'select2']);
+
+        $tags = $this->subscriptionTypeTagsRepository->tagsSortedByOccurrences();
+        $form->addMultiSelect('subscription_type_tag', 'payments.admin.retention_analysis.fields.subscription_type_tag', $tags)
             ->setDisabled($disabled)
             ->getControlPrototype()->addAttributes(['class' => 'select2']);
 

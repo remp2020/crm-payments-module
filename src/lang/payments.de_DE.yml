@@ -307,6 +307,8 @@ admin:
             min_date_of_payment: Zahlungen ab (Datum)
             with_previous_subscription_all_unpaid: Mit früheren Abonnements - alle unbezahlt
             partition: Partition
+            subscription_type: Abonnementtyp
+            subscription_type_tag: Abonnementtyp-Tag
         errors:
             unexpected_error: Es gab einen unerwarteten Fehler. Die Einzelheiten des Fehlers wurden protokolliert.
             long_execution_time: Die Analyse wurde nicht innerhalb des Zeitlimits von %minutes% Minuten abgeschlossen. Bitte grenzen Sie die Parameter weiter ein.
