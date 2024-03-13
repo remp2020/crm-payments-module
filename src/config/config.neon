@@ -21,6 +21,7 @@ services:
 
 	- Crm\PaymentsModule\Forms\PaymentFormFactory
 	- Crm\PaymentsModule\Forms\PaymentGatewayFormFactory
+	- Crm\PaymentsModule\Forms\PaymentRefundFormFactory
 	- Crm\PaymentsModule\Models\PaymentsHistogramFactory
 	recurrentPaymentsResolver: Crm\PaymentsModule\Models\RecurrentPaymentsResolver
 	- Crm\PaymentsModule\Forms\RecurrentPaymentFormFactory
@@ -47,7 +48,9 @@ services:
 	- Crm\PaymentsModule\Components\AddressWidget\AddressWidget
 	- Crm\PaymentsModule\Components\ChangePaymentSubscriptionTypeWidget\ChangePaymentSubscriptionTypeWidget
 	- Crm\PaymentsModule\Components\PaymentDonationLabelWidget\PaymentDonationLabelWidget
+	- Crm\PaymentsModule\Components\PaymentStatusDropdownMenuWidget\PaymentStatusDropdownMenuWidget
 	- Crm\PaymentsModule\Components\PaymentToSubscriptionMenu\PaymentToSubscriptionMenu
+	- Crm\PaymentsModule\Components\RefundPaymentItemsListWidget\RefundPaymentItemsListWidget
 	- Crm\PaymentsModule\Components\SubscriptionDetailWidget\SubscriptionDetailWidget
 	- Crm\PaymentsModule\Commands\RecurrentPaymentsCardCheckCommand
 	- Crm\PaymentsModule\Commands\RecurrentPaymentsChargeCommand

@@ -1,0 +1,295 @@
+{block #title}[#{$payment->id}] {_payments.admin.payment_refund.header} VS {$payment->variable_symbol}]{/block}
+
+{block #head}
+    <style>
+        .page-header {
+            border-bottom: 0;
+        }
+
+        .label {
+            vertical-align: middle;
+        }
+    </style>
+{/block}
+
+{block #content}
+
+<div class="row">
+    <div class="col-md-12">
+        <a n:href=":Users:UsersAdmin:Show $payment->user->id">
+            <i class="fa fa-angle-left"></i> {_payments.admin.payments.show.back}
+        </a>
+        <div class="page-header">
+            <h1>
+                <small>
+                    [#{$payment->id}]
+                </small>
+                {_payments.admin.payment_refund.header} VS {$payment->variable_symbol}
+            </h1>
+        </div>
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-lg-10 col-lg-offset-1 col-md-12">
+        <div class="row">
+            <!-- left column -->
+            <div class="col-md-8">
+
+                {control simpleWidget 'admin.payment_refund.show.alert', $payment}
+
+                {snippetArea refundFormArea}
+                    {form paymentRefundForm}
+                        {if $subscription}
+                            {snippet subscriptionStopRefundFormData}
+                                <div class="panel panel-default">
+                                    <div class="panel-heading">
+                                        {_payments.admin.payment_refund.subscription.subscription_settings}
+                                    </div>
+                                    <div class="panel-body">
+                                        <div style="display: flex; justify-content: space-between;">
+                                            <div>
+                                                {_payments.admin.payment_refund.subscription.payment_has_active_subscription}
+                                            </div>
+                                            <div>
+                                                <b>{$subscription->subscription_type->name}</b>
+                                            </div>
+                                        </div>
+                                        <div class="progress" style="margin: 10px 0;">
+                                            {var $initialProgressValue = $subscription->end_time < new Nette\Utils\DateTime() ? 100 : 0}
+                                            <div
+                                                    id="subscription-ends-progress-bar"
+                                                    class="progress-bar" role="progressbar"
+                                                    style="width: {$initialProgressValue}%;text-align: right; padding-right: 10px;"
+                                                    aria-valuenow="{$initialProgressValue}" aria-valuemin="0" aria-valuemax="100"
+                                            >
+                                                {$initialProgressValue}%
+                                            </div>
+                                        </div>
+                                        <div style="display: flex; justify-content: space-between;">
+                                            <div>
+                                                {$subscription->start_time|userDate}
+                                            </div>
+                                            <div>
+                                                {$subscription->end_time|userDate}
+                                            </div>
+                                        </div>
+                                        {ifset $control['paymentRefundForm']['subscription_ends_at']}
+                                            <div style="display: flex; justify-content: space-between; align-items: center; margin-top: 15px;">
+                                                <div>
+                                                    {label subscription_ends_at /}
+                                                </div>
+                                                <div>
+                                                    {input subscription_ends_at}
+                                                    <div class="text-right">
+                                                        <span class="btn btn-link btn-sm" style="padding-right: 0" onclick="setDefaultSubscriptionEndsAt()">
+                                                            {_payments.admin.payment_refund.default_ends_at}
+                                                        </span>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            {input subscription_starts_at}
+                                        {/ifset}
+                                        {ifset $control['paymentRefundForm']['stop_recurrent_charge']}
+                                            <div class="checkbox">{input stop_recurrent_charge}{label stop_recurrent_charge /}</div>
+                                        {/ifset}
+                                    </div>
+                                </div>
+                            {/snippet}
+                        {/if}
+                        {snippet additionalRefundFormData}
+                            {control simpleWidget 'admin.refund_payment.show.left', ['form' => $control['paymentRefundForm'], 'payment' => $payment]}
+                            {ifset $control['paymentRefundForm']['submit']}
+                                {input submit}
+                            {/ifset}
+                        {/snippet}
+                    {/form}
+                {/snippetArea}
+            </div>
+
+            <!-- right column -->
+            <div class="col-md-4 right-column">
+                <div class="panel panel-default">
+                    <div class="panel-heading">
+                        {_payments.admin.payments.payment_info}
+                        <a href="{link :Payments:PaymentsAdmin:show $payment->id}" target="_blank" class="btn btn-link btn-xs pull-right">{_system.show}</a>
+                    </div>
+                    <div class="panel-body">
+                        <table class="table table-responsive table-clear table-left-label">
+                            <tr>
+                                {var $labelClass = 'label-default'}
+                                {if $payment->status == \Crm\PaymentsModule\Repositories\PaymentsRepository::STATUS_PAID}
+                                    {var $labelClass = 'label-success'}
+                                {elseif $payment->status == \Crm\PaymentsModule\Repositories\PaymentsRepository::STATUS_FORM}
+                                    {var $labelClass = 'label-info'}
+                                {elseif $payment->status == \Crm\PaymentsModule\Repositories\PaymentsRepository::STATUS_FAIL || $payment->status == \Crm\PaymentsModule\Repositories\PaymentsRepository::STATUS_TIMEOUT}
+                                    {var $labelClass = 'label-danger'}
+                                {/if}
+                                <td>{_payments.admin.payments.status}:</td>
+                                <td><span class="label {$labelClass}">{$payment->status}</span></td>
+                            </tr>
+                            <tr>
+                                <td>{_payments.admin.payments.variable_symbol}:</td>
+                                <td>{$payment->variable_symbol}</td>
+                            </tr>
+                            <tr>
+                                <td>{_payments.admin.payments.gateway}:</td>
+                                <td>
+                                    <a target="_blank" href="{plink :Payments:PaymentGatewaysAdmin:Show $payment->payment_gateway->id}">
+                                        {$payment->payment_gateway->name}
+                                    </a>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>{_payments.admin.payment_refund.subscription.automatic_renewal}:</td>
+                                <td>
+                                    {if $payment->recurrent_charge}
+                                        {_system.yes}
+                                    {else}
+                                        {_system.no}
+                                    {/if}
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>{_payments.admin.payments.paid_at}:</td>
+                                <td>{$payment->paid_at ? ($payment->paid_at|userDate) : '-'}</td>
+                            </tr>
+                            <tr>
+                                <td>{_payments.admin.payments.modified_at}:</td>
+                                <td>{$payment->modified_at ? ($payment->modified_at|userDate) : '-'}</td>
+                            </tr>
+                            <tr>
+                                <td>{_payments.admin.payments.created_at}:</td>
+                                <td>{$payment->created_at ? ($payment->created_at|userDate) : '-'}</td>
+                            </tr>
+                            {if $payment->address}
+                                <tr>
+                                    <td style="vertical-align: top;">{_payments.admin.payment_refund.user.address}:</td>
+                                    <td>
+                                        {if $payment->address->company_name}
+                                            {$payment->address->company_name} ({$payment->address->first_name} {$payment->address->last_name}),
+                                        {else}
+                                            {$payment->address->first_name} {$payment->address->last_name},
+                                        {/if}
+                                        <br />
+                                        {$payment->address->address} {$payment->address->number}, {$payment->address->zip} {$payment->address->city}
+                                        <br />
+                                        {$payment->address->country?->name}
+                                        <a href="{link :Users:AddressAdmin:edit $payment->address->id}" target="_blank">
+                                            <i class="fa-solid fa-square-arrow-up-right"></i>
+                                        </a>
+                                    </td>
+                                </tr>
+                            {/if}
+                            <tr>
+                                <td>{_payments.admin.payments.referer}:</td>
+                                <td class="truncate-text" title="{$payment->referer}">
+                                    {if $payment->referer}
+                                        <a href="{$payment->referer}" target="_blank">{$payment->referer}</a>
+                                    {else}
+                                        -
+                                    {/if}
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>{_payments.admin.payments.show.ip}:</td>
+                                <td>{$payment->ip ?? '-'}</td>
+                            </tr>
+                            <tr>
+                                <td>User agent:</td>
+                                <td class="truncate-text" title="{$payment->user_agent}">{$payment->user_agent ?? '-'}</td>
+                            </tr>
+                            <tr>
+                                <td style="vertical-align: top;">{_payments.admin.payments.note}:</td>
+                                <td>{$payment->note ?? '-'}</td>
+                            </tr>
+                        </table>
+                    </div>
+                </div>
+
+                <div class="panel panel-default">
+                    <div class="panel-heading">
+                        {_payments.admin.payments.user}
+                        <a href="{link :Users:UsersAdmin:show $payment->user->id}" target="_blank" class="btn btn-link btn-xs pull-right">{_system.show}</a>
+                    </div>
+                    <div class="panel-body">
+                        <table class="table table-responsive table-clear table-left-label">
+                            <tr>
+                                <td>{_payments.admin.payment_refund.user.email}:</td>
+                                <td><a href="mailto:{$payment->user->email}">{$payment->user->email}</a></td>
+                            </tr>
+                            <tr>
+                                <td>{_payments.admin.payment_refund.user.registered}:</td>
+                                <td>{$payment->user->created_at|userDate}</td>
+                            </tr>
+                            <tr>
+                                <td>{_payments.admin.payment_refund.user.active}:</td>
+                                <td>
+                                    {if $payment->user->active}
+                                        <span class="label label-success">{_system.activated}</span>
+                                    {else}
+                                        <span class="label label-danger">{_system.deactivated}</span>
+                                    {/if}
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>{_payments.admin.payment_refund.user.source}:</td>
+                                <td>{$payment->user->source}</td>
+                            </tr>
+                            <tr>
+                                <td>{_payments.admin.payment_refund.user.language}:</td>
+                                <td class="text-capitalize">
+                                    {Locale::getDisplayLanguage($payment->user->locale, $translator->getLocale())}
+                                </td>
+                            </tr>
+                        </table>
+                    </div>
+                </div>
+
+                {control simpleWidget 'admin.refund_payment.show.right', $payment}
+            </div>
+        </div>
+    </div>
+</div>
+
+{control simpleWidget 'admin.refund_payment.show.bottom', $payment}
+
+<script>
+    const subscriptionEndsProgressBar = document.getElementById('subscription-ends-progress-bar');
+    let subscriptionChangeInput = null;
+    let startTime = null;
+    let defaultEndTime = null;
+
+    {ifset $control['paymentRefundForm']['subscription_ends_at']}
+        subscriptionChangeInput = document.getElementById({$control['paymentRefundForm']['subscription_ends_at']->htmlId});
+    {/ifset}
+    {if isset($control['paymentRefundForm']['subscription_starts_at']) && isset($control['paymentRefundForm']['subscription_default_ends_at'])}
+        startTime = Date.parse(document.getElementById({$control['paymentRefundForm']['subscription_starts_at']->htmlId}).value);
+        defaultEndTime = Date.parse(document.getElementById({$control['paymentRefundForm']['subscription_default_ends_at']->htmlId}).value);
+    {/if}
+
+    function controlProgressBar(endTime) {
+        if (subscriptionEndsProgressBar && endTime) {
+            let percentageDifference = Math.round((((new Date()).getTime() - startTime) / (endTime - startTime)) * 100);
+
+            if (percentageDifference > 100) {
+                percentageDifference = 100;
+            }
+            if (percentageDifference < 0) {
+                percentageDifference = 0;
+            }
+
+            subscriptionEndsProgressBar.style.width = percentageDifference + "%";
+            subscriptionEndsProgressBar.ariaValueNow = percentageDifference.toString();
+            subscriptionEndsProgressBar.innerText = percentageDifference + "%";
+        }
+    }
+
+    function setDefaultSubscriptionEndsAt() {
+        if (subscriptionChangeInput) {
+            subscriptionChangeInput._flatpickr.setDate(defaultEndTime);
+        }
+    }
+
+    controlProgressBar(defaultEndTime);
+</script>

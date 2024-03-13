@@ -57,8 +57,10 @@ use Crm\PaymentsModule\Components\PaidSubscriptionsWithoutExtensionEndingWithinP
 use Crm\PaymentsModule\Components\ParsedMailsFailedNotification\ParsedMailsFailedNotification;
 use Crm\PaymentsModule\Components\PaymentDonationLabelWidget\PaymentDonationLabelWidget;
 use Crm\PaymentsModule\Components\PaymentItemsListWidget\PaymentItemsListWidget;
+use Crm\PaymentsModule\Components\PaymentStatusDropdownMenuWidget\PaymentStatusDropdownMenuWidget;
 use Crm\PaymentsModule\Components\PaymentToSubscriptionMenu\PaymentToSubscriptionMenu;
 use Crm\PaymentsModule\Components\ReactivateFailedRecurrentPaymentWidget\ReactivateFailedRecurrentPaymentWidget;
+use Crm\PaymentsModule\Components\RefundPaymentItemsListWidget\RefundPaymentItemsListWidget;
 use Crm\PaymentsModule\Components\RefundPaymentsListWidget\RefundPaymentsListWidget;
 use Crm\PaymentsModule\Components\SubscribersWithPaymentWidget\SubscribersWithPaymentWidgetFactory;
 use Crm\PaymentsModule\Components\SubscriptionDetailWidget\SubscriptionDetailWidget;
@@ -339,8 +341,18 @@ class PaymentsModule extends CrmModule
         );
 
         $widgetManager->registerWidget(
+            'admin.payment.status.dropdown_menu',
+            PaymentStatusDropdownMenuWidget::class
+        );
+
+        $widgetManager->registerWidget(
             'subscriptions.admin.user_subscriptions_listing.action.menu',
             PaymentToSubscriptionMenu::class,
+        );
+
+        $widgetManager->registerWidget(
+            'admin.refund_payment.show.left',
+            RefundPaymentItemsListWidget::class
         );
     }
 

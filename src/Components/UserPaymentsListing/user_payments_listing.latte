@@ -54,31 +54,7 @@
         </td>
 
         <td>
-          <div class="dropdown clearfix">
-            {var $btn_class = 'btn-default'}
-            {if $payment->status == \Crm\PaymentsModule\Repositories\PaymentsRepository::STATUS_PAID || $payment->status == \Crm\PaymentsModule\Repositories\PaymentsRepository::STATUS_IMPORTED}
-              {var $btn_class = 'btn-success'}
-            {elseif $payment->status == \Crm\PaymentsModule\Repositories\PaymentsRepository::STATUS_FORM}
-              {var $btn_class = 'btn-info'}
-            {elseif $payment->status == \Crm\PaymentsModule\Repositories\PaymentsRepository::STATUS_FAIL || $payment->status == \Crm\PaymentsModule\Repositories\PaymentsRepository::STATUS_TIMEOUT}
-              {var $btn_class = 'btn-danger'}
-            {/if}
-            <button class="btn {$btn_class} btn-sm dropdown-toggle" type="button" id="dropdownMenu1" data-toggle="dropdown" aria-expanded="true">
-              {$payment->status|firstUpper}
-              <span class="caret"></span>
-            </button>
-            <ul n:inner-foreach="$paymentStatuses as $paymentStatus" class="dropdown-menu" role="menu" aria-labelledby="dropdownMenu1">
-              {if $paymentStatus === \Crm\PaymentsModule\Repositories\PaymentsRepository::STATUS_PAID}
-                <li role="presentation">
-                  <a role="menuitem" tabindex="-1" href="#" data-toggle="modal" data-target="#change-status-modal-{$payment->id}">{$paymentStatus|firstUpper}</a>
-                </li>
-              {else}
-                <li  role="presentation">
-                  <a role="menuitem" tabindex="-1" href="{plink :Payments:PaymentsAdmin:changeStatus status => $paymentStatus, payment => $payment->id}">{$paymentStatus|firstUpper}</a>
-                </li>
-              {/if}
-            </ul>
-          </div>
+          {control simpleWidget 'admin.payment.status.dropdown_menu', $payment}
         </td>
 
         <td>

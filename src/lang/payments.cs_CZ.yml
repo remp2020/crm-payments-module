@@ -255,6 +255,11 @@ admin:
         recurrent:
             title: ARPU - celkem všech rekurentných plateb / počet
             tooltip: 'Zobrazuje sumu všech rekurentne vytvořených plateb za dané období děleno počtem plateb - ARPA'
+
+    recurrent:
+        duplicates:
+            title: Duplicitní recurrentní platby
+
     stats:
         title: Statistiky plateb
         menu:
@@ -408,7 +413,30 @@ admin:
         message: Zpráva
         no_records: "Nebyly nalezeny žádné záznamy, které by odpovídaly filtru"
 
+    payment_refund:
+        header: Vrácení platby
+        confirm_refund: Vrátit platbu
+        default_ends_at: Původní datum konce
+        form:
+            cancel_subscription_date: Ukončit předplatné ke dni
+            refund_was_successful: Vrácení platby bylo úspěšné!
+            stop_recurrent_charge: Zastavit automatickou obnovu
+            required:
+                subscription_ends_at: Datum konce předplatného je povinen údaj
+        subscription:
+            subscription_settings: Nastavení předplatného
+            payment_has_active_subscription: Platba obsahuje aktivní předplatné
+            automatic_renewal: Automatická obnova
+        user:
+            email: E-mail
+            address: Adresa
+            registered: Registrován
+            active: Aktivní
+            source: Zdroj
+            language: Jazyk
+
     payments:
+        payment_info: Informace o platbě
         updated: Platba byla upravena
         created: Platba byla vytvořena
         send_notification: Pošli notifikaci emailem
@@ -417,12 +445,16 @@ admin:
         variable_symbol: Variabilní symbol
         user: Uživatel
         amount: Částka
+        amount_without_vat: Částka bez DPH
         gateway: Platební brána
         items: Položky
         status: Stav
         created_at: Vytvořeno
         modified_at: Upraveno
         actions: Akce
+        note: Poznámka
+        referer: Referer
+        status_text: Platba je aktuálně ve stavu
         recurrent_charge: Automaticky obnoveno
         donation: Dar
         donation_recurrent: Opakovaný dar
@@ -437,6 +469,7 @@ admin:
         item: položka
         item_name: Název
         price_with_vat: Jednotková cena s DPH
+        short_unit_price: Jedn. cena
         vat_rate: Sazba DPH
         enter_number_of_products: Zadejte počet kusů
         count: Počet kusů
@@ -451,6 +484,8 @@ admin:
             back: zpět na uživatele
             subscription_id: ID předplatného
             payment_items: Položky platby
+            payment_item: Položka platby
+            payment_item_type: Typ položky
             recurrent_payment: Rekurentní platba
             recurrent_charge: Obnovená platba
             recurrent_previous: Vytvořeno rekurentní platbou
@@ -652,7 +687,6 @@ frontend:
         success: "Přidání karty bylo úspěšné. Platba vytvořená pro potřeby ověření karty Vám bude brzy vrácena."
         error: "Neúspěšný pokus o přidání karty. Zkuste to prosím znovu."
 
-
 config:
     category: Platby
     category_confirmation: Potvrzovací e-maily
@@ -689,7 +723,11 @@ config:
         name: Paypal signature
     paypal_merchant:
         name: Paypal merchant
-    paypal_ipn_email: {}
+    paypal_ipn_baseurl:
+        name: Paypal IPN URL
+    paypal_ipn_email:
+        name: Paypal IPN email
+        description: '"Receiver email" pro kontrolu IPN zprávy. Nechte prázdný pro vynechání této kontroly'
     csob_merchant_id:
         name: ČSOB Merchant ID
         description: 'Merchant ID poskytnuté bankou nebo vygenerované přes https://iplatebnibrana.csob.cz/keygen/ (pro vývojářské účely)'

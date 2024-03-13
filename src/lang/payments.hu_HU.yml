@@ -315,7 +315,30 @@ admin:
         message: Üzenet
         no_records: Nincs találat
 
+    payment_refund:
+        header: Visszatérítés
+        confirm_refund: A fizetés visszaküldése
+        default_ends_at: Eredeti befejezési dátum
+        form:
+            cancel_subscription_date: Az előfizetés leállítása a mai napig
+            refund_was_successful: A visszatérítés sikeres volt!
+            stop_recurrent_charge: Állítsa le az automatikus megújítást
+            required:
+                subscription_ends_at: Az előfizetés befejezési dátuma kötelező
+        subscription:
+            subscription_settings: Előfizetési beállítások
+            payment_has_active_subscription: A fizetés aktív előfizetést is tartalmaz
+            automatic_renewal: Automatikus megújítás
+        user:
+            email: E-mail
+            address: Cím
+            registered: Bejegyzett
+            active: Aktív
+            source: Forrás
+            language: Nyelv
+
     payments:
+        payment_info: Fizetési információ
         updated: Fizetés frissítve
         created: Fizetés létrehozva
         send_notification: Értesítés küldése e-mailben
@@ -324,11 +347,15 @@ admin:
         variable_symbol: Fizetés egyedi azonosítója
         user: Felhasználó
         amount: Összeg
+        amount_without_vat: Áfa nélküli összeg
         gateway: Fizetési kapu
         items: Tételek
         status: Állapot
         created_at: Létrehozva
         actions: Műveletek
+        note: Jegyzet
+        referer: Hivatalnok
+        status_text: A fizetés jelenleg státuszban van
         recurrent_charge: Ismétlődő díj
         donation: Adomány
         donation_recurrent: Ismétlődő adomány
@@ -343,9 +370,31 @@ admin:
         item: tétel
         item_name: Név
         price_with_vat: Egységár ÁFÁ-val
+        short_unit_price: Egy. az ár
         vat_rate: ÁFA
         enter_number_of_products: Termékek száma
         count: Count
+        export:
+            label: Export
+            exported: 'Az exportálás hozzáadva a sorhoz, és elérhető lesz az <a href="/payments/exports-admin/" class="link">exportálások</a> között.'
+            modal_title: Exportfizetések
+            modal_body: 'Az exportálás szűrt fizetéseket tartalmaz majd, és az <a href="/payments/exports-admin/" class="link">exportálás</a> alatt lesz elérhető.'
+        show:
+            header: Fizetés
+            menu_link: Fizetési részletek
+            back: vissza a felhasználóhoz
+            subscription_id: Előfizetési azonosító
+            payment_items: Fizetési tételek
+            payment_item: Fizetési tétel
+            payment_item_type: Tárgy típus
+            recurrent_payment: Ismétlődő fizetés
+            recurrent_charge: Megújított fizetés
+            recurrent_previous: Ismétlődő fizetéssel létrehozva
+            recurrent_next: A következő ismétlődő fizetés
+            payment_meta:
+                header: Meta
+            ip: IP-cím
+            user_agent: User-Agent
 
     report:
         no_recurrent_charge:
@@ -412,6 +461,7 @@ form:
             label: Fizetés időpontja
             placeholder: pl. 14.2.2016 14:21
             required: A tétel megadása kötelező
+            no_future_paid_at: Fizetni nem lehet a jövőben.
         send_notification:
             label: Értesítés küldése
         manual_subscription:
