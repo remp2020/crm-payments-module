@@ -8,6 +8,7 @@ use Crm\PaymentsModule\Models\GatewayFail;
 use Crm\PaymentsModule\Models\RecurrentPaymentFailStop;
 use Crm\PaymentsModule\Models\RecurrentPaymentFailTry;
 use Crm\PaymentsModule\Repositories\PaymentMetaRepository;
+use Crm\PaymentsModule\Repositories\RecurrentPaymentsRepository;
 use Crm\UsersModule\Models\Auth\UserManager;
 use Nette\Application\LinkGenerator;
 use Nette\Database\Table\ActiveRow;
@@ -63,7 +64,8 @@ class CsobOneClick extends GatewayAbstract implements RecurrentPaymentInterface,
         LinkGenerator $linkGenerator,
         ApplicationConfig $applicationConfig,
         Response $httpResponse,
-        Translator $translator
+        Translator $translator,
+        private RecurrentPaymentsRepository $recurrentPaymentsRepository,
     ) {
         parent::__construct($linkGenerator, $applicationConfig, $httpResponse, $translator);
     }
@@ -231,7 +233,6 @@ class CsobOneClick extends GatewayAbstract implements RecurrentPaymentInterface,
     public function charge($payment, $token): string
     {
         $this->initialize();
-        $clientIp = Request::getIp();
 
         $oneClickPaymentRequest = [
             'payId' => $token,
@@ -240,7 +241,6 @@ class CsobOneClick extends GatewayAbstract implements RecurrentPaymentInterface,
             'email' => $payment->user->email,
             'createdAt' => $payment->user->created_at,
             'changedAt' => $payment->user->modified_at,
-            'clientIp' => $clientIp,
 
             // This parameter doesn't make sense. CSOB requires it even for offline payments and even when the library
             // indicates that client is just not there (clientInitiated: false).
@@ -249,11 +249,12 @@ class CsobOneClick extends GatewayAbstract implements RecurrentPaymentInterface,
             ]),
         ];
 
-        // clientIp for offline payment (cli) should be the same as the one used during initial payment
-        // https://github.com/csob/paymentgateway/issues/471
-        $initialPaymentMeta = $this->paymentMetaRepository->findByMeta('pay_id', $token);
-        if ($clientIp === 'cli' && $initialPaymentMeta) {
-            $oneClickPaymentRequest['clientIp'] = $initialPaymentMeta->payment->ip;
+        // client IP is mandatory since eAPI v1.8
+        $clientIp = $this->getClientIp($payment, $token);
+        if ($clientIp !== null) {
+            $oneClickPaymentRequest['clientIp'] = $clientIp;
+        } else {
+            Debugger::log("Unable to find IP address for payment [$payment] with token [{$token}].", Debugger::ERROR);
         }
 
         if (!empty($payment->user->last_name)) {
@@ -335,5 +336,38 @@ class CsobOneClick extends GatewayAbstract implements RecurrentPaymentInterface,
 
         // CSOB deactivates card token after 365 days without payment
         return $recurrentPayment->parent_payment->paid_at > new DateTime('-365 days');
+    }
+
+    private function getClientIp(ActiveRow $payment, string $token): ?string
+    {
+        // use IP of request (if exists; cli === offline charge)
+        $requestIp = Request::getIp();
+        if ($requestIp !== 'cli') {
+            return $requestIp;
+        }
+
+        // clientIp for offline payment (cli) should be the same as the one used during initial payment
+        // https://github.com/csob/paymentgateway/issues/471
+        // 1. try to find initial payment from payment meta
+        $initialPaymentMeta = $this->paymentMetaRepository->findByMeta('pay_id', $token);
+        if ($initialPaymentMeta !== null && isset($initialPaymentMeta->payment->ip)) {
+            return $initialPaymentMeta->payment->ip;
+        }
+
+        // 2. try to find initial payment from first recurrent payment
+        $initialRecurrentPayment = $this->recurrentPaymentsRepository->getTable()
+            ->where(['cid' => $token])
+            ->order('created_at ASC')
+            ->fetch();
+        if ($initialRecurrentPayment !== null && isset($initialRecurrentPayment->payment->ip)) {
+            return $initialRecurrentPayment->payment->ip;
+        }
+
+        // no initial payment found; load last known IP from customer
+        if (isset($payment->user->current_sign_in_ip)) {
+            return $payment->user->current_sign_in_ip;
+        }
+
+        return null;
     }
 }
