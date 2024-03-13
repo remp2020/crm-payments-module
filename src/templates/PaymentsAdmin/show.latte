@@ -33,6 +33,13 @@
         </small>
         {_payments.admin.payments.show.header}
         VS {$payment->variable_symbol}
+
+        {control simpleWidget 'admin.payment.actions.header', $payment}
+        {if $payment->status != Crm\PaymentsModule\Repository\PaymentsRepository::STATUS_REFUND}
+          <a href="{plink :Payments:PaymentsRefundAdmin:default $payment->id}" class="btn btn-default btn-lg pull-right" style="margin-left: 7px;" title="{_payments.admin.payment_refund.confirm_refund}">
+              <i class="fa fa-rotate-right"></i> {_payments.admin.payment_refund.confirm_refund}
+          </a>
+        {/if}
         <a href="{plink :Payments:PaymentsAdmin:edit $payment->id, userId => $payment->user_id}" class="btn btn-primary btn-lg pull-right" title="{_payments.admin.payments.edit}">
           <i class="fa fa-edit"></i> {_payments.admin.payments.edit}
         </a>
@@ -45,6 +52,9 @@
 
   <!-- left column -->
   <div class="col-md-6">
+
+    {control simpleWidget 'admin.payment.show.alert', $payment}
+
     <ul class="list-group">
 
       <li class="list-group-item">
@@ -58,13 +68,13 @@
 
       <li class="list-group-item">
         {if $payment->status == \Crm\PaymentsModule\Repository\PaymentsRepository::STATUS_PAID || $payment->status == \Crm\PaymentsModule\Repository\PaymentsRepository::STATUS_IMPORTED}
-          {var $btnClass = 'btn-success'}
+          {var $btnClass = 'label-success'}
         {elseif $payment->status == \Crm\PaymentsModule\Repository\PaymentsRepository::STATUS_FORM}
-          {var $btnClass = 'btn-info'}
+          {var $btnClass = 'label-info'}
         {elseif $payment->status == \Crm\PaymentsModule\Repository\PaymentsRepository::STATUS_FAIL || $payment->status == \Crm\PaymentsModule\Repository\PaymentsRepository::STATUS_TIMEOUT}
-          {var $btnClass = 'btn-danger'}
+          {var $btnClass = 'label-danger'}
         {else}
-          {var $btnClass = 'btn-default'}
+          {var $btnClass = 'label-default'}
         {/if}
         <b>{_payments.form.payment.status.label}:</b>&nbsp;
         <span class="label {$btnClass}">{$payment->status|firstUpper}</span>

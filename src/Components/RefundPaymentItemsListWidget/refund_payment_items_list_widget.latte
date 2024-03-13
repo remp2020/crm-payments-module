@@ -1,0 +1,67 @@
+<div class="panel panel-default">
+    <div class="panel-heading">
+        {_payments.admin.payments.show.payment_items}
+    </div>
+    <div class="panel-body">
+        <table class="table table-responsive table-striped">
+            <thead>
+                <tr>
+                    <th>
+                        {_payments.admin.payments.show.payment_item}
+                    </th>
+                    <th>
+                        {_payments.admin.payments.show.payment_item_type}
+                    </th>
+                    <th>
+                        {_payments.admin.payments.count}
+                    </th>
+                    <th>
+                        {_payments.admin.payments.short_unit_price}
+                    </th>
+                    <th class="text-right">
+                        {_payments.admin.payments.amount}
+                    </th>
+                </tr>
+            </thead>
+            <tbody>
+                {var $totalAmount = 0}
+                {var $totalAmountWithoutVat = 0}
+                {foreach $paymentItems as $paymentItem}
+                    <tr>
+                        <td class="truncate-text">{$paymentItem->name}</td>
+                        <td class="truncate-text">
+                            <span class="label label-default">{$paymentItem->type}</span>
+                        </td>
+                        <td>{$paymentItem->count}</td>
+                        <td>{$paymentItem->amount|price}</td>
+                        <td class="text-right">{($paymentItem->amount * $paymentItem->count)|price}</td>
+                    </tr>
+
+                    {php $totalAmount += $paymentItem->amount * $paymentItem->count}
+                    {php $totalAmountWithoutVat += $paymentItem->amount_without_vat * $paymentItem->count}
+                {/foreach}
+            </tbody>
+        </table>
+
+        <hr />
+
+        <div class="row">
+            <div class="col-sm-6 col-sm-offset-6 col-xs-12">
+                <table class="table table-clear table-left-label">
+                    <tr class="text-right" style="font-size: 1.2em;">
+                        <td>{_payments.admin.payments.amount}</td>
+                        <td><b>{$totalAmount|price}</b></td>
+                    </tr>
+                    <tr class="text-right">
+                        <td>{_payments.admin.payments.amount_without_vat}</td>
+                        <td>{$totalAmountWithoutVat|price}</td>
+                    </tr>
+                    <tr class="text-right">
+                        <td>{_payments.admin.payments.vat_rate}</td>
+                        <td>{($totalAmount-$totalAmountWithoutVat)|price}</td>
+                    </tr>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>

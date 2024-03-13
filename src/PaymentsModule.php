@@ -34,6 +34,8 @@ use Crm\PaymentsModule\Commands\StopRecurrentPaymentsExpiresCommand;
 use Crm\PaymentsModule\Commands\TatraBankaMailConfirmationCommand;
 use Crm\PaymentsModule\Commands\TatraBankaStatementMailConfirmationCommand;
 use Crm\PaymentsModule\Commands\UpdateRecurrentPaymentsExpiresCommand;
+use Crm\PaymentsModule\Components\PaymentStatusDropdownMenuWidget\PaymentStatusDropdownMenuWidget;
+use Crm\PaymentsModule\Components\RefundPaymentItemsListWidget\RefundPaymentItemsListWidget;
 use Crm\PaymentsModule\DataProvider\CanDeleteAddressDataProvider;
 use Crm\PaymentsModule\DataProvider\PaymentFromVariableSymbolDataProvider;
 use Crm\PaymentsModule\DataProvider\PaymentsClaimUserDataProvider;
@@ -278,8 +280,18 @@ class PaymentsModule extends CrmModule
         );
 
         $widgetManager->registerWidget(
+            'admin.payment.status.dropdown_menu',
+            PaymentStatusDropdownMenuWidget::class
+        );
+
+        $widgetManager->registerWidget(
             'subscriptions.admin.user_subscriptions_listing.action.menu',
             \Crm\PaymentsModule\Components\PaymentToSubscriptionMenu::class,
+        );
+
+        $widgetManager->registerWidget(
+            'admin.refund_payment.show.left',
+            RefundPaymentItemsListWidget::class
         );
     }
 

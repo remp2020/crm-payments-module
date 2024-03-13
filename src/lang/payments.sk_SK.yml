@@ -403,7 +403,30 @@ admin:
         message: Správa
         no_records: Nenašli sa žiadne záznamy ktoré by zodpovedali filtru
 
+    payment_refund:
+        header: Vrátenie platby
+        confirm_refund: Vrátiť platbu
+        default_ends_at: Pôvodný dátum konca
+        form:
+            cancel_subscription_date: Ukončiť predplatné ku dňu
+            refund_was_successful: Vrátenie platby bolo úspešné!
+            stop_recurrent_charge: Zastaviť automatickú obnovu
+            required:
+                subscription_ends_at: Dátum konca predplatného je povinný údaj
+        subscription:
+            subscription_settings: Nastavenia predplatného
+            payment_has_active_subscription: Platba obsahuje aktívne predplatné
+            automatic_renewal: Automatická obnova
+        user:
+            email: E-mail
+            address: Adresa
+            registered: Registrovaný
+            active: Aktívny
+            source: Zdroj
+            language: Jazyk
+
     payments:
+        payment_info: Informácie o platbe
         updated: Platba bola upravená
         created: Platba bola vytvorená
         send_notification: Pošli notifikáciu emailom
@@ -412,12 +435,16 @@ admin:
         variable_symbol: Variabilný symbol
         user: Používateľ
         amount: Suma
+        amount_without_vat: Suma bez DPH
         gateway: Platobná brána
         items: Položky
         status: Stav
         created_at: Vytvorené
         modified_at: Upravené
         actions: Akcie
+        note: Poznámka
+        referer: Referer
+        status_text: Platba je aktuálne v stave
         recurrent_charge: Automaticky obnovené
         donation: Dar
         donation_recurrent: Opakovaný dar
@@ -432,6 +459,7 @@ admin:
         item: položka
         item_name: Názov
         price_with_vat: Jednotková cena s DPH
+        short_unit_price: Jedn. cena
         vat_rate: Sadzba DPH
         enter_number_of_products: Zadajte počet kusov
         count: Počet kusov
@@ -446,6 +474,8 @@ admin:
             back: späť na používateľa
             subscription_id: ID predplatného
             payment_items: Položky platby
+            payment_item: Položka platby
+            payment_item_type: Typ položky
             recurrent_payment: Rekurentná platba
             recurrent_charge: Obnovená platba
             recurrent_previous: Vytvorené rekurentnou platbou

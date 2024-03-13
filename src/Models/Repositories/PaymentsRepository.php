@@ -458,10 +458,10 @@ class PaymentsRepository extends Repository
             self::STATUS_FORM => self::STATUS_FORM,
             self::STATUS_FAIL => self::STATUS_FAIL,
             self::STATUS_PAID => self::STATUS_PAID,
+            self::STATUS_PREPAID => self::STATUS_PREPAID,
             self::STATUS_TIMEOUT => self::STATUS_TIMEOUT,
             self::STATUS_REFUND => self::STATUS_REFUND,
             self::STATUS_IMPORTED => self::STATUS_IMPORTED,
-            self::STATUS_PREPAID => self::STATUS_PREPAID,
         ];
     }
 

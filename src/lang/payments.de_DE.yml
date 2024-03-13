@@ -347,12 +347,37 @@ admin:
         title: Verarbeitete Zahlungs-E-Mails
         no_records: Keine Datensätze entsprechen den Filterbedingungen
         delivered_at: Erhalten am
+
+    payment_refund:
+        header: Erstattung
+        confirm_refund: Zurück geben
+        default_ends_at: Ursprüngliches Enddatum
+        form:
+            cancel_subscription_date: Abonnement bis heute beenden
+            refund_was_successful: Die Rückerstattung war erfolgreich!
+            stop_recurrent_charge: Stoppen Sie die automatische Verlängerung
+            required:
+                subscription_ends_at: Das Enddatum des Abonnements ist obligatorisch
+        subscription:
+            subscription_settings: Abonnementeinstellungen
+            payment_has_active_subscription: Die Zahlung beinhaltet ein aktives Abonnement
+            automatic_renewal: Automatische Erneuerung
+        user:
+            email: Email
+            address: Adresse
+            registered: Eingetragen
+            active: Aktiv
+            source: Quelle
+            language: Sprache
+
     payments:
+        payment_info: Zahlungsinformationen
         updated: Die Zahlung wurde angepasst
         created: Die Zahlung wurde erstellt
         close: Schließen
         title: Zahlungen
         amount: Summe
+        amount_without_vat: Betrag ohne MwSt.
         donation: Spende
         donation_recurrent: Wiederholend Spende
         paid_at: Bezahlt
@@ -373,16 +398,37 @@ admin:
             label: Export
             modal_body: Der Export wird enthält die gefilterten Zahlungen enthalten und unter <a href="/payments/exports-admin/" class="link">Exporten</a> verfügbar sein.
         price_with_vat: Einzelpreis inkl. MwSt.
+        short_unit_price: Eins. der Preis
         send_notification: Benachrichtigung per E-Mail senden
         created_at: Angelegt am
         recurrent_charge: Wiederholende Abbuchung
         variable_symbol: Variables Symbol
         items: Artikel
         actions: Aktionen
+        note: Notiz
+        referer: Referent
+        status_text: Die Zahlung befindet sich derzeit im Status
         user: Nutzer
         gateway: Zahlungsdienstleister
         status: Status
         item_name: Titel
+        show:
+            header: Zahlung
+            menu_link: Zahlungsdetails
+            back: zurück zum Benutzer
+            subscription_id: Abonnement-ID
+            payment_items: Zahlungsposten
+            payment_item: Zahlungsposten
+            payment_item_type: Gegenstandsart
+            recurrent_payment: Wiederkehrende Zahlung
+            recurrent_charge: Erneute Zahlung
+            recurrent_previous: Erstellt durch wiederkehrende Zahlung
+            recurrent_next: Die folgende wiederkehrende Zahlung
+            payment_meta:
+                header: Meta
+            ip: IP Adresse
+            user_agent: User-Agent
+
     report:
         no_recurrent_charge:
             label: Bislang keine wiederkehrende Abbuchung
@@ -523,6 +569,7 @@ form:
             label: Zahlungszeitpunkt
             placeholder: z.B. 14.2.2016 14:21
             required: Angabe ist erforderlich.
+            no_future_paid_at: Bezahlt um kann nicht in der Zukunft liegen.
         send_notification:
             label: Benachrichtigung senden
         manual_subscription:

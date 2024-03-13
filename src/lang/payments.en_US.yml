@@ -403,7 +403,30 @@ admin:
         message: Message
         no_records: No records match selected filter
 
+    payment_refund:
+        header: Refund
+        confirm_refund: Confirm refund
+        default_ends_at: Default end date
+        form:
+            cancel_subscription_date: End subscription to date
+            refund_was_successful: The refund was successful!
+            stop_recurrent_charge: Stop automatic renewal
+            required:
+                subscription_ends_at: The subscription end date is required
+        subscription:
+            subscription_settings: Subscription settings
+            payment_has_active_subscription: The payment includes an active subscription
+            automatic_renewal: Automatic renewal
+        user:
+            email: E-mail
+            address: Address
+            registered: Registered
+            active: Active
+            source: Source
+            language: Language
+
     payments:
+        payment_info: Payment information
         updated: Payment was updated
         created: Payment was created
         send_notification: Send notification via email
@@ -412,12 +435,16 @@ admin:
         variable_symbol: Variable symbol
         user: User
         amount: Amount
+        amount_without_vat: Amount without VAT
         gateway: Payment gateway
         items: Items
         status: Status
         created_at: Created at
         modified_at: Updated at
         actions: Actions
+        note: Note
+        referer: Referer
+        status_text: The payment is currently in status
         recurrent_charge: Recurrent charge
         donation: Donation
         donation_recurrent: Recurrent donation
@@ -432,6 +459,7 @@ admin:
         item: item
         item_name: Name
         price_with_vat: Unit price with VAT
+        short_unit_price: Unit price
         vat_rate: VAT rate
         enter_number_of_products: Enter number of products
         count: Count
@@ -446,6 +474,8 @@ admin:
             back: back to user
             subscription_id: ID of subscription
             payment_items: Payment items
+            payment_item: Payment item
+            payment_item_type: Type
             recurrent_payment: Recurrent payment
             recurrent_charge: Automatically charged payment
             recurrent_previous: Created by recurrent payment
