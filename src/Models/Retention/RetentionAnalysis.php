@@ -72,7 +72,7 @@ SQL;
 
         if ($inputParams['partition'] === self::PARTITION_WEEK) {
             return <<<SQL
-                YEARWEEK({$subQueryName}.paid_at) DIV 100 AS paid_at_year,
+                YEARWEEK({$subQueryName}.paid_at, 3) DIV 100 AS paid_at_year,
                 YEARWEEK({$subQueryName}.paid_at, 3) MOD 100 AS paid_at_partition
                 SQL;
         }
