@@ -486,4 +486,39 @@ Vaše ČSOB
 
         $this->assertCount(0, $mailContents);
     }
+
+    public function testCashTransferPayment()
+    {
+        $email = 'Vážený kliente,
+
+dne 18.12.2023 byla na účtu 330028604 zaúčtována hotovostní transakce.
+
+Název smlouvy: Respekt Media a.s.
+Číslo smlouvy: 42864596
+Majitel smlouvy: Respekt Media a.s.
+Účet: 330028604, CZK, RESPEKT MEDIA A.S.
+Částka: +3 300,00 CZK
+Variabilní symbol: 1122334455
+Zpráva příjemci: VS1122334455
+
+Zůstatek na účtu po zaúčtování transakce: +11111 CZK.
+
+S přáním krásného dne
+Vaše ČSOB
+';
+
+        $csobMailParser = new CsobMailParser();
+        $mailContents = $csobMailParser->parseMulti($email);
+
+        $this->assertCount(1, $mailContents);
+
+        $mailContent = $mailContents[0];
+        $this->assertEquals('330028604', $mailContent->getAccountNumber());
+        $this->assertEquals('CZK', $mailContent->getCurrency());
+        $this->assertEquals(3300.00, $mailContent->getAmount());
+        $this->assertEquals('1122334455', $mailContent->getVs());
+        $this->assertNull($mailContent->getKs());
+        $this->assertNull($mailContent->getSs());
+        $this->assertEquals(strtotime('18.12.2023'), $mailContent->getTransactionDate());
+    }
 }

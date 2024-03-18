@@ -29,7 +29,7 @@ class CsobMailParser implements ParserInterface
     {
         $mailContent = new MailContent();
 
-        $pattern1 = '/(.*) byl(?:a)? na účtu ([a-zA-Z0-9]+) (?:zaúčtovaná|zaúčtována|zaúčtovaný) (?:zahraniční transakce\.|(?:transakce typu: |transakce )?(Došlá platba|Příchozí úhrada|Došlá úhrada|SEPA převod|platební kartou))/mu';
+        $pattern1 = '/(.*) byl(?:a)? na účtu ([a-zA-Z0-9]+) (?:zaúčtovaná|zaúčtována|zaúčtovaný) (?:zahraniční transakce\.|hotovostní transakce\.|(?:transakce typu: |transakce )?(Došlá platba|Příchozí úhrada|Došlá úhrada|SEPA převod|platební kartou))/mu';
         $res = preg_match($pattern1, $content, $result);
         if (!$res) {
             return null;
