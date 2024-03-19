@@ -264,6 +264,32 @@ class RecurrentPaymentsResolverTest extends PaymentsTestCase
         ];
     }
 
+    /*
+     * Failed parent payment
+    */
+    public function testResolveSubscriptionTypeWithParentPaymentFailed()
+    {
+        // create subscription type with trial periods (it's linking itself; we can ignore it now)
+        $subscriptionType = $this->getSubscriptionTypeByCode('subscription_type_test');
+        $this->subscriptionTypesRepository->update($subscriptionType, [
+            'trial_periods' => 2,
+            'next_subscription_type_id' => $subscriptionType,
+        ]);
+
+        // change parent payment to failed
+        $recurrentPayment = $this->createRecurrentPaymentWithSubscriptionType($subscriptionType);
+        $this->paymentsRepository->update(
+            $recurrentPayment->parent_payment,
+            ['status' => PaymentsRepository::STATUS_FAIL],
+        );
+        // reload is needed (Nette cache)
+        $recurrentPayment = $this->recurrentPaymentsRepository->find($recurrentPayment->id);
+
+        $resolvedSubscriptionType = $this->recurrentPaymentsResolver->resolveSubscriptionType($recurrentPayment);
+
+        $this->assertEquals($subscriptionType->id, $resolvedSubscriptionType->id);
+    }
+
     /* ***********************************************************************
      * Helper methods
      * ********************************************************************* */

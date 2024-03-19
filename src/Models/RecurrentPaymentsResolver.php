@@ -75,6 +75,9 @@ class RecurrentPaymentsResolver
         while ($previousRecurrentCharge) {
             // $previousRecurrentCharge might be failed attempt, we need to find the latest successful attempt before continuing
             $previousRecurrentCharge = $this->recurrentPaymentsRepository->latestSuccessfulRecurrentPayment($previousRecurrentCharge);
+            if (!$previousRecurrentCharge) {
+                break;
+            }
             $previousRecurrentCharge = $this->recurrentPaymentsRepository->findByPayment($previousRecurrentCharge->parent_payment);
             if (!$previousRecurrentCharge) {
                 break;
