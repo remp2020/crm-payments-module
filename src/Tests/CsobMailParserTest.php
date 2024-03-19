@@ -491,12 +491,12 @@ Vaše ČSOB
     {
         $email = 'Vážený kliente,
 
-dne 18.12.2023 byla na účtu 330028604 zaúčtována hotovostní transakce.
+dne 18.12.2023 byla na účtu 99991111 zaúčtována hotovostní transakce.
 
-Název smlouvy: Respekt Media a.s.
-Číslo smlouvy: 42864596
-Majitel smlouvy: Respekt Media a.s.
-Účet: 330028604, CZK, RESPEKT MEDIA A.S.
+Název smlouvy: CRM International a.s.
+Číslo smlouvy: 4200000
+Majitel smlouvy: CRM International a.s.
+Účet: 99991111, CZK, CRM INTERNATIONAL A.S.
 Částka: +3 300,00 CZK
 Variabilní symbol: 1122334455
 Zpráva příjemci: VS1122334455
@@ -513,7 +513,7 @@ Vaše ČSOB
         $this->assertCount(1, $mailContents);
 
         $mailContent = $mailContents[0];
-        $this->assertEquals('330028604', $mailContent->getAccountNumber());
+        $this->assertEquals('99991111', $mailContent->getAccountNumber());
         $this->assertEquals('CZK', $mailContent->getCurrency());
         $this->assertEquals(3300.00, $mailContent->getAmount());
         $this->assertEquals('1122334455', $mailContent->getVs());
