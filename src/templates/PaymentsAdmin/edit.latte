@@ -12,7 +12,7 @@
       	{$payment->variable_symbol}
 
         {control simpleWidget 'admin.payment.actions.header', $payment}
-        {if $payment->status != Crm\PaymentsModule\Repositories\PaymentsRepository::STATUS_REFUND}
+        {if $payment->status != Crm\PaymentsModule\Repository\PaymentsRepository::STATUS_REFUND}
             <a href="{plink :Payments:PaymentsRefundAdmin:default $payment->id}" class="btn btn-default btn-lg pull-right" title="{_payments.admin.payment_refund.confirm_refund}">
                 <i class="fa fa-rotate-right"></i> {_payments.admin.payment_refund.confirm_refund}
             </a>
