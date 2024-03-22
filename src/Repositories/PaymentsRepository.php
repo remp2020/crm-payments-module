@@ -164,9 +164,9 @@ class PaymentsRepository extends Repository
         return $added;
     }
 
-    final public function copyPayment(ActiveRow $payment)
+    final public function copyPayment(ActiveRow $payment, array $changes = [])
     {
-        $newPayment = $this->insert([
+        $paymentData = array_merge([
             'amount' => $payment->amount,
             'user_id' => $payment->user_id,
             'subscription_type_id' => $payment->subscription_type_id,
@@ -178,7 +178,9 @@ class PaymentsRepository extends Repository
             'ip' => Request::getIp(),
             'user_agent' => Request::getUserAgent(),
             'referer' => null,
-        ]);
+        ], $changes);
+
+        $newPayment = $this->insert($paymentData);
 
         $totalPricesEqual = true;
         $paymentItems = $payment->related('payment_items');

@@ -82,6 +82,8 @@ use Crm\PaymentsModule\DataProviders\SubscriptionFormDataProvider;
 use Crm\PaymentsModule\DataProviders\SubscriptionsWithActiveUnchargedRecurrentEndingWithinPeriodDataProvider;
 use Crm\PaymentsModule\DataProviders\SubscriptionsWithoutExtensionEndingWithinPeriodDataProvider;
 use Crm\PaymentsModule\DataProviders\UniversalSearchDataProvider;
+use Crm\PaymentsModule\Events\AttachRenewalPaymentEvent;
+use Crm\PaymentsModule\Events\AttachRenewalPaymentEventHandler;
 use Crm\PaymentsModule\Events\BeforeRecurrentPaymentChargeEvent;
 use Crm\PaymentsModule\Events\NewPaymentEvent;
 use Crm\PaymentsModule\Events\PaymentChangeStatusEvent;
@@ -537,6 +539,10 @@ class PaymentsModule extends CrmModule
         $emitter->addListener(
             SubscriptionMovedEvent::class,
             SubscriptionMovedHandler::class
+        );
+        $emitter->addListener(
+            AttachRenewalPaymentEvent::class,
+            AttachRenewalPaymentEventHandler::class,
         );
     }
 

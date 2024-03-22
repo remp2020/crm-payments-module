@@ -117,6 +117,7 @@ services:
 	- Crm\PaymentsModule\Events\RecurrentPaymentCardExpiredEventHandler
 	- Crm\PaymentsModule\Events\SubscriptionPreUpdateHandler
 	- Crm\PaymentsModule\Events\SubscriptionMovedHandler
+	- Crm\PaymentsModule\Events\AttachRenewalPaymentEventHandler
 
 	subscribersWithPaymentWidgetFactory:
 		factory: Crm\PaymentsModule\Components\SubscribersWithPaymentWidget\SubscribersWithPaymentWidgetFactory
