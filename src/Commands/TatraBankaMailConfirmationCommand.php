@@ -63,7 +63,7 @@ class TatraBankaMailConfirmationCommand extends Command
                 return;
             }
 
-            $this->mailProcessor->processMail($mailContent, $this->output);
+            return $this->mailProcessor->processMail($mailContent, $this->output);
         });
 
         $criteria = new MailCriteria();
@@ -85,7 +85,7 @@ class TatraBankaMailConfirmationCommand extends Command
                 return;
             }
 
-            $this->mailProcessor->processMail($mailContent, $this->output);
+            return $this->mailProcessor->processMail($mailContent, $this->output);
         });
 
         return Command::SUCCESS;
