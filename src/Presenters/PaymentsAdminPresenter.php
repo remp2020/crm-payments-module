@@ -288,7 +288,7 @@ class PaymentsAdminPresenter extends AdminPresenter
             throw new BadRequestException();
         }
         $this->template->payment = $payment;
-        $this->template->user = $payment->user;
+        $this->template->dbUser = $payment->user;
 
         $allowEditPaymentItems = true;
 
@@ -325,7 +325,7 @@ class PaymentsAdminPresenter extends AdminPresenter
         if (!$user) {
             throw new BadRequestException();
         }
-        $this->template->user = $user;
+        $this->template->dbUser = $user;
     }
 
     public function createComponentPaymentForm()
