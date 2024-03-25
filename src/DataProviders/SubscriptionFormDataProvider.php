@@ -76,7 +76,7 @@ class SubscriptionFormDataProvider implements SubscriptionFormDataProviderInterf
             // load & translate original description
             // - if translation string is single value of description, it is translated automatically
             // - if there are multiple strings, translation has to be done manually
-            $originalDescription = $form->getComponent($elementName)->getOption('description', null);
+            $originalDescription = $form->getComponent($elementName)->getOption('description');
             if ($originalDescription !== null) {
                 $description = $this->translator->translate($originalDescription) . "\n" . $description;
             }
