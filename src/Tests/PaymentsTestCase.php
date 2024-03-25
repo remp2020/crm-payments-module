@@ -24,13 +24,9 @@ use Crm\SubscriptionsModule\Seeders\SubscriptionLengthMethodSeeder;
 use Crm\SubscriptionsModule\Seeders\SubscriptionTypeNamesSeeder;
 use Crm\UsersModule\Repositories\AccessTokensRepository;
 use Crm\UsersModule\Repositories\UsersRepository;
-use Nette\DI\Container;
 
 class PaymentsTestCase extends DatabaseTestCase
 {
-    /** @var  Container */
-    protected $container;
-
     /** @var PaymentsRepository */
     protected $paymentsRepository;
 
@@ -76,7 +72,6 @@ class PaymentsTestCase extends DatabaseTestCase
     public function setUp(): void
     {
         parent::setUp();
-        $this->container = $GLOBALS['container'];
 
         $this->accessTokensRepository = $this->getRepository(AccessTokensRepository::class);
         $this->paymentsRepository = $this->getRepository(PaymentsRepository::class);
