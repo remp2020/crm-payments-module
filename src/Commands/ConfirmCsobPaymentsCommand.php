@@ -13,17 +13,11 @@ use Symfony\Component\Console\Output\OutputInterface;
 
 class ConfirmCsobPaymentsCommand extends Command
 {
-    private $paymentsRepository;
-
-    private $paymentProcessor;
-
     public function __construct(
-        PaymentsRepository $paymentsRepository,
-        PaymentProcessor $paymentProcessor
+        private readonly PaymentsRepository $paymentsRepository,
+        private readonly PaymentProcessor $paymentProcessor,
     ) {
         parent::__construct();
-        $this->paymentsRepository = $paymentsRepository;
-        $this->paymentProcessor = $paymentProcessor;
     }
 
     public function configure()
@@ -50,9 +44,14 @@ class ConfirmCsobPaymentsCommand extends Command
 
         foreach ($unconfirmedPayments as $unconfirmedPayment) {
             $output->writeln("Processing {$unconfirmedPayment->variable_symbol}");
-            $this->paymentProcessor->complete($unconfirmedPayment, function () {
-                // no need to do anything...
-            });
+
+            // try to complete payment, without automatically updating status
+            // prevents payment status to be updated to `fail` (payment should be usable in notifications) respekt#150
+            $this->paymentProcessor->complete($unconfirmedPayment, function ($payment, $gateway, $status) {
+                if ($payment->status !== $status && $status !== PaymentsRepository::STATUS_FAIL) {
+                    $this->paymentsRepository->updateStatus($payment, $status);
+                }
+            }, true);
         }
 
         return Command::SUCCESS;

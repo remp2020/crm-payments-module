@@ -67,36 +67,39 @@ class PaymentProcessor
         return $gateway->process($allowRedirect);
     }
 
-    public function complete($payment, $callback)
+    public function complete($payment, $callback, bool $preventPaymentStatusUpdate = false)
     {
         $gateway = $this->gatewayFactory->getGateway($payment->payment_gateway->code);
         if (!$gateway instanceof GatewayAbstract) {
             throw new \Exception('To use PaymentProcessor, the gateway must be implementation of GatewayAbstract: ' . get_class($gateway));
         }
 
-        if ($payment->status == PaymentsRepository::STATUS_PAID) {
-            $callback($payment, $gateway);
+        if ($payment->status === PaymentsRepository::STATUS_PAID) {
+            $callback($payment, $gateway, PaymentsRepository::STATUS_PAID);
             return;
         }
 
-        if ($payment->status == PaymentsRepository::STATUS_PREPAID) {
+        if ($payment->status === PaymentsRepository::STATUS_PREPAID) {
             $this->paymentLogsRepository->add(
                 'OK',
                 Json::encode([]),
                 $this->request->getUrl(),
                 $payment->id
             );
-            $callback($payment, $gateway);
+            $callback($payment, $gateway, PaymentsRepository::STATUS_PREPAID);
             return;
         }
 
+        $status = $payment->status;
         $result = $gateway->complete($payment);
         if ($result === true) {
             $status = PaymentsRepository::STATUS_PAID;
             if ($gateway instanceof AuthorizationInterface) {
                 $status = PaymentsRepository::STATUS_AUTHORIZED;
             }
-            $this->paymentsRepository->updateStatus($payment, $status, true);
+            if (!$preventPaymentStatusUpdate) {
+                $this->paymentsRepository->updateStatus($payment, $status, true);
+            }
             $payment = $this->paymentsRepository->find($payment->id);
 
             if ((boolean) $payment->payment_gateway->is_recurrent) {
@@ -114,7 +117,10 @@ class PaymentProcessor
                 }
             }
         } elseif ($result === false) {
-            $this->paymentsRepository->updateStatus($payment, PaymentsRepository::STATUS_FAIL);
+            $status = PaymentsRepository::STATUS_FAIL;
+            if (!$preventPaymentStatusUpdate) {
+                $this->paymentsRepository->updateStatus($payment, $status);
+            }
             $payment = $this->paymentsRepository->find($payment->id);
         } elseif ($result === null) {
             // no action intentionally, not even log
@@ -128,6 +134,6 @@ class PaymentProcessor
             $payment->id
         );
 
-        $callback($payment, $gateway);
+        $callback($payment, $gateway, $status);
     }
 }
