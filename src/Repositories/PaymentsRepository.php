@@ -39,41 +39,21 @@ class PaymentsRepository extends Repository
 
     protected $tableName = 'payments';
 
-    private $variableSymbol;
-
-    private $subscriptionsRepository;
-
-    private $paymentItemsRepository;
-
-    private $emitter;
-
-    private $hermesEmitter;
-
-    private $paymentMetaRepository;
-
-    private $cacheRepository;
-
     public function __construct(
         Explorer $database,
-        VariableSymbolInterface $variableSymbol,
-        SubscriptionsRepository $subscriptionsRepository,
-        PaymentItemsRepository $paymentItemsRepository,
-        Emitter $emitter,
         AuditLogRepository $auditLogRepository,
-        \Tomaj\Hermes\Emitter $hermesEmitter,
-        PaymentMetaRepository $paymentMetaRepository,
-        CacheRepository $cacheRepository,
-        RedisClientFactory $redisClientFactory
+        RedisClientFactory $redisClientFactory,
+        protected VariableSymbolInterface $variableSymbol,
+        protected SubscriptionsRepository $subscriptionsRepository,
+        protected PaymentItemsRepository $paymentItemsRepository,
+        protected Emitter $emitter,
+        protected \Tomaj\Hermes\Emitter $hermesEmitter,
+        protected PaymentMetaRepository $paymentMetaRepository,
+        protected CacheRepository $cacheRepository,
+        protected PaymentGatewaysRepository $paymentGatewaysRepository,
     ) {
         parent::__construct($database);
-        $this->variableSymbol = $variableSymbol;
-        $this->subscriptionsRepository = $subscriptionsRepository;
-        $this->paymentItemsRepository = $paymentItemsRepository;
-        $this->emitter = $emitter;
         $this->auditLogRepository = $auditLogRepository;
-        $this->hermesEmitter = $hermesEmitter;
-        $this->paymentMetaRepository = $paymentMetaRepository;
-        $this->cacheRepository = $cacheRepository;
         $this->redisClientFactory = $redisClientFactory;
     }
 
@@ -179,6 +159,12 @@ class PaymentsRepository extends Repository
             'user_agent' => Request::getUserAgent(),
             'referer' => null,
         ], $changes);
+
+        // Caller can signal VS change by passing ['variable_symbol' => null] within the $changes array.
+        if ($paymentData['variable_symbol'] === null) {
+            $paymentGateway = $this->paymentGatewaysRepository->find($paymentData['payment_gateway_id']);
+            $paymentData['variable_symbol'] = $this->variableSymbol->getNew($paymentGateway);
+        }
 
         $newPayment = $this->insert($paymentData);
 
