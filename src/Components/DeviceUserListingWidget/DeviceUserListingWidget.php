@@ -3,7 +3,8 @@
 namespace Crm\PaymentsModule\Components\DeviceUserListingWidget;
 
 use Crm\ApplicationModule\Models\Widget\BaseLazyWidget;
-use DeviceDetector\DeviceDetector;
+use Crm\ApplicationModule\Models\Widget\LazyWidgetManager;
+use Crm\UsersModule\Models\DeviceDetector;
 use Nette\Database\Table\ActiveRow;
 
 /**
@@ -14,6 +15,14 @@ use Nette\Database\Table\ActiveRow;
  */
 class DeviceUserListingWidget extends BaseLazyWidget
 {
+
+    public function __construct(
+        LazyWidgetManager $widgetManager,
+        private DeviceDetector $deviceDetector,
+    ) {
+        parent::__construct($widgetManager);
+    }
+
     private $templateName = 'device_user_listing_widget.latte';
 
     public function identifier()
@@ -27,14 +36,14 @@ class DeviceUserListingWidget extends BaseLazyWidget
             return;
         }
 
-        $deviceDetector = new DeviceDetector($payment->user_agent);
-        $deviceDetector->parse();
+        $this->deviceDetector->setUserAgent($payment->user_agent);
+        $this->deviceDetector->parse();
 
-        if ($deviceDetector->getModel() === '') {
+        if ($this->deviceDetector->getModel() === '') {
             return;
         }
 
-        $this->template->device = $deviceDetector->getModel();
+        $this->template->device = $this->deviceDetector->getModel();
         $this->template->setFile(__DIR__ . DIRECTORY_SEPARATOR . $this->templateName);
         $this->template->render();
     }
