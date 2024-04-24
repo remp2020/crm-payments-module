@@ -22,8 +22,8 @@ admin:
             help: Number of subscribers with active subscription without payment. Every user is counted once even though subscriber has multiple subscriptions.
 
         actual_paid_subscribers_stat_widget:
-            title: Subscribers with payment
-            help: Number of subscribers with active subscription with payment. Every user is counted once even though subscriber has multiple subscriptions.
+            title: Subscribers with paid subscription
+            help: Number of subscribers with active subscription with payment. Includes activated child and gifted subscriptions. Every user is counted once even though subscriber has multiple subscriptions.
 
         actual_nonfree_subscribers_stat_widget:
             title: Subscribers with paid subscriptions

@@ -19,15 +19,15 @@ admin:
 
         actual_free_subscribers_stat_widget:
             title: Předplatitelé bez platby
-            help: Počet předplatitelů s aktivním předplatným bez platby. Jeden uživatel je jednou i když má více předplatných.
+            help: Počet předplatitelů s aktivním předplatným bez platby. Jeden uživatel je započítán jednou i když má více předplatných.
 
         actual_paid_subscribers_stat_widget:
-            title: Předplatitelé s platbou
-            help: Počet předplatitelů s aktivním předplatným s platbou. Jeden uživatel je jednou i když má více předplatných.
+            title: Předplatitelé s placeným předplatným
+            help: Počet předplatitelů s aktivním placeným předplatným. Zahrnuje také aktivované dceřiné a darované předplatné. Jeden uživatel je započítán jednou i když má více předplatných.
 
         actual_nonfree_subscribers_stat_widget:
             title: Předplatitelé s placeným předplatným
-            help: "Počet předplatitelů s aktivním předplatným, kteří mají typ předplatného jiný než 'free'. Jeden uživatel je jednou i když má více předplatných."
+            help: "Počet předplatitelů s aktivním předplatným, kteří mají typ předplatného jiný než 'free'. Jeden uživatel je započítán jednou i když má více předplatných."
 
         change_payment_status:
             title: Změna stavu platby
