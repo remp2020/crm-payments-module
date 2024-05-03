@@ -49,7 +49,7 @@ class ConfirmCsobPaymentsCommand extends Command
             // prevents payment status to be updated to `fail` (payment should be usable in notifications) respekt#150
             $this->paymentProcessor->complete($unconfirmedPayment, function ($payment, $gateway, $status) {
                 if ($payment->status !== $status && $status !== PaymentsRepository::STATUS_FAIL) {
-                    $this->paymentsRepository->updateStatus($payment, $status);
+                    $this->paymentsRepository->updateStatus($payment, $status, true);
                 }
             }, true);
         }
