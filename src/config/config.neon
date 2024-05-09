@@ -103,8 +103,10 @@ services:
 	- Crm\PaymentsModule\Scenarios\RecurrentPaymentStateCriteria
 	- Crm\PaymentsModule\Scenarios\RecurrentPaymentSubscriptionTypeContentAccessCriteria
 	- Crm\PaymentsModule\Scenarios\PaymentHasSubscriptionCriteria
+	- Crm\PaymentsModule\Scenarios\RecurrentPaymentScenarioConditionModel
 	- Crm\PaymentsModule\Scenarios\DonationAmountCriteria
 	- Crm\PaymentsModule\Scenarios\PaymentHasItemTypeCriteria
+	- Crm\PaymentsModule\Scenarios\PaymentScenarioConditionModel
 	- Crm\PaymentsModule\Segment\AmountCriteria
 	- Crm\PaymentsModule\Segment\StatusCriteria
 	- Crm\PaymentsModule\Segment\ReferenceCriteria

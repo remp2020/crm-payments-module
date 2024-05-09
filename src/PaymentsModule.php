@@ -109,7 +109,9 @@ use Crm\PaymentsModule\Scenarios\PaymentGatewayCriteria;
 use Crm\PaymentsModule\Scenarios\PaymentHasItemTypeCriteria;
 use Crm\PaymentsModule\Scenarios\PaymentHasSubscriptionCriteria;
 use Crm\PaymentsModule\Scenarios\PaymentIsRecurrentChargeCriteria;
+use Crm\PaymentsModule\Scenarios\PaymentScenarioConditionModel;
 use Crm\PaymentsModule\Scenarios\PaymentStatusCriteria;
+use Crm\PaymentsModule\Scenarios\RecurrentPaymentScenarioConditionModel;
 use Crm\PaymentsModule\Scenarios\RecurrentPaymentStateCriteria;
 use Crm\PaymentsModule\Scenarios\RecurrentPaymentStatusCriteria;
 use Crm\PaymentsModule\Scenarios\RecurrentPaymentSubscriptionTypeContentAccessCriteria;
@@ -470,6 +472,15 @@ class PaymentsModule extends CrmModule
         $scenariosCriteriaStorage->register('recurrent_payment', RecurrentPaymentStateCriteria::KEY, $this->getInstance(RecurrentPaymentStateCriteria::class));
         $scenariosCriteriaStorage->register('recurrent_payment', RecurrentPaymentStatusCriteria::KEY, $this->getInstance(RecurrentPaymentStatusCriteria::class));
         $scenariosCriteriaStorage->register('recurrent_payment', RecurrentPaymentSubscriptionTypeContentAccessCriteria::KEY, $this->getInstance(RecurrentPaymentSubscriptionTypeContentAccessCriteria::class));
+
+        $scenariosCriteriaStorage->registerConditionModel(
+            'payment',
+            $this->getInstance(PaymentScenarioConditionModel::class)
+        );
+        $scenariosCriteriaStorage->registerConditionModel(
+            'recurrent_payment',
+            $this->getInstance(RecurrentPaymentScenarioConditionModel::class)
+        );
     }
 
     public function registerSeeders(SeederManager $seederManager)
