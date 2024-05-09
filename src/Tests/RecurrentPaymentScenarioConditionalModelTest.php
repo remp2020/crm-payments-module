@@ -10,9 +10,9 @@ use Crm\PaymentsModule\Repositories\RecurrentPaymentsRepository;
 use Crm\PaymentsModule\Scenarios\RecurrentPaymentScenarioConditionModel;
 use Crm\ProductsModule\Repositories\OrdersRepository;
 use Crm\ProductsModule\Tests\BaseTestCase;
+use Crm\ScenariosModule\Events\ConditionCheckException;
 use Crm\SubscriptionsModule\Models\Builder\SubscriptionTypeBuilder;
 use Crm\UsersModule\Repositories\UsersRepository;
-use Exception;
 use Nette\Utils\DateTime;
 
 class RecurrentPaymentScenarioConditionalModelTest extends BaseTestCase
@@ -94,7 +94,7 @@ class RecurrentPaymentScenarioConditionalModelTest extends BaseTestCase
 
     public function testItemQueryWithoutMandatoryJobParameter(): void
     {
-        $this->expectException(Exception::class);
+        $this->expectException(ConditionCheckException::class);
         $this->expectExceptionMessage("Recurrent payment scenario conditional model requires 'recurrent_payment_id' job param.");
 
         /** @var RecurrentPaymentsRepository $recurrentPaymentsRepository */

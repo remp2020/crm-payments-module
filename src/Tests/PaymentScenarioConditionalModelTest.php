@@ -9,9 +9,9 @@ use Crm\PaymentsModule\Repositories\PaymentsRepository;
 use Crm\PaymentsModule\Scenarios\PaymentScenarioConditionModel;
 use Crm\ProductsModule\Repositories\OrdersRepository;
 use Crm\ProductsModule\Tests\BaseTestCase;
+use Crm\ScenariosModule\Events\ConditionCheckException;
 use Crm\SubscriptionsModule\Models\Builder\SubscriptionTypeBuilder;
 use Crm\UsersModule\Repositories\UsersRepository;
-use Exception;
 
 class PaymentScenarioConditionalModelTest extends BaseTestCase
 {
@@ -81,7 +81,7 @@ class PaymentScenarioConditionalModelTest extends BaseTestCase
 
     public function testItemQueryWithoutMandatoryJobParameter(): void
     {
-        $this->expectException(Exception::class);
+        $this->expectException(ConditionCheckException::class);
         $this->expectExceptionMessage("Payment scenario conditional model requires 'payment_id' job param.");
 
         /** @var PaymentsRepository $paymentsRepository */
