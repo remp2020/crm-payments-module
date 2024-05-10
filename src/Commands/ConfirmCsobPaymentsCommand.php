@@ -47,11 +47,17 @@ class ConfirmCsobPaymentsCommand extends Command
 
             // try to complete payment, without automatically updating status
             // prevents payment status to be updated to `fail` (payment should be usable in notifications) respekt#150
-            $this->paymentProcessor->complete($unconfirmedPayment, function ($payment, $gateway, $status) {
-                if ($payment->status !== $status && $status !== PaymentsRepository::STATUS_FAIL) {
-                    $this->paymentsRepository->updateStatus($payment, $status, true);
-                }
-            }, true);
+            $this->paymentProcessor->complete(
+                payment: $unconfirmedPayment,
+                callback: function ($payment, $gateway, $status) {
+                    if ($payment->status !== $status && $status !== PaymentsRepository::STATUS_FAIL) {
+                        $this->paymentsRepository->updateStatus($payment, $status, true);
+                        $payment = $this->paymentsRepository->find($payment->id);
+                        $this->paymentProcessor->createRecurrentPayment($payment, $gateway);
+                    }
+                },
+                preventPaymentStatusUpdate: true,
+            );
         }
 
         return Command::SUCCESS;

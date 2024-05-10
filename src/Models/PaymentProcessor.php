@@ -17,32 +17,14 @@ use Tracy\ILogger;
 
 class PaymentProcessor
 {
-    private GatewayFactory $gatewayFactory;
-
-    private PaymentsRepository $paymentsRepository;
-
-    private RecurrentPaymentsRepository $recurrentPaymentsRepository;
-
-    private PaymentLogsRepository $paymentLogsRepository;
-
-    protected Request $request;
-
-    private Emitter $emitter;
-
     public function __construct(
-        GatewayFactory $gatewayFactory,
-        PaymentsRepository $paymentsRepository,
-        RecurrentPaymentsRepository $recurrentPaymentsRepository,
-        PaymentLogsRepository $paymentLogsRepository,
-        Request $request,
-        Emitter $emitter
+        private GatewayFactory $gatewayFactory,
+        private PaymentsRepository $paymentsRepository,
+        private RecurrentPaymentsRepository $recurrentPaymentsRepository,
+        private PaymentLogsRepository $paymentLogsRepository,
+        protected Request $request,
+        private Emitter $emitter
     ) {
-        $this->gatewayFactory = $gatewayFactory;
-        $this->paymentsRepository = $paymentsRepository;
-        $this->recurrentPaymentsRepository = $recurrentPaymentsRepository;
-        $this->paymentLogsRepository = $paymentLogsRepository;
-        $this->request = $request;
-        $this->emitter = $emitter;
     }
 
     public function begin($payment, $allowRedirect = true)
@@ -67,6 +49,15 @@ class PaymentProcessor
         return $gateway->process($allowRedirect);
     }
 
+    /**
+     * @param      $payment
+     * @param      $callback
+     * @param bool $preventPaymentStatusUpdate if true, this also means no recurrent payment will be created
+     *
+     * @return void
+     * @throws UnknownPaymentMethodCode
+     * @throws \Nette\Utils\JsonException
+     */
     public function complete($payment, $callback, bool $preventPaymentStatusUpdate = false)
     {
         $gateway = $this->gatewayFactory->getGateway($payment->payment_gateway->code);
@@ -97,31 +88,17 @@ class PaymentProcessor
             if ($gateway instanceof AuthorizationInterface) {
                 $status = PaymentsRepository::STATUS_AUTHORIZED;
             }
+
             if (!$preventPaymentStatusUpdate) {
                 $this->paymentsRepository->updateStatus($payment, $status, true);
-            }
-            $payment = $this->paymentsRepository->find($payment->id);
-
-            if ((boolean) $payment->payment_gateway->is_recurrent) {
-                if (!$gateway instanceof RecurrentPaymentInterface) {
-                    throw new \Exception("Gateway flagged with 'is_recurrent' flag needs to implement RecurrentPaymentInterface: " . get_class($gateway));
-                }
-
-                if ($gateway->hasRecurrentToken()) {
-                    $this->recurrentPaymentsRepository->createFromPayment(
-                        $payment,
-                        $gateway->getRecurrentToken()
-                    );
-                } else {
-                    Debugger::log("Could not create recurrent payment from payment [{$payment->id}], missing recurrent token.", ILogger::ERROR);
-                }
+                $payment = $this->paymentsRepository->find($payment->id);
+                $this->createRecurrentPayment($payment, $gateway);
             }
         } elseif ($result === false) {
             $status = PaymentsRepository::STATUS_FAIL;
             if (!$preventPaymentStatusUpdate) {
                 $this->paymentsRepository->updateStatus($payment, $status);
             }
-            $payment = $this->paymentsRepository->find($payment->id);
         } elseif ($result === null) {
             // no action intentionally, not even log
             return;
@@ -134,6 +111,24 @@ class PaymentProcessor
             $payment->id
         );
 
+        $payment = $this->paymentsRepository->find($payment->id); // reload payment
         $callback($payment, $gateway, $status);
+    }
+
+    public function createRecurrentPayment($payment, $gateway): void
+    {
+        if ((boolean) $payment->payment_gateway->is_recurrent) {
+            if (!$gateway instanceof RecurrentPaymentInterface) {
+                throw new \Exception("Gateway flagged with 'is_recurrent' flag needs to implement RecurrentPaymentInterface: " . get_class($gateway));
+            }
+            if ($gateway->hasRecurrentToken()) {
+                $this->recurrentPaymentsRepository->createFromPayment(
+                    $payment,
+                    $gateway->getRecurrentToken()
+                );
+            } else {
+                Debugger::log("Could not create recurrent payment from payment [{$payment->id}], missing recurrent token.", ILogger::ERROR);
+            }
+        }
     }
 }
