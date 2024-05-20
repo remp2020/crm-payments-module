@@ -65,7 +65,8 @@ class MailProcessor
 
         $this->logBuilder
             ->setMessage($this->mailContent->getReceiverMessage())
-            ->setAmount($this->mailContent->getAmount());
+            ->setAmount($this->mailContent->getAmount())
+            ->setSourceAccountNumber($this->mailContent->getSourceAccountNumber());
 
         $payment = $this->getPaymentFromMailContentVs();
         if (!$payment) {

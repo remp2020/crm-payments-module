@@ -411,7 +411,25 @@ admin:
         amount: Amount
         payment: Payment
         message: Message
+        source_account_number: Counterparty's bank account
+        note:
+            label: Note
         no_records: No records match selected filter
+        actions: Actions
+
+    parsed_mails_filter_form:
+        amount_from:
+            label: Amount from (inclusive)
+        amount_to:
+            label: Amount to (inclusive)
+        filter:
+            more: More options
+
+    parsed_mails_edit_form:
+        title: Edit processed payment email
+        success_message: Processed payment email was updated.
+        save: Save
+        cancel: Cancel
 
     payment_refund:
         header: Refund

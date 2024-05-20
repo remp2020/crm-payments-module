@@ -229,6 +229,7 @@ class MailProcessorTest extends PaymentsTestCase
 
         $log = $this->parsedMailLogsRepository->lastLog();
         $this->assertEquals(ParsedMailLogsRepository::STATE_CHANGED_TO_PAID, $log->state);
+        $this->assertNull($log->source_account_number);
 
         $newPayment = $this->paymentsRepository->find($payment->id);
         $this->assertEquals($newPayment->id, $payment->id);
@@ -423,5 +424,19 @@ class MailProcessorTest extends PaymentsTestCase
 
         $this->assertTrue($result);
         $this->assertEquals(BankTransfer::GATEWAY_CODE, $payment->payment_gateway->code);
+    }
+
+    public function testMailWithSourceAccountNumber(): void
+    {
+        $mailContent = new MailContent();
+        $mailContent->setTransactionDate(strtotime('2.3.2015 13:43'));
+        $mailContent->setSourceAccountNumber('1234567890');
+
+        $result = $this->mailProcessor->processMail($mailContent, new TestOutput());
+        $this->assertFalse($result);
+
+        $log = $this->parsedMailLogsRepository->lastLog();
+
+        $this->assertEquals('1234567890', $log->source_account_number);
     }
 }

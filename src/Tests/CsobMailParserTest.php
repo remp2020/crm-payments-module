@@ -34,6 +34,7 @@ Vaše ČSOB
 
         $mailContent = $mailContents[0];
         $this->assertEquals('123456789', $mailContent->getAccountNumber());
+        $this->assertEquals('1122334455/9999', $mailContent->getSourceAccountNumber());
         $this->assertEquals('CZK', $mailContent->getCurrency());
         $this->assertEquals(1234.56, $mailContent->getAmount());
         $this->assertEquals('23456789', $mailContent->getVs());
@@ -71,6 +72,7 @@ Vaše ČSOB
 
         $mailContent = $mailContents[0];
         $this->assertEquals('123456789', $mailContent->getAccountNumber());
+        $this->assertEquals('1122334455/9999', $mailContent->getSourceAccountNumber());
         $this->assertEquals('CZK', $mailContent->getCurrency());
         $this->assertEquals(1234.56, $mailContent->getAmount());
         $this->assertEquals('23456789', $mailContent->getVs());
@@ -121,6 +123,7 @@ Vaše ČSOB
 
         $mailContent = $mailContents[0];
         $this->assertEquals('123456789', $mailContent->getAccountNumber());
+        $this->assertEquals('1122334455/9999', $mailContent->getSourceAccountNumber());
         $this->assertEquals('CZK', $mailContent->getCurrency());
         $this->assertEquals(1234.56, $mailContent->getAmount());
         $this->assertEquals('23456789', $mailContent->getVs());
@@ -130,6 +133,7 @@ Vaše ČSOB
 
         $mailContent = $mailContents[1];
         $this->assertEquals('123456789', $mailContent->getAccountNumber());
+        $this->assertEquals('9988776655/1111', $mailContent->getSourceAccountNumber());
         $this->assertEquals('CZK', $mailContent->getCurrency());
         $this->assertEquals(987.65, $mailContent->getAmount());
         $this->assertEquals('78787878', $mailContent->getVs());
@@ -166,6 +170,7 @@ Vaše ČSOB
 
         $mailContent = $mailContents[0];
         $this->assertEquals('123456789', $mailContent->getAccountNumber());
+        $this->assertEquals('1122334455/9999', $mailContent->getSourceAccountNumber());
         $this->assertEquals('CZK', $mailContent->getCurrency());
         $this->assertEquals(414.00, $mailContent->getAmount());
         $this->assertEquals('23456789', $mailContent->getVs());
@@ -207,6 +212,7 @@ Vaše ČSOB
 
         $mailContent = $mailContents[0];
         $this->assertEquals('123456789', $mailContent->getAccountNumber());
+        $this->assertEquals('NL56 ABNA 1234 5678 90', $mailContent->getSourceAccountNumber());
         $this->assertEquals('CZK', $mailContent->getCurrency());
         $this->assertEquals(3581.70, $mailContent->getAmount());
         $this->assertEquals('23456789', $mailContent->getVs());
@@ -250,6 +256,7 @@ Vaše ČSOB
 
         $mailContent = $mailContents[0];
         $this->assertEquals('123456789', $mailContent->getAccountNumber());
+        $this->assertEquals('SK99 1100 0000 7777 8888 9999', $mailContent->getSourceAccountNumber());
         $this->assertEquals('CZK', $mailContent->getCurrency());
         $this->assertEquals(3300, $mailContent->getAmount());
         $this->assertEquals('6869282911', $mailContent->getVs());
@@ -294,6 +301,7 @@ Vaše ČSOB
 
         $mailContent = $mailContents[0];
         $this->assertEquals('123456789', $mailContent->getAccountNumber());
+        $this->assertEquals('SK99 1100 0000 7777 8888 9999', $mailContent->getSourceAccountNumber());
         $this->assertEquals('CZK', $mailContent->getCurrency());
         $this->assertEquals(3300, $mailContent->getAmount());
         $this->assertEquals('6869282912', $mailContent->getVs());
@@ -334,6 +342,7 @@ Vaše ČSOB
         $this->assertCount(1, $mailContents);
 
         $mailContent = $mailContents[0];
+        $this->assertEquals('2233445566/2600', $mailContent->getSourceAccountNumber());
         $this->assertEquals('CZK', $mailContent->getCurrency());
         $this->assertEquals(1440.00, $mailContent->getAmount());
         $this->assertEquals('0449274899', $mailContent->getVs());
@@ -367,6 +376,7 @@ Vaše ČSOB
 
         $mailContent = $mailContents[0];
         $this->assertEquals('123456789', $mailContent->getAccountNumber());
+        $this->assertEquals('6012345678/2700', $mailContent->getSourceAccountNumber());
         $this->assertEquals('CZK', $mailContent->getCurrency());
         $this->assertEquals(1980.00, $mailContent->getAmount());
         $this->assertEquals('3723199116', $mailContent->getVs());
@@ -402,6 +412,7 @@ Vaše ČSOB
 
         $mailContent = $mailContents[0];
         $this->assertEquals('123456789', $mailContent->getAccountNumber());
+        $this->assertEquals('6012345678/2700', $mailContent->getSourceAccountNumber());
         $this->assertEquals('CZK', $mailContent->getCurrency());
         $this->assertEquals(1980.00, $mailContent->getAmount());
         $this->assertEquals('3723199116', $mailContent->getVs());
@@ -437,6 +448,7 @@ Vaše ČSOB
 
         $mailContent = $mailContents[0];
         $this->assertEquals('123456789', $mailContent->getAccountNumber());
+        $this->assertEquals('6012345678/2700', $mailContent->getSourceAccountNumber());
         $this->assertEquals('CZK', $mailContent->getCurrency());
         $this->assertEquals(2700.00, $mailContent->getAmount());
         $this->assertEquals('3723199333', $mailContent->getVs());
@@ -514,6 +526,7 @@ Vaše ČSOB
 
         $mailContent = $mailContents[0];
         $this->assertEquals('99991111', $mailContent->getAccountNumber());
+        $this->assertNull($mailContent->getSourceAccountNumber());
         $this->assertEquals('CZK', $mailContent->getCurrency());
         $this->assertEquals(3300.00, $mailContent->getAmount());
         $this->assertEquals('1122334455', $mailContent->getVs());

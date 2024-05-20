@@ -411,7 +411,25 @@ admin:
         amount: Částka
         payment: Platba
         message: Zpráva
+        source_account_number: Bankovní účet protistrany
+        note:
+            label: Poznámka
         no_records: "Nebyly nalezeny žádné záznamy, které by odpovídaly filtru"
+        actions: Akce
+
+    parsed_mails_filter_form:
+        amount_from:
+            label: Částka od (včetně)
+        amount_to:
+            label: Částka do (včetně)
+        filter:
+            more: Víc možností
+
+    parsed_mails_edit_form:
+        title: Upravit zpracovaný platební email
+        success_message: Zpracovaný platební email byl upraven.
+        save: Uložit
+        cancel: Zrušit
 
     payment_refund:
         header: Vrácení platby

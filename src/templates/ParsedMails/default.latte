@@ -29,6 +29,9 @@
               <th>{_payments.admin.parsed_mails.state.label}</th>
               <th>{_payments.admin.parsed_mails.payment_status.label}</th>
               <th>{_payments.admin.parsed_mails.message}</th>
+              <th>{_payments.admin.parsed_mails.source_account_number}</th>
+              <th>{_payments.admin.parsed_mails.note.label}</th>
+              <th>{_payments.admin.parsed_mails.actions}</th>
           </tr>
 	    </thead>
         <tbody>
@@ -69,6 +72,23 @@
             <td>
                 <code n:ifcontent>{$log->message}</code>
             </td>
+            <td>
+                <code n:ifcontent class="muted">{$log->source_account_number}</code>
+            </td>
+            <td>
+                {$log->note}
+            </td>
+            <td>
+                <p class="text-nowrap">
+                    <a href="#"
+                       class="btn btn-sm btn-primary"
+                       data-toggle="modal"
+                       data-target="#parsedMailLogEditModal{$log->id}"
+                       title="{_payments.admin.parsed_mails_edit_form.title}">
+                        <i class="fa fa-edit"></i>
+                    </a>
+                </p>
+            </td>
           </tr>
         </tbody>
       </table>
@@ -80,3 +100,23 @@
   </div>
 
  </div>
+
+{foreach $logs as $log}
+    <div class="modal fade" id="parsedMailLogEditModal{$log->id}" tabindex="-1" role="dialog">
+        <div class="modal-dialog modal-lg" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                    <h4 class="modal-title">
+                        {_payments.admin.parsed_mails_edit_form.title}
+                    </h4>
+                </div>
+                <div class="modal-body">
+                    {control editForm-{$log->id}}
+                </div>
+            </div>
+        </div>
+    </div>
+{/foreach}

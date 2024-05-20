@@ -338,6 +338,7 @@ admin:
         payment_item_types:
             label: Artikeltyp
         arpu: ARPU - Durchschnittlicher Umsatz pro Nutzer
+
     parsed_mails:
         variable_symbol:
             label: Variables Symbol
@@ -349,9 +350,27 @@ admin:
         amount: Summe
         payment: Zahlung
         message: Nachricht
+        source_account_number: Bankkonto des Kontrahenten
+        note:
+            label: Notiz
         title: Verarbeitete Zahlungs-E-Mails
         no_records: Keine Datensätze entsprechen den Filterbedingungen
         delivered_at: Erhalten am
+        actions: Aktion
+
+    parsed_mails_filter_form:
+        amount_from:
+            label: Betrag ab (einschließlich)
+        amount_to:
+            label: Betrag bis (einschließlich)
+        filter:
+            more: Weitere Optionen
+
+    parsed_mails_edit_form:
+        title: Bearbeiten Sie die verarbeitete Zahlungs-E-Mail
+        success_message: Die verarbeitete Zahlungs-E-Mail wurde aktualisiert.
+        save: Speichern
+        cancel: Abbrechen
 
     payment_refund:
         header: Erstattung

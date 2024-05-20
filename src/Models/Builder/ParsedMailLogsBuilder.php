@@ -59,4 +59,9 @@ class ParsedMailLogsBuilder extends Builder
     {
         return $this->set('message', $message);
     }
+
+    public function setSourceAccountNumber(?string $sourceAccountNumber): self
+    {
+        return $this->set('source_account_number', $sourceAccountNumber);
+    }
 }

@@ -27,6 +27,7 @@ services:
 	- Crm\PaymentsModule\Forms\RecurrentPaymentFormFactory
 	- Crm\PaymentsModule\Forms\RetentionAnalysisFilterFormFactory
 	- Crm\PaymentsModule\Forms\ChangePaymentSubscriptionTypeFormFactory
+	- Crm\PaymentsModule\Forms\ParsedMailLogFactory
 	- Crm\PaymentsModule\Models\PaymentProcessor
 	- Crm\PaymentsModule\Models\RecurrentPaymentsProcessor
 	- Crm\PaymentsModule\Models\Builder\ParsedMailLogsBuilder

@@ -38,6 +38,12 @@ class CsobMailParser implements ParserInterface
         $mailContent->setTransactionDate(strtotime($result[1]));
         $mailContent->setAccountNumber($result[2]);
 
+        $pattern3 = '/Účet protistrany(?:\/IBAN)*: (.*)/mu';
+        $res = preg_match($pattern3, $content, $result);
+        if ($res) {
+            $mailContent->setSourceAccountNumber(trim($result[1]));
+        }
+
         $pattern2 = '/Částka: ([+-])(.*?) ([A-Z]+)/mu';
         $res = preg_match($pattern2, $content, $result);
         if ($res) {

@@ -313,7 +313,25 @@ admin:
         amount: Összeg
         payment: Fizetés
         message: Üzenet
+        source_account_number: Az ügyfél bankszámlája
+        note:
+            label: Jegyzet
         no_records: Nincs találat
+        actions: Művelet
+
+    parsed_mails_filter_form:
+        amount_from:
+            label: Összeg kezdete (beleértve)
+        amount_to:
+            label: Összeg vége (beleértve)
+        filter:
+            more: További lehetőségek
+
+    parsed_mails_edit_form:
+        title: Feldolgozott fizetési e-mail szerkesztése
+        success_message: A feldolgozott fizetés e-mailje módosult.
+        save: Mentés
+        cancel: Mégsem
 
     payment_refund:
         header: Visszatérítés
