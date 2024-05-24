@@ -484,7 +484,10 @@ class PaymentFormFactory
         }
 
         /** @var PaymentFormDataProviderInterface[] $providers */
-        $providers = $this->dataProviderManager->getProviders('payments.dataprovider.payment_form', PaymentFormDataProviderInterface::class);
+        $providers = $this->dataProviderManager->getProviders(
+            'payments.dataprovider.payment_form',
+            PaymentFormDataProviderInterface::class,
+        );
         foreach ($providers as $sorting => $provider) {
             $paymentItemContainer->addItems($provider->paymentItems([
                 'values' => $values,
