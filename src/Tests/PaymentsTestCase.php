@@ -2,6 +2,7 @@
 
 namespace Crm\PaymentsModule\Tests;
 
+use Crm\ApplicationModule\Repositories\ConfigsRepository;
 use Crm\ApplicationModule\Tests\DatabaseTestCase;
 use Crm\PaymentsModule\Models\PaymentItem\PaymentItemContainer;
 use Crm\PaymentsModule\Models\VariableSymbolInterface;
@@ -13,6 +14,7 @@ use Crm\PaymentsModule\Repositories\PaymentItemsRepository;
 use Crm\PaymentsModule\Repositories\PaymentMetaRepository;
 use Crm\PaymentsModule\Repositories\PaymentsRepository;
 use Crm\PaymentsModule\Repositories\RecurrentPaymentsRepository;
+use Crm\PaymentsModule\Seeders\ConfigsSeeder;
 use Crm\PaymentsModule\Seeders\PaymentGatewaysSeeder;
 use Crm\SubscriptionsModule\Models\Builder\SubscriptionTypeBuilder;
 use Crm\SubscriptionsModule\Models\PaymentItem\SubscriptionTypePaymentItem;
@@ -30,6 +32,9 @@ class PaymentsTestCase extends DatabaseTestCase
     /** @var PaymentsRepository */
     protected $paymentsRepository;
 
+    /** @var PaymentItemsRepository */
+    protected $paymentItemsRepository;
+
     /** @var RecurrentPaymentsRepository */
     protected $recurrentPaymentsRepository;
 
@@ -46,6 +51,7 @@ class PaymentsTestCase extends DatabaseTestCase
             SubscriptionLengthMethodSeeder::class,
             SubscriptionTypeNamesSeeder::class,
             PaymentGatewaysSeeder::class,
+            ConfigsSeeder::class,
         ];
     }
 
@@ -65,7 +71,8 @@ class PaymentsTestCase extends DatabaseTestCase
             SubscriptionTypeItemsRepository::class,
             VariableSymbolInterface::class,
             UsersRepository::class,
-            ParsedMailLogsRepository::class
+            ParsedMailLogsRepository::class,
+            ConfigsRepository::class,
         ];
     }
 
@@ -75,6 +82,7 @@ class PaymentsTestCase extends DatabaseTestCase
 
         $this->accessTokensRepository = $this->getRepository(AccessTokensRepository::class);
         $this->paymentsRepository = $this->getRepository(PaymentsRepository::class);
+        $this->paymentItemsRepository = $this->getRepository(PaymentItemsRepository::class);
         $this->paymentGatewaysRepository = $this->getRepository(PaymentGatewaysRepository::class);
         $this->recurrentPaymentsRepository = $this->getRepository(RecurrentPaymentsRepository::class);
     }

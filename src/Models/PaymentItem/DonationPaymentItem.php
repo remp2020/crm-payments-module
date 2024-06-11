@@ -6,7 +6,7 @@ class DonationPaymentItem implements PaymentItemInterface
 {
     use PaymentItemTrait;
 
-    const TYPE = 'donation';
+    public const TYPE = 'donation';
 
     public function __construct(string $name, float $price, int $vat)
     {

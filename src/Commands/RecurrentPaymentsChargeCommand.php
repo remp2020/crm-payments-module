@@ -10,8 +10,6 @@ use Crm\PaymentsModule\Models\GatewayFail;
 use Crm\PaymentsModule\Models\Gateways\ExternallyChargedRecurrentPaymentInterface;
 use Crm\PaymentsModule\Models\Gateways\GatewayAbstract;
 use Crm\PaymentsModule\Models\Gateways\RecurrentPaymentInterface;
-use Crm\PaymentsModule\Models\PaymentItem\DonationPaymentItem;
-use Crm\PaymentsModule\Models\PaymentItem\PaymentItemContainer;
 use Crm\PaymentsModule\Models\RecurrentPaymentFailStop;
 use Crm\PaymentsModule\Models\RecurrentPaymentFailTry;
 use Crm\PaymentsModule\Models\RecurrentPaymentFastCharge;
@@ -20,10 +18,10 @@ use Crm\PaymentsModule\Models\RecurrentPaymentsResolver;
 use Crm\PaymentsModule\Repositories\PaymentLogsRepository;
 use Crm\PaymentsModule\Repositories\PaymentsRepository;
 use Crm\PaymentsModule\Repositories\RecurrentPaymentsRepository;
-use Crm\SubscriptionsModule\Models\PaymentItem\SubscriptionTypePaymentItem;
 use League\Event\Emitter;
 use Nette\Localization\Translator;
 use Nette\Utils\DateTime;
+use Nette\Utils\Json;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
@@ -33,7 +31,6 @@ use Tracy\Debugger;
 class RecurrentPaymentsChargeCommand extends Command
 {
     use DecoratedCommandTrait;
-
     private int $fastChargeThreshold = 0;
 
     public function __construct(
@@ -54,11 +51,11 @@ class RecurrentPaymentsChargeCommand extends Command
     {
         $this->setName('payments:charge')
             ->setDescription("Charges recurrent payments ready to be charged. It's highly recommended to use flock or similar tool to prevent multiple instances of this command running.")
-            ->addArgument(
-                'charge',
+            ->addOption(
+                'recurrent_payment_ids',
                 null,
-                InputOption::VALUE_OPTIONAL,
-                'Set to test charge'
+                InputOption::VALUE_REQUIRED,
+                "IDs of records from 'recurrent_payments' table. Expects list of values separated by comma."
             );
     }
 
@@ -66,7 +63,14 @@ class RecurrentPaymentsChargeCommand extends Command
     {
         $start = microtime(true);
 
-        $chargeableRecurrentPayments = $this->recurrentPaymentsRepository->getChargeablePayments();
+        if ($input->getOption('recurrent_payment_ids')) {
+            $recurrentPaymentIdsOption = $input->getOption('recurrent_payment_ids');
+            $recurrentPaymentIds = explode(',', $recurrentPaymentIdsOption);
+            $chargeableRecurrentPayments = $this->recurrentPaymentsRepository->getChargeablePayments()
+                ->where('id IN (?)', $recurrentPaymentIds);
+        } else {
+            $chargeableRecurrentPayments = $this->recurrentPaymentsRepository->getChargeablePayments();
+        }
 
         $this->line('Charging: <info>' . $chargeableRecurrentPayments->count('*') . '</info> payments');
         $this->line('');
@@ -74,109 +78,25 @@ class RecurrentPaymentsChargeCommand extends Command
         foreach ($chargeableRecurrentPayments as $recurrentPayment) {
             try {
                 $this->validateRecurrentPayment($recurrentPayment);
-            } catch (RecurrentPaymentFastCharge $exception) {
-                $msg = 'RecurringPayment_id: ' . $recurrentPayment->id . ' Card_id: ' . $recurrentPayment->cid . ' User_id: ' . $recurrentPayment->user_id . ' Error: Fast charge';
-                Debugger::log($msg, Debugger::EXCEPTION);
-                $this->error($msg);
+            } catch (RecurrentPaymentFastCharge $e) {
+                Debugger::log($e->getMessage(), Debugger::EXCEPTION);
+                $this->error($e->getMessage());
                 continue;
             }
 
-            $subscriptionType = $this->recurrentPaymentsResolver->resolveSubscriptionType($recurrentPayment);
-            $customChargeAmount = $this->recurrentPaymentsResolver->resolveCustomChargeAmount($recurrentPayment);
-
-            if (!isset($recurrentPayment->payment_id) || $recurrentPayment->payment_id === null) {
-                $additionalAmount = 0;
-                $additionalType = null;
-                $parentPayment = $recurrentPayment->parent_payment;
-                if ($parentPayment && $parentPayment->additional_type === 'recurrent') {
-                    $additionalType = 'recurrent';
-                    $additionalAmount = $parentPayment->additional_amount;
-                }
-
-                $paymentItemContainer = new PaymentItemContainer();
-
-                // we want to load previous payment items only if new subscription has same subscription type
-                // and it isn't upgraded recurrent payment
-                if ($subscriptionType->id === $parentPayment->subscription_type_id
-                    && $subscriptionType->id === $recurrentPayment->subscription_type_id
-                    && $parentPayment->amount === $recurrentPayment->subscription_type->price
-                    && !$customChargeAmount
-                ) {
-                    foreach ($this->paymentsRepository->getPaymentItems($parentPayment) as $key => $item) {
-                        // TODO: unset donation payment item without relying on the name of payment item
-                        // remove donation from items, it will be added by PaymentsRepository->add().
-                        //
-                        // Possible solution should be to add `recurrent` field to payment_items
-                        // and copy only this items with recurrent flag
-                        // for now this should be ok because we are not selling recurring products
-                        if ($item['amount'] === $parentPayment->additional_amount &&
-                            $item['name'] === $this->translator->translate('payments.admin.donation')
-                        ) {
-                            continue;
-                        }
-
-                        $paymentItemContainer->addItem(new SubscriptionTypePaymentItem(
-                            $subscriptionType->id,
-                            $item['name'],
-                            $item['amount'],
-                            $item['vat'],
-                            $item['count'],
-                            $item['meta'],
-                            $item['subscription_type_item_id']
-                        ));
-
-                        // In case of subscription type VAT change, parent payment would copy incorrect VAT rates
-                        // into the new payment items. If we see a change in a total price without VAT, we don't
-                        // copy the items anymore (the price with VAT was already checked in IF above).
-
-                        $subscriptionTypePaymentItemContainer = new PaymentItemContainer();
-                        $subscriptionTypePaymentItemContainer
-                            ->addItems(SubscriptionTypePaymentItem::fromSubscriptionType($subscriptionType));
-
-                        if (round($paymentItemContainer->totalPriceWithoutVAT(), 2) !==
-                            round($subscriptionTypePaymentItemContainer->totalPriceWithoutVAT(), 2)
-                        ) {
-                            $paymentItemContainer = $subscriptionTypePaymentItemContainer;
-                        }
-                    }
-                } elseif (!$customChargeAmount) {
-                    // if subscription type changed, load the items from new subscription type
-                    $paymentItemContainer->addItems(SubscriptionTypePaymentItem::fromSubscriptionType($subscriptionType));
-                    // TODO: what about other types of payment items? (e.g. student donation?); seems we're losing them here
-                } else {
-                    $items = $this->getSubscriptionTypeItemsForCustomChargeAmount($subscriptionType, $customChargeAmount);
-                    $paymentItemContainer->addItems($items);
-                }
-
-                if ($additionalType == 'recurrent' && $additionalAmount) {
-                    $donationPaymentVat = $this->applicationConfig->get('donation_vat_rate');
-                    if ($donationPaymentVat === null) {
-                        throw new \Exception("Config 'donation_vat_rate' is not set");
-                    }
-                    $paymentItemContainer->addItem(
-                        new DonationPaymentItem(
-                            $this->translator->translate('payments.admin.donation'),
-                            (float) $additionalAmount,
-                            (int) $donationPaymentVat
-                        )
-                    );
-                }
+            if (!isset($recurrentPayment->payment_id)) {
+                $paymentData = $this->recurrentPaymentsResolver->resolvePaymentData($recurrentPayment);
 
                 $payment = $this->paymentsRepository->add(
-                    $subscriptionType,
-                    $recurrentPayment->payment_gateway,
-                    $recurrentPayment->user,
-                    $paymentItemContainer,
-                    null,
-                    $customChargeAmount,
-                    null,
-                    null,
-                    null,
-                    $additionalAmount,
-                    $additionalType,
-                    null,
-                    null,
-                    true
+                    subscriptionType: $paymentData->subscriptionType,
+                    paymentGateway: $recurrentPayment->payment_gateway,
+                    user: $recurrentPayment->user,
+                    paymentItemContainer: $paymentData->paymentItemContainer,
+                    amount: $paymentData->customChargeAmount,
+                    additionalAmount: $paymentData->additionalAmount,
+                    additionalType: $paymentData->additionalType,
+                    address: $paymentData->address,
+                    recurrentCharge: true
                 );
 
                 $this->recurrentPaymentsRepository->update($recurrentPayment, [
@@ -184,7 +104,7 @@ class RecurrentPaymentsChargeCommand extends Command
                 ]);
             }
 
-            $this->chargeRecurrentPayment($recurrentPayment, $customChargeAmount);
+            $this->chargeRecurrentPayment($recurrentPayment);
         }
 
         $end = microtime(true);
@@ -198,10 +118,18 @@ class RecurrentPaymentsChargeCommand extends Command
         return Command::SUCCESS;
     }
 
-    private function chargeRecurrentPayment($recurrentPayment, $customChargeAmount)
+    private function chargeRecurrentPayment($recurrentPayment): void
     {
-        $this->emitter->emit(new BeforeRecurrentPaymentChargeEvent($recurrentPayment->payment, $recurrentPayment->cid)); // ability to modify payment
+        $customChargeAmount = $this->recurrentPaymentsResolver->resolveCustomChargeAmount($recurrentPayment);
+
+        // ability to modify payment
+        $this->emitter->emit(new BeforeRecurrentPaymentChargeEvent($recurrentPayment->payment, $recurrentPayment->cid));
         $payment = $this->paymentsRepository->find($recurrentPayment->payment_id); // reload
+
+        if (!$payment) {
+            throw new \RuntimeException("Error loading payment with ID=[$recurrentPayment->payment_id]");
+        }
+
         /** @var RecurrentPaymentInterface $gateway */
         $gateway = $this->gatewayFactory->getGateway($payment->payment_gateway->code);
         if (!$gateway instanceof GatewayAbstract) {
@@ -267,7 +195,7 @@ class RecurrentPaymentsChargeCommand extends Command
 
         $this->paymentLogsRepository->add(
             $gateway->isSuccessful() ? 'OK' : 'ERROR',
-            json_encode($gateway->getResponseData()),
+            Json::encode($gateway->getResponseData()),
             'recurring-payment-automatic-charge',
             $payment->id
         );
@@ -278,46 +206,7 @@ class RecurrentPaymentsChargeCommand extends Command
         $this->line("  * message: {$gateway->getResultMessage()}");
     }
 
-    protected function getSubscriptionTypeItemsForCustomChargeAmount($subscriptionType, $customChargeAmount)
-    {
-        $items = SubscriptionTypePaymentItem::fromSubscriptionType($subscriptionType);
-
-        // sort items by vat (higher vat first)
-        usort($items, function (SubscriptionTypePaymentItem $a, SubscriptionTypePaymentItem $b) {
-            return ($a->vat() <=> $b->vat()) * -1;
-        });
-
-        // get vat-amount ratios, floor everything down to avoid scenario that everything is rounded up
-        // and sum of items would be greater than charged amount
-        $ratios = [];
-        foreach ($items as $item) {
-            $ratios[$item->vat()] = floor($item->unitPrice() / $subscriptionType->price * 100) / 100;
-        }
-        // any rounding weirdness (sum of ratios not being 1) should go in favor of higher vat (first item)
-        $ratios[array_keys($ratios)[0]] += 1 - array_sum($ratios);
-
-        // update prices based on found ratios
-        $sum = 0;
-        foreach ($items as $item) {
-            $itemPrice = floor($customChargeAmount * $ratios[$item->vat()] * 100) / 100;
-            $item->forcePrice($itemPrice);
-            $sum += $itemPrice;
-        }
-        // any rounding weirdness (sum of items not being $customChargeamount) should go in favor of higher vat (first item)
-        $items[0]->forcePrice(round($items[0]->unitPrice() + ($customChargeAmount - $sum), 2));
-
-        $checkSum = 0;
-        foreach ($items as $item) {
-            $checkSum += $item->totalPrice();
-        }
-        if (round($checkSum, 2) !== round($customChargeAmount, 2)) {
-            throw new \Exception("Cannot charge custom amount, sum of items [{$checkSum}] is different than charged amount [{$customChargeAmount}].");
-        }
-
-        return $items;
-    }
-
-    private function validateRecurrentPayment($recurrentPayment)
+    private function validateRecurrentPayment($recurrentPayment): void
     {
         $parentRecurrentPayment = $this->recurrentPaymentsRepository->getLastWithState($recurrentPayment, RecurrentPaymentsRepository::STATE_CHARGED);
         if (!$parentRecurrentPayment) {
@@ -337,7 +226,7 @@ class RecurrentPaymentsChargeCommand extends Command
                 'note' => 'Fast charge',
             ]);
 
-            throw new RecurrentPaymentFastCharge();
+            throw new RecurrentPaymentFastCharge($recurrentPayment);
         }
     }
 

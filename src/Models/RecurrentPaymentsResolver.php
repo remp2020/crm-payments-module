@@ -2,31 +2,30 @@
 
 namespace Crm\PaymentsModule\Models;
 
+use Crm\ApplicationModule\Models\Config\ApplicationConfig;
+use Crm\PaymentsModule\Events\RecurrentPaymentItemContainerReadyEvent;
 use Crm\PaymentsModule\Models\PaymentItem\DonationPaymentItem;
-use Crm\PaymentsModule\Repositories\PaymentsRepository;
+use Crm\PaymentsModule\Models\PaymentItem\PaymentItemContainer;
+use Crm\PaymentsModule\Models\RecurrentPaymentsResolver\PaymentData;
 use Crm\PaymentsModule\Repositories\RecurrentPaymentsRepository;
+use Crm\SubscriptionsModule\Models\PaymentItem\SubscriptionTypePaymentItem;
 use Crm\SubscriptionsModule\Repositories\SubscriptionTypesRepository;
+use League\Event\Emitter;
 use Nette\Database\Table\ActiveRow;
+use Nette\Localization\Translator;
 use Nette\Utils\DateTime;
 
 class RecurrentPaymentsResolver
 {
-    protected $paymentsRepository;
-
-    private $recurrentPaymentsRepository;
-
-    private $subscriptionTypesRepository;
-
     public $lastFailedChargeAt = null;
 
     public function __construct(
-        PaymentsRepository $paymentsRepository,
-        RecurrentPaymentsRepository $recurrentPaymentsRepository,
-        SubscriptionTypesRepository $subscriptionTypesRepository
+        private RecurrentPaymentsRepository $recurrentPaymentsRepository,
+        private SubscriptionTypesRepository $subscriptionTypesRepository,
+        private Translator $translator,
+        private ApplicationConfig $applicationConfig,
+        private Emitter $emitter,
     ) {
-        $this->paymentsRepository = $paymentsRepository;
-        $this->recurrentPaymentsRepository = $recurrentPaymentsRepository;
-        $this->subscriptionTypesRepository = $subscriptionTypesRepository;
     }
 
     /**
@@ -100,38 +99,27 @@ class RecurrentPaymentsResolver
      */
     public function resolveCustomChargeAmount(ActiveRow $recurrentPayment) : ?float
     {
-        $amount = null;
-        if ($recurrentPayment->custom_amount != null) {
-            $amount = $recurrentPayment->custom_amount;
-        }
-        return $amount;
+        return $recurrentPayment->custom_amount;
     }
 
     /**
      * resolveChargeAmount calculates final amount of money to be charged next time, including
      * the standard subscription price.
      */
-    public function resolveChargeAmount(ActiveRow $recurrentPayment) : float
+    public function resolveChargeAmount(ActiveRow $recurrentPayment): float
     {
-        $subscriptionType = $this->resolveSubscriptionType($recurrentPayment);
-        $amount = $subscriptionType->price;
-        if ($recurrentPayment->custom_amount != null) {
-            $amount = $recurrentPayment->custom_amount;
-        } elseif ($amount != $recurrentPayment->parent_payment->amount) {
-            // original payment could contain recurring donations
-            foreach ($this->paymentsRepository->getPaymentItems($recurrentPayment->parent_payment) as $paymentItem) {
-                if ($paymentItem['type'] === DonationPaymentItem::TYPE
-                        && $recurrentPayment->parent_payment->additional_type == 'recurrent'
-                    ) {
-                    $amount += $paymentItem['amount'] * $paymentItem['count'];
-                }
-            }
-        }
-        return $amount;
+        $paymentData = $this->resolvePaymentData($recurrentPayment);
+        return $paymentData->customChargeAmount ?? $paymentData->paymentItemContainer->totalPrice();
+    }
+
+    public function resolveAddress(ActiveRow $recurrentPayment): ?ActiveRow
+    {
+        return $recurrentPayment->parent_payment->address ?? null;
     }
 
     /**
-     * resolveFailedRecurrent checks following recurring payments after charge failed and returns last recurring payment.
+     * resolveFailedRecurrent checks following recurring payments after charge failed and returns last recurring
+     * payment.
      *
      * This method follows sequence:
      * - get $recurrentPayment->payment
@@ -168,5 +156,143 @@ class RecurrentPaymentsResolver
         }
 
         return new DateTime($this->lastFailedChargeAt);
+    }
+
+    private function createPaymentItemContainer(
+        ActiveRow $recurrentPayment,
+        ActiveRow $subscriptionType,
+        ?float $customChargeAmount,
+        null|float|int $additionalAmount,
+        ?string $additionalType,
+    ): PaymentItemContainer {
+        $paymentItemContainer = new PaymentItemContainer();
+        $parentPayment = $recurrentPayment->parent_payment;
+
+        // we want to load previous payment items only if new subscription has same subscription type
+        // and it isn't upgraded recurrent payment
+        if ($subscriptionType->id === $parentPayment->subscription_type_id
+            && $subscriptionType->id === $recurrentPayment->subscription_type_id
+            && $parentPayment->amount === $recurrentPayment->subscription_type->price
+            && !$customChargeAmount
+        ) {
+            $subscriptionTypePaymentItems = $parentPayment->related('payment_items')
+                ->where('type', SubscriptionTypePaymentItem::TYPE);
+            foreach ($subscriptionTypePaymentItems as $paymentItem) {
+                $paymentItemContainer->addItem(SubscriptionTypePaymentItem::fromPaymentItem($paymentItem));
+            }
+
+            // In case of subscription type VAT change, parent payment would copy incorrect VAT rates
+            // into the new payment items. If we see a change in a total price without VAT, we don't
+            // copy the items anymore (the price with VAT was already checked in IF above).
+            $containerToCompare = new PaymentItemContainer();
+            $containerToCompare->addItems(SubscriptionTypePaymentItem::fromSubscriptionType($subscriptionType));
+
+            if (round($paymentItemContainer->totalPriceWithoutVAT(), 2) !==
+                round($containerToCompare->totalPriceWithoutVAT(), 2)
+            ) {
+                $paymentItemContainer = $containerToCompare;
+            }
+        } elseif (!$customChargeAmount) {
+            // if subscription type has changed or there is a price difference (e.g. caused by donation),
+            // load subscription type payment items from subscription type
+            $paymentItemContainer->addItems(SubscriptionTypePaymentItem::fromSubscriptionType($subscriptionType));
+        } else {
+            $items = $this->getSubscriptionTypeItemsForCustomChargeAmount($subscriptionType, $customChargeAmount);
+            $paymentItemContainer->addItems($items);
+        }
+
+        // Recurrent donation item are added directly
+        if ($additionalType === 'recurrent' && $additionalAmount) {
+            $donationPaymentVat = $this->applicationConfig->get('donation_vat_rate');
+            if ($donationPaymentVat === null) {
+                throw new \RuntimeException("Config 'donation_vat_rate' is not set");
+            }
+            $paymentItemContainer->addItem(
+                new DonationPaymentItem(
+                    $this->translator->translate('payments.admin.donation'),
+                    (float) $additionalAmount,
+                    (int) $donationPaymentVat
+                )
+            );
+        }
+
+        // let modules add own items to PaymentItemContainer
+        $this->emitter->emit(new RecurrentPaymentItemContainerReadyEvent(
+            $paymentItemContainer,
+            $recurrentPayment
+        ));
+
+        return $paymentItemContainer;
+    }
+
+    protected function getSubscriptionTypeItemsForCustomChargeAmount($subscriptionType, $customChargeAmount): array
+    {
+        $items = SubscriptionTypePaymentItem::fromSubscriptionType($subscriptionType);
+
+        // sort items by vat (higher vat first)
+        usort($items, static function (SubscriptionTypePaymentItem $a, SubscriptionTypePaymentItem $b) {
+            return ($b->vat() <=> $a->vat());
+        });
+
+        // get vat-amount ratios, floor everything down to avoid scenario that everything is rounded up
+        // and sum of items would be greater than charged amount
+        $ratios = [];
+        foreach ($items as $item) {
+            $ratios[$item->vat()] = floor($item->unitPrice() / $subscriptionType->price * 100) / 100;
+        }
+        // any rounding weirdness (sum of ratios not being 1) should go in favor of higher vat (first item)
+        $ratios[array_keys($ratios)[0]] += 1 - array_sum($ratios);
+
+        // update prices based on found ratios
+        $sum = 0;
+        foreach ($items as $item) {
+            $itemPrice = floor($customChargeAmount * $ratios[$item->vat()] * 100) / 100;
+            $item->forcePrice($itemPrice);
+            $sum += $itemPrice;
+        }
+        // any rounding weirdness (sum of items not being $customChargeamount) should go in favor of higher vat (first item)
+        $items[0]->forcePrice(round($items[0]->unitPrice() + ($customChargeAmount - $sum), 2));
+
+        $checkSum = 0;
+        foreach ($items as $item) {
+            $checkSum += $item->totalPrice();
+        }
+        if (round($checkSum, 2) !== round($customChargeAmount, 2)) {
+            throw new \Exception("Cannot charge custom amount, sum of items [{$checkSum}] is different than charged amount [{$customChargeAmount}].");
+        }
+
+        return $items;
+    }
+
+    public function resolvePaymentData(ActiveRow $recurrentPayment, ?ActiveRow $forceSubscriptionType = null): PaymentData
+    {
+        $subscriptionType = $forceSubscriptionType ?? $this->resolveSubscriptionType($recurrentPayment);
+        $customChargeAmount = $this->resolveCustomChargeAmount($recurrentPayment);
+        $address = $this->resolveAddress($recurrentPayment);
+
+        $additionalAmount = 0;
+        $additionalType = null;
+        $parentPayment = $recurrentPayment->parent_payment;
+        if ($parentPayment && $parentPayment->additional_type === 'recurrent') {
+            $additionalType = 'recurrent';
+            $additionalAmount = $parentPayment->additional_amount;
+        }
+
+        $paymentItemContainer = $this->createPaymentItemContainer(
+            $recurrentPayment,
+            $subscriptionType,
+            $customChargeAmount,
+            $additionalAmount,
+            $additionalType
+        );
+
+        return new PaymentData(
+            $paymentItemContainer,
+            $subscriptionType,
+            $customChargeAmount,
+            $additionalAmount,
+            $additionalType,
+            $address,
+        );
     }
 }
