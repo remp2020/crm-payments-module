@@ -208,7 +208,7 @@ class DashboardPresenter extends AdminPresenter
             ->setTableName('payments')
             ->setJoin('JOIN payment_items ON payment_items.payment_id = payments.id')
             ->setWhere("{$this->paidPaymentStatusWhere()} {$this->recurrentChargeWhere()} {$this->paymentItemTypesWhere()}")
-            ->setValueField('SUM(payment_items.count * payment_items.amount) / COUNT(DISTINCT payments.id)')
+            ->setValueField('ROUND(SUM(payment_items.count * payment_items.amount) / COUNT(DISTINCT payments.id), 2)')
             ->setTimeField('paid_at')
             ->setStart($this->dateFrom)
             ->setEnd($this->dateTo));

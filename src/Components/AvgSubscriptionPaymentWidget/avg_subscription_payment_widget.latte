@@ -1,5 +1,5 @@
 <li class="list-group-item">
-  <b>{_payments.admin.component.avg_subscription_payment_widget.avg_subscription_payment}:</b> {$avgSubscriptionPayments|number:2}
+  <b>{_payments.admin.component.avg_subscription_payment_widget.avg_subscription_payment}:</b> {$avgSubscriptionPayments|price}
   {if $updatedAt}
     <span class="text-muted">({$updatedAt|userDate})</span>
   {/if}
