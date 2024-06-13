@@ -12,6 +12,7 @@ use Omnipay\Common\Exception\InvalidRequestException;
  */
 class TestRecurrentGateway extends GatewayAbstract implements RecurrentPaymentInterface
 {
+    public const GATEWAY_CODE = 'recurrent';
 
     protected function initialize()
     {
