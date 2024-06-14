@@ -425,7 +425,15 @@ admin:
             label: "Vásárolt előfizetés típus (mind)"
         total_recurrent_subscriptions:
             label: "Vásárolt előfizetés típus (ismétlődő)"
+
 form:
+    controls:
+        subscription_types:
+            categories:
+                default: 'Alapértelmezett előfizetési típusok'
+                non_default: 'Egyéb előfizetési típusok'
+                hidden: 'Rejtett előfizetési típusok'
+
     payment_gateway:
         name:
             label: Név

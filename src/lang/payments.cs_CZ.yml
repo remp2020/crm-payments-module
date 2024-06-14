@@ -551,6 +551,13 @@ admin:
             param_label: Typ přístupu k obsahu
 
 form:
+    controls:
+        subscription_types:
+            categories:
+                default: 'Výchozí typy předplatného'
+                non_default: 'Ostatní typy předplatného'
+                hidden: 'Skryté typy předplatného'
+
     payment_gateway:
         name:
             label: Jméno

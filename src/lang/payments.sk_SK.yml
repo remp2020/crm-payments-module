@@ -551,6 +551,13 @@ admin:
             param_label: Typ prístupu k obsahu
 
 form:
+    controls:
+        subscription_types:
+            categories:
+                default: 'Predvolené typy predplatného'
+                non_default: 'Ostatné typy predplatného'
+                hidden: 'Skryté typy predplatného'
+
     payment_gateway:
         name:
             label: Meno

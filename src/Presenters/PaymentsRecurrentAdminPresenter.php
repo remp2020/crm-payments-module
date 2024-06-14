@@ -10,32 +10,17 @@ use Crm\ApplicationModule\Models\Graphs\Criteria;
 use Crm\ApplicationModule\Models\Graphs\GraphData;
 use Crm\ApplicationModule\Models\Graphs\GraphDataItem;
 use Crm\PaymentsModule\Components\DuplicateRecurrentPayments\DuplicateRecurrentPaymentsControlFactoryInterface;
+use Crm\PaymentsModule\Forms\Controls\SubscriptionTypesSelectItemsBuilder;
 use Crm\PaymentsModule\Forms\RecurrentPaymentFormFactory;
 use Crm\PaymentsModule\Repositories\RecurrentPaymentsRepository;
 use Crm\SubscriptionsModule\Repositories\SubscriptionTypesRepository;
 use Nette\Application\Attributes\Persistent;
 use Nette\Application\UI\Form;
-use Nette\DI\Attributes\Inject;
 use Tomaj\Form\Renderer\BootstrapInlineRenderer;
 use Tracy\Debugger;
 
 class PaymentsRecurrentAdminPresenter extends AdminPresenter
 {
-    #[Inject]
-    public GraphData $graphData;
-
-    #[Inject]
-    public SubscriptionTypesRepository $subscriptionTypesRepository;
-
-    #[Inject]
-    public RecurrentPaymentsRepository $recurrentPaymentsRepository;
-
-    #[Inject]
-    public RecurrentPaymentFormFactory $recurrentPaymentFormFactory;
-
-    #[Inject]
-    public UserDateHelper $userDateHelper;
-
     #[Persistent]
     public $subscription_type;
 
@@ -47,6 +32,17 @@ class PaymentsRecurrentAdminPresenter extends AdminPresenter
 
     #[Persistent]
     public $cid;
+
+    public function __construct(
+        private readonly GraphData $graphData,
+        private readonly SubscriptionTypesRepository $subscriptionTypesRepository,
+        private readonly RecurrentPaymentsRepository $recurrentPaymentsRepository,
+        private readonly RecurrentPaymentFormFactory $recurrentPaymentFormFactory,
+        private readonly UserDateHelper $userDateHelper,
+        private readonly SubscriptionTypesSelectItemsBuilder $subscriptionTypesSelectItemsBuilder,
+    ) {
+        parent::__construct();
+    }
 
     /**
      * @admin-access-level read
@@ -87,9 +83,12 @@ class PaymentsRecurrentAdminPresenter extends AdminPresenter
         $form->addSelect('status', 'payments.admin.payments_recurrent.admin_filter_form.status.label', $statuses)
             ->setPrompt('--');
 
-        $subscriptionTypes = $this->subscriptionTypesRepository->getAllActive()->fetchPairs('id', 'name');
-        $form->addselect('subscription_type', 'payments.admin.payments_recurrent.admin_filter_form.subscription_type.label', $subscriptionTypes)
-            ->setPrompt('--');
+        $subscriptionTypes = $this->subscriptionTypesRepository->getAllActive()->fetchAll();
+        $form->addselect(
+            'subscription_type',
+            'payments.admin.payments_recurrent.admin_filter_form.subscription_type.label',
+            $this->subscriptionTypesSelectItemsBuilder->buildSimple($subscriptionTypes)
+        )->setPrompt('--');
 
         $form->addCheckbox('problem', 'payments.admin.payments_recurrent.admin_filter_form.problem.label');
 

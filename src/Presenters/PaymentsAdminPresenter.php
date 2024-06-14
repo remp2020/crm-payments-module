@@ -9,6 +9,7 @@ use Crm\ApplicationModule\Hermes\HermesMessage;
 use Crm\ApplicationModule\Models\DataProvider\DataProviderManager;
 use Crm\PaymentsModule\Components\ChangePaymentStatus\ChangePaymentStatusFactoryInterface;
 use Crm\PaymentsModule\DataProviders\AdminFilterFormDataProviderInterface;
+use Crm\PaymentsModule\Forms\Controls\SubscriptionTypesSelectItemsBuilder;
 use Crm\PaymentsModule\Forms\PaymentFormFactory;
 use Crm\PaymentsModule\Models\AdminFilterFormData;
 use Crm\PaymentsModule\Models\PaymentsHistogramFactory;
@@ -22,57 +23,32 @@ use Crm\UsersModule\Repositories\UsersRepository;
 use Nette\Application\Attributes\Persistent;
 use Nette\Application\BadRequestException;
 use Nette\Application\UI\Form;
-use Nette\DI\Attributes\Inject;
 use Tomaj\Form\Renderer\BootstrapRenderer;
 use Tomaj\Hermes\Emitter;
 
 class PaymentsAdminPresenter extends AdminPresenter
 {
-    #[Inject]
-    public PaymentsRepository $paymentsRepository;
-
-    #[Inject]
-    public PaymentItemMetaRepository $paymentItemMetaRepository;
-
-    #[Inject]
-    public PaymentGatewaysRepository $paymentGatewaysRepository;
-
-    #[Inject]
-    public SubscriptionTypesRepository $subscriptionTypesRepository;
-
-    #[Inject]
-    public UsersRepository $usersRepository;
-
-    #[Inject]
-    public PaymentFormFactory $factory;
-
-    #[Inject]
-    public DataProviderManager $dataProviderManager;
-
-    #[Inject]
-    public PaymentsHistogramFactory $paymentsHistogramFactory;
-
-    #[Inject]
-    public RecurrentPaymentsRepository $recurrentPaymentsRepository;
-
     #[Persistent]
     public $month;
 
     #[Persistent]
     public $formData = [];
 
-    private $adminFilterFormData;
-
-    private $hermesEmitter;
-
-
     public function __construct(
-        AdminFilterFormData $adminFilterFormData,
-        Emitter $hermesEmitter
+        private readonly PaymentsRepository $paymentsRepository,
+        private readonly PaymentItemMetaRepository $paymentItemMetaRepository,
+        private readonly PaymentGatewaysRepository $paymentGatewaysRepository,
+        private readonly SubscriptionTypesRepository $subscriptionTypesRepository,
+        private readonly UsersRepository $usersRepository,
+        private readonly PaymentFormFactory $factory,
+        private readonly DataProviderManager $dataProviderManager,
+        private readonly PaymentsHistogramFactory $paymentsHistogramFactory,
+        private readonly RecurrentPaymentsRepository $recurrentPaymentsRepository,
+        private readonly AdminFilterFormData $adminFilterFormData,
+        private readonly Emitter $hermesEmitter,
+        private readonly SubscriptionTypesSelectItemsBuilder $subscriptionTypesSelectItemsBuilder
     ) {
         parent::__construct();
-        $this->adminFilterFormData = $adminFilterFormData;
-        $this->hermesEmitter = $hermesEmitter;
     }
 
     public function startup()
@@ -166,11 +142,11 @@ class PaymentsAdminPresenter extends AdminPresenter
 
         $form->addText('external_id', 'payments.admin.component.admin_filter_form.external_id.label');
 
-        $subscriptionTypes = $this->subscriptionTypesRepository->getAllActive()->fetchPairs('id', 'name');
+        $subscriptionTypes = $this->subscriptionTypesRepository->getAllActive()->fetchAll();
         $subscriptionType = $form->addSelect(
             'subscription_type',
             'payments.admin.component.admin_filter_form.subscription_type.label',
-            $subscriptionTypes
+            $this->subscriptionTypesSelectItemsBuilder->buildSimple($subscriptionTypes),
         )->setPrompt('--');
         $subscriptionType->getControlPrototype()->addAttributes(['class' => 'select2']);
 

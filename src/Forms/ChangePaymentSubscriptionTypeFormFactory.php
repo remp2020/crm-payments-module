@@ -3,11 +3,11 @@
 namespace Crm\PaymentsModule\Forms;
 
 use Crm\ApplicationModule\Models\Database\ActiveRow;
+use Crm\PaymentsModule\Forms\Controls\SubscriptionTypesSelectItemsBuilder;
 use Crm\PaymentsModule\Models\PaymentItem\PaymentItemContainer;
 use Crm\PaymentsModule\Repositories\PaymentItemsRepository;
 use Crm\PaymentsModule\Repositories\PaymentsRepository;
 use Crm\SubscriptionsModule\Models\PaymentItem\SubscriptionTypePaymentItem;
-use Crm\SubscriptionsModule\Models\Subscription\SubscriptionTypeHelper;
 use Crm\SubscriptionsModule\Repositories\SubscriptionTypesRepository;
 use Nette\Application\UI\Form;
 use Nette\Database\Explorer;
@@ -21,12 +21,12 @@ class ChangePaymentSubscriptionTypeFormFactory
     private ?ActiveRow $payment = null;
 
     public function __construct(
-        private Translator $translator,
-        private SubscriptionTypesRepository $subscriptionTypesRepository,
-        private SubscriptionTypeHelper $subscriptionTypeHelper,
-        private PaymentsRepository $paymentsRepository,
-        private PaymentItemsRepository $paymentItemsRepository,
-        private Explorer $database
+        private readonly Translator $translator,
+        private readonly SubscriptionTypesRepository $subscriptionTypesRepository,
+        private readonly PaymentsRepository $paymentsRepository,
+        private readonly PaymentItemsRepository $paymentItemsRepository,
+        private readonly Explorer $database,
+        private readonly SubscriptionTypesSelectItemsBuilder $subscriptionTypesSelectItemsBuilder,
     ) {
     }
 
@@ -46,12 +46,11 @@ class ChangePaymentSubscriptionTypeFormFactory
         if (isset($this->payment->subscription_type)) {
             $subscriptionTypeOptions[] = $this->payment->subscription_type;
         }
-        $subscriptionTypePairs = $this->subscriptionTypeHelper->getPairs($subscriptionTypeOptions, true);
 
         $form->addSelect(
             'subscription_type_id',
             'payments.admin.component.change_payment_subscription_type_widget.subscription_type',
-            $subscriptionTypePairs
+            $this->subscriptionTypesSelectItemsBuilder->buildWithDescription($subscriptionTypeOptions)
         )->setRequired()->setHtmlAttribute('class', 'form-control')
             ->getControlPrototype()
             ->addAttributes(['class' => 'select2']);

@@ -6,13 +6,13 @@ use Crm\ApplicationModule\Models\Config\ApplicationConfig;
 use Crm\ApplicationModule\Models\DataProvider\DataProviderException;
 use Crm\ApplicationModule\Models\DataProvider\DataProviderManager;
 use Crm\PaymentsModule\DataProviders\PaymentFormDataProviderInterface;
+use Crm\PaymentsModule\Forms\Controls\SubscriptionTypesSelectItemsBuilder;
 use Crm\PaymentsModule\Models\PaymentItem\DonationPaymentItem;
 use Crm\PaymentsModule\Models\PaymentItem\PaymentItemContainer;
 use Crm\PaymentsModule\Repositories\PaymentGatewaysRepository;
 use Crm\PaymentsModule\Repositories\PaymentsRepository;
 use Crm\SubscriptionsModule\Models\PaymentItem\SubscriptionTypePaymentItem;
 use Crm\SubscriptionsModule\Models\Subscription\SubscriptionTypeHelper;
-use Crm\SubscriptionsModule\Repositories\SubscriptionTypeItemMetaRepository;
 use Crm\SubscriptionsModule\Repositories\SubscriptionTypesRepository;
 use Crm\UsersModule\Repositories\AddressesRepository;
 use Crm\UsersModule\Repositories\UsersRepository;
@@ -32,54 +32,24 @@ class PaymentFormFactory
     const MANUAL_SUBSCRIPTION_START = 'start_at';
     const MANUAL_SUBSCRIPTION_START_END = 'start_end_at';
 
-    private $paymentsRepository;
-
-    private $paymentGatewaysRepository;
-
-    private $subscriptionTypesRepository;
-
-    private $usersRepository;
-
-    private $addressesRepository;
-
-    private $dataProviderManager;
-
-    private $applicationConfig;
-
-    private $translator;
-
-    private $subscriptionTypeHelper;
-
     public $onSave;
 
     public $onUpdate;
 
     private $onCallback;
 
-    private $subscriptionTypeItemMetaRepository;
-
     public function __construct(
-        PaymentsRepository $paymentsRepository,
-        PaymentGatewaysRepository $paymentGatewaysRepository,
-        SubscriptionTypesRepository $subscriptionTypesRepository,
-        SubscriptionTypeItemMetaRepository $subscriptionTypeItemMetaRepository,
-        UsersRepository $usersRepository,
-        AddressesRepository $addressesRepository,
-        DataProviderManager $dataProviderManager,
-        ApplicationConfig $applicationConfig,
-        Translator $translator,
-        SubscriptionTypeHelper $subscriptionTypeHelper
+        private readonly PaymentsRepository $paymentsRepository,
+        private readonly PaymentGatewaysRepository $paymentGatewaysRepository,
+        private readonly SubscriptionTypesRepository $subscriptionTypesRepository,
+        private readonly UsersRepository $usersRepository,
+        private readonly AddressesRepository $addressesRepository,
+        private readonly DataProviderManager $dataProviderManager,
+        private readonly ApplicationConfig $applicationConfig,
+        private readonly Translator $translator,
+        private readonly SubscriptionTypeHelper $subscriptionTypeHelper,
+        private readonly SubscriptionTypesSelectItemsBuilder $subscriptionTypesSelectItemsBuilder,
     ) {
-        $this->paymentsRepository = $paymentsRepository;
-        $this->paymentGatewaysRepository = $paymentGatewaysRepository;
-        $this->subscriptionTypesRepository = $subscriptionTypesRepository;
-        $this->usersRepository = $usersRepository;
-        $this->addressesRepository = $addressesRepository;
-        $this->dataProviderManager = $dataProviderManager;
-        $this->applicationConfig = $applicationConfig;
-        $this->translator = $translator;
-        $this->subscriptionTypeItemMetaRepository = $subscriptionTypeItemMetaRepository;
-        $this->subscriptionTypeHelper = $subscriptionTypeHelper;
     }
 
     /**
@@ -184,14 +154,13 @@ class PaymentFormFactory
             $subscriptionTypeOptions[] = $payment->subscription_type;
         }
         $subscriptionTypes = $this->subscriptionTypeHelper->getItems($subscriptionTypeOptions);
-        $subscriptionTypePairs = $this->subscriptionTypeHelper->getPairs($subscriptionTypeOptions, true);
 
         $form->addHidden('subscription_types', Json::encode($subscriptionTypes));
 
         $subscriptionType = $form->addSelect(
             'subscription_type_id',
             'payments.form.payment.subscription_type_id.label',
-            $subscriptionTypePairs
+            $this->subscriptionTypesSelectItemsBuilder->buildWithDescription($subscriptionTypeOptions)
         )->setPrompt("payments.form.payment.subscription_type_id.prompt");
         $subscriptionType->getControlPrototype()->addAttributes(['class' => 'select2']);
 

@@ -542,7 +542,15 @@ frontend:
     add_card:
         error: Die Karte konnte nicht hinzugefügt werden. Bitte probieren Sie es später noch einmal.
         success: Die Karte wurde erfolgreich hinzugefügt. Eine eventuell im Rahmen der Kartenprüfung erfolgte Abbuchung wird Ihnen wieder zurückerstattet.
+
 form:
+    controls:
+        subscription_types:
+            categories:
+                default: 'Standardabonnementtypen'
+                non_default: 'Andere Abonnementtypen'
+                hidden: 'Versteckte Abonnementtypen'
+
     payment_gateway:
         name:
             label: Name

@@ -551,6 +551,13 @@ admin:
             param_label: Content access type
 
 form:
+    controls:
+        subscription_types:
+            categories:
+                default: 'Default subscription types'
+                non_default: 'Other subscription types'
+                hidden: 'Hidden subscription types'
+
     payment_gateway:
         name:
             label: Name

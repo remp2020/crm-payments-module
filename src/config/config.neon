@@ -19,6 +19,7 @@ services:
 	paymentItemMetaRepository: Crm\PaymentsModule\Repositories\PaymentItemMetaRepository
 	retentionAnalysisJobsRepository: Crm\PaymentsModule\Repositories\RetentionAnalysisJobsRepository
 
+	- Crm\PaymentsModule\Forms\Controls\SubscriptionTypesSelectItemsBuilder
 	- Crm\PaymentsModule\Forms\PaymentFormFactory
 	- Crm\PaymentsModule\Forms\PaymentGatewayFormFactory
 	- Crm\PaymentsModule\Forms\PaymentRefundFormFactory

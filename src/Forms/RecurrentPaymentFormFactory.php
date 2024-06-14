@@ -2,8 +2,8 @@
 
 namespace Crm\PaymentsModule\Forms;
 
+use Crm\PaymentsModule\Forms\Controls\SubscriptionTypesSelectItemsBuilder;
 use Crm\PaymentsModule\Repositories\RecurrentPaymentsRepository;
-use Crm\SubscriptionsModule\Models\Subscription\SubscriptionTypeHelper;
 use Crm\SubscriptionsModule\Repositories\SubscriptionTypesRepository;
 use Nette\Application\UI\Form;
 use Nette\Localization\Translator;
@@ -12,26 +12,14 @@ use Tomaj\Form\Renderer\BootstrapRenderer;
 
 class RecurrentPaymentFormFactory
 {
-    private $recurrentPaymentsRepository;
-
-    private $subscriptionTypesRepository;
-
-    private $translator;
-
-    private $subscriptionTypeHelper;
-
     public $onUpdate;
 
     public function __construct(
-        RecurrentPaymentsRepository $recurrentPaymentsRepository,
-        SubscriptionTypesRepository $subscriptionTypesRepository,
-        Translator $translator,
-        SubscriptionTypeHelper $subscriptionTypeHelper
+        private readonly RecurrentPaymentsRepository $recurrentPaymentsRepository,
+        private readonly SubscriptionTypesRepository $subscriptionTypesRepository,
+        private readonly Translator $translator,
+        private readonly SubscriptionTypesSelectItemsBuilder $subscriptionTypesSelectItemsBuilder
     ) {
-        $this->recurrentPaymentsRepository = $recurrentPaymentsRepository;
-        $this->subscriptionTypesRepository = $subscriptionTypesRepository;
-        $this->translator = $translator;
-        $this->subscriptionTypeHelper = $subscriptionTypeHelper;
     }
 
     public function create($recurrentPaymentId)
@@ -56,11 +44,11 @@ class RecurrentPaymentFormFactory
             ->setHtmlType('number')
             ->setHtmlAttribute('placeholder', 'payments.admin.component.recurrent_payment_form.retries.placeholder');
 
-        $subscriptionTypePairs = $this->subscriptionTypeHelper->getPairs($this->subscriptionTypesRepository->getAllActive(), true);
+        $subscriptionTypes = $this->subscriptionTypesRepository->getAllActive()->fetchAll();
         $nextSubscriptionType = $form->addSelect(
             'next_subscription_type_id',
             'payments.admin.component.recurrent_payment_form.next_subscription_type_id.label',
-            $subscriptionTypePairs
+            $this->subscriptionTypesSelectItemsBuilder->buildWithDescription($subscriptionTypes)
         )->setPrompt('--')
             ->setOption('description', $this->translator->translate('payments.admin.component.recurrent_payment_form.next_subscription_type_id.description', ['actual' => $recurrent->subscription_type->name]));
         $nextSubscriptionType->getControlPrototype()->addAttributes(['class' => 'select2']);
