@@ -338,11 +338,16 @@ class CsobOneClick extends GatewayAbstract implements RecurrentPaymentInterface,
         return $recurrentPayment->parent_payment->paid_at > new DateTime('-365 days');
     }
 
+    /**
+     * Method tries to obtain valid IP from request, initial payment or user.
+     *
+     * Note: Internal IP record can contain value `cli` which indicates offline charge.
+     */
     private function getClientIp(ActiveRow $payment, string $token): ?string
     {
-        // use IP of request (if exists; cli === offline charge)
+        // use IP of request (if exists)
         $requestIp = Request::getIp();
-        if ($requestIp !== 'cli') {
+        if (filter_var($requestIp, FILTER_VALIDATE_IP) !== false) {
             return $requestIp;
         }
 
@@ -351,7 +356,9 @@ class CsobOneClick extends GatewayAbstract implements RecurrentPaymentInterface,
         // 1. try to find initial payment from payment meta
         $initialPaymentMeta = $this->paymentMetaRepository->findByMeta('pay_id', $token);
         if ($initialPaymentMeta !== null && isset($initialPaymentMeta->payment->ip)) {
-            return $initialPaymentMeta->payment->ip;
+            if (filter_var($initialPaymentMeta->payment->ip, FILTER_VALIDATE_IP) !== false) {
+                return $initialPaymentMeta->payment->ip;
+            }
         }
 
         // 2. try to find initial payment from first recurrent payment
@@ -360,11 +367,13 @@ class CsobOneClick extends GatewayAbstract implements RecurrentPaymentInterface,
             ->order('created_at ASC')
             ->fetch();
         if ($initialRecurrentPayment !== null && isset($initialRecurrentPayment->payment->ip)) {
-            return $initialRecurrentPayment->payment->ip;
+            if (filter_var($initialRecurrentPayment->payment->ip, FILTER_VALIDATE_IP) !== false) {
+                return $initialRecurrentPayment->payment->ip;
+            }
         }
 
         // no initial payment found; load last known IP from customer
-        if (isset($payment->user->current_sign_in_ip)) {
+        if (isset($payment->user->current_sign_in_ip) && filter_var($payment->user->current_sign_in_ip, FILTER_VALIDATE_IP)) {
             return $payment->user->current_sign_in_ip;
         }
 
