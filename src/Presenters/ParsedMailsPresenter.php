@@ -4,7 +4,6 @@ namespace Crm\PaymentsModule\Presenters;
 
 use Crm\AdminModule\Presenters\AdminPresenter;
 use Crm\ApplicationModule\Components\PreviousNextPaginator\PreviousNextPaginator;
-use Crm\ApplicationModule\Models\Database\Selection;
 use Crm\PaymentsModule\Forms\ParsedMailLogFactory;
 use Crm\PaymentsModule\Models\ParsedMailLog\State;
 use Crm\PaymentsModule\Repositories\ParsedMailLogsRepository;
@@ -50,7 +49,13 @@ class ParsedMailsPresenter extends AdminPresenter
      */
     public function renderDefault()
     {
-        $logs = $this->getFilteredLogsSelection();
+        $logs = $this->parsedMailLogsRepository->all(
+            $this->vs,
+            $this->state,
+            $this->paymentStatus,
+            $this->amountFrom,
+            $this->amountTo
+        );
 
         $pnp = new PreviousNextPaginator();
         $this->addComponent($pnp, 'paginator');
@@ -166,20 +171,5 @@ class ParsedMailsPresenter extends AdminPresenter
 
             return $form;
         });
-    }
-
-    private function getFilteredLogsSelection(): Selection
-    {
-        $logs = $this->parsedMailLogsRepository->all($this->vs, $this->state, $this->paymentStatus);
-
-        if ($this->amountFrom) {
-            $logs->where('amount >= ?', $this->amountFrom);
-        }
-
-        if ($this->amountTo) {
-            $logs->where('amount <= ?', $this->amountTo);
-        }
-
-        return $logs;
     }
 }

@@ -7,6 +7,7 @@ use Crm\ApplicationModule\Repositories\AuditLogRepository;
 use Crm\PaymentsModule\Models\VariableSymbolVariant;
 use Nette\Caching\Storage;
 use Nette\Database\Explorer;
+use Nette\Database\Table\Selection;
 
 class ParsedMailLogsRepository extends Repository
 {
@@ -54,8 +55,13 @@ class ParsedMailLogsRepository extends Repository
         $this->auditLogRepository = $auditLogRepository;
     }
 
-    public function all(?string $vs = null, ?string $state = null, ?string $paymentStatus = null)
-    {
+    public function all(
+        ?string $vs = null,
+        ?string $state = null,
+        ?string $paymentStatus = null,
+        ?int $amountFrom = null,
+        ?int $amountTo = null,
+    ): Selection {
         $where = [];
         if ($vs !== null) {
             $where["{$this->tableName}.variable_symbol LIKE ?"] = "%{$vs}%";
@@ -66,6 +72,13 @@ class ParsedMailLogsRepository extends Repository
         if ($paymentStatus !== null) {
             $where['payment.status'] = $paymentStatus;
         }
+        if ($amountFrom) {
+            $where["{$this->tableName}.amount >= ?"] = $amountFrom;
+        }
+        if ($amountTo) {
+            $where["{$this->tableName}.amount <= ?"] = $amountTo;
+        }
+
         return $this->getTable()->where($where)->order('parsed_mail_logs.created_at DESC');
     }
 
