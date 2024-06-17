@@ -9,8 +9,10 @@ class CsobMailParserTest extends PaymentsTestCase
     public function testSingleTransferPayment()
     {
         $email = 'Vážený kliente,
+        
+toto je automaticky generovaný e-mail ze služby ČSOB CEB, neodpovídejte na něj.
 
-dne 25.9.2018 byla na účtu 123456789 zaúčtovaná transakce typu: Došlá platba.
+Dne 25.9.2018 byla na účtu 123456789 zaúčtovaná transakce typu: Došlá platba.
 
 Název smlouvy: CRM International a.s.
 Číslo smlouvy: 87654321
@@ -48,7 +50,9 @@ Vaše ČSOB
     {
         $email = 'Vážený kliente,
 
-dne 25.9.2018 byla na účtu 123456789 zaúčtována transakce typu: Došlá platba.
+toto je automaticky generovaný e-mail ze služby ČSOB CEB, neodpovídejte na něj.
+
+Dne 25.9.2018 byla na účtu 123456789 zaúčtována transakce typu: Příchozí úhrada.
 
 Název smlouvy: CRM International a.s.
 Číslo smlouvy: 87654321
@@ -85,7 +89,9 @@ Vaše ČSOB
     {
         $email = 'Vážený kliente,
 
-dne 25.9.2018 byla na účtu 123456789 zaúčtovaná transakce typu: Došlá platba.
+toto je automaticky generovaný e-mail ze služby ČSOB CEB, neodpovídejte na něj.
+
+Dne 25.9.2018 byla na účtu 123456789 zaúčtovaná transakce typu: Došlá platba.
 
 Název smlouvy: CRM International a.s.
 Číslo smlouvy: 87654321
@@ -99,7 +105,7 @@ Konstantní symbol: 3456
 
 Zůstatek na účtu po zaúčtování transakce: +1 234 567,89 CZK.
 
-dne 25.9.2018 byla na účtu 123456789 zaúčtovaná transakce typu: Došlá platba.
+Dne 25.9.2018 byla na účtu 123456789 zaúčtovaná transakce typu: Došlá platba.
 
 Název smlouvy: CRM International a.s.
 Číslo smlouvy: 87654321
@@ -146,7 +152,9 @@ Vaše ČSOB
     {
         $email = 'Vážený kliente,
 
-dne 18.8.2022 byla na účtu 123456789 zaúčtována transakce typu: Příchozí úhrada okamžitá.
+toto je automaticky generovaný e-mail ze služby ČSOB CEB, neodpovídejte na něj.
+
+Dne 18.8.2022 byla na účtu 123456789 zaúčtována transakce typu: Příchozí úhrada okamžitá.
 
 Název smlouvy: CRM International a.s.
 Číslo smlouvy: 87654321
@@ -183,7 +191,9 @@ Vaše ČSOB
     {
         $email = 'Vážený kliente,
 
-dne 18.8.2022 byl na účtu 123456789 zaúčtovaný SEPA převod.
+toto je automaticky generovaný e-mail ze služby ČSOB CEB, neodpovídejte na něj.
+
+Dne 18.8.2022 byl na účtu 123456789 zaúčtovaný SEPA převod.
 
 Název smlouvy: CRM International a.s.
 Číslo smlouvy: 87654321
@@ -225,7 +235,9 @@ Vaše ČSOB
     {
         $email = 'Vážený kliente,
 
-dne 5.12.2023 byla na účtu 123456789 zaúčtována zahraniční transakce.
+toto je automaticky generovaný e-mail ze služby ČSOB CEB, neodpovídejte na něj.
+
+Dne 5.12.2023 byla na účtu 123456789 zaúčtována zahraniční transakce.
 
 Název smlouvy: CRM International a.s.
 Číslo smlouvy: 87654321
@@ -269,7 +281,9 @@ Vaše ČSOB
     {
         $email = 'Vážený kliente,
 
-dne 5.12.2023 byla na účtu 123456789 zaúčtována zahraniční transakce.
+toto je automaticky generovaný e-mail ze služby ČSOB CEB, neodpovídejte na něj.
+
+Dne 5.12.2023 byla na účtu 123456789 zaúčtována zahraniční transakce.
 
 Název smlouvy: CRM International a.s.
 Číslo smlouvy: 87654321
@@ -314,7 +328,9 @@ Vaše ČSOB
     {
         $email = 'Vážený kliente,
 
-dne 1.3.2024 byla na účtu 123456789 zaúčtována transakce typu: Příchozí úhrada.
+toto je automaticky generovaný e-mail ze služby ČSOB CEB, neodpovídejte na něj.
+
+Dne 1.3.2024 byla na účtu 123456789 zaúčtována transakce typu: Příchozí úhrada.
 
 Název smlouvy: CRM International a.s.
 Číslo smlouvy: 87654321
@@ -353,7 +369,9 @@ Vaše ČSOB
     {
         $email = 'Vážený kliente,
 
-dne 21.2.2024 byla na účtu 123456789 zaúčtována zahraniční transakce.
+toto je automaticky generovaný e-mail ze služby ČSOB CEB, neodpovídejte na něj.
+
+Dne 21.2.2024 byla na účtu 123456789 zaúčtována zahraniční transakce.
 
 Název smlouvy: CRM International a.s.
 Číslo smlouvy: 87654321
@@ -389,7 +407,9 @@ Vaše ČSOB
     {
         $email = 'Vážený kliente,
 
-dne 21.2.2024 byla na účtu 123456789 zaúčtována zahraniční transakce.
+toto je automaticky generovaný e-mail ze služby ČSOB CEB, neodpovídejte na něj.
+
+Dne 21.2.2024 byla na účtu 123456789 zaúčtována zahraniční transakce.
 
 Název smlouvy: CRM International a.s.
 Číslo smlouvy: 87654321
@@ -425,7 +445,9 @@ Vaše ČSOB
     {
         $email = 'Vážený kliente,
 
-dne 31.1.2024 byla na účtu 123456789 zaúčtována zahraniční transakce.
+toto je automaticky generovaný e-mail ze služby ČSOB CEB, neodpovídejte na něj.
+
+Dne 31.1.2024 byla na účtu 123456789 zaúčtována zahraniční transakce.
 
 Název smlouvy: CRM International a.s.
 Číslo smlouvy: 87654321
@@ -461,7 +483,9 @@ Vaše ČSOB
     {
         $email = 'Vážený kliente,
 
-dne 25.9.2018 byla na účtu 123456789 zaúčtována transakce platební kartou.
+toto je automaticky generovaný e-mail ze služby ČSOB CEB, neodpovídejte na něj.
+
+Dne 25.9.2018 byla na účtu 123456789 zaúčtována transakce platební kartou.
 
 Název smlouvy: CRM International a.s.
 Číslo smlouvy: 87654321
@@ -503,7 +527,9 @@ Vaše ČSOB
     {
         $email = 'Vážený kliente,
 
-dne 18.12.2023 byla na účtu 99991111 zaúčtována hotovostní transakce.
+toto je automaticky generovaný e-mail ze služby ČSOB CEB, neodpovídejte na něj.
+
+Dne 18.12.2023 byla na účtu 99991111 zaúčtována hotovostní transakce.
 
 Název smlouvy: CRM International a.s.
 Číslo smlouvy: 4200000

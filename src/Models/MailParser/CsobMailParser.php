@@ -12,7 +12,7 @@ class CsobMailParser implements ParserInterface
      */
     public function parseMulti(string $content): array
     {
-        $transactions = array_slice(explode("dne ", $content), 1);
+        $transactions = array_slice(explode("Dne ", $content), 1);
 
         $mailContents = [];
         foreach ($transactions as $transaction) {
