@@ -10,6 +10,7 @@ use Nette\Application\Attributes\Persistent;
 use Nette\Application\BadRequestException;
 use Nette\DI\Attributes\Inject;
 use Nette\Database\Table\ActiveRow;
+use Nette\Http\IResponse;
 
 class BankTransferPresenter extends FrontendPresenter implements PaymentAwareInterface
 {
@@ -21,9 +22,18 @@ class BankTransferPresenter extends FrontendPresenter implements PaymentAwareInt
 
     public function renderInfo($id)
     {
+        $user = $this->getUser();
+        if (!$user->isLoggedIn()) {
+            throw new BadRequestException('User is not logged in', httpCode: IResponse::S404_NotFound);
+        }
+
         $payment = $this->paymentsRepository->findLastByVS($id);
         if (!$payment) {
             throw new BadRequestException('Payment with variable symbol not found: ' . $id);
+        }
+
+        if ($user->getId() !== $payment->user_id) {
+            throw new BadRequestException("User hasn't access to the payment.", httpCode: IResponse::S404_NotFound);
         }
 
         if ($payment->payment_gateway->code !== BankTransfer::GATEWAY_CODE) {
