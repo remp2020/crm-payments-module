@@ -131,6 +131,7 @@ services:
 	- Crm\PaymentsModule\Events\SubscriptionPreUpdateHandler
 	- Crm\PaymentsModule\Events\SubscriptionMovedHandler
 	- Crm\PaymentsModule\Events\AttachRenewalPaymentEventHandler
+	- Crm\PaymentsModule\Events\StopRecurrentPaymentEventHandler
 
 	subscribersWithPaymentWidgetFactory:
 		factory: Crm\PaymentsModule\Components\SubscribersWithPaymentWidget\SubscribersWithPaymentWidgetFactory
@@ -207,3 +208,4 @@ services:
 	scenariosGenericEventsManager:
 		setup:
 			- register('attach_renewal_payment', Crm\PaymentsModule\Scenarios\AttachRenewalPaymentGenericEvent())
+			- register('stop_recurrent_payment', Crm\PaymentsModule\Scenarios\StopRecurrentPaymentGenericEvent())

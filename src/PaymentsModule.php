@@ -97,6 +97,8 @@ use Crm\PaymentsModule\Events\RecurrentPaymentFailEvent;
 use Crm\PaymentsModule\Events\RecurrentPaymentFailTryEvent;
 use Crm\PaymentsModule\Events\RecurrentPaymentRenewedEvent;
 use Crm\PaymentsModule\Events\RecurrentPaymentStateChangedEvent;
+use Crm\PaymentsModule\Events\StopRecurrentPaymentEvent;
+use Crm\PaymentsModule\Events\StopRecurrentPaymentEventHandler;
 use Crm\PaymentsModule\Events\SubscriptionMovedHandler;
 use Crm\PaymentsModule\Events\SubscriptionPreUpdateHandler;
 use Crm\PaymentsModule\Hermes\ExportPaymentsHandler;
@@ -562,6 +564,10 @@ class PaymentsModule extends CrmModule
         $emitter->addListener(
             AttachRenewalPaymentEvent::class,
             AttachRenewalPaymentEventHandler::class,
+        );
+        $emitter->addListener(
+            StopRecurrentPaymentEvent::class,
+            StopRecurrentPaymentEventHandler::class,
         );
     }
 
