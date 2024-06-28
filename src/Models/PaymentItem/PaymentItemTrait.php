@@ -6,13 +6,13 @@ use Crm\PaymentsModule\Models\PaymentItem\PaymentItemHelper;
 
 trait PaymentItemTrait
 {
-    private $name;
+    private string $name;
 
-    private $price;
+    private float $price;
 
-    private $vat;
+    private int $vat;
 
-    private $count;
+    private int $count;
 
     public function type(): string
     {

@@ -25,4 +25,10 @@ class AuthorizationPaymentItem implements PaymentItemInterface
     {
         return [];
     }
+
+    public function forceVat(int $vat): static
+    {
+        $this->vat = $vat;
+        return $this;
+    }
 }

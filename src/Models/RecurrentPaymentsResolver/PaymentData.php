@@ -15,6 +15,7 @@ final class PaymentData
         public readonly null|float|int $additionalAmount,
         public readonly ?string $additionalType,
         public readonly ?ActiveRow $address,
+        public readonly ?ActiveRow $paymentCountry,
     ) {
     }
 }

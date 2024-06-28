@@ -5,7 +5,9 @@ namespace Crm\PaymentsModule\Models\PaymentItem;
 class PaymentItemContainer
 {
     /** @var PaymentItemInterface[] */
-    private $items = [];
+    private array $items = [];
+
+    private ?int $forceVat = null;
 
     public function addItem(PaymentItemInterface $item): self
     {

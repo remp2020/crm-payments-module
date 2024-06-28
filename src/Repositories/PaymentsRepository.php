@@ -11,11 +11,13 @@ use Crm\ApplicationModule\Repositories\AuditLogRepository;
 use Crm\ApplicationModule\Repositories\CacheRepository;
 use Crm\PaymentsModule\Events\NewPaymentEvent;
 use Crm\PaymentsModule\Events\PaymentChangeStatusEvent;
+use Crm\PaymentsModule\Models\OneStopShop\OneStopShop;
 use Crm\PaymentsModule\Models\PaymentItem\PaymentItemContainer;
 use Crm\PaymentsModule\Models\VariableSymbolInterface;
 use Crm\PaymentsModule\Models\VariableSymbolVariant;
 use Crm\SubscriptionsModule\Models\PaymentItem\SubscriptionTypePaymentItem;
 use Crm\SubscriptionsModule\Repositories\SubscriptionsRepository;
+use Crm\UsersModule\Repositories\CountriesRepository;
 use DateTime;
 use League\Event\Emitter;
 use Nette\Database\Explorer;
@@ -28,14 +30,14 @@ class PaymentsRepository extends Repository
 {
     use RedisClientTrait;
 
-    const STATUS_FORM = 'form';
-    const STATUS_PAID = 'paid';
-    const STATUS_FAIL = 'fail';
-    const STATUS_TIMEOUT = 'timeout';
-    const STATUS_REFUND = 'refund';
-    const STATUS_IMPORTED = 'imported';
-    const STATUS_PREPAID = 'prepaid';
-    const STATUS_AUTHORIZED = 'authorized';
+    public const STATUS_FORM = 'form';
+    public const STATUS_PAID = 'paid';
+    public const STATUS_FAIL = 'fail';
+    public const STATUS_TIMEOUT = 'timeout';
+    public const STATUS_REFUND = 'refund';
+    public const STATUS_IMPORTED = 'imported';
+    public const STATUS_PREPAID = 'prepaid';
+    public const STATUS_AUTHORIZED = 'authorized';
 
     protected $tableName = 'payments';
 
@@ -51,6 +53,8 @@ class PaymentsRepository extends Repository
         protected PaymentMetaRepository $paymentMetaRepository,
         protected CacheRepository $cacheRepository,
         protected PaymentGatewaysRepository $paymentGatewaysRepository,
+        private OneStopShop $oneStopShop,
+        private CountriesRepository $countriesRepository,
     ) {
         parent::__construct($database);
         $this->auditLogRepository = $auditLogRepository;
@@ -72,15 +76,18 @@ class PaymentsRepository extends Repository
         $variableSymbol = null,
         ActiveRow $address = null,
         $recurrentCharge = false,
-        array $metaData = []
+        array $metaData = [],
+        ?ActiveRow $paymentCountry = null,
     ) {
+        $this->oneStopShop->adjustPaymentItemContainerVatRates($paymentItemContainer, $paymentCountry);
+
         $data = [
             'user_id' => $user->id,
             'payment_gateway_id' => $paymentGateway->id,
             'status' => self::STATUS_FORM,
             'created_at' => new DateTime(),
             'modified_at' => new DateTime(),
-            'variable_symbol' => $variableSymbol ? $variableSymbol : $this->variableSymbol->getNew($paymentGateway),
+            'variable_symbol' => $variableSymbol ?: $this->variableSymbol->getNew($paymentGateway),
             'ip' => Request::getIp(),
             'user_agent' => Request::getUserAgent(),
             'referer' => $referer,
@@ -89,7 +96,8 @@ class PaymentsRepository extends Repository
             'note' => $note,
             'additional_type' => $additionalType,
             'additional_amount' => $additionalAmount == null ? 0 : $additionalAmount,
-            'address_id' => $address ? $address->id : null,
+            'address_id' => $address?->id,
+            'payment_country_id' => $paymentCountry?->id,
             'recurrent_charge' => $recurrentCharge,
         ];
 
@@ -248,9 +256,21 @@ class PaymentsRepository extends Repository
 
     final public function update(ActiveRow &$row, $data, PaymentItemContainer $paymentItemContainer = null)
     {
+        // TODO: do it here or before update?
+        $newPaymentCountry = null;
+        if (isset($data['payment_country_id']) &&
+            $data['payment_country_id'] !== $row->payment_country_id) {
+            $newPaymentCountry = $this->countriesRepository->find($data['payment_country_id']);
+        }
+
         if ($paymentItemContainer) {
+            if ($newPaymentCountry) {
+                $this->oneStopShop->adjustPaymentItemContainerVatRates($paymentItemContainer, $newPaymentCountry);
+            }
             $this->paymentItemsRepository->deleteByPayment($row);
             $this->paymentItemsRepository->add($row, $paymentItemContainer);
+        } elseif ($newPaymentCountry) {
+            $this->oneStopShop->adjustPaymentVatRates($row, $newPaymentCountry);
         }
 
         $data['modified_at'] = new DateTime();

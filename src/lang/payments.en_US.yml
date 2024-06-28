@@ -717,6 +717,9 @@ config:
     category_confirmation: Confirmation e-mails
     donation_vat_rate:
         name: Donation VAT rate
+    enable_one_stop_shop:
+        name: Enable One Stop Shop scheme (OSS)
+        description: Enables <a target="_blank" href="https://vat-one-stop-shop.ec.europa.eu/one-stop-shop_en">OSS</a> scheme, which adjusts VAT of newly created payments based on the resolved payment country. Enable this only if your subject is registered to OSS scheme.
     tatrapay_sharedsecret:
         name: Tatrapay sharedsecret
     cardpay_sharedsecret:

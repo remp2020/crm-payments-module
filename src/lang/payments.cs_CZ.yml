@@ -717,6 +717,9 @@ config:
     category_confirmation: Potvrzovací e-maily
     donation_vat_rate:
         name: DPH pro dary
+    enable_one_stop_shop:
+        name: Zapnout One Stop Shop (OSS)
+        description: Systémově povolí režim <a target="_blank" href="https://vat-one-stop-shop.ec.europa.eu/one-stop-shop_en">OSS</a>, který nastaví DPH na platbách podle vyhodnocené země doručení. Zapněte pouze v případě, že je váš subjekt registrován do tohoto režimu.
     tatrapay_sharedsecret:
         name: Tatrapay sharedsecret
     cardpay_sharedsecret:

@@ -10,6 +10,7 @@ use Crm\PaymentsModule\Models\GatewayFail;
 use Crm\PaymentsModule\Models\Gateways\ExternallyChargedRecurrentPaymentInterface;
 use Crm\PaymentsModule\Models\Gateways\GatewayAbstract;
 use Crm\PaymentsModule\Models\Gateways\RecurrentPaymentInterface;
+use Crm\PaymentsModule\Models\OneStopShop\OneStopShopCountryConflictException;
 use Crm\PaymentsModule\Models\RecurrentPaymentFailStop;
 use Crm\PaymentsModule\Models\RecurrentPaymentFailTry;
 use Crm\PaymentsModule\Models\RecurrentPaymentFastCharge;
@@ -85,7 +86,13 @@ class RecurrentPaymentsChargeCommand extends Command
             }
 
             if (!isset($recurrentPayment->payment_id)) {
-                $paymentData = $this->recurrentPaymentsResolver->resolvePaymentData($recurrentPayment);
+                try {
+                    $paymentData = $this->recurrentPaymentsResolver->resolvePaymentData($recurrentPayment);
+                } catch (OneStopShopCountryConflictException $e) {
+                    Debugger::log($e->getMessage(), Debugger::ERROR);
+                    $this->error($e->getMessage());
+                    continue;
+                }
 
                 $payment = $this->paymentsRepository->add(
                     subscriptionType: $paymentData->subscriptionType,
@@ -96,7 +103,8 @@ class RecurrentPaymentsChargeCommand extends Command
                     additionalAmount: $paymentData->additionalAmount,
                     additionalType: $paymentData->additionalType,
                     address: $paymentData->address,
-                    recurrentCharge: true
+                    recurrentCharge: true,
+                    paymentCountry: $paymentData->paymentCountry,
                 );
 
                 $this->recurrentPaymentsRepository->update($recurrentPayment, [

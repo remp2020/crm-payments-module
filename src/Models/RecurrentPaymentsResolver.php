@@ -4,12 +4,16 @@ namespace Crm\PaymentsModule\Models;
 
 use Crm\ApplicationModule\Models\Config\ApplicationConfig;
 use Crm\PaymentsModule\Events\RecurrentPaymentItemContainerReadyEvent;
+use Crm\PaymentsModule\Models\GeoIp\GeoIpException;
+use Crm\PaymentsModule\Models\OneStopShop\CountryResolutionType;
+use Crm\PaymentsModule\Models\OneStopShop\OneStopShop;
 use Crm\PaymentsModule\Models\PaymentItem\DonationPaymentItem;
 use Crm\PaymentsModule\Models\PaymentItem\PaymentItemContainer;
 use Crm\PaymentsModule\Models\RecurrentPaymentsResolver\PaymentData;
 use Crm\PaymentsModule\Repositories\RecurrentPaymentsRepository;
 use Crm\SubscriptionsModule\Models\PaymentItem\SubscriptionTypePaymentItem;
 use Crm\SubscriptionsModule\Repositories\SubscriptionTypesRepository;
+use Crm\UsersModule\Repositories\CountriesRepository;
 use League\Event\Emitter;
 use Nette\Database\Table\ActiveRow;
 use Nette\Localization\Translator;
@@ -25,6 +29,8 @@ class RecurrentPaymentsResolver
         private Translator $translator,
         private ApplicationConfig $applicationConfig,
         private Emitter $emitter,
+        private OneStopShop $oneStopShop,
+        private CountriesRepository $countriesRepository,
     ) {
     }
 
@@ -286,6 +292,39 @@ class RecurrentPaymentsResolver
             $additionalType
         );
 
+        // One Stop Shop
+        $paymentCountry = null;
+        if ($this->oneStopShop->isEnabled()) {
+            $resolvedCountry = null;
+
+            try {
+                $resolvedCountry = $this->oneStopShop->resolveCountry(
+                    user: $recurrentPayment->user,
+                    paymentAddress: $address,
+                    paymentItemContainer: $paymentItemContainer
+                );
+            } catch (GeoIpException $e) {
+                // Resolver probably tried to resolve the country based on "cli" IP address, will be handled further.
+            }
+
+            // IP address isn't a good indicator to resolve the country, IP of original payment should be used instead.
+            if (!$resolvedCountry || $resolvedCountry->reason === CountryResolutionType::IP_ADDRESS) {
+                $originalPaymentIp = $this->resolveOriginalPaymentIp($parentPayment);
+                if ($originalPaymentIp) {
+                    $resolvedCountry = $this->oneStopShop->resolveCountry(
+                        user: $recurrentPayment->user,
+                        paymentAddress: $address,
+                        paymentItemContainer: $paymentItemContainer,
+                        ipAddress: $originalPaymentIp,
+                    );
+                }
+            }
+
+            if ($resolvedCountry) {
+                $paymentCountry = $this->countriesRepository->findByIsoCode($resolvedCountry?->countryCode);
+            }
+        }
+
         return new PaymentData(
             $paymentItemContainer,
             $subscriptionType,
@@ -293,6 +332,26 @@ class RecurrentPaymentsResolver
             $additionalAmount,
             $additionalType,
             $address,
+            $paymentCountry,
         );
+    }
+
+    private function resolveOriginalPaymentIp(ActiveRow $payment): ?string
+    {
+        if ($payment->recurrent_charge) {
+            $recurrentPayment = $this->recurrentPaymentsRepository->findByPayment($payment);
+            if (!$recurrentPayment) {
+                // failsafe for inconsistent data
+                return null;
+            }
+
+            return $this->resolveOriginalPaymentIp($recurrentPayment->parent_payment);
+        }
+
+        if ($payment->ip === 'cli') {
+            return null;
+        }
+
+        return $payment->ip;
     }
 }

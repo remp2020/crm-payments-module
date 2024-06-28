@@ -16,24 +16,12 @@ class ConfigsSeeder implements ISeeder
 {
     use ConfigsTrait;
 
-    private $configCategoriesRepository;
-
-    private $configsRepository;
-
-    private $configBuilder;
-
-    private $database;
-
     public function __construct(
-        ConfigCategoriesRepository $configCategoriesRepository,
-        ConfigsRepository $configsRepository,
-        ConfigBuilder $configBuilder,
-        Connection $database
+        private ConfigCategoriesRepository $configCategoriesRepository,
+        private ConfigsRepository $configsRepository,
+        private ConfigBuilder $configBuilder,
+        private Connection $database
     ) {
-        $this->configCategoriesRepository = $configCategoriesRepository;
-        $this->configsRepository = $configsRepository;
-        $this->configBuilder = $configBuilder;
-        $this->database = $database;
     }
 
     public function seed(OutputInterface $output)
@@ -67,6 +55,17 @@ class ConfigsSeeder implements ISeeder
             null,
             null,
             800
+        );
+
+        $this->addConfig(
+            $output,
+            $category,
+            'one_stop_shop_enabled',
+            ApplicationConfig::TYPE_BOOLEAN,
+            'payments.config.enable_one_stop_shop.name',
+            'payments.config.enable_one_stop_shop.description',
+            false,
+            90
         );
 
         $sorting = 1000;

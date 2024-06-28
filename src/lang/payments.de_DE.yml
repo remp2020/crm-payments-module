@@ -642,6 +642,9 @@ config:
     category: Zahlungen
     donation_vat_rate:
         name: Mehrwertsteuer für Spenden
+    one_stop_shop:
+        name: Aktivieren One Stop Shop
+        description: Aktiviert das <a target="_blank" href="https://vat-one-stop-shop.ec.europa.eu/one-stop-shop_en">OSS</a>-System, das die Mehrwertsteuer neu erstellter Zahlungen basierend auf dem ermittelten Zahlungsland anpasst. Aktivieren Sie dies nur, wenn Ihr Unternehmen beim OSS-System registriert ist.
     comfortpay_terminalid:
         name: Comfortpay terminalid
     comfortpay_local_cert_path:

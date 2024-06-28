@@ -18,6 +18,7 @@ services:
 	paymentItemsRepository: Crm\PaymentsModule\Repositories\PaymentItemsRepository
 	paymentItemMetaRepository: Crm\PaymentsModule\Repositories\PaymentItemMetaRepository
 	retentionAnalysisJobsRepository: Crm\PaymentsModule\Repositories\RetentionAnalysisJobsRepository
+	vatRatesRepository: Crm\PaymentsModule\Repositories\VatRatesRepository
 
 	- Crm\PaymentsModule\Forms\Controls\SubscriptionTypesSelectItemsBuilder
 	- Crm\PaymentsModule\Forms\PaymentFormFactory
@@ -68,6 +69,7 @@ services:
 	- Crm\PaymentsModule\Commands\CancelAuthorizationCommand
 	- Crm\PaymentsModule\Commands\FillReferenceToSubscriptionTypeItemInPaymentItemsCommand
 	- Crm\PaymentsModule\Commands\ConfirmCsobPaymentsCommand
+	- Crm\PaymentsModule\Commands\OneStopShopAddPaymentCountryCommand
 	- Crm\PaymentsModule\Api\VariableSymbolApiHandler
 	- Crm\PaymentsModule\Api\ListRecurrentPaymentsApiHandler
 	- Crm\PaymentsModule\Api\ReactivateRecurrentPaymentApiHandler
@@ -97,6 +99,7 @@ services:
 	- Crm\PaymentsModule\DataProviders\PaymentsClaimUserDataProvider
 	- Crm\PaymentsModule\DataProviders\RecurrentPaymentsClaimUserDataProvider
 	- Crm\PaymentsModule\DataProviders\UniversalSearchDataProvider
+	- Crm\PaymentsModule\DataProviders\SalesFunnelTwigVariablesDataProvider
 	- Crm\PaymentsModule\Scenarios\PaymentStatusCriteria
 	- Crm\PaymentsModule\Scenarios\RecurrentPaymentStatusCriteria
 	- Crm\PaymentsModule\Scenarios\PaymentIsRecurrentChargeCriteria
@@ -191,3 +194,6 @@ services:
 	mountManagerConfig:
 		setup:
 			- mountFilesystem(Crm\PaymentsModule\Models\FileSystem::PAYMENTS_EXPORTS_BUCKET_NAME, @paymentsExportFileSystem, 'payments')
+
+	geoIp: Crm\PaymentsModule\Models\GeoIp\MaxmindLazyGeoReader
+	- Crm\PaymentsModule\Models\OneStopShop\OneStopShop

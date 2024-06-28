@@ -33,6 +33,7 @@ use Crm\PaymentsModule\Commands\ConfirmCsobPaymentsCommand;
 use Crm\PaymentsModule\Commands\CsobMailConfirmationCommand;
 use Crm\PaymentsModule\Commands\FillReferenceToSubscriptionTypeItemInPaymentItemsCommand;
 use Crm\PaymentsModule\Commands\LastPaymentsCheckCommand;
+use Crm\PaymentsModule\Commands\OneStopShopAddPaymentCountryCommand;
 use Crm\PaymentsModule\Commands\RecurrentPaymentsCardCheckCommand;
 use Crm\PaymentsModule\Commands\RecurrentPaymentsChargeCommand;
 use Crm\PaymentsModule\Commands\SingleChargeCommand;
@@ -78,6 +79,7 @@ use Crm\PaymentsModule\DataProviders\PaymentsClaimUserDataProvider;
 use Crm\PaymentsModule\DataProviders\PaymentsUserDataProvider;
 use Crm\PaymentsModule\DataProviders\RecurrentPaymentsClaimUserDataProvider;
 use Crm\PaymentsModule\DataProviders\RecurrentPaymentsUserDataProvider;
+use Crm\PaymentsModule\DataProviders\SalesFunnelTwigVariablesDataProvider;
 use Crm\PaymentsModule\DataProviders\SubscriptionFormDataProvider;
 use Crm\PaymentsModule\DataProviders\SubscriptionsWithActiveUnchargedRecurrentEndingWithinPeriodDataProvider;
 use Crm\PaymentsModule\DataProviders\SubscriptionsWithoutExtensionEndingWithinPeriodDataProvider;
@@ -377,6 +379,7 @@ class PaymentsModule extends CrmModule
         $commandsContainer->registerCommand($this->getInstance(CancelAuthorizationCommand::class));
         $commandsContainer->registerCommand($this->getInstance(FillReferenceToSubscriptionTypeItemInPaymentItemsCommand::class));
         $commandsContainer->registerCommand($this->getInstance(ConfirmCsobPaymentsCommand::class));
+        $commandsContainer->registerCommand($this->getInstance(OneStopShopAddPaymentCountryCommand::class));
     }
 
     public function registerApiCalls(ApiRoutersContainerInterface $apiRoutersContainer)
@@ -529,6 +532,10 @@ class PaymentsModule extends CrmModule
         $dataProviderManager->registerDataProvider(
             'admin.dataprovider.universal_search',
             $this->getInstance(UniversalSearchDataProvider::class)
+        );
+        $dataProviderManager->registerDataProvider(
+            'sales_funnel.dataprovider.twig_variables',
+            $this->getInstance(SalesFunnelTwigVariablesDataProvider::class)
         );
     }
 
