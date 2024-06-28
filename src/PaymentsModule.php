@@ -87,6 +87,7 @@ use Crm\PaymentsModule\DataProviders\UniversalSearchDataProvider;
 use Crm\PaymentsModule\Events\AttachRenewalPaymentEvent;
 use Crm\PaymentsModule\Events\AttachRenewalPaymentEventHandler;
 use Crm\PaymentsModule\Events\BeforeRecurrentPaymentChargeEvent;
+use Crm\PaymentsModule\Events\BeforeRecurrentPaymentExpiresEvent;
 use Crm\PaymentsModule\Events\NewPaymentEvent;
 use Crm\PaymentsModule\Events\PaymentChangeStatusEvent;
 use Crm\PaymentsModule\Events\PaymentStatusChangeHandler;
@@ -586,6 +587,7 @@ class PaymentsModule extends CrmModule
         $eventsStorage->register('card_expires_this_month', RecurrentPaymentCardExpiredEvent::class);
         $eventsStorage->register('recurrent_payment_state_changed', RecurrentPaymentStateChangedEvent::class, true);
         $eventsStorage->register('before_recurrent_payment_charge', BeforeRecurrentPaymentChargeEvent::class, true);
+        $eventsStorage->register('before_recurrent_payment_expires', BeforeRecurrentPaymentExpiresEvent::class, true);
     }
 
     public function cache(OutputInterface $output, array $tags = [])
