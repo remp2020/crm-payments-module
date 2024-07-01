@@ -294,6 +294,7 @@ class RecurrentPaymentsResolver
 
         // One Stop Shop
         $paymentCountry = null;
+        $paymentCountryResolutionReason = null;
         if ($this->oneStopShop->isEnabled()) {
             $resolvedCountry = null;
 
@@ -322,6 +323,7 @@ class RecurrentPaymentsResolver
 
             if ($resolvedCountry) {
                 $paymentCountry = $this->countriesRepository->findByIsoCode($resolvedCountry?->countryCode);
+                $paymentCountryResolutionReason = $resolvedCountry->getReasonValue();
             }
         }
 
@@ -333,6 +335,7 @@ class RecurrentPaymentsResolver
             $additionalType,
             $address,
             $paymentCountry,
+            $paymentCountryResolutionReason
         );
     }
 

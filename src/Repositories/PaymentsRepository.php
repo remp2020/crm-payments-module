@@ -78,6 +78,7 @@ class PaymentsRepository extends Repository
         $recurrentCharge = false,
         array $metaData = [],
         ?ActiveRow $paymentCountry = null,
+        ?string $paymentCountryResolutionReason = null,
     ) {
         $this->oneStopShop->adjustPaymentItemContainerVatRates($paymentItemContainer, $paymentCountry);
 
@@ -98,6 +99,7 @@ class PaymentsRepository extends Repository
             'additional_amount' => $additionalAmount == null ? 0 : $additionalAmount,
             'address_id' => $address?->id,
             'payment_country_id' => $paymentCountry?->id,
+            'payment_country_resolution_reason' => $paymentCountryResolutionReason,
             'recurrent_charge' => $recurrentCharge,
         ];
 

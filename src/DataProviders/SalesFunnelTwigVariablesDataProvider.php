@@ -4,7 +4,6 @@ namespace Crm\PaymentsModule\DataProviders;
 
 use Crm\ApplicationModule\Models\DataProvider\DataProviderException;
 use Crm\PaymentsModule\Models\GeoIp\GeoIpException;
-use Crm\PaymentsModule\Models\OneStopShop\CountryResolutionType;
 use Crm\PaymentsModule\Models\OneStopShop\OneStopShop;
 use Crm\PaymentsModule\Models\OneStopShop\OneStopShopCountryConflictException;
 use Crm\PaymentsModule\Repositories\VatRatesRepository;
@@ -60,12 +59,7 @@ final class SalesFunnelTwigVariablesDataProvider implements SalesFunnelVariables
                 if ($countryResolution) {
                     $oneStopShopData['prefilledCountryCode'] = $countryResolution->countryCode;
                     $oneStopShopData['prefilledCountryName'] = $vatRates[$countryResolution->countryCode]['country_name'] ?? null;
-                    if ($countryResolution->reason instanceof CountryResolutionType) {
-                        $reason = $countryResolution->reason->value;
-                    } else {
-                        $reason = $countryResolution->reason;
-                    }
-                    $oneStopShopData['prefilledCountryReason'] = $reason;
+                    $oneStopShopData['prefilledCountryReason'] = $countryResolution->getReasonValue();
                 } else {
                     $oneStopShopData['prefilledCountryCode'] = null;
                 }

@@ -9,4 +9,13 @@ final class CountryResolution
         public readonly CountryResolutionType|string $reason,
     ) {
     }
+
+    public function getReasonValue(): string
+    {
+        if ($this->reason instanceof CountryResolutionType) {
+            return $this->reason->value;
+        }
+
+        return $this->reason;
+    }
 }

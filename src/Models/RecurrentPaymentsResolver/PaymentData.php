@@ -16,6 +16,7 @@ final class PaymentData
         public readonly ?string $additionalType,
         public readonly ?ActiveRow $address,
         public readonly ?ActiveRow $paymentCountry,
+        public readonly ?string $paymentCountryResolutionReason,
     ) {
     }
 }

@@ -105,6 +105,7 @@ class OneStopShopAddPaymentCountryCommand extends Command
                         }
 
                         $country = $paymentData->paymentCountry;
+                        $countryResolutionReason = $paymentData->paymentCountryResolutionReason;
                     } else {
                         $countryResolution = $this->oneStopShop->resolveCountry(
                             user: $payment->user,
@@ -120,15 +121,17 @@ class OneStopShopAddPaymentCountryCommand extends Command
                         }
 
                         $country = $this->countriesRepository->findByIsoCode($countryResolution->countryCode);
+                        $countryResolutionReason = $countryResolution->getReasonValue();
                     }
 
                     $this->paymentsRepository->update($payment, [
                         'payment_country_id' => $country->id,
+                        'payment_country_resolution_reason' => $countryResolutionReason
                     ]);
 
                     $this->line(" * Payment <info>[{$payment->id}]</info> resolved to <info>[" . $country->iso_code . "]</info>");
 
-                    $this->resolveRecurrentChildren($payment, $country);
+                    $this->resolveRecurrentChildren($payment, $country, $countryResolutionReason);
                 } catch (OneStopShopCountryConflictException|GeoIpException $e) {
                     $this->error(" * Payment [{$payment->id}] - unable to add payment country: " . $e->getMessage());
                     continue;
@@ -157,7 +160,7 @@ class OneStopShopAddPaymentCountryCommand extends Command
             ->order('payments.id ASC');
     }
 
-    private function resolveRecurrentChildren(ActiveRow $payment, ActiveRow $country)
+    private function resolveRecurrentChildren(ActiveRow $payment, ActiveRow $country, string $countryResolutionReason): void
     {
         $recurrentPayment = $this->recurrentPaymentsRepository->recurrent($payment);
         if (!$recurrentPayment || !$recurrentPayment->payment) {
@@ -171,10 +174,11 @@ class OneStopShopAddPaymentCountryCommand extends Command
 
         $this->paymentsRepository->update($nextPayment, [
             'payment_country_id' => $country->id,
+            'payment_country_resolution_reason' => $countryResolutionReason
         ]);
         $this->line("   * subsequent payment <info>[{$nextPayment->id}]</info> resolved to <info>[" . $country->iso_code . "]</info>");
 
-        $this->resolveRecurrentChildren($nextPayment, $country);
+        $this->resolveRecurrentChildren($nextPayment, $country, $countryResolutionReason);
     }
 
     private function paymentItemContainerFromPayment(ActiveRow $payment): PaymentItemContainer

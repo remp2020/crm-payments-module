@@ -8,4 +8,5 @@ enum CountryResolutionType: string
     case INVOICE_ADDRESS = 'invoice_address';
     case PAYMENT_ADDRESS = 'payment_address';
     case USER_SELECTED = 'user_selected';
+    case ADMIN_SELECTED = 'admin_selected';
 }
