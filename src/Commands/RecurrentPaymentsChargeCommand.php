@@ -80,8 +80,9 @@ class RecurrentPaymentsChargeCommand extends Command
             try {
                 $this->validateRecurrentPayment($recurrentPayment);
             } catch (RecurrentPaymentFastCharge $e) {
-                Debugger::log($e->getMessage(), Debugger::EXCEPTION);
-                $this->error($e->getMessage());
+                $msg = "Error validating recurrent payment [{$recurrentPayment->id}], reason: " . $e->getMessage();
+                Debugger::log($msg, Debugger::EXCEPTION);
+                $this->error($msg);
                 continue;
             }
 
@@ -89,8 +90,9 @@ class RecurrentPaymentsChargeCommand extends Command
                 try {
                     $paymentData = $this->recurrentPaymentsResolver->resolvePaymentData($recurrentPayment);
                 } catch (OneStopShopCountryConflictException $e) {
-                    Debugger::log($e->getMessage(), Debugger::ERROR);
-                    $this->error($e->getMessage());
+                    $msg = "Error resolving recurrent payment [{$recurrentPayment->id}], reason: " . $e->getMessage();
+                    Debugger::log($msg, Debugger::ERROR);
+                    $this->error($msg);
                     continue;
                 }
 
