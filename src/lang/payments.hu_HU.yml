@@ -413,6 +413,10 @@ admin:
                 header: Meta
             ip: IP-cím
             user_agent: User-Agent
+            oss:
+                header: One Stop Shop
+                country: Ország
+                reason: Ország kiválasztási módszer
 
     report:
         no_recurrent_charge:

@@ -175,6 +175,20 @@
       {/foreach}
     </ul>
 
+    {if $ossEnabled}
+      <h3 class="page-header">{_payments.admin.payments.show.oss.header}</h3>
+      <ul class="list-group">
+        <li class="list-group-item">
+          <b>{_payments.admin.payments.show.oss.country}:</b>
+          {$payment->payment_country?->name}
+        </li>
+        <li class="list-group-item">
+          <b>{_payments.admin.payments.show.oss.reason}:</b>
+          {$payment->payment_country_resolution_reason}
+        </li>
+      </ul>
+    {/if}
+
     {if $payment->payment_gateway->is_recurrent}
     <h3 class="page-header">{_payments.admin.payments.show.recurrent_payment}</h3>
     <ul class="list-group">

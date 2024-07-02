@@ -512,6 +512,10 @@ admin:
                 header: Meta
             ip: IP address
             user_agent: User-Agent
+            oss:
+                header: One Stop Shop
+                country: Country
+                reason: Country selection method
 
     report:
         no_recurrent_charge:

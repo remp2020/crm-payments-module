@@ -452,6 +452,10 @@ admin:
                 header: Meta
             ip: IP Adresse
             user_agent: User-Agent
+            oss:
+                header: One Stop Shop
+                country: Land
+                reason: Methode zur Länderauswahl
 
     report:
         no_recurrent_charge:

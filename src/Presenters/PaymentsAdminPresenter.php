@@ -12,6 +12,7 @@ use Crm\PaymentsModule\DataProviders\AdminFilterFormDataProviderInterface;
 use Crm\PaymentsModule\Forms\Controls\SubscriptionTypesSelectItemsBuilder;
 use Crm\PaymentsModule\Forms\PaymentFormFactory;
 use Crm\PaymentsModule\Models\AdminFilterFormData;
+use Crm\PaymentsModule\Models\OneStopShop\OneStopShop;
 use Crm\PaymentsModule\Models\PaymentsHistogramFactory;
 use Crm\PaymentsModule\Repositories\PaymentGatewaysRepository;
 use Crm\PaymentsModule\Repositories\PaymentItemMetaRepository;
@@ -46,7 +47,8 @@ class PaymentsAdminPresenter extends AdminPresenter
         private readonly RecurrentPaymentsRepository $recurrentPaymentsRepository,
         private readonly AdminFilterFormData $adminFilterFormData,
         private readonly Emitter $hermesEmitter,
-        private readonly SubscriptionTypesSelectItemsBuilder $subscriptionTypesSelectItemsBuilder
+        private readonly SubscriptionTypesSelectItemsBuilder $subscriptionTypesSelectItemsBuilder,
+        private readonly OneStopShop $oneStopShop,
     ) {
         parent::__construct();
     }
@@ -252,6 +254,7 @@ class PaymentsAdminPresenter extends AdminPresenter
             $this->template->recurrent_previous = $this->recurrentPaymentsRepository->findByPayment($payment);
             $this->template->recurrent_next = $this->recurrentPaymentsRepository->recurrent($payment);
         }
+        $this->template->ossEnabled = $this->oneStopShop->isEnabled();
     }
 
     /**
