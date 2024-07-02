@@ -3,6 +3,7 @@
 namespace Crm\PaymentsModule\Tests;
 
 use Crm\ApplicationModule\Repositories\ConfigsRepository;
+use Crm\ApplicationModule\Seeders\CountriesSeeder;
 use Crm\ApplicationModule\Tests\DatabaseTestCase;
 use Crm\PaymentsModule\Models\PaymentItem\PaymentItemContainer;
 use Crm\PaymentsModule\Models\VariableSymbolInterface;
@@ -25,6 +26,7 @@ use Crm\SubscriptionsModule\Seeders\SubscriptionExtensionMethodsSeeder;
 use Crm\SubscriptionsModule\Seeders\SubscriptionLengthMethodSeeder;
 use Crm\SubscriptionsModule\Seeders\SubscriptionTypeNamesSeeder;
 use Crm\UsersModule\Repositories\AccessTokensRepository;
+use Crm\UsersModule\Repositories\CountriesRepository;
 use Crm\UsersModule\Repositories\UsersRepository;
 
 class PaymentsTestCase extends DatabaseTestCase
@@ -52,6 +54,7 @@ class PaymentsTestCase extends DatabaseTestCase
             SubscriptionTypeNamesSeeder::class,
             PaymentGatewaysSeeder::class,
             ConfigsSeeder::class,
+            CountriesSeeder::class,
         ];
     }
 
@@ -73,6 +76,7 @@ class PaymentsTestCase extends DatabaseTestCase
             UsersRepository::class,
             ParsedMailLogsRepository::class,
             ConfigsRepository::class,
+            CountriesRepository::class,
         ];
     }
 

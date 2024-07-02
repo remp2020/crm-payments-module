@@ -5,6 +5,7 @@ namespace Crm\PaymentsModule\Models;
 use Crm\ApplicationModule\Models\Config\ApplicationConfig;
 use Crm\PaymentsModule\Events\RecurrentPaymentItemContainerReadyEvent;
 use Crm\PaymentsModule\Models\GeoIp\GeoIpException;
+use Crm\PaymentsModule\Models\OneStopShop\CountryResolution;
 use Crm\PaymentsModule\Models\OneStopShop\CountryResolutionType;
 use Crm\PaymentsModule\Models\OneStopShop\OneStopShop;
 use Crm\PaymentsModule\Models\PaymentItem\DonationPaymentItem;
@@ -307,17 +308,25 @@ class RecurrentPaymentsResolver
             } catch (GeoIpException $e) {
                 // Resolver probably tried to resolve the country based on "cli" IP address, will be handled further.
             }
-
-            // IP address isn't a good indicator to resolve the country, IP of original payment should be used instead.
+            // IP address isn't a good indicator to resolve the country.
+            // First, try to copy resolution from parent payment.
+            // If there is no previous resolution, IP of original payment should be used instead.
             if (!$resolvedCountry || $resolvedCountry->reason === CountryResolutionType::IP_ADDRESS) {
-                $originalPaymentIp = $this->resolveOriginalPaymentIp($parentPayment);
-                if ($originalPaymentIp) {
-                    $resolvedCountry = $this->oneStopShop->resolveCountry(
-                        user: $recurrentPayment->user,
-                        paymentAddress: $address,
-                        paymentItemContainer: $paymentItemContainer,
-                        ipAddress: $originalPaymentIp,
+                if ($parentPayment?->payment_country) {
+                    $resolvedCountry =  new CountryResolution(
+                        $parentPayment->payment_country->iso_code,
+                        CountryResolutionType::PREVIOUS_PAYMENT,
                     );
+                } else {
+                    $originalPaymentIp = $this->resolveOriginalPaymentIp($parentPayment);
+                    if ($originalPaymentIp) {
+                        $resolvedCountry = $this->oneStopShop->resolveCountry(
+                            user: $recurrentPayment->user,
+                            paymentAddress: $address,
+                            paymentItemContainer: $paymentItemContainer,
+                            ipAddress: $originalPaymentIp,
+                        );
+                    }
                 }
             }
 

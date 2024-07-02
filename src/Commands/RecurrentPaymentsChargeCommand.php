@@ -108,6 +108,7 @@ class RecurrentPaymentsChargeCommand extends Command
                     address: $paymentData->address,
                     recurrentCharge: true,
                     paymentCountry: $paymentData->paymentCountry,
+                    paymentCountryResolutionReason: $paymentData->paymentCountryResolutionReason,
                 );
 
                 $this->recurrentPaymentsRepository->update($recurrentPayment, [

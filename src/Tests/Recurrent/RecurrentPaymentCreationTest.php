@@ -6,6 +6,7 @@ namespace Crm\PaymentsModule\Tests\Recurrent;
 use Crm\ApplicationModule\Repositories\ConfigsRepository;
 use Crm\PaymentsModule\Commands\RecurrentPaymentsChargeCommand;
 use Crm\PaymentsModule\Models\GatewayFactory;
+use Crm\PaymentsModule\Models\OneStopShop\CountryResolutionType;
 use Crm\PaymentsModule\Models\PaymentItem\DonationPaymentItem;
 use Crm\PaymentsModule\Models\PaymentItem\PaymentItemContainer;
 use Crm\PaymentsModule\Models\PaymentProcessor;
@@ -17,6 +18,7 @@ use Crm\PrintModule\Seeders\AddressTypesSeeder;
 use Crm\SubscriptionsModule\Models\Builder\SubscriptionTypeBuilder;
 use Crm\SubscriptionsModule\Models\PaymentItem\SubscriptionTypePaymentItem;
 use Crm\UsersModule\Models\Auth\UserManager;
+use Crm\UsersModule\Repositories\CountriesRepository;
 use Nette\Database\Table\ActiveRow;
 use Nette\Utils\DateTime;
 use Symfony\Component\Console\Command\Command;
@@ -59,6 +61,53 @@ class RecurrentPaymentCreationTest extends PaymentsTestCase
             AddressTypesSeeder::class,
             TestPaymentGatewaysSeeder::class,
         ];
+    }
+
+    public function testOneStopShopCountryResolution(): void
+    {
+        // Enable one-stop-shop
+        $configsRepository = $this->inject(ConfigsRepository::class);
+        $configRow = $configsRepository->loadByName('one_stop_shop_enabled');
+        $configsRepository->update($configRow, ['value' => 1]);
+
+        $st = $this->createSubscriptionType();
+        $paymentItemContainer = (new PaymentItemContainer())->addItems(SubscriptionTypePaymentItem::fromSubscriptionType($st));
+
+        $payment = $this->paymentsRepository->add(
+            subscriptionType: $st,
+            paymentGateway: $this->paymentGatewaysRepository->findByCode(TestRecurrentGateway::GATEWAY_CODE),
+            user: $this->user,
+            paymentItemContainer: $paymentItemContainer,
+            paymentCountry: $this->inject(CountriesRepository::class)->findByIsoCode('PL'),
+            paymentCountryResolutionReason: CountryResolutionType::USER_SELECTED->value,
+        );
+
+        // Make manual payment
+        $this->paymentsProcessor->complete($payment, fn() => null);
+        $payment = $this->paymentsRepository->find($payment->id);
+        $this->assertEquals(PaymentsRepository::STATUS_PAID, $payment->status);
+        $this->assertEquals('PL', $payment->payment_country->iso_code);
+        $this->assertEquals(CountryResolutionType::USER_SELECTED->value, $payment->payment_country_resolution_reason);
+
+        // Charge recurrent
+        $recurrentPayment = $this->recurrentPaymentsRepository->recurrent($payment);
+        $recurrentPayment = $this->chargeNow($recurrentPayment);
+
+        // Check
+        $payment2 = $recurrentPayment->payment;
+        $this->assertEquals(PaymentsRepository::STATUS_PAID, $payment2->status);
+        $this->assertEquals('PL', $payment2->payment_country->iso_code);
+        $this->assertEquals(CountryResolutionType::PREVIOUS_PAYMENT->value, $payment2->payment_country_resolution_reason);
+
+        // Charge again
+        $recurrentPayment2 = $this->recurrentPaymentsRepository->recurrent($payment2);
+        $recurrentPayment2 = $this->chargeNow($recurrentPayment2);
+
+        // Check again
+        $payment3 = $recurrentPayment2->payment;
+        $this->assertEquals(PaymentsRepository::STATUS_PAID, $payment3->status);
+        $this->assertEquals('PL', $payment3->payment_country->iso_code);
+        $this->assertEquals(CountryResolutionType::PREVIOUS_PAYMENT->value, $payment3->payment_country_resolution_reason);
     }
 
     public function testNonRecurrentDonation(): void
