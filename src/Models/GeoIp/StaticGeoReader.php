@@ -7,7 +7,7 @@ use Crm\UsersModule\Repositories\CountriesRepository;
 final class StaticGeoReader implements GeoIpInterface
 {
     private array $map = [];
-    private string $default;
+    private bool $default = false;
 
     public function __construct(private CountriesRepository $countriesRepository)
     {
@@ -20,7 +20,7 @@ final class StaticGeoReader implements GeoIpInterface
 
     public function useDefaultCountryFallback()
     {
-        $this->default = $this->countriesRepository->defaultCountry()->iso_code;
+        $this->default = true;
     }
 
     public function countryCode(string $ip): ?string
@@ -29,8 +29,8 @@ final class StaticGeoReader implements GeoIpInterface
             return $this->map[$ip];
         }
 
-        if (isset($this->default)) {
-            return $this->default;
+        if ($this->default === true) {
+            return $this->countriesRepository->defaultCountry()->iso_code;
         }
 
         throw new GeoIpException("Unable to resolve country for {$ip}.");
