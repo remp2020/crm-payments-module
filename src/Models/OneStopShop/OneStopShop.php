@@ -7,10 +7,12 @@ use Crm\ApplicationModule\Models\Config\ApplicationConfig;
 use Crm\ApplicationModule\Models\DataProvider\DataProviderManager;
 use Crm\ApplicationModule\Models\Request;
 use Crm\PaymentsModule\DataProviders\OneStopShopCountryResolutionDataProviderInterface;
+use Crm\PaymentsModule\DataProviders\OneStopShopVatRateDataProviderInterface;
 use Crm\PaymentsModule\Models\GeoIp\GeoIpException;
 use Crm\PaymentsModule\Models\GeoIp\GeoIpInterface;
 use Crm\PaymentsModule\Models\PaymentItem\PaymentItemContainer;
 use Crm\PaymentsModule\Models\PaymentItem\PaymentItemHelper;
+use Crm\PaymentsModule\Models\PaymentItem\PaymentItemInterface;
 use Crm\PaymentsModule\Repositories\PaymentItemsRepository;
 use Crm\PaymentsModule\Repositories\VatRatesRepository;
 use Crm\UsersModule\Repositories\CountriesRepository;
@@ -110,9 +112,8 @@ final class OneStopShop
             return;
         }
 
-        $vatRate = $this->getCountryVatRate($paymentCountry);
-
         foreach ($payment->related('payment_items') as $paymentItem) {
+            $vatRate = $this->getCountryVatRate($paymentCountry, $paymentItem);
             $this->paymentItemsRepository->update($paymentItem, [
                 'vat' => $vatRate,
                 'amount_without_vat' =>  PaymentItemHelper::getPriceWithoutVAT($paymentItem->amount, $vatRate),
@@ -137,16 +138,15 @@ final class OneStopShop
             return;
         }
 
-        // TODO: add chance to change VAT for external modules using data provider/event
-        $vatRate = $this->getCountryVatRate($paymentCountry);
 
-        foreach ($paymentItemContainer->items() as $item) {
+        foreach ($paymentItemContainer->items() as $paymentItem) {
+            $vatRate = $this->getCountryVatRate($paymentCountry, $paymentItem);
             // Currently, VAT is stored as int in payment_items table
-            $item->forceVat((int) $vatRate);
+            $paymentItem->forceVat((int) $vatRate);
         }
     }
 
-    public function getCountryVatRate(ActiveRow $paymentCountry): float|int
+    public function getCountryVatRate(ActiveRow $paymentCountry, PaymentItemInterface $paymentItem): float|int
     {
         $vatRates = $this->vatRatesRepository->getByCountry($paymentCountry);
         if (!$vatRates) {
@@ -154,6 +154,24 @@ final class OneStopShop
             //throw new \RuntimeException("Missing VAT rates for country [{$paymentCountry->iso_code}]");
             return 0;
         }
+
+        $dataProviderParams = [
+            'vat_rates' => $vatRates,
+            'payment_item' => $paymentItem,
+        ];
+
+        /** @var OneStopShopVatRateDataProviderInterface[] $providers */
+        $providers = $this->dataProviderManager->getProviders(
+            OneStopShopVatRateDataProviderInterface::PATH,
+            OneStopShopVatRateDataProviderInterface::class
+        );
+        foreach ($providers as $provider) {
+            $vatRate = $provider->provide($dataProviderParams);
+            if ($vatRate !== null) {
+                return $vatRate;
+            }
+        }
+
         return $vatRates->standard;
     }
 
