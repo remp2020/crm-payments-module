@@ -10,6 +10,7 @@ use Crm\PaymentsModule\Models\GatewayFail;
 use Crm\PaymentsModule\Models\Gateways\ExternallyChargedRecurrentPaymentInterface;
 use Crm\PaymentsModule\Models\Gateways\GatewayAbstract;
 use Crm\PaymentsModule\Models\Gateways\RecurrentPaymentInterface;
+use Crm\PaymentsModule\Models\GeoIp\GeoIpException;
 use Crm\PaymentsModule\Models\OneStopShop\OneStopShopCountryConflictException;
 use Crm\PaymentsModule\Models\RecurrentPaymentFailStop;
 use Crm\PaymentsModule\Models\RecurrentPaymentFailTry;
@@ -89,7 +90,7 @@ class RecurrentPaymentsChargeCommand extends Command
             if (!isset($recurrentPayment->payment_id)) {
                 try {
                     $paymentData = $this->recurrentPaymentsResolver->resolvePaymentData($recurrentPayment);
-                } catch (OneStopShopCountryConflictException $e) {
+                } catch (OneStopShopCountryConflictException|GeoIpException $e) {
                     $msg = "Error resolving recurrent payment [{$recurrentPayment->id}], reason: " . $e->getMessage();
                     Debugger::log($msg, Debugger::ERROR);
                     $this->error($msg);
