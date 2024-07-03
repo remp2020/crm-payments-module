@@ -7,6 +7,7 @@ use Crm\ApplicationModule\Models\Config\ApplicationConfig;
 use Crm\ApplicationModule\Models\DataProvider\DataProviderManager;
 use Crm\ApplicationModule\Models\Request;
 use Crm\PaymentsModule\DataProviders\OneStopShopCountryResolutionDataProviderInterface;
+use Crm\PaymentsModule\Models\GeoIp\GeoIpException;
 use Crm\PaymentsModule\Models\GeoIp\GeoIpInterface;
 use Crm\PaymentsModule\Models\PaymentItem\PaymentItemContainer;
 use Crm\PaymentsModule\Models\PaymentItem\PaymentItemHelper;
@@ -33,7 +34,7 @@ final class OneStopShop
     }
 
     /**
-     * @throws OneStopShopCountryConflictException
+     * @throws OneStopShopCountryConflictException|GeoIpException
      */
     public function resolveCountry(
         ?ActiveRow $user = null,
