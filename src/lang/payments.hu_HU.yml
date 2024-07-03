@@ -461,7 +461,7 @@ form:
             label: Átutalás egyedi azonosítója
             required: Egyedi azonosító megadása kötelező
             placeholder: pl. 87239102385
-            generate: Létrehozás
+            generate: Generálás
             already_used: Az egyedi azonosítót nemrég már használták
         amount:
             label: Összeg
