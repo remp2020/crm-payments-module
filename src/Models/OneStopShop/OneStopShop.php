@@ -47,6 +47,10 @@ final class OneStopShop
         if (!$this->isEnabled()) {
             return null;
         }
+        // Do not convert IP address to country here (before data providers),
+        // since it may crash and may not be needed - a resolution with bigger priority can be returned instead.
+        $ipAddress ??= $this->getIp();
+
         $dataProviderParams = compact(
             'user',
             'selectedCountryCode',
@@ -79,8 +83,7 @@ final class OneStopShop
             return new CountryResolution($selectedCountryCode, CountryResolutionType::USER_SELECTED);
         }
 
-        $ip = $ipAddress ?? $this->getIp();
-        $ipCountryCode = $this->geoIp->countryCode($ip);
+        $ipCountryCode = $this->geoIp->countryCode($ipAddress);
 
         if (!$ipCountryCode) {
             // Some IP addresses do not have designated country (e.g. 199.64.72.254).
