@@ -16,17 +16,24 @@ use Crm\PaymentsModule\Models\PaymentItem\PaymentItemInterface;
 use Crm\PaymentsModule\Repositories\PaymentItemsRepository;
 use Crm\PaymentsModule\Repositories\VatRatesRepository;
 use Crm\UsersModule\Repositories\CountriesRepository;
+use Crm\UsersModule\Repositories\UsersRepository;
 use Nette\Database\Table\ActiveRow;
+use Nette\Security\User;
+use Tracy\Debugger;
 
 final class OneStopShop
 {
+    private array $frontendDataRequestCache = [];
+
     public function __construct(
-        private ApplicationConfig $applicationConfig,
-        private GeoIpInterface $geoIp,
-        private VatRatesRepository $vatRatesRepository,
-        private PaymentItemsRepository $paymentItemsRepository,
-        private DataProviderManager $dataProviderManager,
-        private CountriesRepository $countriesRepository,
+        private readonly ApplicationConfig $applicationConfig,
+        private readonly GeoIpInterface $geoIp,
+        private readonly VatRatesRepository $vatRatesRepository,
+        private readonly PaymentItemsRepository $paymentItemsRepository,
+        private readonly DataProviderManager $dataProviderManager,
+        private readonly CountriesRepository $countriesRepository,
+        private readonly User $user,
+        private readonly UsersRepository $usersRepository,
     ) {
     }
 
@@ -144,6 +151,41 @@ final class OneStopShop
             // Currently, VAT is stored as int in payment_items table
             $paymentItem->forceVat((int) $vatRate);
         }
+    }
+
+    public function getFrontendData(bool $enableRequestCache = true): OneStopShopFrontendData
+    {
+        $userId = $this->user->getId();
+
+        if ($enableRequestCache && $userId && isset($this->frontendDataRequestCache[$userId])) {
+            return $this->frontendDataRequestCache[$userId];
+        }
+
+        $user = $this->user->isLoggedIn() ? $this->usersRepository->find($this->user->getId()) : null;
+        $enabled = $this->isEnabled();
+        $countries = $this->countriesRepository->all()->fetchPairs('iso_code', 'name');
+        $prefilledCountryCode = null;
+        $prefilledCountryReason = null;
+        if ($enabled) {
+            try {
+                // Prefilled payment country based on user and request (e.g. IP) data
+                $countryResolution = $this->resolveCountry($user);
+                if ($countryResolution) {
+                    $prefilledCountryCode = $countryResolution->countryCode;
+                    $prefilledCountryReason = $countryResolution->getReasonValue();
+                }
+            } catch (OneStopShopCountryConflictException|GeoIpException $e) {
+                Debugger::log($e,);
+            }
+        }
+        $data = new OneStopShopFrontendData(
+            enabled: $enabled,
+            countries: $countries,
+            prefilledCountryCode: $prefilledCountryCode,
+            prefilledCountryReason: $prefilledCountryReason,
+        );
+        $this->frontendDataRequestCache[$userId] = $data;
+        return $data;
     }
 
     public function getCountryVatRate(ActiveRow $paymentCountry, PaymentItemInterface $paymentItem): float|int
