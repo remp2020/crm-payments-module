@@ -145,7 +145,6 @@ final class OneStopShop
             return;
         }
 
-
         foreach ($paymentItemContainer->items() as $paymentItem) {
             $vatRate = $this->getCountryVatRate($paymentCountry, $paymentItem);
             // Currently, VAT is stored as int in payment_items table
@@ -188,7 +187,7 @@ final class OneStopShop
         return $data;
     }
 
-    public function getCountryVatRate(ActiveRow $paymentCountry, PaymentItemInterface $paymentItem): float|int
+    public function getCountryVatRate(ActiveRow $paymentCountry, PaymentItemInterface|ActiveRow $paymentItem): float|int
     {
         $vatRates = $this->vatRatesRepository->getByCountry($paymentCountry);
         if (!$vatRates) {
