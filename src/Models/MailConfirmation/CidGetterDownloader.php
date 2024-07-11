@@ -21,10 +21,10 @@ class CidGetterDownloader
 
     public function __construct(ApplicationConfig $config)
     {
-        $this->imapHost = $config->get('tb_simple_confirmation_host');
-        $this->imapPort = $config->get('tb_simple_confirmation_port');
-        $this->username = $config->get('tb_simple_confirmation_username');
-        $this->password = $config->get('tb_simple_confirmation_password');
+        $this->imapHost = $config->get('tb_confirmation_host');
+        $this->imapPort = $config->get('tb_confirmation_port');
+        $this->username = $config->get('tb_confirmation_username');
+        $this->password = $config->get('tb_confirmation_password');
     }
 
     public function download($callback, $variableSymbol)

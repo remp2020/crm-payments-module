@@ -417,61 +417,6 @@ class ConfigsSeeder implements ISeeder
         $this->addConfig(
             $output,
             $confirmationCategory,
-            'tb_simple_confirmation_host',
-            ApplicationConfig::TYPE_STRING,
-            'payments.config.tb_simple_confirmation_host.name',
-            'payments.config.tb_simple_confirmation_host.description',
-            $host,
-            101
-        );
-
-        $this->addConfig(
-            $output,
-            $confirmationCategory,
-            'tb_simple_confirmation_port',
-            ApplicationConfig::TYPE_STRING,
-            'payments.config.tb_simple_confirmation_port.name',
-            'payments.config.tb_simple_confirmation_port.description',
-            $port,
-            102
-        );
-
-        $this->addConfig(
-            $output,
-            $confirmationCategory,
-            'tb_simple_confirmation_username',
-            ApplicationConfig::TYPE_STRING,
-            'payments.config.tb_simple_confirmation_username.name',
-            'payments.config.tb_simple_confirmation_username.description',
-            $username,
-            103
-        );
-
-        $this->addConfig(
-            $output,
-            $confirmationCategory,
-            'tb_simple_confirmation_password',
-            ApplicationConfig::TYPE_STRING,
-            'payments.config.tb_simple_confirmation_password.name',
-            'payments.config.tb_simple_confirmation_password.description',
-            $password,
-            104
-        );
-
-        $this->addConfig(
-            $output,
-            $confirmationCategory,
-            'tb_simple_confirmation_processed_folder',
-            ApplicationConfig::TYPE_STRING,
-            'payments.config.tb_simple_confirmation_processed_folder.name',
-            'payments.config.tb_simple_confirmation_processed_folder.description',
-            $processedFolder,
-            105
-        );
-
-        $this->addConfig(
-            $output,
-            $confirmationCategory,
             'tb_confirmation_host',
             ApplicationConfig::TYPE_STRING,
             'payments.config.tb_confirmation_host.name',

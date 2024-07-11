@@ -695,11 +695,6 @@ config:
     confirmation_mail_processed_folder:
         name: ORDNER der Bestätigungs-E-Mails nach der Verarbeitung
         description: IMAP-Ordner, in den die E-Mail nach der Verarbeitung verschoben werden soll
-    tb_simple_confirmation_port:
-        description: IMAP-Connection-Port (eg. 993) (<a href='https://github.com/remp2020/crm-payments-module#confirmation-e-mails' target='_blank'>info</a>)
-    tb_simple_confirmation_processed_folder:
-        description: IMAP-Ordner, in den die Email nach der Verarbeitung verschoben wird (z.B. INBOX/processed) (<a href='https://github.com/remp2020/crm-payments-module#confirmation-e-mails' target='_blank'>info</a>)
-        name: TatraBanka Simple Ordner
     tb_confirmation_processed_folder:
         name: TatraBanka Ordner
         description: IMAP-Ordner, in den die Email nach der Verarbeitung verschoben wird (z.B. INBOX/processed) (<a href='https://github.com/remp2020/crm-payments-module#confirmation-e-mails' target='_blank'>info</a>)
@@ -745,8 +740,6 @@ config:
     recurrent_payment_charges:
         name: Wiederholung wiederkehrender Zahlungen
         description: Definition von Zeit-Intervallen (https://en.wikipedia.org/wiki/ISO_8601#Durations), getrennt durch Komma. (z. B. PT15M, PT6H, PT6H, PT6H, PT6H)
-    tb_simple_confirmation_username:
-        description: IMAP-Connection-Username (eg. example@gmail.com) (<a href='https://github.com/remp2020/crm-payments-module#confirmation-e-mails' target='_blank'>info</a>)
     tb_confirmation_host:
         description: IMAP-Connection-Host (z.B. imap.gmail.com) (<a href='https://github.com/remp2020/crm-payments-module#confirmation-e-mails' target='_blank'>info</a>)
     tb_confirmation_password:
@@ -755,14 +748,10 @@ config:
         name: Bestätigungs-E-Mails Benutzername
     confirmation_mail_password:
         name: Bestätigungs-E-Mails Passwort
-    tb_simple_confirmation_host:
-        description: IMAP-Connection-Host (eg. imap.gmail.com) (<a href='https://github.com/remp2020/crm-payments-module#confirmation-e-mails' target='_blank'>Info</a>)
     tb_confirmation_username:
         description: IMAP-Connection-Username (z.B. example@gmail.com) (<a href='https://github.com/remp2020/crm-payments-module#confirmation-e-mails' target='_blank'>info</a>)
     sk_csob_confirmation_password:
         description: IMAP-Connection-Passwort (z.B. password) (<a href='https://github.com/remp2020/crm-payments-module#confirmation-e-mails' target='_blank'>info</a>)
-    tb_simple_confirmation_password:
-        description: IMAP-Connection-Passwort (eg. password) (<a href='https://github.com/remp2020/crm-payments-module#confirmation-e-mails' target='_blank'>info</a>)
     csob_confirmation_host:
         description: IMAP-Connection-Host (z.B. imap.gmail.com) (<a href='https://github.com/remp2020/crm-payments-module#confirmation-e-mails' target='_blank'>info</a>)
     csob_confirmation_username:

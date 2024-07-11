@@ -590,7 +590,6 @@ config:
     tatrapay_sharedsecret: {}
     cardpay_sharedsecret: {}
     comfortpay_terminalid: {}
-    tb_simple_confirmation_host: {}
     comfortpay_local_passphrase_path: {}
     paypal_merchant: {}
     paypal_signature: {}
@@ -626,13 +625,11 @@ config:
     confirmation_mail_host: {}
     recurrent_payment_gateway_fail_delay: {}
     comfortpay_mid: {}
-    tb_simple_confirmation_username: {}
     comfortpay_ws: {}
     cardpay_mid: {}
     confirmation_mail_processed_folder: {}
     confirmation_mail_username: {}
     confirmation_mail_port: {}
-    tb_simple_confirmation_port: {}
 
 data_provider:
     universal_search:
