@@ -262,7 +262,7 @@ class PaymentsRepository extends Repository
             variableSymbol: $paymentData['variable_symbol'],
             address: $this->addressesRepository->find($paymentData['address_id'] ?? null),
             recurrentCharge: $paymentData['recurrent_charge'] ?? false,
-            paymentCountry: $paymentData['payment_country_id'] ?? null,
+            paymentCountry: $this->countriesRepository->find($paymentData['payment_country_id'] ?? null),
             paymentCountryResolutionReason: $paymentData['payment_country_resolution_reason'] ?? null,
             allowUnreliablePaymentItemContainer: true,
         );
