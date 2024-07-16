@@ -11,13 +11,18 @@ use Crm\ApplicationModule\Repositories\AuditLogRepository;
 use Crm\ApplicationModule\Repositories\CacheRepository;
 use Crm\PaymentsModule\Events\NewPaymentEvent;
 use Crm\PaymentsModule\Events\PaymentChangeStatusEvent;
+use Crm\PaymentsModule\Models\GeoIp\GeoIpException;
 use Crm\PaymentsModule\Models\OneStopShop\OneStopShop;
 use Crm\PaymentsModule\Models\PaymentItem\PaymentItemContainer;
+use Crm\PaymentsModule\Models\PaymentItem\PaymentItemContainerFactory;
 use Crm\PaymentsModule\Models\VariableSymbolInterface;
 use Crm\PaymentsModule\Models\VariableSymbolVariant;
 use Crm\SubscriptionsModule\Models\PaymentItem\SubscriptionTypePaymentItem;
+use Crm\SubscriptionsModule\Repositories\SubscriptionTypesRepository;
 use Crm\SubscriptionsModule\Repositories\SubscriptionsRepository;
+use Crm\UsersModule\Repositories\AddressesRepository;
 use Crm\UsersModule\Repositories\CountriesRepository;
+use Crm\UsersModule\Repositories\UsersRepository;
 use DateTime;
 use League\Event\Emitter;
 use Nette\Database\Explorer;
@@ -55,6 +60,10 @@ class PaymentsRepository extends Repository
         protected PaymentGatewaysRepository $paymentGatewaysRepository,
         private OneStopShop $oneStopShop,
         private CountriesRepository $countriesRepository,
+        private PaymentItemContainerFactory $paymentItemContainerFactory,
+        private UsersRepository $usersRepository,
+        private AddressesRepository $addressesRepository,
+        private SubscriptionTypesRepository $subscriptionTypesRepository,
     ) {
         parent::__construct($database);
         $this->auditLogRepository = $auditLogRepository;
@@ -79,7 +88,16 @@ class PaymentsRepository extends Repository
         array $metaData = [],
         ?ActiveRow $paymentCountry = null,
         ?string $paymentCountryResolutionReason = null,
+        bool $allowUnreliablePaymentItemContainer = false,
     ) {
+        if ($paymentItemContainer->isUnreliable()) {
+            if ($allowUnreliablePaymentItemContainer) {
+                Debugger::log("Creating payment warning: " . $paymentItemContainer->getUnreliableWarning(), Debugger::WARNING);
+            } else {
+                throw new \RuntimeException("Unreliable payment container is not allowed. Details: " . $paymentItemContainer->getUnreliableWarning());
+            }
+        }
+
         $this->oneStopShop->adjustPaymentItemContainerVatRates($paymentItemContainer, $paymentCountry);
 
         $data = [
@@ -156,39 +174,9 @@ class PaymentsRepository extends Repository
 
     final public function copyPayment(ActiveRow $payment, array $changes = [])
     {
-        $paymentData = array_merge([
-            'amount' => $payment->amount,
-            'user_id' => $payment->user_id,
-            'subscription_type_id' => $payment->subscription_type_id,
-            'payment_gateway_id' => $payment->payment_gateway_id,
-            'status' => self::STATUS_FORM,
-            'created_at' => new DateTime(),
-            'modified_at' => new DateTime(),
-            'variable_symbol' => $payment->variable_symbol,
-            'ip' => Request::getIp(),
-            'user_agent' => Request::getUserAgent(),
-            'referer' => null,
-        ], $changes);
+        $paymentItemContainer = $this->paymentItemContainerFactory->createFromPayment($payment, [SubscriptionTypePaymentItem::TYPE]);
 
-        // Caller can signal VS change by passing ['variable_symbol' => null] within the $changes array.
-        if ($paymentData['variable_symbol'] === null) {
-            $paymentGateway = $this->paymentGatewaysRepository->find($paymentData['payment_gateway_id']);
-            $paymentData['variable_symbol'] = $this->variableSymbol->getNew($paymentGateway);
-        }
-
-        $newPayment = $this->insert($paymentData);
-
-        $totalPricesEqual = true;
-        $paymentItems = $payment->related('payment_items');
-        $hasOnlySubscriptionTypePaymentItems = empty(array_filter($paymentItems->fetchPairs('id', 'type'), function ($type) {
-            return $type !== SubscriptionTypePaymentItem::TYPE;
-        }));
-        if ($payment->subscription_type_id && $hasOnlySubscriptionTypePaymentItems) {
-            $paymentItemContainer = new PaymentItemContainer();
-            foreach ($paymentItems as $paymentItem) {
-                $paymentItemContainer->addItem(SubscriptionTypePaymentItem::fromPaymentItem($paymentItem));
-            }
-
+        if ($payment->subscription_type_id) {
             $subscriptionTypePaymentItemContainer = new PaymentItemContainer();
             $subscriptionTypePaymentItemContainer->addItems(SubscriptionTypePaymentItem::fromSubscriptionType($payment->subscription_type));
 
@@ -209,24 +197,75 @@ class PaymentsRepository extends Repository
                 // 2) We can only copy original items if the amount of items equals. If it changed (e.g. one item was
                 // split into two separate items), let's use the current (correct) items from the subscription type.
                 if (!$totalPricesWithoutVatEqual || !$totalItemsCountEqual) {
-                    $this->paymentItemsRepository->add($newPayment, $subscriptionTypePaymentItemContainer);
-                    return $newPayment;
+                    $paymentItemContainer = $subscriptionTypePaymentItemContainer;
                 }
             }
         }
 
-        $fromSubscriptionType = $totalPricesEqual;
-        foreach ($paymentItems as $paymentItem) {
-            // change new payment's status to failed if it's not possible to copy payment items (payment would be incomplete)
-            try {
-                $this->paymentItemsRepository->copyPaymentItem($paymentItem, $newPayment, $fromSubscriptionType);
-            } catch (\Exception $e) {
-                $this->update($newPayment, ['status' => PaymentsRepository::STATUS_FAIL, 'note' => "Unable to copy payment items [{$e->getMessage()}]."]);
-                throw $e;
-            }
+        // Copy all other payment types except for subscription type payment items (copied in previous step)
+        $paymentItemContainer = $this->paymentItemContainerFactory->addItemsFromPaymentToContainer(
+            payment: $payment,
+            container: $paymentItemContainer,
+            excludedPaymentItemTypes: [SubscriptionTypePaymentItem::TYPE],
+        );
+
+        $paymentData = array_merge([
+            'amount' => $payment->amount,
+            'user_id' => $payment->user_id,
+            'subscription_type_id' => $payment->subscription_type_id,
+            'payment_gateway_id' => $payment->payment_gateway_id,
+            'status' => self::STATUS_FORM,
+            'created_at' => new DateTime(),
+            'modified_at' => new DateTime(),
+            'variable_symbol' => $payment->variable_symbol,
+            'ip' => Request::getIp(),
+            'user_agent' => Request::getUserAgent(),
+            'referer' => null,
+        ], $changes);
+
+        // Caller can signal VS change by passing ['variable_symbol' => null] within the $changes array.
+        if ($paymentData['variable_symbol'] === null) {
+            $paymentGateway = $this->paymentGatewaysRepository->find($paymentData['payment_gateway_id']);
+            $paymentData['variable_symbol'] = $this->variableSymbol->getNew($paymentGateway);
         }
 
-        return $newPayment;
+        // One-Stop-Shop
+        try {
+            $resolvedCountry = $this->oneStopShop->resolveCountry(
+                user: $this->usersRepository->find($paymentData['user_id']),
+                paymentAddress: $this->addressesRepository->find($paymentData['address_id'] ?? null),
+                paymentItemContainer: $paymentItemContainer,
+                ipAddress: $paymentData['ip'],
+                previousPayment: $payment,
+            );
+            if ($resolvedCountry) {
+                $paymentData['payment_country_id'] = $this->countriesRepository->findByIsoCode($resolvedCountry->countryCode)->id;
+                $paymentData['payment_country_resolution_reason'] = $resolvedCountry->getReasonValue();
+            }
+        } catch (GeoIpException $exception) {
+            // do not crash because of wrong IP resolution, just log
+            Debugger::log("PaymentsRepository copyPayment OSS error: " . $exception->getMessage(), Debugger::ERROR);
+        }
+
+        return $this->add(
+            subscriptionType: $this->subscriptionTypesRepository->find($paymentData['subscription_type_id']),
+            paymentGateway: $this->paymentGatewaysRepository->find($paymentData['payment_gateway_id']),
+            user: $this->usersRepository->find($paymentData['user_id']),
+            paymentItemContainer: $paymentItemContainer,
+            referer: $paymentData['referer'],
+            amount: $paymentData['amount'],
+            subscriptionStartAt: $paymentData['subscription_start_at'] ?? null,
+            subscriptionEndAt: $paymentData['subscription_end_at'] ?? null,
+            note: $paymentData['note'] ?? null,
+            additionalAmount: $paymentData['additional_amount'] ?? null,
+            additionalType: $paymentData['additional_type'] ?? null,
+            variableSymbol: $paymentData['variable_symbol'],
+            address: $this->addressesRepository->find($paymentData['address_id'] ?? null),
+            recurrentCharge: $paymentData['recurrent_charge'] ?? false,
+            paymentCountry: $paymentData['payment_country_id'] ?? null,
+            paymentCountryResolutionReason: $paymentData['payment_country_resolution_reason'] ?? null,
+            allowUnreliablePaymentItemContainer: true,
+        );
     }
 
     final public function getPaymentItems(ActiveRow $payment): array
@@ -258,7 +297,6 @@ class PaymentsRepository extends Repository
 
     final public function update(ActiveRow &$row, $data, PaymentItemContainer $paymentItemContainer = null)
     {
-        // TODO: do it here or before update?
         $newPaymentCountry = null;
         if (isset($data['payment_country_id']) &&
             $data['payment_country_id'] !== $row->payment_country_id) {
@@ -266,9 +304,10 @@ class PaymentsRepository extends Repository
         }
 
         if ($paymentItemContainer) {
-            if ($newPaymentCountry) {
-                $this->oneStopShop->adjustPaymentItemContainerVatRates($paymentItemContainer, $newPaymentCountry);
-            }
+            $this->oneStopShop->adjustPaymentItemContainerVatRates(
+                $paymentItemContainer,
+                $newPaymentCountry ?? $row->payment_country,
+            );
             $this->paymentItemsRepository->deleteByPayment($row);
             $this->paymentItemsRepository->add($row, $paymentItemContainer);
         } elseif ($newPaymentCountry) {

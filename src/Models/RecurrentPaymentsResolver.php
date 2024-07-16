@@ -5,11 +5,11 @@ namespace Crm\PaymentsModule\Models;
 use Crm\ApplicationModule\Models\Config\ApplicationConfig;
 use Crm\PaymentsModule\Events\RecurrentPaymentItemContainerReadyEvent;
 use Crm\PaymentsModule\Models\GeoIp\GeoIpException;
-use Crm\PaymentsModule\Models\OneStopShop\CountryResolution;
 use Crm\PaymentsModule\Models\OneStopShop\CountryResolutionType;
 use Crm\PaymentsModule\Models\OneStopShop\OneStopShop;
 use Crm\PaymentsModule\Models\PaymentItem\DonationPaymentItem;
 use Crm\PaymentsModule\Models\PaymentItem\PaymentItemContainer;
+use Crm\PaymentsModule\Models\PaymentItem\PaymentItemContainerFactory;
 use Crm\PaymentsModule\Models\RecurrentPaymentsResolver\PaymentData;
 use Crm\PaymentsModule\Repositories\RecurrentPaymentsRepository;
 use Crm\SubscriptionsModule\Models\PaymentItem\SubscriptionTypePaymentItem;
@@ -32,6 +32,7 @@ class RecurrentPaymentsResolver
         private Emitter $emitter,
         private OneStopShop $oneStopShop,
         private CountriesRepository $countriesRepository,
+        private PaymentItemContainerFactory $paymentItemContainerFactory,
     ) {
     }
 
@@ -182,11 +183,10 @@ class RecurrentPaymentsResolver
             && $parentPayment->amount === $recurrentPayment->subscription_type->price
             && !$customChargeAmount
         ) {
-            $subscriptionTypePaymentItems = $parentPayment->related('payment_items')
-                ->where('type', SubscriptionTypePaymentItem::TYPE);
-            foreach ($subscriptionTypePaymentItems as $paymentItem) {
-                $paymentItemContainer->addItem(SubscriptionTypePaymentItem::fromPaymentItem($paymentItem));
-            }
+            $paymentItemContainer = $this->paymentItemContainerFactory->createFromPayment(
+                $parentPayment,
+                [SubscriptionTypePaymentItem::TYPE]
+            );
 
             // In case of subscription type VAT change, parent payment would copy incorrect VAT rates
             // into the new payment items. If we see a change in a total price without VAT, we don't
@@ -303,30 +303,24 @@ class RecurrentPaymentsResolver
                 $resolvedCountry = $this->oneStopShop->resolveCountry(
                     user: $recurrentPayment->user,
                     paymentAddress: $address,
-                    paymentItemContainer: $paymentItemContainer
+                    paymentItemContainer: $paymentItemContainer,
+                    previousPayment: $parentPayment,
                 );
             } catch (GeoIpException $e) {
                 // Resolver probably tried to resolve the country based on "cli" IP address, will be handled further.
             }
             // IP address isn't a good indicator to resolve the country.
-            // First, try to copy resolution from parent payment.
-            // If there is no previous resolution, IP of original payment should be used instead.
+            // If there is no other previous resolution, IP of original payment should be used instead.
             if (!$resolvedCountry || $resolvedCountry->reason === CountryResolutionType::IP_ADDRESS) {
-                if ($parentPayment?->payment_country) {
-                    $resolvedCountry =  new CountryResolution(
-                        $parentPayment->payment_country->iso_code,
-                        CountryResolutionType::PREVIOUS_PAYMENT,
+                $originalPaymentIp = $this->resolveOriginalPaymentIp($parentPayment);
+                if ($originalPaymentIp) {
+                    $resolvedCountry = $this->oneStopShop->resolveCountry(
+                        user: $recurrentPayment->user,
+                        paymentAddress: $address,
+                        paymentItemContainer: $paymentItemContainer,
+                        ipAddress: $originalPaymentIp,
+                        previousPayment: $parentPayment,
                     );
-                } else {
-                    $originalPaymentIp = $this->resolveOriginalPaymentIp($parentPayment);
-                    if ($originalPaymentIp) {
-                        $resolvedCountry = $this->oneStopShop->resolveCountry(
-                            user: $recurrentPayment->user,
-                            paymentAddress: $address,
-                            paymentItemContainer: $paymentItemContainer,
-                            ipAddress: $originalPaymentIp,
-                        );
-                    }
                 }
             }
 

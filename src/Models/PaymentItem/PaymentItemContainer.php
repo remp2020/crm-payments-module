@@ -9,6 +9,23 @@ class PaymentItemContainer
 
     private ?int $forceVat = null;
 
+    private bool $unreliable = false;
+
+    /**
+     * Is true if container contains GenericPaymentItem, which means
+     * some payment item type was not registered in PaymentItemContainerFactory
+     * @return bool
+     */
+    public function isUnreliable(): bool
+    {
+        return $this->unreliable;
+    }
+
+    public function setUnreliable(bool $unreliable = true): void
+    {
+        $this->unreliable = $unreliable;
+    }
+
     public function addItem(PaymentItemInterface $item): self
     {
         $this->items[] = $item;
@@ -62,5 +79,18 @@ class PaymentItemContainer
             $priceWithoutVAT += $item->totalPriceWithoutVAT();
         }
         return $priceWithoutVAT;
+    }
+
+    public function getUnreliableWarning(): string
+    {
+        $unregisteredTypes = [];
+        foreach ($this->items as $item) {
+            if ($item instanceof GenericPaymentItem) {
+                $unregisteredTypes[] = $item->type();
+            }
+        }
+        return 'PaymentItemContainer is unreliable, since it contains unregistered PaymentItem types [' .
+            implode(', ', $unregisteredTypes) . ']. This may cause unexpected problems when working with payments. ' .
+            'Make sure you register custom types using PaymentItemContainerFactory#registerPaymentItemType';
     }
 }

@@ -52,6 +52,7 @@ final class OneStopShop
         ?PaymentItemContainer $paymentItemContainer = null,
         ?array $formParams = null,
         ?string $ipAddress = null,
+        ?ActiveRow $previousPayment = null,
     ): ?CountryResolution {
         if (!$this->isEnabled()) {
             return null;
@@ -66,7 +67,8 @@ final class OneStopShop
             'paymentAddress',
             'paymentItemContainer',
             'formParams',
-            'ipAddress'
+            'ipAddress',
+            'previousPayment'
         );
 
         /** @var OneStopShopCountryResolutionDataProviderInterface[] $providers */
@@ -90,6 +92,13 @@ final class OneStopShop
 
         if ($selectedCountryCode) {
             return new CountryResolution($selectedCountryCode, CountryResolutionType::USER_SELECTED);
+        }
+
+        if ($previousPayment && $previousPayment->payment_country) {
+            return new CountryResolution(
+                $previousPayment->payment_country->iso_code,
+                CountryResolutionType::PREVIOUS_PAYMENT,
+            );
         }
 
         $ipCountryCode = $this->geoIp->countryCode($ipAddress);

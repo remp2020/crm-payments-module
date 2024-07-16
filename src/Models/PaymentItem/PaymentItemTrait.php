@@ -2,7 +2,7 @@
 
 namespace Crm\PaymentsModule\Models\PaymentItem;
 
-use Crm\PaymentsModule\Models\PaymentItem\PaymentItemHelper;
+use Nette\Database\Table\ActiveRow;
 
 trait PaymentItemTrait
 {
@@ -13,6 +13,8 @@ trait PaymentItemTrait
     private int $vat;
 
     private int $count;
+
+    private array $meta = [];
 
     public function type(): string
     {
@@ -44,6 +46,11 @@ trait PaymentItemTrait
         return $this->count;
     }
 
+    public function meta(): array
+    {
+        return $this->meta;
+    }
+
     public function unitPriceWithoutVAT(): float
     {
         return PaymentItemHelper::getPriceWithoutVAT($this->unitPrice(), $this->vat());
@@ -52,5 +59,16 @@ trait PaymentItemTrait
     public function totalPriceWithoutVAT(): float
     {
         return $this->unitPriceWithoutVAT() * $this->count();
+    }
+
+    public function forceVat(int $vat): static
+    {
+        $this->vat = $vat;
+        return $this;
+    }
+
+    public static function loadMeta(ActiveRow $paymentItem): array
+    {
+        return $paymentItem->related('payment_item_meta')->fetchPairs('key', 'value');
     }
 }

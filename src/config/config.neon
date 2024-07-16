@@ -36,6 +36,11 @@ services:
 	- Crm\PaymentsModule\Models\AdminFilterFormData
 	- Crm\PaymentsModule\Models\AverageMonthPayment
 	- Crm\PaymentsModule\Models\PaymentItem\PaymentItemHelper
+	paymentItemContainerFactory:
+		class: Crm\PaymentsModule\Models\PaymentItem\PaymentItemContainerFactory
+		setup:
+			- registerPaymentItemType(Crm\PaymentsModule\Models\PaymentItem\AuthorizationPaymentItem)
+			- registerPaymentItemType(Crm\PaymentsModule\Models\PaymentItem\DonationPaymentItem)
 	mailDownloader: Crm\PaymentsModule\Models\MailConfirmation\ImapMailDownloader
 	- Crm\PaymentsModule\Models\MailConfirmation\MailProcessor
 	- Crm\PaymentsModule\Components\ChangePaymentStatus\ChangePaymentStatusFactoryInterface

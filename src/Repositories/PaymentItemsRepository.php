@@ -79,7 +79,13 @@ class PaymentItemsRepository extends Repository
 
     final public function deleteByPayment(ActiveRow $payment)
     {
-        $this->dbContext->beginTransaction();
+        $inTransaction = false;
+        try {
+            $this->dbContext->beginTransaction();
+            $inTransaction = true;
+        } catch (DriverException $e) {
+            // transaction already in progress, ignore exception
+        }
 
         try {
             // remove payment item meta
@@ -96,7 +102,9 @@ class PaymentItemsRepository extends Repository
             throw $exception;
         }
 
-        $this->dbContext->commit();
+        if ($inTransaction) {
+            $this->dbContext->commit();
+        }
 
         return true;
     }

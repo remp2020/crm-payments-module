@@ -5,6 +5,7 @@ namespace Crm\PaymentsModule\Tests;
 use Crm\ApplicationModule\Repositories\ConfigsRepository;
 use Crm\ApplicationModule\Seeders\CountriesSeeder;
 use Crm\ApplicationModule\Tests\DatabaseTestCase;
+use Crm\PaymentsModule\Models\GatewayFactory;
 use Crm\PaymentsModule\Models\PaymentItem\PaymentItemContainer;
 use Crm\PaymentsModule\Models\VariableSymbolInterface;
 use Crm\PaymentsModule\Repositories\ParsedMailLogsRepository;
@@ -31,6 +32,8 @@ use Crm\UsersModule\Repositories\UsersRepository;
 
 class PaymentsTestCase extends DatabaseTestCase
 {
+    public const TEST_GATEWAY_CODE = 'my_pay';
+
     /** @var PaymentsRepository */
     protected $paymentsRepository;
 
@@ -89,6 +92,9 @@ class PaymentsTestCase extends DatabaseTestCase
         $this->paymentItemsRepository = $this->getRepository(PaymentItemsRepository::class);
         $this->paymentGatewaysRepository = $this->getRepository(PaymentGatewaysRepository::class);
         $this->recurrentPaymentsRepository = $this->getRepository(RecurrentPaymentsRepository::class);
+
+        $gatewayFactory = $this->inject(GatewayFactory::class);
+        $gatewayFactory->registerGateway(self::TEST_GATEWAY_CODE);
     }
 
     protected function createPayment($variableSymbol)
@@ -120,7 +126,7 @@ class PaymentsTestCase extends DatabaseTestCase
         }
         if (!$this->paymentGateway) {
             $paymentGatewaysRepository = $this->container->getByType(PaymentGatewaysRepository::class);
-            $this->paymentGateway = $paymentGatewaysRepository->add('MyPay', 'my_pay');
+            $this->paymentGateway = $paymentGatewaysRepository->add('MyPay', self::TEST_GATEWAY_CODE);
         }
         return $this->paymentGateway;
     }

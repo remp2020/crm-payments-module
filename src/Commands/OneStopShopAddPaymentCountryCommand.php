@@ -6,13 +6,12 @@ use Crm\ApplicationModule\Commands\DecoratedCommandTrait;
 use Crm\PaymentsModule\Models\GeoIp\GeoIpException;
 use Crm\PaymentsModule\Models\OneStopShop\OneStopShop;
 use Crm\PaymentsModule\Models\OneStopShop\OneStopShopCountryConflictException;
-use Crm\PaymentsModule\Models\PaymentItem\PaymentItemContainer;
+use Crm\PaymentsModule\Models\PaymentItem\PaymentItemContainerFactory;
 use Crm\PaymentsModule\Models\RecurrentPaymentsResolver;
 use Crm\PaymentsModule\Repositories\PaymentItemsRepository;
 use Crm\PaymentsModule\Repositories\PaymentMetaRepository;
 use Crm\PaymentsModule\Repositories\PaymentsRepository;
 use Crm\PaymentsModule\Repositories\RecurrentPaymentsRepository;
-use Crm\SubscriptionsModule\Models\PaymentItem\SubscriptionTypePaymentItem;
 use Crm\UsersModule\Repositories\CountriesRepository;
 use Nette\Database\Table\ActiveRow;
 use Nette\Database\Table\Selection;
@@ -33,6 +32,7 @@ class OneStopShopAddPaymentCountryCommand extends Command
         private CountriesRepository $countriesRepository,
         private OneStopShop $oneStopShop,
         private RecurrentPaymentsResolver $recurrentPaymentsResolver,
+        private PaymentItemContainerFactory $paymentItemContainerFactory,
     ) {
         parent::__construct();
     }
@@ -107,11 +107,12 @@ class OneStopShopAddPaymentCountryCommand extends Command
                         $country = $paymentData->paymentCountry;
                         $countryResolutionReason = $paymentData->paymentCountryResolutionReason;
                     } else {
+                        $paymentItemContainer = $this->paymentItemContainerFactory->createFromPayment($payment);
+
                         $countryResolution = $this->oneStopShop->resolveCountry(
                             user: $payment->user,
                             paymentAddress: $payment->address,
-                            // create virtual container containing ONLY subscription types payment items, important for OneStopShop country resolver
-                            paymentItemContainer: $this->paymentItemContainerFromPayment($payment),
+                            paymentItemContainer: $paymentItemContainer,
                             ipAddress: $payment->ip,
                         );
 
@@ -179,16 +180,5 @@ class OneStopShopAddPaymentCountryCommand extends Command
         $this->line("   * subsequent payment <info>[{$nextPayment->id}]</info> resolved to <info>[" . $country->iso_code . "]</info>");
 
         $this->resolveRecurrentChildren($nextPayment, $country, $countryResolutionReason);
-    }
-
-    private function paymentItemContainerFromPayment(ActiveRow $payment): PaymentItemContainer
-    {
-        $container = new PaymentItemContainer();
-        foreach ($this->paymentItemsRepository->getByPayment($payment) as $item) {
-            if ($item->type === SubscriptionTypePaymentItem::TYPE) {
-                $container->addItem(SubscriptionTypePaymentItem::fromPaymentItem($item));
-            }
-        }
-        return $container;
     }
 }
