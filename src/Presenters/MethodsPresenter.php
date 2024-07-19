@@ -5,6 +5,8 @@ namespace Crm\PaymentsModule\Presenters;
 use Crm\ApplicationModule\Presenters\FrontendPresenter;
 use Crm\PaymentsModule\Models\GatewayFactory;
 use Crm\PaymentsModule\Models\Gateways\AuthorizationInterface;
+use Crm\PaymentsModule\Models\GeoIp\GeoIpException;
+use Crm\PaymentsModule\Models\OneStopShop\OneStopShop;
 use Crm\PaymentsModule\Models\PaymentItem\AuthorizationPaymentItem;
 use Crm\PaymentsModule\Models\PaymentItem\PaymentItemContainer;
 use Crm\PaymentsModule\Models\PaymentProcessor;
@@ -12,38 +14,23 @@ use Crm\PaymentsModule\Repositories\PaymentGatewaysRepository;
 use Crm\PaymentsModule\Repositories\PaymentsRepository;
 use Crm\PaymentsModule\Repositories\RecurrentPaymentsRepository;
 use Crm\UsersModule\Models\Auth\UserManager;
+use Crm\UsersModule\Repositories\CountriesRepository;
 use Nette\Application\BadRequestException;
+use Tracy\Debugger;
 
 class MethodsPresenter extends FrontendPresenter
 {
-    private PaymentGatewaysRepository $paymentGatewaysRepository;
-
-    private UserManager $userManager;
-
-    private PaymentProcessor $paymentProcessor;
-
-    private GatewayFactory $gatewayFactory;
-
-    private PaymentsRepository $paymentsRepository;
-
-    private RecurrentPaymentsRepository $recurrentPaymentsRepository;
-
     public function __construct(
-        PaymentGatewaysRepository $paymentGatewaysRepository,
-        UserManager $userManager,
-        PaymentProcessor $paymentProcessor,
-        GatewayFactory $gatewayFactory,
-        PaymentsRepository $paymentsRepository,
-        RecurrentPaymentsRepository $recurrentPaymentsRepository
+        private PaymentGatewaysRepository $paymentGatewaysRepository,
+        private UserManager $userManager,
+        private PaymentProcessor $paymentProcessor,
+        private GatewayFactory $gatewayFactory,
+        private PaymentsRepository $paymentsRepository,
+        private RecurrentPaymentsRepository $recurrentPaymentsRepository,
+        private OneStopShop $oneStopShop,
+        private CountriesRepository $countriesRepository,
     ) {
         parent::__construct();
-
-        $this->paymentGatewaysRepository = $paymentGatewaysRepository;
-        $this->userManager = $userManager;
-        $this->paymentProcessor = $paymentProcessor;
-        $this->gatewayFactory = $gatewayFactory;
-        $this->paymentsRepository = $paymentsRepository;
-        $this->recurrentPaymentsRepository = $recurrentPaymentsRepository;
     }
 
     public function renderAdd(string $paymentGatewayCode, int $recurrentPaymentId = null)
@@ -61,6 +48,9 @@ class MethodsPresenter extends FrontendPresenter
         }
 
         $userRow = $this->userManager->loadUser($this->getUser());
+        if (!$userRow) {
+            throw new \RuntimeException("Unable to load user");
+        }
         if ($recurrentPaymentId !== null) {
             $recurrentPaymentRow = $this->recurrentPaymentsRepository->getUserActiveRecurrentPayments($userRow->id)
                 ->where('id', $recurrentPaymentId)
@@ -75,12 +65,25 @@ class MethodsPresenter extends FrontendPresenter
             new AuthorizationPaymentItem('authorization', $gateway->getAuthorizationAmount())
         );
 
+        $countryResolution = null;
+        try {
+            $countryResolution  = $this->oneStopShop->resolveCountry(
+                user: $userRow,
+                paymentItemContainer: $paymentItemContainer,
+            );
+        } catch (GeoIpException $exception) {
+            // do not crash because of wrong IP resolution, just log
+            Debugger::log("MethodsPresenter OSS GeoIpException: " . $exception->getMessage(), Debugger::ERROR);
+        }
+
         $payment = $this->paymentsRepository->add(
-            null,
-            $paymentGateway,
-            $userRow,
-            $paymentItemContainer,
-            $this->getReferer()
+            subscriptionType: null,
+            paymentGateway: $paymentGateway,
+            user: $userRow,
+            paymentItemContainer: $paymentItemContainer,
+            referer: $this->getReferer(),
+            paymentCountry: $countryResolution ? $this->countriesRepository->findByIsoCode($countryResolution->countryCode) : null,
+            paymentCountryResolutionReason: $countryResolution?->getReasonValue(),
         );
 
         if ($recurrentPaymentId !== null) {
@@ -95,6 +98,9 @@ class MethodsPresenter extends FrontendPresenter
     public function renderComplete(int $paymentId)
     {
         $paymentRow = $this->paymentsRepository->find($paymentId);
+        if (!$paymentRow) {
+            throw new \RuntimeException("Unable to load payment with ID [{$paymentId}]");
+        }
         if ($paymentRow->status === PaymentsRepository::STATUS_AUTHORIZED) {
             $this->flashMessage($this->translator->translate('payments.frontend.add_card.success'));
             $this->redirect('Payments:my');

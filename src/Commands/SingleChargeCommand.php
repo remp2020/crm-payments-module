@@ -4,42 +4,34 @@ namespace Crm\PaymentsModule\Commands;
 
 use Crm\PaymentsModule\Events\BeforeRecurrentPaymentChargeEvent;
 use Crm\PaymentsModule\Models\GatewayFactory;
+use Crm\PaymentsModule\Models\Gateways\RecurrentPaymentInterface;
+use Crm\PaymentsModule\Models\GeoIp\GeoIpException;
+use Crm\PaymentsModule\Models\OneStopShop\OneStopShop;
 use Crm\PaymentsModule\Models\PaymentItem\PaymentItemContainer;
 use Crm\PaymentsModule\Repositories\PaymentsRepository;
 use Crm\PaymentsModule\Repositories\RecurrentPaymentsRepository;
 use Crm\SubscriptionsModule\Models\PaymentItem\SubscriptionTypePaymentItem;
 use Crm\SubscriptionsModule\Repositories\SubscriptionTypesRepository;
+use Crm\UsersModule\Repositories\CountriesRepository;
 use League\Event\Emitter;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
+use Tracy\Debugger;
 
 class SingleChargeCommand extends Command
 {
-    private $recurrentPaymentsRepository;
-
-    private $gatewayFactory;
-
-    private $paymentsRepository;
-
-    private $subscriptionTypesRepository;
-
-    private Emitter $emitter;
-
     public function __construct(
-        RecurrentPaymentsRepository $recurrentPaymentsRepository,
-        GatewayFactory $gatewayFactory,
-        PaymentsRepository $paymentsRepository,
-        SubscriptionTypesRepository $subscriptionTypesRepository,
-        Emitter $emitter
+        private RecurrentPaymentsRepository $recurrentPaymentsRepository,
+        private GatewayFactory $gatewayFactory,
+        private PaymentsRepository $paymentsRepository,
+        private SubscriptionTypesRepository $subscriptionTypesRepository,
+        private Emitter $emitter,
+        private OneStopShop $oneStopShop,
+        private CountriesRepository $countriesRepository,
     ) {
         parent::__construct();
-        $this->recurrentPaymentsRepository = $recurrentPaymentsRepository;
-        $this->gatewayFactory = $gatewayFactory;
-        $this->paymentsRepository = $paymentsRepository;
-        $this->subscriptionTypesRepository = $subscriptionTypesRepository;
-        $this->emitter = $emitter;
     }
 
     protected function configure()
@@ -67,6 +59,11 @@ class SingleChargeCommand extends Command
                 null,
                 InputOption::VALUE_REQUIRED,
                 'Code of subscription type to be used in payment'
+            )->addOption(
+                'payment_country_code',
+                null,
+                InputOption::VALUE_REQUIRED,
+                'ISO code of payment country for One Stop Shop country resolution. Use if you want to specify payment country manually'
             );
     }
 
@@ -103,6 +100,7 @@ class SingleChargeCommand extends Command
             $output->writeln("<error>ERROR</error>: subscription type with code <info>{$subscriptionTypeCode}</info> doesn't exist.");
             return Command::FAILURE;
         }
+        $paymentCountryCode = $input->getOption('payment_country_code');
 
         $paymentItemContainer = new PaymentItemContainer();
         $containerItems = SubscriptionTypePaymentItem::fromSubscriptionType($subscriptionType);
@@ -115,26 +113,36 @@ class SingleChargeCommand extends Command
             return Command::FAILURE;
         }
 
+        $countryResolution = null;
+        try {
+            $countryResolution  = $this->oneStopShop->resolveCountry(
+                user: $recurrentPayment->user,
+                selectedCountryCode: $paymentCountryCode,
+                paymentItemContainer: $paymentItemContainer,
+            );
+        } catch (GeoIpException $exception) {
+            // do not crash because of wrong IP resolution, just log
+            Debugger::log("SingleChargeCommand OSS GeoIpException: " . $exception->getMessage(), Debugger::ERROR);
+        }
+
         $payment = $this->paymentsRepository->add(
-            $subscriptionType,
-            $recurrentPayment->payment_gateway,
-            $recurrentPayment->user,
-            $paymentItemContainer,
-            null,
-            $amount,
-            new \DateTime(),
-            new \DateTime('+1 minute'),
-            $description,
-            null,
-            null,
-            null,
-            null,
-            true
+            subscriptionType: $subscriptionType,
+            paymentGateway: $recurrentPayment->payment_gateway,
+            user: $recurrentPayment->user,
+            paymentItemContainer: $paymentItemContainer,
+            amount: $amount,
+            subscriptionStartAt: new \DateTime(),
+            subscriptionEndAt: new \DateTime('+1 minute'),
+            note: $description,
+            recurrentCharge: true,
+            paymentCountry: $countryResolution ? $this->countriesRepository->findByIsoCode($countryResolution->countryCode) : null,
+            paymentCountryResolutionReason: $countryResolution?->getReasonValue(),
         );
 
         $this->emitter->emit(new BeforeRecurrentPaymentChargeEvent($payment, $recurrentPayment->cid)); // ability to modify payment
         $payment = $this->paymentsRepository->find($payment->id); // reload
 
+        /** @var RecurrentPaymentInterface $gateway */
         $gateway = $this->gatewayFactory->getGateway($payment->payment_gateway->code);
         $gateway->charge($payment, $recurrentPayment->cid);
         $this->paymentsRepository->updateStatus($payment, PaymentsRepository::STATUS_PAID);

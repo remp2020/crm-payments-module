@@ -3,6 +3,8 @@
 namespace Crm\PaymentsModule\Events;
 
 use Crm\PaymentsModule\Models\Gateways\BankTransfer;
+use Crm\PaymentsModule\Models\GeoIp\GeoIpException;
+use Crm\PaymentsModule\Models\OneStopShop\OneStopShop;
 use Crm\PaymentsModule\Models\PaymentItem\PaymentItemContainer;
 use Crm\PaymentsModule\Repositories\PaymentGatewaysRepository;
 use Crm\PaymentsModule\Repositories\PaymentMetaRepository;
@@ -11,10 +13,12 @@ use Crm\SubscriptionsModule\Models\PaymentItem\SubscriptionTypePaymentItem;
 use Crm\SubscriptionsModule\Repositories\ContentAccessRepository;
 use Crm\SubscriptionsModule\Repositories\SubscriptionTypesRepository;
 use Crm\SubscriptionsModule\Repositories\SubscriptionsRepository;
+use Crm\UsersModule\Repositories\CountriesRepository;
 use Crm\UsersModule\Repositories\UsersRepository;
 use League\Event\AbstractListener;
 use League\Event\Emitter;
 use League\Event\EventInterface;
+use Tracy\Debugger;
 
 class AttachRenewalPaymentEventHandler extends AbstractListener
 {
@@ -27,6 +31,8 @@ class AttachRenewalPaymentEventHandler extends AbstractListener
         private ContentAccessRepository $contentAccessRepository,
         private UsersRepository $usersRepository,
         private Emitter $emitter,
+        private OneStopShop $oneStopShop,
+        private CountriesRepository $countriesRepository,
     ) {
     }
 
@@ -92,12 +98,27 @@ class AttachRenewalPaymentEventHandler extends AbstractListener
             $newPayment = $creatingNewPaymentEvent->getRenewalPayment();
 
             if ($newPayment === null) {
+                $countryResolution = null;
+                try {
+                    $countryResolution = $this->oneStopShop->resolveCountry(
+                        user: $user,
+                        paymentItemContainer: $paymentItemContainer,
+                        // use previous payment if found
+                        previousPayment: $subscription->related('payments')->fetch()
+                    );
+                } catch (GeoIpException $exception) {
+                    // do not crash because of wrong IP resolution, just log
+                    Debugger::log("AttachRenewalPaymentEventHandler OSS GeoIpException: " . $exception->getMessage(), Debugger::ERROR);
+                }
+
                 $newPayment = $this->paymentsRepository->add(
                     subscriptionType: $newSubscriptionType,
                     paymentGateway: $paymentGateway,
                     user: $user,
                     paymentItemContainer: $paymentItemContainer,
-                    metaData: $newPaymentMetaData
+                    metaData: $newPaymentMetaData,
+                    paymentCountry: $countryResolution ? $this->countriesRepository->findByIsoCode($countryResolution->countryCode) : null,
+                    paymentCountryResolutionReason: $countryResolution?->getReasonValue(),
                 );
             }
         }
