@@ -239,7 +239,7 @@ class PaymentsRepository extends Repository
                 previousPayment: $payment,
             );
             if ($resolvedCountry) {
-                $paymentData['payment_country_id'] = $this->countriesRepository->findByIsoCode($resolvedCountry->countryCode)->id;
+                $paymentData['payment_country_id'] = $resolvedCountry->country->id;
                 $paymentData['payment_country_resolution_reason'] = $resolvedCountry->getReasonValue();
             }
         } catch (GeoIpException $exception) {

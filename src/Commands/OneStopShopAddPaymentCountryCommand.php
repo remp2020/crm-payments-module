@@ -121,7 +121,7 @@ class OneStopShopAddPaymentCountryCommand extends Command
                             continue;
                         }
 
-                        $country = $this->countriesRepository->findByIsoCode($countryResolution->countryCode);
+                        $country = $countryResolution->country;
                         $countryResolutionReason = $countryResolution->getReasonValue();
                     }
 

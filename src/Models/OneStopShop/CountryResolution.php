@@ -2,10 +2,12 @@
 
 namespace Crm\PaymentsModule\Models\OneStopShop;
 
+use Nette\Database\Table\ActiveRow;
+
 final class CountryResolution
 {
     public function __construct(
-        public readonly string $countryCode,
+        public readonly ActiveRow $country,
         public readonly CountryResolutionType|string $reason,
     ) {
     }

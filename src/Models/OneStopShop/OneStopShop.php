@@ -83,20 +83,24 @@ final class OneStopShop
             }
         }
 
-        if ($paymentAddress) {
+        if ($paymentAddress && $paymentAddress->country) {
             if ($selectedCountryCode !== null && $selectedCountryCode !== $paymentAddress->country->iso_code) {
                 throw new OneStopShopCountryConflictException("Conflicting selectedCountryCode [{$selectedCountryCode}] and paymentAddress country [{$paymentAddress->country->iso_code}]");
             }
-            return new CountryResolution($paymentAddress->country->iso_code, CountryResolutionType::PAYMENT_ADDRESS);
+            return new CountryResolution($paymentAddress->country, CountryResolutionType::PAYMENT_ADDRESS);
         }
 
         if ($selectedCountryCode) {
-            return new CountryResolution($selectedCountryCode, CountryResolutionType::USER_SELECTED);
+            $selectedCountry = $this->countriesRepository->findByIsoCode($selectedCountryCode);
+            if (!$selectedCountry) {
+                throw new \RuntimeException("Invalid selected country code [{$selectedCountryCode}]");
+            }
+            return new CountryResolution($selectedCountry, CountryResolutionType::USER_SELECTED);
         }
 
         if ($previousPayment && $previousPayment->payment_country) {
             return new CountryResolution(
-                $previousPayment->payment_country->iso_code,
+                $previousPayment->payment_country,
                 CountryResolutionType::PREVIOUS_PAYMENT,
             );
         }
@@ -108,7 +112,12 @@ final class OneStopShop
             return null;
         }
 
-        return new CountryResolution($ipCountryCode, CountryResolutionType::IP_ADDRESS);
+        $ipCountry = $this->countriesRepository->findByIsoCode($ipCountryCode);
+        if (!$ipCountry) {
+            throw new \RuntimeException("Invalid IP country code [{$ipCountryCode}]");
+        }
+
+        return new CountryResolution($ipCountry, CountryResolutionType::IP_ADDRESS);
     }
 
     public function adjustPaymentVatRates(
@@ -179,7 +188,7 @@ final class OneStopShop
                 // Prefilled payment country based on user and request (e.g. IP) data
                 $countryResolution = $this->resolveCountry($user);
                 if ($countryResolution) {
-                    $prefilledCountryCode = $countryResolution->countryCode;
+                    $prefilledCountryCode = $countryResolution->country;
                     $prefilledCountryReason = $countryResolution->getReasonValue();
                 }
             } catch (OneStopShopCountryConflictException|GeoIpException $e) {

@@ -14,7 +14,6 @@ use Crm\PaymentsModule\Models\RecurrentPaymentsResolver\PaymentData;
 use Crm\PaymentsModule\Repositories\RecurrentPaymentsRepository;
 use Crm\SubscriptionsModule\Models\PaymentItem\SubscriptionTypePaymentItem;
 use Crm\SubscriptionsModule\Repositories\SubscriptionTypesRepository;
-use Crm\UsersModule\Repositories\CountriesRepository;
 use League\Event\Emitter;
 use Nette\Database\Table\ActiveRow;
 use Nette\Localization\Translator;
@@ -31,7 +30,6 @@ class RecurrentPaymentsResolver
         private ApplicationConfig $applicationConfig,
         private Emitter $emitter,
         private OneStopShop $oneStopShop,
-        private CountriesRepository $countriesRepository,
         private PaymentItemContainerFactory $paymentItemContainerFactory,
     ) {
     }
@@ -325,7 +323,7 @@ class RecurrentPaymentsResolver
             }
 
             if ($resolvedCountry) {
-                $paymentCountry = $this->countriesRepository->findByIsoCode($resolvedCountry?->countryCode);
+                $paymentCountry = $resolvedCountry->country;
                 $paymentCountryResolutionReason = $resolvedCountry->getReasonValue();
             }
         }

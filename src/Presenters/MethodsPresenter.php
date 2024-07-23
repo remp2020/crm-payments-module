@@ -14,7 +14,6 @@ use Crm\PaymentsModule\Repositories\PaymentGatewaysRepository;
 use Crm\PaymentsModule\Repositories\PaymentsRepository;
 use Crm\PaymentsModule\Repositories\RecurrentPaymentsRepository;
 use Crm\UsersModule\Models\Auth\UserManager;
-use Crm\UsersModule\Repositories\CountriesRepository;
 use Nette\Application\BadRequestException;
 use Tracy\Debugger;
 
@@ -28,7 +27,6 @@ class MethodsPresenter extends FrontendPresenter
         private PaymentsRepository $paymentsRepository,
         private RecurrentPaymentsRepository $recurrentPaymentsRepository,
         private OneStopShop $oneStopShop,
-        private CountriesRepository $countriesRepository,
     ) {
         parent::__construct();
     }
@@ -82,7 +80,7 @@ class MethodsPresenter extends FrontendPresenter
             user: $userRow,
             paymentItemContainer: $paymentItemContainer,
             referer: $this->getReferer(),
-            paymentCountry: $countryResolution ? $this->countriesRepository->findByIsoCode($countryResolution->countryCode) : null,
+            paymentCountry: $countryResolution?->country,
             paymentCountryResolutionReason: $countryResolution?->getReasonValue(),
         );
 

@@ -12,7 +12,6 @@ use Crm\PaymentsModule\Repositories\PaymentsRepository;
 use Crm\PaymentsModule\Repositories\RecurrentPaymentsRepository;
 use Crm\SubscriptionsModule\Models\PaymentItem\SubscriptionTypePaymentItem;
 use Crm\SubscriptionsModule\Repositories\SubscriptionTypesRepository;
-use Crm\UsersModule\Repositories\CountriesRepository;
 use League\Event\Emitter;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;
@@ -29,7 +28,6 @@ class SingleChargeCommand extends Command
         private SubscriptionTypesRepository $subscriptionTypesRepository,
         private Emitter $emitter,
         private OneStopShop $oneStopShop,
-        private CountriesRepository $countriesRepository,
     ) {
         parent::__construct();
     }
@@ -135,7 +133,7 @@ class SingleChargeCommand extends Command
             subscriptionEndAt: new \DateTime('+1 minute'),
             note: $description,
             recurrentCharge: true,
-            paymentCountry: $countryResolution ? $this->countriesRepository->findByIsoCode($countryResolution->countryCode) : null,
+            paymentCountry: $countryResolution?->country,
             paymentCountryResolutionReason: $countryResolution?->getReasonValue(),
         );
 

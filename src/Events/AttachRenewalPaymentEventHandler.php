@@ -13,7 +13,6 @@ use Crm\SubscriptionsModule\Models\PaymentItem\SubscriptionTypePaymentItem;
 use Crm\SubscriptionsModule\Repositories\ContentAccessRepository;
 use Crm\SubscriptionsModule\Repositories\SubscriptionTypesRepository;
 use Crm\SubscriptionsModule\Repositories\SubscriptionsRepository;
-use Crm\UsersModule\Repositories\CountriesRepository;
 use Crm\UsersModule\Repositories\UsersRepository;
 use League\Event\AbstractListener;
 use League\Event\Emitter;
@@ -32,7 +31,6 @@ class AttachRenewalPaymentEventHandler extends AbstractListener
         private UsersRepository $usersRepository,
         private Emitter $emitter,
         private OneStopShop $oneStopShop,
-        private CountriesRepository $countriesRepository,
     ) {
     }
 
@@ -117,7 +115,7 @@ class AttachRenewalPaymentEventHandler extends AbstractListener
                     user: $user,
                     paymentItemContainer: $paymentItemContainer,
                     metaData: $newPaymentMetaData,
-                    paymentCountry: $countryResolution ? $this->countriesRepository->findByIsoCode($countryResolution->countryCode) : null,
+                    paymentCountry: $countryResolution?->country,
                     paymentCountryResolutionReason: $countryResolution?->getReasonValue(),
                 );
             }
