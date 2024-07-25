@@ -188,7 +188,7 @@ final class OneStopShop
                 // Prefilled payment country based on user and request (e.g. IP) data
                 $countryResolution = $this->resolveCountry($user);
                 if ($countryResolution) {
-                    $prefilledCountryCode = $countryResolution->country;
+                    $prefilledCountryCode = $countryResolution->country->iso_code;
                     $prefilledCountryReason = $countryResolution->getReasonValue();
                 }
             } catch (OneStopShopCountryConflictException|GeoIpException $e) {
