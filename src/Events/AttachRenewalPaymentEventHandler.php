@@ -114,7 +114,7 @@ class AttachRenewalPaymentEventHandler extends AbstractListener
                 if (!$countryResolution) {
                     // try to resolve based on the previous payment
                     $sourcePayment = $this->paymentsRepository->subscriptionPayment($subscription);
-                    if ($sourcePayment) {
+                    if ($sourcePayment && $sourcePayment->payment_country_id) {
                         $countryResolution = new CountryResolution(
                             country: $sourcePayment->payment_country,
                             reason: $sourcePayment->payment_country_resolution_reason,
