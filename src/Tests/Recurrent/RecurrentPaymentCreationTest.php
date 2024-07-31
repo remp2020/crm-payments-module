@@ -6,7 +6,7 @@ namespace Crm\PaymentsModule\Tests\Recurrent;
 use Crm\ApplicationModule\Repositories\ConfigsRepository;
 use Crm\PaymentsModule\Commands\RecurrentPaymentsChargeCommand;
 use Crm\PaymentsModule\Models\GatewayFactory;
-use Crm\PaymentsModule\Models\OneStopShop\CountryResolutionType;
+use Crm\PaymentsModule\Models\OneStopShop\CountryResolutionTypeEnum;
 use Crm\PaymentsModule\Models\PaymentItem\DonationPaymentItem;
 use Crm\PaymentsModule\Models\PaymentItem\PaymentItemContainer;
 use Crm\PaymentsModule\Models\PaymentProcessor;
@@ -79,7 +79,7 @@ class RecurrentPaymentCreationTest extends PaymentsTestCase
             user: $this->user,
             paymentItemContainer: $paymentItemContainer,
             paymentCountry: $this->inject(CountriesRepository::class)->findByIsoCode('PL'),
-            paymentCountryResolutionReason: CountryResolutionType::USER_SELECTED->value,
+            paymentCountryResolutionReason: CountryResolutionTypeEnum::UserSelected->value,
         );
 
         // Make manual payment
@@ -87,7 +87,7 @@ class RecurrentPaymentCreationTest extends PaymentsTestCase
         $payment = $this->paymentsRepository->find($payment->id);
         $this->assertEquals(PaymentsRepository::STATUS_PAID, $payment->status);
         $this->assertEquals('PL', $payment->payment_country->iso_code);
-        $this->assertEquals(CountryResolutionType::USER_SELECTED->value, $payment->payment_country_resolution_reason);
+        $this->assertEquals(CountryResolutionTypeEnum::UserSelected->value, $payment->payment_country_resolution_reason);
 
         // Charge recurrent
         $recurrentPayment = $this->recurrentPaymentsRepository->recurrent($payment);
@@ -97,7 +97,7 @@ class RecurrentPaymentCreationTest extends PaymentsTestCase
         $payment2 = $recurrentPayment->payment;
         $this->assertEquals(PaymentsRepository::STATUS_PAID, $payment2->status);
         $this->assertEquals('PL', $payment2->payment_country->iso_code);
-        $this->assertEquals(CountryResolutionType::PREVIOUS_PAYMENT->value, $payment2->payment_country_resolution_reason);
+        $this->assertEquals(CountryResolutionTypeEnum::PreviousPayment->value, $payment2->payment_country_resolution_reason);
 
         // Charge again
         $recurrentPayment2 = $this->recurrentPaymentsRepository->recurrent($payment2);
@@ -107,7 +107,7 @@ class RecurrentPaymentCreationTest extends PaymentsTestCase
         $payment3 = $recurrentPayment2->payment;
         $this->assertEquals(PaymentsRepository::STATUS_PAID, $payment3->status);
         $this->assertEquals('PL', $payment3->payment_country->iso_code);
-        $this->assertEquals(CountryResolutionType::PREVIOUS_PAYMENT->value, $payment3->payment_country_resolution_reason);
+        $this->assertEquals(CountryResolutionTypeEnum::PreviousPayment->value, $payment3->payment_country_resolution_reason);
     }
 
     public function testNonRecurrentDonation(): void

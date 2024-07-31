@@ -11,7 +11,6 @@ use Crm\ApplicationModule\Repositories\AuditLogRepository;
 use Crm\ApplicationModule\Repositories\CacheRepository;
 use Crm\PaymentsModule\Events\NewPaymentEvent;
 use Crm\PaymentsModule\Events\PaymentChangeStatusEvent;
-use Crm\PaymentsModule\Models\GeoIp\GeoIpException;
 use Crm\PaymentsModule\Models\OneStopShop\OneStopShop;
 use Crm\PaymentsModule\Models\PaymentItem\PaymentItemContainer;
 use Crm\PaymentsModule\Models\PaymentItem\PaymentItemContainerFactory;
@@ -229,22 +228,16 @@ class PaymentsRepository extends Repository
             $paymentData['variable_symbol'] = $this->variableSymbol->getNew($paymentGateway);
         }
 
-        // One-Stop-Shop
-        try {
-            $resolvedCountry = $this->oneStopShop->resolveCountry(
-                user: $this->usersRepository->find($paymentData['user_id']),
-                paymentAddress: $this->addressesRepository->find($paymentData['address_id'] ?? null),
-                paymentItemContainer: $paymentItemContainer,
-                ipAddress: $paymentData['ip'],
-                previousPayment: $payment,
-            );
-            if ($resolvedCountry) {
-                $paymentData['payment_country_id'] = $resolvedCountry->country->id;
-                $paymentData['payment_country_resolution_reason'] = $resolvedCountry->getReasonValue();
-            }
-        } catch (GeoIpException $exception) {
-            // do not crash because of wrong IP resolution, just log
-            Debugger::log("PaymentsRepository copyPayment OSS error: " . $exception->getMessage(), Debugger::ERROR);
+        $resolvedCountry = $this->oneStopShop->resolveCountry(
+            user: $this->usersRepository->find($paymentData['user_id']),
+            paymentAddress: $this->addressesRepository->find($paymentData['address_id'] ?? null),
+            paymentItemContainer: $paymentItemContainer,
+            ipAddress: $paymentData['ip'],
+            previousPayment: $payment,
+        );
+        if ($resolvedCountry) {
+            $paymentData['payment_country_id'] = $resolvedCountry->country->id;
+            $paymentData['payment_country_resolution_reason'] = $resolvedCountry->getReasonValue();
         }
 
         return $this->add(

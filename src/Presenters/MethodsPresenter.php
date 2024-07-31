@@ -5,7 +5,6 @@ namespace Crm\PaymentsModule\Presenters;
 use Crm\ApplicationModule\Presenters\FrontendPresenter;
 use Crm\PaymentsModule\Models\GatewayFactory;
 use Crm\PaymentsModule\Models\Gateways\AuthorizationInterface;
-use Crm\PaymentsModule\Models\GeoIp\GeoIpException;
 use Crm\PaymentsModule\Models\OneStopShop\OneStopShop;
 use Crm\PaymentsModule\Models\PaymentItem\AuthorizationPaymentItem;
 use Crm\PaymentsModule\Models\PaymentItem\PaymentItemContainer;
@@ -15,7 +14,6 @@ use Crm\PaymentsModule\Repositories\PaymentsRepository;
 use Crm\PaymentsModule\Repositories\RecurrentPaymentsRepository;
 use Crm\UsersModule\Models\Auth\UserManager;
 use Nette\Application\BadRequestException;
-use Tracy\Debugger;
 
 class MethodsPresenter extends FrontendPresenter
 {
@@ -63,16 +61,10 @@ class MethodsPresenter extends FrontendPresenter
             new AuthorizationPaymentItem('authorization', $gateway->getAuthorizationAmount())
         );
 
-        $countryResolution = null;
-        try {
-            $countryResolution  = $this->oneStopShop->resolveCountry(
-                user: $userRow,
-                paymentItemContainer: $paymentItemContainer,
-            );
-        } catch (GeoIpException $exception) {
-            // do not crash because of wrong IP resolution, just log
-            Debugger::log("MethodsPresenter OSS GeoIpException: " . $exception->getMessage(), Debugger::ERROR);
-        }
+        $countryResolution  = $this->oneStopShop->resolveCountry(
+            user: $userRow,
+            paymentItemContainer: $paymentItemContainer,
+        );
 
         $payment = $this->paymentsRepository->add(
             subscriptionType: null,

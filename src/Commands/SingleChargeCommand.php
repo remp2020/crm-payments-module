@@ -5,7 +5,6 @@ namespace Crm\PaymentsModule\Commands;
 use Crm\PaymentsModule\Events\BeforeRecurrentPaymentChargeEvent;
 use Crm\PaymentsModule\Models\GatewayFactory;
 use Crm\PaymentsModule\Models\Gateways\RecurrentPaymentInterface;
-use Crm\PaymentsModule\Models\GeoIp\GeoIpException;
 use Crm\PaymentsModule\Models\OneStopShop\OneStopShop;
 use Crm\PaymentsModule\Models\PaymentItem\PaymentItemContainer;
 use Crm\PaymentsModule\Repositories\PaymentsRepository;
@@ -17,7 +16,6 @@ use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
-use Tracy\Debugger;
 
 class SingleChargeCommand extends Command
 {
@@ -111,17 +109,11 @@ class SingleChargeCommand extends Command
             return Command::FAILURE;
         }
 
-        $countryResolution = null;
-        try {
-            $countryResolution  = $this->oneStopShop->resolveCountry(
-                user: $recurrentPayment->user,
-                selectedCountryCode: $paymentCountryCode,
-                paymentItemContainer: $paymentItemContainer,
-            );
-        } catch (GeoIpException $exception) {
-            // do not crash because of wrong IP resolution, just log
-            Debugger::log("SingleChargeCommand OSS GeoIpException: " . $exception->getMessage(), Debugger::ERROR);
-        }
+        $countryResolution  = $this->oneStopShop->resolveCountry(
+            user: $recurrentPayment->user,
+            selectedCountryCode: $paymentCountryCode,
+            paymentItemContainer: $paymentItemContainer,
+        );
 
         $payment = $this->paymentsRepository->add(
             subscriptionType: $subscriptionType,

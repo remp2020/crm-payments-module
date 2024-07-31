@@ -43,7 +43,7 @@ final class OneStopShop
     }
 
     /**
-     * @throws OneStopShopCountryConflictException|GeoIpException
+     * @throws OneStopShopCountryConflictException
      */
     public function resolveCountry(
         ?ActiveRow $user = null,
@@ -87,7 +87,7 @@ final class OneStopShop
             if ($selectedCountryCode !== null && $selectedCountryCode !== $paymentAddress->country->iso_code) {
                 throw new OneStopShopCountryConflictException("Conflicting selectedCountryCode [{$selectedCountryCode}] and paymentAddress country [{$paymentAddress->country->iso_code}]");
             }
-            return new CountryResolution($paymentAddress->country, CountryResolutionType::PAYMENT_ADDRESS);
+            return new CountryResolution($paymentAddress->country, CountryResolutionTypeEnum::PaymentAddress);
         }
 
         if ($selectedCountryCode) {
@@ -95,29 +95,32 @@ final class OneStopShop
             if (!$selectedCountry) {
                 throw new \RuntimeException("Invalid selected country code [{$selectedCountryCode}]");
             }
-            return new CountryResolution($selectedCountry, CountryResolutionType::USER_SELECTED);
+            return new CountryResolution($selectedCountry, CountryResolutionTypeEnum::UserSelected);
         }
 
         if ($previousPayment && $previousPayment->payment_country) {
             return new CountryResolution(
                 $previousPayment->payment_country,
-                CountryResolutionType::PREVIOUS_PAYMENT,
+                CountryResolutionTypeEnum::PreviousPayment,
             );
         }
 
-        $ipCountryCode = $this->geoIp->countryCode($ipAddress);
-
-        if (!$ipCountryCode) {
+        try {
+            $ipCountryCode = $this->geoIp->countryCode($ipAddress);
             // Some IP addresses do not have designated country (e.g. 199.64.72.254).
-            return null;
+            if ($ipCountryCode) {
+                $ipCountry = $this->countriesRepository->findByIsoCode($ipCountryCode);
+                if (!$ipCountry) {
+                    throw new \RuntimeException("Invalid IP country code [{$ipCountryCode}]");
+                }
+                return new CountryResolution($ipCountry, CountryResolutionTypeEnum::IpAddress);
+            }
+        } catch (GeoIpException $exception) {
+            // Ignore
         }
 
-        $ipCountry = $this->countriesRepository->findByIsoCode($ipCountryCode);
-        if (!$ipCountry) {
-            throw new \RuntimeException("Invalid IP country code [{$ipCountryCode}]");
-        }
-
-        return new CountryResolution($ipCountry, CountryResolutionType::IP_ADDRESS);
+        // If all other resolutions return no result and there is no conflict, default to default country
+        return new CountryResolution($this->countriesRepository->defaultCountry(), CountryResolutionTypeEnum::DefaultCountry);
     }
 
     public function adjustPaymentVatRates(
@@ -191,7 +194,7 @@ final class OneStopShop
                     $prefilledCountryCode = $countryResolution->country->iso_code;
                     $prefilledCountryReason = $countryResolution->getReasonValue();
                 }
-            } catch (OneStopShopCountryConflictException|GeoIpException $e) {
+            } catch (OneStopShopCountryConflictException $e) {
                 Debugger::log($e,);
             }
         }

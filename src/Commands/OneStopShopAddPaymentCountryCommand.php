@@ -3,7 +3,6 @@
 namespace Crm\PaymentsModule\Commands;
 
 use Crm\ApplicationModule\Commands\DecoratedCommandTrait;
-use Crm\PaymentsModule\Models\GeoIp\GeoIpException;
 use Crm\PaymentsModule\Models\OneStopShop\OneStopShop;
 use Crm\PaymentsModule\Models\OneStopShop\OneStopShopCountryConflictException;
 use Crm\PaymentsModule\Models\PaymentItem\PaymentItemContainerFactory;
@@ -24,6 +23,7 @@ use Symfony\Component\Console\Output\OutputInterface;
 class OneStopShopAddPaymentCountryCommand extends Command
 {
     use DecoratedCommandTrait;
+
     public function __construct(
         private RecurrentPaymentsRepository $recurrentPaymentsRepository,
         private PaymentsRepository $paymentsRepository,
@@ -51,6 +51,13 @@ class OneStopShopAddPaymentCountryCommand extends Command
                 null,
                 InputOption::VALUE_REQUIRED,
                 "Include only payments created after the provided date."
+            )
+            ->addOption(
+                'statuses',
+                null,
+                InputOption::VALUE_REQUIRED,
+                "Payment status(es) to include. Expects list of values separated by comma. By default, only 'paid' are included.",
+                default: PaymentsRepository::STATUS_PAID,
             );
     }
 
@@ -70,6 +77,9 @@ class OneStopShopAddPaymentCountryCommand extends Command
         } else {
             $paymentsToProcess = $this->getPaymentsWithMissingPaymentCountry();
         }
+
+        $statusesOption = $input->getOption('statuses');
+        $paymentsToProcess = $paymentsToProcess->where('payments.status IN (?)', explode(',', $statusesOption));
 
         if ($fromOption = $input->getOption('from')) {
             $from = DateTime::from($fromOption);
@@ -130,10 +140,10 @@ class OneStopShopAddPaymentCountryCommand extends Command
                         'payment_country_resolution_reason' => $countryResolutionReason
                     ]);
 
-                    $this->line(" * Payment <info>[{$payment->id}]</info> resolved to <info>[" . $country->iso_code . "]</info>");
+                    $this->line(" * Payment <info>[{$payment->id}]</info> resolved to <info>[" . $country->iso_code . "]</info> (reason <info>[" . $countryResolutionReason . "]</info>)");
 
                     $this->resolveRecurrentChildren($payment, $country, $countryResolutionReason);
-                } catch (OneStopShopCountryConflictException|GeoIpException $e) {
+                } catch (OneStopShopCountryConflictException $e) {
                     $this->error(" * Payment [{$payment->id}] - unable to add payment country: " . $e->getMessage());
                     continue;
                 }

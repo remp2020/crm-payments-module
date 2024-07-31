@@ -3,7 +3,6 @@
 namespace Crm\PaymentsModule\Events;
 
 use Crm\PaymentsModule\Models\Gateways\BankTransfer;
-use Crm\PaymentsModule\Models\GeoIp\GeoIpException;
 use Crm\PaymentsModule\Models\OneStopShop\CountryResolution;
 use Crm\PaymentsModule\Models\OneStopShop\OneStopShop;
 use Crm\PaymentsModule\Models\PaymentItem\PaymentItemContainer;
@@ -96,19 +95,12 @@ class AttachRenewalPaymentEventHandler extends AbstractListener
             $newPayment = $creatingNewPaymentEvent->getRenewalPayment();
 
             if ($newPayment === null) {
-                $countryResolution = null;
-
-                try {
-                    $countryResolution = $this->oneStopShop->resolveCountry(
-                        user: $user,
-                        paymentItemContainer: $paymentItemContainer,
-                        // use previous payment if found
-                        previousPayment: $subscription->related('payments')->fetch()
-                    );
-                } catch (GeoIpException $exception) {
-                    // do not crash because of wrong IP resolution, attempt to use source payment
-                    // this catch will be removed in the following days anyway
-                }
+                $countryResolution = $this->oneStopShop->resolveCountry(
+                    user: $user,
+                    paymentItemContainer: $paymentItemContainer,
+                    // use previous payment if found
+                    previousPayment: $subscription->related('payments')->fetch()
+                );
 
                 // we failed, try to resolve naturally, but expect the "default" because this is not an online action
                 if (!$countryResolution) {

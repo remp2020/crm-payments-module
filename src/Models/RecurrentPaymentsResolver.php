@@ -4,8 +4,7 @@ namespace Crm\PaymentsModule\Models;
 
 use Crm\ApplicationModule\Models\Config\ApplicationConfig;
 use Crm\PaymentsModule\Events\RecurrentPaymentItemContainerReadyEvent;
-use Crm\PaymentsModule\Models\GeoIp\GeoIpException;
-use Crm\PaymentsModule\Models\OneStopShop\CountryResolutionType;
+use Crm\PaymentsModule\Models\OneStopShop\CountryResolutionTypeEnum;
 use Crm\PaymentsModule\Models\OneStopShop\OneStopShop;
 use Crm\PaymentsModule\Models\PaymentItem\DonationPaymentItem;
 use Crm\PaymentsModule\Models\PaymentItem\PaymentItemContainer;
@@ -295,21 +294,19 @@ class RecurrentPaymentsResolver
         $paymentCountry = null;
         $paymentCountryResolutionReason = null;
         if ($this->oneStopShop->isEnabled()) {
-            $resolvedCountry = null;
+            $resolvedCountry = $this->oneStopShop->resolveCountry(
+                user: $recurrentPayment->user,
+                paymentAddress: $address,
+                paymentItemContainer: $paymentItemContainer,
+                previousPayment: $parentPayment,
+            );
 
-            try {
-                $resolvedCountry = $this->oneStopShop->resolveCountry(
-                    user: $recurrentPayment->user,
-                    paymentAddress: $address,
-                    paymentItemContainer: $paymentItemContainer,
-                    previousPayment: $parentPayment,
-                );
-            } catch (GeoIpException $e) {
-                // Resolver probably tried to resolve the country based on "cli" IP address, will be handled further.
-            }
             // IP address isn't a good indicator to resolve the country.
-            // If there is no other previous resolution, IP of original payment should be used instead.
-            if (!$resolvedCountry || $resolvedCountry->reason === CountryResolutionType::IP_ADDRESS) {
+            // "Default country" resolution neither, it may happen if IP address is not valid (e.g. 'cli')
+            // If there is no better resolution, IP of original payment should be used instead.
+            if (!$resolvedCountry ||
+                $resolvedCountry->reason === CountryResolutionTypeEnum::IpAddress ||
+                $resolvedCountry->reason === CountryResolutionTypeEnum::DefaultCountry) {
                 $originalPaymentIp = $this->resolveOriginalPaymentIp($parentPayment);
                 if ($originalPaymentIp) {
                     $resolvedCountry = $this->oneStopShop->resolveCountry(
