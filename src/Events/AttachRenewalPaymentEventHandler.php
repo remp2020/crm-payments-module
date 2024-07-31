@@ -4,6 +4,7 @@ namespace Crm\PaymentsModule\Events;
 
 use Crm\PaymentsModule\Models\Gateways\BankTransfer;
 use Crm\PaymentsModule\Models\GeoIp\GeoIpException;
+use Crm\PaymentsModule\Models\OneStopShop\CountryResolution;
 use Crm\PaymentsModule\Models\OneStopShop\OneStopShop;
 use Crm\PaymentsModule\Models\PaymentItem\PaymentItemContainer;
 use Crm\PaymentsModule\Repositories\PaymentGatewaysRepository;
@@ -17,7 +18,6 @@ use Crm\UsersModule\Repositories\UsersRepository;
 use League\Event\AbstractListener;
 use League\Event\Emitter;
 use League\Event\EventInterface;
-use Tracy\Debugger;
 
 class AttachRenewalPaymentEventHandler extends AbstractListener
 {
@@ -97,6 +97,7 @@ class AttachRenewalPaymentEventHandler extends AbstractListener
 
             if ($newPayment === null) {
                 $countryResolution = null;
+
                 try {
                     $countryResolution = $this->oneStopShop->resolveCountry(
                         user: $user,
@@ -105,8 +106,20 @@ class AttachRenewalPaymentEventHandler extends AbstractListener
                         previousPayment: $subscription->related('payments')->fetch()
                     );
                 } catch (GeoIpException $exception) {
-                    // do not crash because of wrong IP resolution, just log
-                    Debugger::log("AttachRenewalPaymentEventHandler OSS GeoIpException: " . $exception->getMessage(), Debugger::ERROR);
+                    // do not crash because of wrong IP resolution, attempt to use source payment
+                    // this catch will be removed in the following days anyway
+                }
+
+                // we failed, try to resolve naturally, but expect the "default" because this is not an online action
+                if (!$countryResolution) {
+                    // try to resolve based on the previous payment
+                    $sourcePayment = $this->paymentsRepository->subscriptionPayment($subscription);
+                    if ($sourcePayment) {
+                        $countryResolution = new CountryResolution(
+                            country: $sourcePayment->payment_country,
+                            reason: $sourcePayment->payment_country_resolution_reason,
+                        );
+                    }
                 }
 
                 $newPayment = $this->paymentsRepository->add(
