@@ -202,3 +202,8 @@ services:
 
 	geoIp: Crm\PaymentsModule\Models\GeoIp\MaxmindLazyGeoReader
 	- Crm\PaymentsModule\Models\OneStopShop\OneStopShop
+
+	# scenarios
+	scenariosGenericEventsManager:
+		setup:
+			- register('attach_renewal_payment', Crm\PaymentsModule\Scenarios\AttachRenewalPaymentGenericEvent())
