@@ -125,7 +125,7 @@ final class OneStopShop
 
     public function adjustPaymentVatRates(
         ActiveRow $payment,
-        ?ActiveRow $paymentCountry
+        ?ActiveRow $paymentCountry,
     ): void {
         if (!$this->isEnabled()) {
             return;
@@ -135,13 +135,25 @@ final class OneStopShop
             return;
         }
 
-        // Do not adjust rates for default country
+        // adjusting payment vat rates for default country is done only if different payment country
+        // was previously set on existing payment
+        $defaultCountry = false;
         if ($this->countriesRepository->defaultCountry()->iso_code === $paymentCountry->iso_code) {
-            return;
+            if (!$payment->payment_country) {
+                return;
+            }
+            $defaultCountry = true;
         }
 
         foreach ($payment->related('payment_items') as $paymentItem) {
-            $vatRate = $this->getCountryVatRate($paymentCountry, $paymentItem);
+            // for default country and payment item with reference to subscription type item,
+            // load original VAT
+            if ($defaultCountry && $paymentItem->subscription_type_item) {
+                $vatRate = $paymentItem->subscription_type_item->vat;
+            } else {
+                $vatRate = $this->getCountryVatRate($paymentCountry, $paymentItem);
+            }
+
             $this->paymentItemsRepository->update($paymentItem, [
                 'vat' => $vatRate,
                 'amount_without_vat' =>  PaymentItemHelper::getPriceWithoutVAT($paymentItem->amount, $vatRate),
