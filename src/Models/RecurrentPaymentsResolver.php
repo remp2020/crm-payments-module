@@ -3,6 +3,8 @@
 namespace Crm\PaymentsModule\Models;
 
 use Crm\ApplicationModule\Models\Config\ApplicationConfig;
+use Crm\ApplicationModule\Models\DataProvider\DataProviderManager;
+use Crm\PaymentsModule\DataProviders\RecurrentPaymentPaymentItemContainerDataProviderInterface;
 use Crm\PaymentsModule\Events\RecurrentPaymentItemContainerReadyEvent;
 use Crm\PaymentsModule\Models\OneStopShop\CountryResolutionTypeEnum;
 use Crm\PaymentsModule\Models\OneStopShop\OneStopShop;
@@ -30,6 +32,7 @@ class RecurrentPaymentsResolver
         private Emitter $emitter,
         private OneStopShop $oneStopShop,
         private PaymentItemContainerFactory $paymentItemContainerFactory,
+        private DataProviderManager $dataProviderManager,
     ) {
     }
 
@@ -170,39 +173,62 @@ class RecurrentPaymentsResolver
         null|float|int $additionalAmount,
         ?string $additionalType,
     ): PaymentItemContainer {
-        $paymentItemContainer = new PaymentItemContainer();
-        $parentPayment = $recurrentPayment->parent_payment;
+        $paymentItemContainer = null;
 
-        // we want to load previous payment items only if new subscription has same subscription type
-        // and it isn't upgraded recurrent payment
-        if ($subscriptionType->id === $parentPayment->subscription_type_id
-            && $subscriptionType->id === $recurrentPayment->subscription_type_id
-            && $parentPayment->amount === $recurrentPayment->subscription_type->price
-            && !$customChargeAmount
-        ) {
-            $paymentItemContainer = $this->paymentItemContainerFactory->createFromPayment(
-                $parentPayment,
-                [SubscriptionTypePaymentItem::TYPE]
-            );
-
-            // In case of subscription type VAT change, parent payment would copy incorrect VAT rates
-            // into the new payment items. If we see a change in a total price without VAT, we don't
-            // copy the items anymore (the price with VAT was already checked in IF above).
-            $containerToCompare = new PaymentItemContainer();
-            $containerToCompare->addItems(SubscriptionTypePaymentItem::fromSubscriptionType($subscriptionType));
-
-            if (round($paymentItemContainer->totalPriceWithoutVAT(), 2) !==
-                round($containerToCompare->totalPriceWithoutVAT(), 2)
-            ) {
-                $paymentItemContainer = $containerToCompare;
+        // let modules rewrite PaymentItemContainer creation logic
+        /** @var RecurrentPaymentPaymentItemContainerDataProviderInterface[] $providers */
+        $providers = $this->dataProviderManager->getProviders(
+            'payments.dataprovider.recurrent_payment_payment_item_container',
+            RecurrentPaymentPaymentItemContainerDataProviderInterface::class
+        );
+        foreach ($providers as $s => $provider) {
+            $resolvedContainer = $provider->provide([
+                'recurrent_payment' => $recurrentPayment,
+                'subscription_type' => $subscriptionType,
+                'custom_charge_amount' => $customChargeAmount,
+            ]);
+            if ($resolvedContainer) {
+                $paymentItemContainer = $resolvedContainer;
+                break;
             }
-        } elseif (!$customChargeAmount) {
-            // if subscription type has changed or there is a price difference (e.g. caused by donation),
-            // load subscription type payment items from subscription type
-            $paymentItemContainer->addItems(SubscriptionTypePaymentItem::fromSubscriptionType($subscriptionType));
-        } else {
-            $items = $this->getSubscriptionTypeItemsForCustomChargeAmount($subscriptionType, $customChargeAmount);
-            $paymentItemContainer->addItems($items);
+        }
+
+        if (!$paymentItemContainer) {
+            $paymentItemContainer = new PaymentItemContainer();
+
+            $parentPayment = $recurrentPayment->parent_payment;
+
+            // we want to load previous payment items only if new subscription has same subscription type
+            // and it isn't upgraded recurrent payment
+            if ($subscriptionType->id === $parentPayment->subscription_type_id
+                && $subscriptionType->id === $recurrentPayment->subscription_type_id
+                && $parentPayment->amount === $recurrentPayment->subscription_type->price
+                && !$customChargeAmount
+            ) {
+                $paymentItemContainer = $this->paymentItemContainerFactory->createFromPayment(
+                    $parentPayment,
+                    [SubscriptionTypePaymentItem::TYPE]
+                );
+
+                // In case of subscription type VAT change, parent payment would copy incorrect VAT rates
+                // into the new payment items. If we see a change in a total price without VAT, we don't
+                // copy the items anymore (the price with VAT was already checked in IF above).
+                $containerToCompare = new PaymentItemContainer();
+                $containerToCompare->addItems(SubscriptionTypePaymentItem::fromSubscriptionType($subscriptionType));
+
+                if (round($paymentItemContainer->totalPriceWithoutVAT(), 2) !==
+                    round($containerToCompare->totalPriceWithoutVAT(), 2)
+                ) {
+                    $paymentItemContainer = $containerToCompare;
+                }
+            } elseif (!$customChargeAmount) {
+                // if subscription type has changed or there is a price difference (e.g. caused by donation),
+                // load subscription type payment items from subscription type
+                $paymentItemContainer->addItems(SubscriptionTypePaymentItem::fromSubscriptionType($subscriptionType));
+            } else {
+                $items = $this->getSubscriptionTypeItemsForCustomChargeAmount($subscriptionType, $customChargeAmount);
+                $paymentItemContainer->addItems($items);
+            }
         }
 
         // Recurrent donation item are added directly
