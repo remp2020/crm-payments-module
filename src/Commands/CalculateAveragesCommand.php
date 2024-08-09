@@ -4,6 +4,7 @@ namespace Crm\PaymentsModule\Commands;
 
 use Crm\ApplicationModule\Commands\DecoratedCommandTrait;
 use Crm\PaymentsModule\Repositories\PaymentsRepository;
+use Crm\SegmentModule\Models\SegmentFactory;
 use Crm\SubscriptionsModule\Models\PaymentItem\SubscriptionTypePaymentItem;
 use Crm\UsersModule\Repositories\UserMetaRepository;
 use Crm\UsersModule\Repositories\UserStatsRepository;
@@ -32,29 +33,15 @@ class CalculateAveragesCommand extends Command
     private ?int $calculatedPeriod = null;
     private ?DateTime $startDate = null;
 
-    private Explorer $database;
-
-    private PaymentsRepository $paymentsRepository;
-
-    private UserStatsRepository $userStatsRepository;
-
-    private UsersRepository $usersRepository;
-
-    private UserMetaRepository $userMetaRepository;
-
     public function __construct(
-        Explorer $database,
-        PaymentsRepository $paymentsRepository,
-        UserStatsRepository $userStatsRepository,
-        UsersRepository $usersRepository,
-        UserMetaRepository $userMetaRepository
+        private readonly Explorer $database,
+        private readonly PaymentsRepository $paymentsRepository,
+        private readonly SegmentFactory $segmentFactory,
+        private readonly UserStatsRepository $userStatsRepository,
+        private readonly UsersRepository $usersRepository,
+        private readonly UserMetaRepository $userMetaRepository
     ) {
         parent::__construct();
-        $this->database = $database;
-        $this->paymentsRepository = $paymentsRepository;
-        $this->userStatsRepository = $userStatsRepository;
-        $this->usersRepository = $usersRepository;
-        $this->userMetaRepository = $userMetaRepository;
     }
 
     protected function configure()
@@ -65,13 +52,19 @@ class CalculateAveragesCommand extends Command
                 'delete',
                 null,
                 InputOption::VALUE_NONE,
-                "Force deleting existing data in 'user_stats' table and 'user_meta' table (where data was originally stored)"
+                "Force deleting existing data in 'user_stats' table and 'user_meta' table (where data was originally stored). If users are provided (--user_id or --segment_code option), only values for provided user(s) are deleted.",
             )
             ->addOption(
                 'user_id',
                 null,
+                InputOption::VALUE_REQUIRED | InputOption::VALUE_IS_ARRAY,
+                "Compute average values for given user(s) only. If this option is used, --segment_code is ignored.",
+            )
+            ->addOption(
+                'segment_code',
+                null,
                 InputOption::VALUE_REQUIRED,
-                "Compute average values for given user only."
+                "Compute average values for users in provided segment. This option is ignored, if `--user_id` is used.",
             )
             ->addOption(
                 'subscription_period',
@@ -91,6 +84,12 @@ class CalculateAveragesCommand extends Command
                 InputOption::VALUE_REQUIRED,
                 "Set beginning for which should be averages calculated. Use PHP's DateInterval format (eg. P2Y). Default: no beginning; will calculate from all payments.",
             )
+            ->addUsage('                                         # no options, all stats are calculated')
+            ->addUsage('--user_id=123 --user_id=456              # stats for users with ID #123 and #456 are calculated')
+            ->addUsage('--segment_code=active_users              # stats for users in segment `active_users`')
+            ->addUsage('--delete                                 # all existing data is removed and recalculated')
+            ->addUsage('--delete --user_id=123 --user_id=456     # data of users with ID #123 and #456 is removed and recalculated')
+            ->addUsage('--delete --segment_code=active_users     # data of users in segment `active_users` is removed and recalculated')
         ;
     }
 
@@ -147,48 +146,73 @@ class CalculateAveragesCommand extends Command
         }
         $this->line("  * Minimal subscription length set to: <comment>{$this->minimalSubscriptionLength}</comment>.");
 
+        $output->write('  * Calculating averages for ');
+        $userIDs = $input->getOption('user_id');
+        $segmentCode = $input->getOption('segment_code');
+
+        // check user IDs (--user_id has priority over --segment_code)
+        if (!empty($userIDs)) {
+            $this->line('provided user IDs: ' . implode(', ', $userIDs));
+        } elseif ($segmentCode !== null) {
+            $segment = $this->segmentFactory->buildSegment($segmentCode);
+            $segmentCount = $segment->totalCount();
+            $this->line("provided segment: [<comment>{$segmentCode}</comment>] with {$segmentCount} users.");
+            $userIDs = $segment->getIds();
+        }
+        if (empty($userIDs)) {
+            $this->line("all users.");
+        }
+
+        // delete existing stats (if --delete is used)
         if ($input->getOption('delete')) {
             $this->line("  * deleting old values from 'user_stats' and 'user_meta' tables.");
 
-            $this->userStatsRepository->getTable()
-                ->where('key IN (?)', $keys)
-                ->delete();
+            $userStats = $this->userStatsRepository->getTable()
+                ->where('key IN (?)', $keys);
+            if (!empty($userIDs)) {
+                $userStats->where('user_id IN (?)', $userIDs);
+            }
+            $userStats->delete();
 
-            $this->userMetaRepository->getTable()
-                ->where('key IN (?)', $keys)
-                ->delete();
+            $userMeta = $this->userMetaRepository->getTable()
+                ->where('key IN (?)', $keys);
+            if (!empty($userIDs)) {
+                $userMeta->where('user_id IN (?)', $userIDs);
+            }
+            $userMeta->delete();
         }
-
-        $userId = $input->getOption('user_id');
 
         foreach ($keys as $key) {
             $this->line("  * filling up 0s for '<info>{$key}</info>' stat");
 
-            if ($userId) {
-                $this->database->query(<<<SQL
-                INSERT IGNORE INTO `user_stats` (`user_id`,`key`,`value`, `created_at`, `updated_at`)
-                VALUES (?, ?, 0, NOW(), NOW())
-SQL, $userId, $key);
+            if (!empty($userIDs)) {
+                foreach ($userIDs as $userID) {
+                    $this->database->query(<<<SQL
+                        INSERT IGNORE INTO `user_stats` (`user_id`,`key`,`value`, `created_at`, `updated_at`)
+                        VALUES (?, ?, 0, NOW(), NOW())
+                    SQL, $userID, $key);
+                }
             } else {
                 $this->database->query(<<<SQL
-                -- fill empty values for new users
-                INSERT IGNORE INTO `user_stats` (`user_id`,`key`,`value`, `created_at`, `updated_at`)
-                SELECT `id`, ?, 0, NOW(), NOW()
-                FROM `users`;
-SQL, $key);
+                    -- fill empty values for new users
+                    INSERT IGNORE INTO `user_stats` (`user_id`,`key`,`value`, `created_at`, `updated_at`)
+                    SELECT users.id, ?, 0, NOW(), NOW()
+                    FROM `users`
+                    LEFT JOIN user_stats ON user_id = users.id AND `key` = ?
+                    WHERE user_stats.id IS NULL;
+                SQL, $key, $key);
             }
         }
 
-        if ($userId) {
-            $interval = [$userId, $userId];
-            $this->computeUserSubscriptionPaymentCounts(...$interval);
-            $this->computeUserSubscriptionPaymentAmounts(...$interval);
-            $this->computeUserAvgPaymentAmount(...$interval);
+        if (!empty($userIDs)) {
+            $this->computeUserSubscriptionPaymentCounts(userIDs: $userIDs);
+            $this->computeUserSubscriptionPaymentAmounts(userIDs: $userIDs);
+            $this->computeUserAvgPaymentAmount(userIDs: $userIDs);
         } else {
             foreach ($this->userIdIntervals() as $interval) {
-                $this->computeUserSubscriptionPaymentCounts(...$interval);
-                $this->computeUserSubscriptionPaymentAmounts(...$interval);
-                $this->computeUserAvgPaymentAmount(...$interval);
+                $this->computeUserSubscriptionPaymentCounts(interval: $interval);
+                $this->computeUserSubscriptionPaymentAmounts(interval: $interval);
+                $this->computeUserAvgPaymentAmount(interval: $interval);
             }
         }
 
@@ -212,9 +236,19 @@ SQL, $key);
         return $intervals;
     }
 
-    private function computeUserSubscriptionPaymentCounts($minUserId, $maxUserId)
+    private function computeUserSubscriptionPaymentCounts(array $userIDs = null, array $interval = null)
     {
-        $this->line("  * computing '<info>subscription_payments</info>' for user IDs between [<info>{$minUserId}</info>, <info>{$maxUserId}</info>]");
+        if (isset($userIDs)) {
+            $this->line("  * computing '<info>subscription_payments</info>' for provided user IDs");
+            $userIdsCondition = "`payments`.`user_id` IN (?)";
+            $userIdsParams = [$userIDs];
+        } elseif (isset($interval)) {
+            $this->line("  * computing '<info>subscription_payments</info>' for user IDs between [<info>{$interval[0]}</info>, <info>{$interval[1]}</info>]");
+            $userIdsCondition = "`payments`.`user_id` BETWEEN ? AND ?";
+            $userIdsParams = $interval;
+        } else {
+            throw new \RuntimeException('Either array of user IDs (e.g. [1,2,3,4,...]) or interval of user IDs (e.g. [1,1000]) need to be provided');
+        }
 
         $paymentPaidAt = $this->startDate;
         $subscriptionTypeItem = SubscriptionTypePaymentItem::TYPE;
@@ -233,17 +267,27 @@ SQL, $key);
                 AND `subscription_types`.`length` >= ?
             WHERE
                 `payment_items`.`type` IN (?)
-                AND `payments`.`user_id` BETWEEN ? AND ?
+                AND {$userIdsCondition}
             GROUP BY `payments`.`user_id`
-        SQL, self::PAYMENT_STATUSES, $paymentPaidAt, $this->minimalSubscriptionLength, $subscriptionTypeItem, $minUserId, $maxUserId)
+        SQL, self::PAYMENT_STATUSES, $paymentPaidAt, $this->minimalSubscriptionLength, $subscriptionTypeItem, ...$userIdsParams)
             ->fetchPairs('user_id', 'subscription_payments');
 
         $this->userStatsRepository->upsertUsersValues('subscription_payments', $values);
     }
 
-    private function computeUserSubscriptionPaymentAmounts($minUserId, $maxUserId)
+    private function computeUserSubscriptionPaymentAmounts(array $userIDs = null, array $interval = null)
     {
-        $this->line("  * computing '<info>subscription_payments_amount</info>' for user IDs between [<info>{$minUserId}</info>, <info>{$maxUserId}</info>]");
+        if (isset($userIDs)) {
+            $this->line("  * computing '<info>subscription_payments_amount</info>' for provided user IDs");
+            $userIdsCondition = "`payments`.`user_id` IN (?)";
+            $userIdsParams = [$userIDs];
+        } elseif (isset($interval)) {
+            $this->line("  * computing '<info>subscription_payments_amount</info>' for user IDs between [<info>{$interval[0]}</info>, <info>{$interval[1]}</info>]");
+            $userIdsCondition = "`payments`.`user_id` BETWEEN ? AND ?";
+            $userIdsParams = $interval;
+        } else {
+            throw new \RuntimeException('Either array of user IDs (e.g. [1,2,3,4,...]) or interval of user IDs (e.g. [1,1000]) need to be provided');
+        }
 
         $paymentPaidAt = $this->startDate;
         $subscriptionTypeItem = SubscriptionTypePaymentItem::TYPE;
@@ -262,17 +306,27 @@ SQL, $key);
                 AND `subscription_types`.`length` >= ?
             WHERE
                 `payment_items`.`type` IN (?)
-                AND `payments`.`user_id` BETWEEN ? AND ?
+                AND {$userIdsCondition}
             GROUP BY `payments`.`user_id`
-        SQL, self::PAYMENT_STATUSES, $paymentPaidAt, $this->minimalSubscriptionLength, $subscriptionTypeItem, $minUserId, $maxUserId)
+        SQL, self::PAYMENT_STATUSES, $paymentPaidAt, $this->minimalSubscriptionLength, $subscriptionTypeItem, ...$userIdsParams)
             ->fetchPairs('user_id', 'subscription_payments_amount');
 
         $this->userStatsRepository->upsertUsersValues('subscription_payments_amount', $values);
     }
 
-    public function computeUserAvgPaymentAmount($minUserId, $maxUserId)
+    public function computeUserAvgPaymentAmount(array $userIDs = null, array $interval = null)
     {
-        $this->line("  * computing '<info>avg_month_payment</info>' for user IDs between [<info>{$minUserId}</info>, <info>{$maxUserId}</info>]");
+        if (isset($userIDs)) {
+            $this->line("  * computing '<info>avg_month_payment</info>' for provided user IDs");
+            $userIdsCondition = "`payments`.`user_id` IN (?)";
+            $userIdsParams = [$userIDs];
+        } elseif (isset($interval)) {
+            $this->line("  * computing '<info>avg_month_payment</info>' for user IDs between [<info>{$interval[0]}</info>, <info>{$interval[1]}</info>]");
+            $userIdsCondition = "`payments`.`user_id` BETWEEN ? AND ?";
+            $userIdsParams = $interval;
+        } else {
+            throw new \RuntimeException('Either array of user IDs (e.g. [1,2,3,4,...]) or interval of user IDs (e.g. [1,1000]) need to be provided');
+        }
 
         $paymentPaidAt = $this->startDate;
 
@@ -287,9 +341,9 @@ SQL, $key);
             WHERE
                 `payments`.`status` IN (?)
                 AND `payments`.`paid_at` > ?
-                AND `payments`.`user_id` BETWEEN ? AND ?
+                AND {$userIdsCondition}
             GROUP BY `payments`.`user_id`
-        SQL, $this->minimalSubscriptionLength, self::PAYMENT_STATUSES, $paymentPaidAt, $minUserId, $maxUserId)
+        SQL, $this->minimalSubscriptionLength, self::PAYMENT_STATUSES, $paymentPaidAt, ...$userIdsParams)
             ->fetchPairs('user_id', 'avg_month_payment_amount');
 
         $this->userStatsRepository->upsertUsersValues('avg_month_payment', $values);
