@@ -148,7 +148,7 @@ class RetentionAnalysisTest extends DatabaseTestCase
                     [
                         'count' => 0,
                         'users_in_period' => 2,
-                        'incomplate' => true,
+                        'incomplete' => true,
                     ],
                 ]
             ],
@@ -226,7 +226,7 @@ class RetentionAnalysisTest extends DatabaseTestCase
                     [
                         'count' => 0,
                         'users_in_period' => 3,
-                        'incomplate' => true,
+                        'incomplete' => true,
                     ],
                 ],
                 '2023-01' => [
