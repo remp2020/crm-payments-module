@@ -2,6 +2,7 @@
 
 namespace Crm\PaymentsModule\Tests;
 
+use Crm\PaymentsModule\Events\BeforeBankTransferMailProcessingEvent;
 use Crm\PaymentsModule\Models\Gateways\BankTransfer;
 use Crm\PaymentsModule\Models\Gateways\CsobOneClick;
 use Crm\PaymentsModule\Models\MailConfirmation\MailProcessor;
@@ -12,6 +13,9 @@ use Crm\PaymentsModule\Repositories\PaymentsRepository;
 use Crm\SubscriptionsModule\Models\PaymentItem\SubscriptionTypePaymentItem;
 use Crm\SubscriptionsModule\Repositories\SubscriptionTypeItemsRepository;
 use DateTime;
+use League\Event\AbstractListener;
+use League\Event\Emitter;
+use Mockery;
 use Tomaj\BankMailsParser\MailContent;
 
 class MailProcessorTest extends PaymentsTestCase
@@ -22,6 +26,8 @@ class MailProcessorTest extends PaymentsTestCase
 
     private SubscriptionTypeItemsRepository $subscriptionTypeItemsRepository;
 
+    private Emitter $emitter;
+
     public function setup(): void
     {
         parent::setup();
@@ -29,6 +35,7 @@ class MailProcessorTest extends PaymentsTestCase
         $this->mailProcessor = $this->container->getByType(MailProcessor::class);
         $this->parsedMailLogsRepository = $this->getRepository(ParsedMailLogsRepository::class);
         $this->subscriptionTypeItemsRepository = $this->getRepository(SubscriptionTypeItemsRepository::class);
+        $this->emitter = $this->inject(Emitter::class);
     }
 
     public function testMailWithoutVariableSymbol()
@@ -402,7 +409,7 @@ class MailProcessorTest extends PaymentsTestCase
         $amount = 10.2;
         $variableSymbol = '7492857611';
 
-        $paymentItemContainer = $paymentItemContainer = (new PaymentItemContainer())->addItems(SubscriptionTypePaymentItem::fromSubscriptionType($this->getSubscriptionType()));
+        $paymentItemContainer = (new PaymentItemContainer())->addItems(SubscriptionTypePaymentItem::fromSubscriptionType($this->getSubscriptionType()));
         $csobOneClickGateway = $this->paymentGatewaysRepository->findBy('code', CsobOneClick::GATEWAY_CODE);
 
         $payment = $this->paymentsRepository->add(
@@ -426,6 +433,44 @@ class MailProcessorTest extends PaymentsTestCase
         $this->assertEquals(BankTransfer::GATEWAY_CODE, $payment->payment_gateway->code);
     }
 
+    public function testPaymentFromOtherThanBankTransferGatewayWithPreventedGatewayOverride(): void
+    {
+        $amount = 10.2;
+        $variableSymbol = '7492857611';
+
+        $eventListener = Mockery::mock(AbstractListener::class)
+            ->shouldReceive('handle')
+            ->withArgs(function (BeforeBankTransferMailProcessingEvent $event) {
+                $event->preventPaymentGatewayOverride();
+                return true;
+            })
+            ->getMock();
+        $this->emitter->addListener(BeforeBankTransferMailProcessingEvent::class, $eventListener);
+
+        $paymentItemContainer = (new PaymentItemContainer())->addItems(SubscriptionTypePaymentItem::fromSubscriptionType($this->getSubscriptionType()));
+        $csobOneClickGateway = $this->paymentGatewaysRepository->findBy('code', CsobOneClick::GATEWAY_CODE);
+
+        $payment = $this->paymentsRepository->add(
+            subscriptionType: $this->getSubscriptionType(),
+            paymentGateway: $csobOneClickGateway,
+            user: $this->getUser(),
+            paymentItemContainer: $paymentItemContainer,
+            amount: $amount,
+            variableSymbol: $variableSymbol,
+        );
+
+        $mailContent = new MailContent();
+        $mailContent->setAmount($amount);
+        $mailContent->setTransactionDate(time());
+        $mailContent->setVs($variableSymbol);
+
+        $result = $this->mailProcessor->processMail($mailContent, new TestOutput());
+        $this->assertTrue($result);
+
+        $payment = $this->paymentsRepository->find($payment->id);
+        $this->assertEquals(CsobOneClick::GATEWAY_CODE, $payment->payment_gateway->code);
+    }
+
     public function testMailWithSourceAccountNumber(): void
     {
         $mailContent = new MailContent();
@@ -438,5 +483,11 @@ class MailProcessorTest extends PaymentsTestCase
         $log = $this->parsedMailLogsRepository->lastLog();
 
         $this->assertEquals('1234567890', $log->source_account_number);
+    }
+
+    protected function tearDown(): void
+    {
+        parent::tearDown();
+        $this->emitter->removeAllListeners(BeforeBankTransferMailProcessingEvent::class);
     }
 }

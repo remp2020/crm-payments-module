@@ -2,6 +2,7 @@
 
 namespace Crm\PaymentsModule\Models\MailConfirmation;
 
+use Crm\PaymentsModule\Events\BeforeBankTransferMailProcessingEvent;
 use Crm\PaymentsModule\Models\Builder\ParsedMailLogsBuilder;
 use Crm\PaymentsModule\Models\Gateways\BankTransfer;
 use Crm\PaymentsModule\Models\Gateways\GatewayAbstract;
@@ -10,6 +11,7 @@ use Crm\PaymentsModule\Repositories\ParsedMailLogsRepository;
 use Crm\PaymentsModule\Repositories\PaymentGatewaysRepository;
 use Crm\PaymentsModule\Repositories\PaymentsRepository;
 use DateInterval;
+use League\Event\Emitter;
 use Nette\Database\Table\ActiveRow;
 use Nette\Utils\DateTime;
 use Omnipay\Common\Exception\InvalidRequestException;
@@ -27,11 +29,12 @@ class MailProcessor
     private OutputInterface $output;
 
     public function __construct(
-        private PaymentsRepository $paymentsRepository,
-        private PaymentProcessor $paymentProcessor,
-        private ParsedMailLogsBuilder $parsedMailLogsBuilder,
-        private ParsedMailLogsRepository $parsedMailLogsRepository,
-        private PaymentGatewaysRepository $paymentGatewaysRepository,
+        private readonly PaymentsRepository $paymentsRepository,
+        private readonly PaymentProcessor $paymentProcessor,
+        private readonly ParsedMailLogsBuilder $parsedMailLogsBuilder,
+        private readonly ParsedMailLogsRepository $parsedMailLogsRepository,
+        private readonly PaymentGatewaysRepository $paymentGatewaysRepository,
+        private readonly Emitter $emitter,
     ) {
     }
 
@@ -133,14 +136,22 @@ class MailProcessor
             return false;
         }
 
+        $beforeBankTransferMailProcessingEvent = new BeforeBankTransferMailProcessingEvent($payment);
+        $this->emitter->emit($beforeBankTransferMailProcessingEvent);
+
         if (in_array($payment->status, [PaymentsRepository::STATUS_FORM, PaymentsRepository::STATUS_FAIL, PaymentsRepository::STATUS_TIMEOUT], true)) {
             $payment = $this->paymentsRepository->updateStatus($payment, PaymentsRepository::STATUS_PAID, true);
 
-            if ($payment && $payment->payment_gateway->code !== BankTransfer::GATEWAY_CODE) {
-                $bankTransferPaymentGateway = $this->paymentGatewaysRepository->findByCode(BankTransfer::GATEWAY_CODE);
-                $this->paymentsRepository->update($payment, [
-                    'payment_gateway_id' => $bankTransferPaymentGateway->id,
-                ]);
+            if ($payment) {
+                $isWrongPaymentGateway = $payment->payment_gateway->code !== BankTransfer::GATEWAY_CODE;
+
+                $canOverridePaymentGateway = $beforeBankTransferMailProcessingEvent->isPaymentGatewayOverrideAllowed() && $isWrongPaymentGateway;
+                if ($canOverridePaymentGateway) {
+                    $bankTransferPaymentGateway = $this->paymentGatewaysRepository->findByCode(BankTransfer::GATEWAY_CODE);
+                    $this->paymentsRepository->update($payment, [
+                        'payment_gateway_id' => $bankTransferPaymentGateway->id,
+                    ]);
+                }
             }
 
             $state = ParsedMailLogsRepository::STATE_CHANGED_TO_PAID;
