@@ -60,6 +60,8 @@ services:
 	- Crm\PaymentsModule\Components\PaymentToSubscriptionMenu\PaymentToSubscriptionMenu
 	- Crm\PaymentsModule\Components\RefundPaymentItemsListWidget\RefundPaymentItemsListWidget
 	- Crm\PaymentsModule\Components\SubscriptionDetailWidget\SubscriptionDetailWidget
+	- Crm\PaymentsModule\Components\SubscriptionTransferInformationWidget\SubscriptionTransferInformationWidget
+	- Crm\PaymentsModule\Components\SubscriptionTransferSummaryWidget\SubscriptionTransferSummaryWidget
 	- Crm\PaymentsModule\Commands\RecurrentPaymentsCardCheckCommand
 	- Crm\PaymentsModule\Commands\RecurrentPaymentsChargeCommand
 	- Crm\PaymentsModule\Commands\CsobMailConfirmationCommand
@@ -173,6 +175,7 @@ services:
 	- Crm\PaymentsModule\DataProviders\SubscriptionsWithoutExtensionEndingWithinPeriodDataProvider
 	- Crm\PaymentsModule\DataProviders\PaymentItemTypesFilterDataProvider
 	- Crm\PaymentsModule\DataProviders\SubscriptionFormDataProvider
+	- Crm\PaymentsModule\DataProviders\SubscriptionTransferDataProvider
 
 	cardPayDirectLogger:
 		factory: Monolog\Logger('card-pay-direct')

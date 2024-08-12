@@ -65,6 +65,8 @@ use Crm\PaymentsModule\Components\RefundPaymentItemsListWidget\RefundPaymentItem
 use Crm\PaymentsModule\Components\RefundPaymentsListWidget\RefundPaymentsListWidget;
 use Crm\PaymentsModule\Components\SubscribersWithPaymentWidget\SubscribersWithPaymentWidgetFactory;
 use Crm\PaymentsModule\Components\SubscriptionDetailWidget\SubscriptionDetailWidget;
+use Crm\PaymentsModule\Components\SubscriptionTransferInformationWidget\SubscriptionTransferInformationWidget;
+use Crm\PaymentsModule\Components\SubscriptionTransferSummaryWidget\SubscriptionTransferSummaryWidget;
 use Crm\PaymentsModule\Components\SubscriptionTypeReports\SubscriptionTypeReports;
 use Crm\PaymentsModule\Components\SubscriptionsWithActiveUnchargedRecurrentEndingWithinPeriodWidget\SubscriptionsWithActiveUnchargedRecurrentEndingWithinPeriodWidget;
 use Crm\PaymentsModule\Components\SubscriptionsWithoutExtensionEndingWithinPeriodWidget\SubscriptionsWithoutExtensionEndingWithinPeriodWidget;
@@ -81,6 +83,7 @@ use Crm\PaymentsModule\DataProviders\RecurrentPaymentsClaimUserDataProvider;
 use Crm\PaymentsModule\DataProviders\RecurrentPaymentsUserDataProvider;
 use Crm\PaymentsModule\DataProviders\SalesFunnelTwigVariablesDataProvider;
 use Crm\PaymentsModule\DataProviders\SubscriptionFormDataProvider;
+use Crm\PaymentsModule\DataProviders\SubscriptionTransferDataProvider;
 use Crm\PaymentsModule\DataProviders\SubscriptionsWithActiveUnchargedRecurrentEndingWithinPeriodDataProvider;
 use Crm\PaymentsModule\DataProviders\SubscriptionsWithoutExtensionEndingWithinPeriodDataProvider;
 use Crm\PaymentsModule\DataProviders\UniversalSearchDataProvider;
@@ -363,6 +366,17 @@ class PaymentsModule extends CrmModule
             'admin.refund_payment.show.left',
             RefundPaymentItemsListWidget::class
         );
+
+        $widgetManager->registerWidget(
+            'admin.subscriptions.transfer.summary.content',
+            SubscriptionTransferInformationWidget::class,
+            priority: 110
+        );
+
+        $widgetManager->registerWidget(
+            'admin.subscriptions.transfer.summary.right',
+            SubscriptionTransferSummaryWidget::class
+        );
     }
 
     public function registerCommands(CommandsContainerInterface $commandsContainer)
@@ -539,6 +553,10 @@ class PaymentsModule extends CrmModule
         $dataProviderManager->registerDataProvider(
             'sales_funnel.dataprovider.twig_variables',
             $this->getInstance(SalesFunnelTwigVariablesDataProvider::class)
+        );
+        $dataProviderManager->registerDataProvider(
+            'subscriptions.dataprovider.transfer',
+            $this->getInstance(SubscriptionTransferDataProvider::class),
         );
     }
 

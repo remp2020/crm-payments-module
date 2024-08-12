@@ -1,0 +1,13 @@
+<div n:if="$hasPayment || $hasRecurrentPayment" class="row">
+  <div class="col-lg-12">
+    <p>
+      <strong>
+        {if $hasRecurrentPayment}
+          {_payments.admin.component.subscription_transfer_information_widget.recurrent_payment_transfer_notice}
+        {else}
+          {_payments.admin.component.subscription_transfer_information_widget.payment_transfer_notice}
+        {/if}
+      </strong>
+    </p>
+  </div>
+</div>

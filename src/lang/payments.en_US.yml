@@ -242,6 +242,15 @@ admin:
             header: Payment's details
             payment_id: ID of payment
 
+        subscription_transfer_summary_widget:
+            recurrent_payment:
+                header: Recurring payment information
+                note: Note
+
+        subscription_transfer_information_widget:
+            recurrent_payment_transfer_notice: The recurring payment will be transferred together with the subscription.
+            payment_transfer_notice: The payment will be transferred together with the subscription.
+
     donation: Donation
 
     arpu:

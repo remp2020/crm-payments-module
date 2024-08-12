@@ -242,6 +242,15 @@ admin:
             header: Detail platby
             payment_id: ID platby
 
+        subscription_transfer_summary_widget:
+            recurrent_payment:
+                header: Informace o rekurentní platbě
+                note: Poznámka
+
+        subscription_transfer_information_widget:
+            recurrent_payment_transfer_notice: Opakovaná platba bude přesunuta spolu s předplatným.
+            payment_transfer_notice: Platba bude přesunuta spolu s předplatným.
+
     donation: Dar k předplatnému
 
     arpu:
@@ -297,7 +306,7 @@ admin:
         created_at: Čas vytvoření
         subscription_type: Typ předplatného
         email: E-mail
-        retries: Počet opakování
+        retries: Zbývající počet opakování
         charge_status: Stav pokusu o obnovení
         recurrent_status: Stav rekurentní platby
         actions: Akce

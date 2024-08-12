@@ -218,6 +218,13 @@ admin:
             avg_month_payment: Fizetés havi átlagösszege
         avg_subscription_payment_widget:
             avg_subscription_payment: Az előfizetés céljából végzett kifizetések számának átlaga
+        subscription_transfer_summary_widget:
+            recurrent_payment:
+                header: Ismétlődő fizetési információk
+                note: Jegyzet
+        subscription_transfer_information_widget:
+            recurrent_payment_transfer_notice: Az ismétlődő fizetés az előfizetéssel együtt kerül átutalásra.
+            payment_transfer_notice: A fizetés az előfizetéssel együtt kerül átutalásra.
     donation: Adomány
 
     arpu:

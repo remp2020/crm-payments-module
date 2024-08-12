@@ -209,6 +209,13 @@ admin:
                 send: Filter
             file_system:
                 label: Speicherort
+        subscription_transfer_summary_widget:
+            recurrent_payment:
+                header: Terugkerende betalingsinformatie
+                note: Opmerking
+        subscription_transfer_information_widget:
+            recurrent_payment_transfer_notice: Die wiederkehrende Zahlung wird zusammen mit dem Abonnement überwiesen.
+            payment_transfer_notice: Die Zahlung erfolgt zusammen mit dem Abonnement.
     arpu:
         all:
             title: ARPU - Summe aller Zahlungen / Anzahl
