@@ -14,7 +14,7 @@ use Crm\PaymentsModule\Repositories\PaymentsRepository;
 use Crm\SubscriptionsModule\Models\PaymentItem\SubscriptionTypePaymentItem;
 use Crm\SubscriptionsModule\Models\Subscription\SubscriptionTypeHelper;
 use Crm\SubscriptionsModule\Repositories\SubscriptionTypesRepository;
-use Crm\UsersModule\Models\Address\AddressesLister;
+use Crm\UsersModule\Forms\Controls\AddressesSelectItemsBuilder;
 use Crm\UsersModule\Repositories\AddressesRepository;
 use Crm\UsersModule\Repositories\UsersRepository;
 use Nette\Application\UI\Form;
@@ -50,7 +50,7 @@ class PaymentFormFactory
         private readonly Translator $translator,
         private readonly SubscriptionTypeHelper $subscriptionTypeHelper,
         private readonly SubscriptionTypesSelectItemsBuilder $subscriptionTypesSelectItemsBuilder,
-        private readonly AddressesLister $addressesLister,
+        private readonly AddressesSelectItemsBuilder $addressesSelectItemsBuilder,
     ) {
     }
 
@@ -288,7 +288,7 @@ class PaymentFormFactory
         $form->addText('referer', 'payments.form.payment.referer.label')
             ->setHtmlAttribute('placeholder', 'payments.form.payment.referer.placeholder');
 
-        $addresses = $this->addressesLister->addressesForSelect($user);
+        $addresses = $this->addressesSelectItemsBuilder->buildSimpleWithTypes($user);
         if (count($addresses) > 0) {
             $form->addSelect('address_id', "payments.form.payment.address_id.label", $addresses)->setPrompt('--');
         }
