@@ -7,7 +7,7 @@ class PaymentItemContainer
     /** @var PaymentItemInterface[] */
     private array $items = [];
 
-    private ?int $forceVat = null;
+    private bool $preventOssVatChange = false;
 
     private bool $unreliable = false;
 
@@ -92,5 +92,23 @@ class PaymentItemContainer
         return 'PaymentItemContainer is unreliable, since it contains unregistered PaymentItem types [' .
             implode(', ', $unregisteredTypes) . ']. This may cause unexpected problems when working with payments. ' .
             'Make sure you register custom types using PaymentItemContainerFactory#registerPaymentItemType';
+    }
+
+    public function preventOssVatChange(): bool
+    {
+        return $this->preventOssVatChange;
+    }
+
+    /**
+     * If set to true, One Stop Shop (if enabled) will not adjust VAT rates on payment items in container.
+     * This may be useful for B2B payments.
+     * @param bool $value
+     *
+     * @return $this
+     */
+    public function setPreventOssVatChange(bool $value = true): self
+    {
+        $this->preventOssVatChange = $value;
+        return $this;
     }
 }

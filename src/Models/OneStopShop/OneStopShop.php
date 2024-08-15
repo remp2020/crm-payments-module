@@ -173,6 +173,10 @@ final class OneStopShop
             return;
         }
 
+        if ($paymentItemContainer->preventOssVatChange()) {
+            return;
+        }
+
         // Do not adjust rates for default country
         if ($this->countriesRepository->defaultCountry()->iso_code === $paymentCountry->iso_code) {
             return;
