@@ -4,6 +4,7 @@ declare(strict_types=1);
 namespace Crm\PaymentsModule\Models\OneStopShop;
 
 use Crm\ApplicationModule\Models\Config\ApplicationConfig;
+use Crm\ApplicationModule\Models\DataProvider\DataProviderException;
 use Crm\ApplicationModule\Models\DataProvider\DataProviderManager;
 use Crm\ApplicationModule\Models\Request;
 use Crm\PaymentsModule\DataProviders\OneStopShopCountryResolutionDataProviderInterface;
@@ -43,7 +44,18 @@ final class OneStopShop
     }
 
     /**
+     * @param ActiveRow|null $user
+     * @param string|null $selectedCountryCode
+     * @param ActiveRow|null $paymentAddress
+     * @param PaymentItemContainer|null $paymentItemContainer
+     * @param array|null $formParams
+     * @param string|null $ipAddress set to enforce specific IP address. If not set, IP of current request will be used.
+     * @param ActiveRow|null $previousPayment set if there is a relevant previous payment, e.g. when doing recurrent payment
+     * @param ActiveRow|null $payment set only when resolving existing payment
+     *
+     * @return CountryResolution|null
      * @throws OneStopShopCountryConflictException
+     * @throws DataProviderException
      */
     public function resolveCountry(
         ?ActiveRow $user = null,
@@ -53,6 +65,7 @@ final class OneStopShop
         ?array $formParams = null,
         ?string $ipAddress = null,
         ?ActiveRow $previousPayment = null,
+        ?ActiveRow $payment = null,
     ): ?CountryResolution {
         if (!$this->isEnabled()) {
             return null;
@@ -68,7 +81,8 @@ final class OneStopShop
             'paymentItemContainer',
             'formParams',
             'ipAddress',
-            'previousPayment'
+            'previousPayment',
+            'payment'
         );
 
         /** @var OneStopShopCountryResolutionDataProviderInterface[] $providers */

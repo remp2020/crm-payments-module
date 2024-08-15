@@ -124,6 +124,7 @@ class OneStopShopAddPaymentCountryCommand extends Command
                             paymentAddress: $payment->address,
                             paymentItemContainer: $paymentItemContainer,
                             ipAddress: $payment->ip,
+                            payment: $payment,
                         );
 
                         if (!$countryResolution) {
