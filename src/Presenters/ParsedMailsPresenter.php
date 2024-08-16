@@ -5,7 +5,7 @@ namespace Crm\PaymentsModule\Presenters;
 use Crm\AdminModule\Presenters\AdminPresenter;
 use Crm\ApplicationModule\Components\PreviousNextPaginator\PreviousNextPaginator;
 use Crm\PaymentsModule\Forms\ParsedMailLogFactory;
-use Crm\PaymentsModule\Models\ParsedMailLog\State;
+use Crm\PaymentsModule\Models\ParsedMailLog\StateEnum;
 use Crm\PaymentsModule\Repositories\ParsedMailLogsRepository;
 use Crm\PaymentsModule\Repositories\PaymentsRepository;
 use Exception;
@@ -85,7 +85,7 @@ class ParsedMailsPresenter extends AdminPresenter
         $form->addText('vs', 'payments.admin.parsed_mails.variable_symbol.label')
             ->setHtmlAttribute('autofocus');
 
-        $form->addSelect('state', 'payments.admin.parsed_mails.state.label', State::getFriendlyList())
+        $form->addSelect('state', 'payments.admin.parsed_mails.state.label', StateEnum::getFriendlyList())
             ->setPrompt('--');
 
         $form->addSelect(
