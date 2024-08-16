@@ -88,7 +88,7 @@ services:
 	- Crm\PaymentsModule\Models\MailConfirmation\CidGetterDownloader
 	variableSymbol:
 		factory: Crm\PaymentsModule\Repositories\VariableSymbolRepository
-	- Crm\PaymentsModule\Commands\CalculateAveragesCommand
+	paymentsCalculateAveragesCommand: Crm\PaymentsModule\Commands\CalculateAveragesCommand
 	- Crm\PaymentsModule\Models\Gateways\Paypal
 	- Crm\PaymentsModule\Models\Gateways\PaypalReference
 	- Crm\PaymentsModule\Models\Gateways\Tatrapay
