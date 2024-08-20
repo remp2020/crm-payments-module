@@ -657,7 +657,20 @@ form:
             placeholder: URL the payment originated at
         address_id:
             label: Address
+        payment_country_id:
+            label: Country of payment (One Stop Shop)
+            description: "If the payment country is not set, the payment is automatically assigned a country according to the rules of the One Stop Shop mode. The VAT amount is then automatically adjusted for new payment items according to the VAT rates of the given country. In the case of the default country (%country_name%), VAT is not adjusted."
+            prefilled_reason_invoice_address: "Pre-filled according to invoice address"
+            prefilled_reason_default_country: "Pre-filled according to default country"
+            prefilled_reason_other: "Pre-filled because: %reason%"
+        oss_force_vat_change:
+            label: Force VAT change according to country of payment on existing payment items
+            description: If checked, the VAT rates set for individual payment items will be overwritten by the VAT rate of the given payment country.
+        one_stop_shop:
+            conflict: "The payment cannot be saved due to a One Stop Shop mode address conflict."
+            vat_not_allowed: "VAT rate of %iterator%. payment item [%invalid_vat%] is not allowed for country %country%."
         send: Save
+        send_and_close: Save and close
 
     subscription_form:
         start_time:

@@ -49,9 +49,11 @@ final class OneStopShop
      * @param ActiveRow|null $paymentAddress
      * @param PaymentItemContainer|null $paymentItemContainer
      * @param array|null $formParams
-     * @param string|null $ipAddress set to enforce specific IP address. If not set, IP of current request will be used.
-     * @param ActiveRow|null $previousPayment set if there is a relevant previous payment, e.g. when doing recurrent payment
-     * @param ActiveRow|null $payment set only when resolving existing payment
+     * @param string|false|null $ipAddress Set to enforce specific IP address.
+     *                                     If null, IP of current request will be used.
+     *                                     If set to false, IP address will be ignored during resolving.
+     * @param ActiveRow|null $previousPayment Set if there is a relevant previous payment, e.g. when doing recurrent payment
+     * @param ActiveRow|null $payment Set only when resolving existing payment
      *
      * @return CountryResolution|null
      * @throws OneStopShopCountryConflictException
@@ -63,7 +65,7 @@ final class OneStopShop
         ?ActiveRow $paymentAddress = null,
         ?PaymentItemContainer $paymentItemContainer = null,
         ?array $formParams = null,
-        ?string $ipAddress = null,
+        string|false|null $ipAddress = null,
         ?ActiveRow $previousPayment = null,
         ?ActiveRow $payment = null,
     ): ?CountryResolution {
@@ -119,18 +121,20 @@ final class OneStopShop
             );
         }
 
-        try {
-            $ipCountryCode = $this->geoIp->countryCode($ipAddress);
-            // Some IP addresses do not have designated country (e.g. 199.64.72.254).
-            if ($ipCountryCode) {
-                $ipCountry = $this->countriesRepository->findByIsoCode($ipCountryCode);
-                if (!$ipCountry) {
-                    throw new \RuntimeException("Invalid IP country code [{$ipCountryCode}]");
+        if ($ipAddress) {
+            try {
+                $ipCountryCode = $this->geoIp->countryCode($ipAddress);
+                // Some IP addresses do not have designated country (e.g. 199.64.72.254).
+                if ($ipCountryCode) {
+                    $ipCountry = $this->countriesRepository->findByIsoCode($ipCountryCode);
+                    if (!$ipCountry) {
+                        throw new \RuntimeException("Invalid IP country code [{$ipCountryCode}]");
+                    }
+                    return new CountryResolution($ipCountry, CountryResolutionTypeEnum::IpAddress);
                 }
-                return new CountryResolution($ipCountry, CountryResolutionTypeEnum::IpAddress);
+            } catch (GeoIpException $exception) {
+                // Ignore
             }
-        } catch (GeoIpException $exception) {
-            // Ignore
         }
 
         // If all other resolutions return no result and there is no conflict, default to default country

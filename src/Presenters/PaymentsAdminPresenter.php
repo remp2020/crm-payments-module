@@ -321,13 +321,21 @@ class PaymentsAdminPresenter extends AdminPresenter
         }
 
         $form = $this->factory->create($id, $user);
-        $this->factory->onSave = function ($form, $payment) {
+        $this->factory->onSave = function ($form, $payment, $shouldClose) {
             $this->flashMessage($this->translator->translate('payments.admin.payments.created'));
-            $this->redirect(':Users:UsersAdmin:Show', $payment->user->id);
+            if ($shouldClose) {
+                $this->redirect(':Users:UsersAdmin:Show', $payment->user->id);
+            } else {
+                $this->redirect(':Payments:PaymentsAdmin:edit', $payment->id);
+            }
         };
-        $this->factory->onUpdate = function ($form, $payment) {
+        $this->factory->onUpdate = function ($form, $payment, $shouldClose) {
             $this->flashMessage($this->translator->translate('payments.admin.payments.updated'));
-            $this->redirect(':Users:UsersAdmin:Show', $payment->user->id);
+            if ($shouldClose) {
+                $this->redirect(':Users:UsersAdmin:Show', $payment->user->id);
+            } else {
+                $this->redirect('this');
+            }
         };
         return $form;
     }

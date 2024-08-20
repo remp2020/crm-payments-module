@@ -600,7 +600,7 @@ form:
             label: Částka
             required: Musí být zadána částka
             nonzero: "Částka platby musí být nenulová, pravděpodobně nebyla vybrána žádná položka platby."
-            description: "Pozor: Částka je předvyplněna podle ceny vybraného typu předplatného. Chcete-li zadat inu částku zaškrněte <strong>vlastni cenu položek</strong> a částka se automaticky přepočítá podle ceny jednotlivých položek."
+            description: "Pozor: Částka je předvyplněna podle ceny vybraného typu předplatného. Chcete-li zadat inu částku zaškrněte <strong>vlastní cenu položek</strong> a částka se automaticky přepočítá podle ceny jednotlivých položek."
         items: Položky platby
         items_no_editable: "Platba obsahuje položky předplatného, které nelze upravit"
         subscription_type_id:
@@ -657,7 +657,20 @@ form:
             placeholder: URL odkud přišla platba
         address_id:
             label: Adresa
+        payment_country_id:
+            label: Země platby (One Stop Shop)
+            description: "Pokud není nastavena země platby, platbě se automaticky přiřadí země podle pravidel režimu One Stop Shop. Pro nové platební položky se následně automaticky upraví výše DPH podle sazeb DPH dané země. V případě výchozí země (%country_name%) se DPH neupravuje ."
+            prefilled_reason_invoice_address: "Předvyplněno podle fakturační adresy"
+            prefilled_reason_default_country: "Předvyplněno podle výchozí země"
+            prefilled_reason_other: "Předvyplněno z důvodu: %reason%"
+        oss_force_vat_change:
+            label: Vynutit změnu DPH podle země platby i na stávajících platebních položkách
+            description: Pokud je zaskrtnuto, sazby DPH zadané u jednotlivých platebních položek budou přepsány sazbou DPH dané platební země.
+        one_stop_shop:
+            conflict: "Platba nemůže být uložena z důvodu konfliktu adres režimu One Stop Shop."
+            vat_not_allowed: "Sazba DPH %iterator%. položky [%invalid_vat%] není pro zemi %country% povolena."
         send: Ulož
+        send_and_close: Ulož a zavři
 
     subscription_form:
         start_time:

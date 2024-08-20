@@ -657,7 +657,20 @@ form:
             placeholder: URL odkial prišla platba
         address_id:
             label: Adresa
+        payment_country_id:
+            label: Krajina platby (One Stop Shop)
+            description: "Ak nie je nastavená krajina platby, platbe sa automaticky priradí krajina podľa pravidiel režimu One Stop Shop. Pre nové platobné položky sa následne automaticky upraví výška DPH podľa sadzieb DPH danej krajiny. V prípade predvolenej krajiny (%country_name%) sa DPH neupravuje."
+            prefilled_reason_invoice_address: "Predvyplnené podľa fakturačnej adresy"
+            prefilled_reason_default_country: "Predvyplnené podľa východiskovej krajiny"
+            prefilled_reason_other: "Predvyplnené z dôvodu: %reason%"
+        oss_force_vat_change:
+            label: Vynútiť zmenu DPH podľa krajiny platby aj na existujúcich platobných položkách
+            description: Ak je zaškrtnuté, sadzby DPH zadané pri jednotlivých platobných položkách budú prepisané sadzbou DPH danej platobnej krajiny.
+        one_stop_shop:
+            conflict: "Platba nemôže byť uložená z dôvodu konfliktu adries režimu One Stop Shop."
+            vat_not_allowed: "Sadzba DPH %iterator%. položky [%invalid_vat%] nie je pre krajinu %country% povolená."
         send: Ulož
+        send_and_close: Ulož a zavri
 
     subscription_form:
         start_time:
