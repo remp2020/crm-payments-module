@@ -11,6 +11,7 @@ use Crm\PaymentsModule\DataProviders\OneStopShopCountryResolutionDataProviderInt
 use Crm\PaymentsModule\DataProviders\OneStopShopVatRateDataProviderInterface;
 use Crm\PaymentsModule\Models\GeoIp\GeoIpException;
 use Crm\PaymentsModule\Models\GeoIp\GeoIpInterface;
+use Crm\PaymentsModule\Models\PaymentItem\DonationPaymentItem;
 use Crm\PaymentsModule\Models\PaymentItem\PaymentItemContainer;
 use Crm\PaymentsModule\Models\PaymentItem\PaymentItemHelper;
 use Crm\PaymentsModule\Models\PaymentItem\PaymentItemInterface;
@@ -266,6 +267,12 @@ final class OneStopShop
             if ($vatRate !== null) {
                 return $vatRate;
             }
+        }
+
+        if ($paymentItem instanceof DonationPaymentItem ||
+            ($paymentItem instanceof ActiveRow && $paymentItem->type === DonationPaymentItem::TYPE)
+        ) {
+            return 0; // donation should return 0% VAT by default
         }
 
         return $vatRates->standard;
