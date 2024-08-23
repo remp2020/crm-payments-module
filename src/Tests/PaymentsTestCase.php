@@ -106,7 +106,7 @@ class PaymentsTestCase extends DatabaseTestCase
         if (!$this->user) {
             /** @var UsersRepository $usersRepository */
             $usersRepository = $this->container->getByType(UsersRepository::class);
-            $this->user = $usersRepository->add('asfsaoihf@afasf.sk', 'q039uewt');
+            $this->user = $usersRepository->add('asfsaoihf@example.com', 'q039uewt');
         }
         return $this->user;
     }
