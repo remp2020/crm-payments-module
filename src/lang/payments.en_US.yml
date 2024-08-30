@@ -12,7 +12,8 @@ menu:
 admin:
     component:
         avg_month_payment_widget:
-            avg_month_payment: Average monthly payment
+            avg_month_payment: Average payment for the subscription period
+            avg_month_payment_tooltip: <p>Shows the average amount paid for one subscription period during the considered time window.</p><p>It is recalculated by the server command payments:calculate_averages and by default includes payments for the last 2 years and calculates the length of one period of 31 days (configurable).<p>If the calculation uses a 31-day subscription period and the user paid 100 euros for an annual subscription, his average paid amount for one subscription period is 100/365*31 ~= 8.49 euros.</p>.
 
         avg_subscription_payment_widget:
             avg_subscription_payment: Average payments for subscriptions

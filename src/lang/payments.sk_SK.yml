@@ -12,7 +12,8 @@ menu:
 admin:
     component:
         avg_month_payment_widget:
-            avg_month_payment: Priemerná mesačná platba
+            avg_month_payment: Priemerná platba za obdobie predplatného
+            avg_month_payment_tooltip: <p>Zobrazuje priemernú zaplatenú sumu za jedno obdobie predplatného počas zohľadneného časového okna.</p><p>Prepočítava sa serverovým príkazom payments:calculate_averages a štandardne zahŕňa platby za obdobie posledných 2 rokov a počíta s dĺžkou jedného obdobia 31 dní (konfigurovateľné).<p>Ak prepočet používa 31-dňové obdobie predplatného a používateľ zaplatil za ročné predplatné 100 eur, jeho priemerná uhradená suma za jedno obdobie predplatného je 100/365*31 ~= 8.49 eur.</p>.
 
         avg_subscription_payment_widget:
             avg_subscription_payment: Priemerný počet platieb za predplatné
