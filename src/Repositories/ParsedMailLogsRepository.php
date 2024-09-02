@@ -61,10 +61,14 @@ class ParsedMailLogsRepository extends Repository
         ?string $paymentStatus = null,
         ?int $amountFrom = null,
         ?int $amountTo = null,
+        ?string $sourceAccountNumber = null,
     ): Selection {
         $where = [];
         if ($vs !== null) {
             $where["{$this->tableName}.variable_symbol LIKE ?"] = "%{$vs}%";
+        }
+        if ($sourceAccountNumber !== null) {
+            $where["{$this->tableName}.source_account_number LIKE ?"] = "%{$sourceAccountNumber}%";
         }
         if ($state !== null) {
             $where["{$this->tableName}.state"] = $state;

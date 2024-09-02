@@ -27,6 +27,9 @@ class ParsedMailsPresenter extends AdminPresenter
     public $vs;
 
     #[Persistent]
+    public $sourceAccountNumber;
+
+    #[Persistent]
     public $state;
 
     #[Persistent]
@@ -54,7 +57,8 @@ class ParsedMailsPresenter extends AdminPresenter
             $this->state,
             $this->paymentStatus,
             $this->amountFrom,
-            $this->amountTo
+            $this->amountTo,
+            $this->sourceAccountNumber,
         );
 
         $pnp = new PreviousNextPaginator();
@@ -85,6 +89,8 @@ class ParsedMailsPresenter extends AdminPresenter
         $form->addText('vs', 'payments.admin.parsed_mails.variable_symbol.label')
             ->setHtmlAttribute('autofocus');
 
+        $form->addText('source_account_number', 'payments.admin.parsed_mails.source_account_number');
+
         $form->addSelect('state', 'payments.admin.parsed_mails.state.label', StateEnum::getFriendlyList())
             ->setPrompt('--');
 
@@ -112,6 +118,7 @@ class ParsedMailsPresenter extends AdminPresenter
             $this->redirect('default', [
                 'state' => null,
                 'vs' => null,
+                'sourceAccountNumber' => null,
                 'paymentStatus' => null,
             ]);
         };
@@ -129,6 +136,7 @@ class ParsedMailsPresenter extends AdminPresenter
             'state' => $this->state,
             'payment_status' => $this->paymentStatus,
             'vs' => $this->vs,
+            'source_account_number' => $this->sourceAccountNumber,
             'amount_from' => $this->amountFrom,
             'amount_to' => $this->amountTo,
         ]);
@@ -141,6 +149,7 @@ class ParsedMailsPresenter extends AdminPresenter
             'state' => $values['state'],
             'paymentStatus' => $values['payment_status'],
             'vs' => $values['vs'],
+            'sourceAccountNumber' => $values['source_account_number'],
             'amountFrom' => $values['amount_from'],
             'amountTo' => $values['amount_to'],
         ]);
