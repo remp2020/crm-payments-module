@@ -22,6 +22,7 @@ services:
 
 	- Crm\PaymentsModule\Forms\Controls\SubscriptionTypesSelectItemsBuilder
 	- Crm\PaymentsModule\Forms\PaymentFormFactory
+	- Crm\PaymentsModule\Forms\PaymentFormOneStopShopInputsFactory
 	- Crm\PaymentsModule\Forms\PaymentGatewayFormFactory
 	- Crm\PaymentsModule\Forms\PaymentRefundFormFactory
 	- Crm\PaymentsModule\Models\PaymentsHistogramFactory

@@ -2,27 +2,20 @@
 
 namespace Crm\PaymentsModule\Forms;
 
-use Crm\ApplicationModule\Forms\Controls\CountriesSelectItemsBuilder;
 use Crm\ApplicationModule\Models\Config\ApplicationConfig;
 use Crm\ApplicationModule\Models\DataProvider\DataProviderException;
 use Crm\ApplicationModule\Models\DataProvider\DataProviderManager;
 use Crm\PaymentsModule\DataProviders\PaymentFormDataProviderInterface;
 use Crm\PaymentsModule\Forms\Controls\SubscriptionTypesSelectItemsBuilder;
-use Crm\PaymentsModule\Models\OneStopShop\CountryResolutionTypeEnum;
-use Crm\PaymentsModule\Models\OneStopShop\OneStopShop;
-use Crm\PaymentsModule\Models\OneStopShop\OneStopShopCountryConflictException;
 use Crm\PaymentsModule\Models\PaymentItem\DonationPaymentItem;
 use Crm\PaymentsModule\Models\PaymentItem\PaymentItemContainer;
-use Crm\PaymentsModule\Models\VatRate\VatRateValidator;
 use Crm\PaymentsModule\Repositories\PaymentGatewaysRepository;
 use Crm\PaymentsModule\Repositories\PaymentsRepository;
-use Crm\PaymentsModule\Repositories\VatRatesRepository;
 use Crm\SubscriptionsModule\Models\PaymentItem\SubscriptionTypePaymentItem;
 use Crm\SubscriptionsModule\Models\Subscription\SubscriptionTypeHelper;
 use Crm\SubscriptionsModule\Repositories\SubscriptionTypesRepository;
 use Crm\UsersModule\Forms\Controls\AddressesSelectItemsBuilder;
 use Crm\UsersModule\Repositories\AddressesRepository;
-use Crm\UsersModule\Repositories\CountriesRepository;
 use Crm\UsersModule\Repositories\UsersRepository;
 use Nette\Application\UI\Form;
 use Nette\Database\Table\ActiveRow;
@@ -59,11 +52,7 @@ class PaymentFormFactory
         private readonly SubscriptionTypeHelper $subscriptionTypeHelper,
         private readonly SubscriptionTypesSelectItemsBuilder $subscriptionTypesSelectItemsBuilder,
         private readonly AddressesSelectItemsBuilder $addressesSelectItemsBuilder,
-        private readonly OneStopShop $oneStopShop,
-        private readonly CountriesRepository $countriesRepository,
-        private readonly VatRatesRepository $vatRatesRepository,
-        private readonly VatRateValidator $vatRateValidator,
-        private readonly CountriesSelectItemsBuilder $countriesSelectItemsBuilder,
+        private readonly PaymentFormOneStopShopInputsFactory $paymentFormOneStopShopInputsFactory,
     ) {
     }
 
@@ -160,64 +149,7 @@ class PaymentFormFactory
                     ->setHtml($this->translator->translate('payments.form.payment.amount.description'))
             );
 
-        // One Stop Shop
-
-        if ($this->oneStopShop->isEnabled()) {
-            $countryResolution = $this->oneStopShop->resolveCountry(user: $user, ipAddress: false);
-
-            $paymentCountryInputDescription = $this->translator->translate(
-                'payments.form.payment.payment_country_id.description',
-                [
-                    'country_name' => $this->countriesRepository->defaultCountry()->name,
-                ]
-            );
-            $paymentCountryInput = $form->addSelect(
-                'payment_country_id',
-                $this->translator->translate('payments.form.payment.payment_country_id.label'),
-                $this->countriesSelectItemsBuilder->getAllPairs(),
-            )
-                ->setOption('description', $paymentCountryInputDescription)
-                ->setPrompt('--');
-            $paymentCountryInput->setOption('id', 'payment-country-id');
-
-            if ($payment && $payment->status !== PaymentsRepository::STATUS_FORM) {
-                $paymentCountryInput->setDisabled();
-            }
-
-            if ($payment) {
-                $form->addCheckbox('oss_force_vat_change', 'payments.form.payment.oss_force_vat_change.label')
-                    ->setOption('description', $this->translator->translate(
-                        'payments.form.payment.oss_force_vat_change.description'
-                    ))
-                    ->setOption('id', 'oss-force-vat-change');
-                $paymentCountryInput->addCondition(Form::NotEqual, $payment->payment_country_id)
-                    ->toggle('oss-force-vat-change');
-            } else {
-                // pre-filled OSS country
-                $countryResolution = $this->oneStopShop->resolveCountry(user: $user, ipAddress: false);
-                if ($countryResolution) {
-                    $prefilledReasonDescription = match ($countryResolution->reason) {
-                        CountryResolutionTypeEnum::InvoiceAddress => $this->translator->translate(
-                            'payments.form.payment.payment_country_id.prefilled_reason_invoice_address'
-                        ),
-                        CountryResolutionTypeEnum::DefaultCountry => $this->translator->translate(
-                            'payments.form.payment.payment_country_id.prefilled_reason_default_country'
-                        ),
-                        default => $this->translator->translate(
-                            'payments.form.payment.payment_country_id.prefilled_reason_other',
-                            [
-                                'reason' => $countryResolution->getReasonValue()
-                            ]
-                        ),
-                    };
-
-                    $paymentCountryInput
-                        ->setDefaultValue($countryResolution->country->id)
-                        ->setOption('description', Html::el('span', ['class' => 'help-block'])
-                            ->setHtml("<b>{$prefilledReasonDescription}</b><br />" . $paymentCountryInputDescription));
-                }
-            }
-        }
+        $this->paymentFormOneStopShopInputsFactory->addInputs($form, $user, $payment);
 
         // subscription types and items
 
@@ -415,10 +347,6 @@ class PaymentFormFactory
         if (isset($values['subscription_type_id'])) {
             $subscriptionType = $this->subscriptionTypesRepository->find($values['subscription_type_id']);
         }
-        $selectedCountry = null;
-        if (isset($values['payment_country_id'])) {
-            $selectedCountry = $this->countriesRepository->find($values['payment_country_id']);
-        }
         $address = null;
         if (isset($values['address_id'])) {
             $address = $this->addressesRepository->find($values['address_id']);
@@ -430,16 +358,14 @@ class PaymentFormFactory
             $form['paid_at']->addError('payments.form.payment.paid_at.no_future_paid_at');
         }
 
-        $ossForceVatChange = filter_var($values['oss_force_vat_change'] ?? null, FILTER_VALIDATE_BOOLEAN);
         $customPaymentItems = filter_var($values['custom_payment_items'] ?? null, FILTER_VALIDATE_BOOLEAN);
-        unset($values['custom_payment_items'], $values['oss_force_vat_change']);
+        unset($values['custom_payment_items']);
 
         [$paymentItemContainer, $allowEditPaymentItems] = $this->createPaymentItemContainer(
             form: $form,
             subscriptionType: $subscriptionType,
             payment: $payment,
             values: $values,
-            ossForceVatChange: $ossForceVatChange,
             customPaymentItems: $customPaymentItems,
         );
 
@@ -456,6 +382,20 @@ class PaymentFormFactory
             $paymentItemContainer->addItems($provider->paymentItems([
                 'values' => $values,
             ]));
+        }
+
+        $countryResolution = $this->paymentFormOneStopShopInputsFactory->processInputs(
+            $paymentItemContainer,
+            $user,
+            $payment,
+            $address,
+            $values,
+            $form,
+            $allowEditPaymentItems,
+            $customPaymentItems,
+        );
+        if ($form->hasErrors()) {
+            return;
         }
 
         if ($payment !== null) {
@@ -495,37 +435,12 @@ class PaymentFormFactory
             // We don't want "status" to be updated in mass update(), but rather via separate updateStatus() call.
             unset($values['status']);
 
-            if ($payment && $payment->status === 'form' && $allowEditPaymentItems) {
-                // OSS resolution is allowed only if payment is in 'form' state
-                $countryResolution = null;
-                try {
-                    $countryResolution  = $this->oneStopShop->resolveCountry(
-                        user: $user,
-                        selectedCountryCode: $selectedCountry?->iso_code,
-                        paymentAddress: $address,
-                        paymentItemContainer: $paymentItemContainer,
-                        ipAddress: false // do not use IP address for resolution
-                    );
-                    if ($countryResolution) {
-                        $values['payment_country_id'] = $countryResolution->country->id;
-                        // if admin explicitly selects a country, correct reason to AdminSelected
-                        $values['payment_country_resolution_reason'] = $selectedCountry ?
-                            CountryResolutionTypeEnum::AdminSelected->value :
-                            $countryResolution->getReasonValue();
-                    }
-                } catch (OneStopShopCountryConflictException $exception) {
-                    $form->addError($this->translator->translate(
-                        'payments.form.payment.one_stop_shop.conflict'
-                    ));
-                    return;
-                }
+            if ($countryResolution) {
+                $values['payment_country_id'] = $countryResolution->country->id;
+                $values['payment_country_resolution_reason'] = $countryResolution->getReasonValue();
+            }
 
-                if (!$ossForceVatChange) {
-                    $this->validateVatRates($form, $paymentItemContainer, $countryResolution?->country);
-                }
-                if ($form->hasErrors()) {
-                    return;
-                }
+            if ($payment->status === 'form' && $allowEditPaymentItems) {
                 $this->paymentsRepository->update($payment, $values, $paymentItemContainer);
             } else {
                 $this->paymentsRepository->update($payment, $values);
@@ -566,36 +481,6 @@ class PaymentFormFactory
                 );
             }
 
-            $countryResolutionReason = null;
-            try {
-                $countryResolution  = $this->oneStopShop->resolveCountry(
-                    user: $user,
-                    selectedCountryCode: $selectedCountry?->iso_code,
-                    paymentAddress: $address,
-                    paymentItemContainer: $paymentItemContainer,
-                    ipAddress: false // do not use IP address for resolution
-                );
-                if ($countryResolution && $selectedCountry) {
-                    // if admin explicitly selects a country, correct reason to AdminSelected
-                    $countryResolutionReason = $selectedCountry ?
-                        CountryResolutionTypeEnum::AdminSelected->value :
-                        $countryResolution->getReasonValue();
-                }
-            } catch (OneStopShopCountryConflictException $exception) {
-                $form->addError($this->translator->translate(
-                    'payments.form.payment.one_stop_shop.conflict'
-                ));
-                return;
-            }
-
-            if ($customPaymentItems) {
-                $this->validateVatRates($form, $paymentItemContainer, $countryResolution?->country);
-            }
-
-            if ($form->hasErrors()) {
-                return;
-            }
-
             $payment = $this->paymentsRepository->add(
                 subscriptionType: $subscriptionType,
                 paymentGateway: $paymentGateway,
@@ -610,7 +495,7 @@ class PaymentFormFactory
                 variableSymbol: $variableSymbol,
                 address: $address,
                 paymentCountry: $countryResolution?->country,
-                paymentCountryResolutionReason: $countryResolutionReason,
+                paymentCountryResolutionReason: $countryResolution?->getReasonValue(),
             );
 
             $updateArray = [];
@@ -634,18 +519,12 @@ class PaymentFormFactory
         ?ActiveRow $subscriptionType,
         ?ActiveRow $payment,
         $values,
-        bool $ossForceVatChange,
         bool $customPaymentItems
     ): array {
         $paymentItemContainer = new PaymentItemContainer();
 
         $allowEditPaymentItems = true;
         if ($customPaymentItems || ($payment && $payment->status === 'form')) {
-            // this means OSS will not change VAT rates on payment items
-            if (!$ossForceVatChange) {
-                $paymentItemContainer->setPreventOssVatChange();
-            }
-
             foreach (Json::decode($values->payment_items) as $i => $item) {
                 $iterator = $i + 1;
                 if ($payment && $item->type !== SubscriptionTypePaymentItem::TYPE) {
@@ -707,38 +586,6 @@ class PaymentFormFactory
         }
 
         return [$paymentItemContainer, $allowEditPaymentItems];
-    }
-
-    private function validateVatRates(
-        Form $form,
-        PaymentItemContainer $paymentItemContainer,
-        ?ActiveRow $country,
-    ): void {
-        if (!$this->oneStopShop->isEnabled()) {
-            return;
-        }
-
-        $country ??= $this->countriesRepository->defaultCountry();
-        $vatRatesRow = $this->vatRatesRepository->getByCountry($country);
-
-        foreach ($paymentItemContainer->items() as $i => $item) {
-            // Zero VAT for donations is fine at this moment. System doesn't allow to specify payment item type
-            // manually, so this item had to come from some other place. The zero VAT was intentional, and it's OK
-            // to allow it here.
-            $allowZeroVatRate = $item->type() === DonationPaymentItem::TYPE || !$vatRatesRow;
-            $isVatRateValid = $this->vatRateValidator->validate($vatRatesRow, (float) $item->vat(), $allowZeroVatRate);
-
-            if (!$isVatRateValid) {
-                $form['payment_items']->addError($this->translator->translate(
-                    'payments.form.payment.one_stop_shop.vat_not_allowed',
-                    [
-                        'invalid_vat' => $item->vat() . '%',
-                        'iterator' => $i + 1,
-                        'country' => $country->name,
-                    ]
-                ));
-            }
-        }
     }
 
     public function callback()
