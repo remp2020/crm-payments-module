@@ -12,6 +12,7 @@ use Crm\ApplicationModule\Repositories\CacheRepository;
 use Crm\PaymentsModule\Events\NewPaymentEvent;
 use Crm\PaymentsModule\Events\PaymentChangeStatusEvent;
 use Crm\PaymentsModule\Models\OneStopShop\OneStopShop;
+use Crm\PaymentsModule\Models\Payment\PaymentStatusEnum;
 use Crm\PaymentsModule\Models\PaymentItem\PaymentItemContainer;
 use Crm\PaymentsModule\Models\PaymentItem\PaymentItemContainerFactory;
 use Crm\PaymentsModule\Models\VariableSymbolInterface;
@@ -34,13 +35,21 @@ class PaymentsRepository extends Repository
 {
     use RedisClientTrait;
 
+    /** @deprecated Use \Crm\PaymentsModule\Models\Payment\PaymentStatusEnum::Form enum instead. */
     public const STATUS_FORM = 'form';
+    /** @deprecated Use \Crm\PaymentsModule\Models\Payment\PaymentStatusEnum::Paid enum instead. */
     public const STATUS_PAID = 'paid';
+    /** @deprecated Use \Crm\PaymentsModule\Models\Payment\PaymentStatusEnum::Fail enum instead. */
     public const STATUS_FAIL = 'fail';
+    /** @deprecated Use \Crm\PaymentsModule\Models\Payment\PaymentStatusEnum::Timeout enum instead. */
     public const STATUS_TIMEOUT = 'timeout';
+    /** @deprecated Use \Crm\PaymentsModule\Models\Payment\PaymentStatusEnum::Refund enum instead. */
     public const STATUS_REFUND = 'refund';
+    /** @deprecated Use \Crm\PaymentsModule\Models\Payment\PaymentStatusEnum::Imported enum instead. */
     public const STATUS_IMPORTED = 'imported';
+    /** @deprecated Use \Crm\PaymentsModule\Models\Payment\PaymentStatusEnum::Prepaid enum instead. */
     public const STATUS_PREPAID = 'prepaid';
+    /** @deprecated Use \Crm\PaymentsModule\Models\Payment\PaymentStatusEnum::Authorized enum instead. */
     public const STATUS_AUTHORIZED = 'authorized';
 
     protected $tableName = 'payments';
@@ -102,7 +111,7 @@ class PaymentsRepository extends Repository
         $data = [
             'user_id' => $user->id,
             'payment_gateway_id' => $paymentGateway->id,
-            'status' => self::STATUS_FORM,
+            'status' => PaymentStatusEnum::Form->value,
             'created_at' => new DateTime(),
             'modified_at' => new DateTime(),
             'variable_symbol' => $variableSymbol ?: $this->variableSymbol->getNew($paymentGateway),
@@ -213,7 +222,7 @@ class PaymentsRepository extends Repository
             'user_id' => $payment->user_id,
             'subscription_type_id' => $payment->subscription_type_id,
             'payment_gateway_id' => $payment->payment_gateway_id,
-            'status' => self::STATUS_FORM,
+            'status' => PaymentStatusEnum::Form->value,
             'created_at' => new DateTime(),
             'modified_at' => new DateTime(),
             'variable_symbol' => $payment->variable_symbol,
@@ -329,7 +338,7 @@ class PaymentsRepository extends Repository
                 'status' => $status,
                 'modified_at' => new DateTime()
             ];
-            if (in_array($status, [self::STATUS_PAID, self::STATUS_PREPAID, self::STATUS_AUTHORIZED], true) && !$payment->paid_at) {
+            if (in_array($status, [PaymentStatusEnum::Paid->value, PaymentStatusEnum::Prepaid->value, PaymentStatusEnum::Authorized->value], true) && !$payment->paid_at) {
                 $data['paid_at'] = new DateTime();
             }
             if ($note) {
@@ -339,7 +348,7 @@ class PaymentsRepository extends Repository
                 $data['error_message'] = $errorMessage;
             }
 
-            if (in_array($payment->status, [self::STATUS_PAID, self::STATUS_PREPAID, self::STATUS_AUTHORIZED], true) && $data['status'] == static::STATUS_FAIL) {
+            if (in_array($payment->status, [PaymentStatusEnum::Paid->value, PaymentStatusEnum::Prepaid->value, PaymentStatusEnum::Authorized->value], true) && $data['status'] == PaymentStatusEnum::Fail->value) {
                 Debugger::log("attempt to make change status of payment #[{$payment->id}] from [{$payment->status}] to [fail]", Debugger::ERROR);
                 return false;
             }
@@ -420,7 +429,7 @@ class PaymentsRepository extends Repository
      */
     final public function userRefundPayments($userId)
     {
-        return $this->userPayments($userId)->where('status', self::STATUS_REFUND);
+        return $this->userPayments($userId)->where('status', PaymentStatusEnum::Refund->value);
     }
 
     /**
@@ -485,7 +494,7 @@ class PaymentsRepository extends Repository
     final public function totalAmountSum($allowCached = false, $forceCacheUpdate = false)
     {
         $callable = function () {
-            return $this->getTable()->where(['status' => self::STATUS_PAID])->sum('amount') ?? 0.00;
+            return $this->getTable()->where(['status' => PaymentStatusEnum::Paid->value])->sum('amount') ?? 0.00;
         };
 
         if ($allowCached) {
@@ -502,20 +511,17 @@ class PaymentsRepository extends Repository
 
     final public function totalUserAmountSum($userId)
     {
-        return $this->getTable()->where(['user_id' => $userId, 'status' => self::STATUS_PAID])->sum('amount') ?? 0.00;
+        return $this->getTable()->where(['user_id' => $userId, 'status' => PaymentStatusEnum::Paid->value])->sum('amount') ?? 0.00;
     }
 
     final public function getStatusPairs()
     {
-        return [
-            self::STATUS_FORM => self::STATUS_FORM,
-            self::STATUS_FAIL => self::STATUS_FAIL,
-            self::STATUS_PAID => self::STATUS_PAID,
-            self::STATUS_PREPAID => self::STATUS_PREPAID,
-            self::STATUS_TIMEOUT => self::STATUS_TIMEOUT,
-            self::STATUS_REFUND => self::STATUS_REFUND,
-            self::STATUS_IMPORTED => self::STATUS_IMPORTED,
-        ];
+        $statuses = PaymentStatusEnum::getFriendlyList();
+
+        // Omit 'Authorized' status because it's used only for payment authorization before purchase. It shouldn't be accessible.
+        unset($statuses[PaymentStatusEnum::Authorized->value]);
+
+        return $statuses;
     }
 
     final public function getPaymentsWithNotes()
@@ -558,7 +564,7 @@ class PaymentsRepository extends Repository
     final public function paidBetween(DateTime $from, DateTime $to)
     {
         return $this->getTable()->where([
-            'status IN (?)' => [self::STATUS_PAID, self::STATUS_PREPAID],
+            'status IN (?)' => [PaymentStatusEnum::Paid->value, PaymentStatusEnum::Prepaid->value],
             'paid_at > ?' => $from,
             'paid_at < ?' => $to,
         ]);
@@ -737,7 +743,7 @@ SQL;
     final public function unconfirmedPayments(DateTime $from)
     {
         return $this->getTable()
-            ->where('payments.status = ?', self::STATUS_FORM)
+            ->where('payments.status = ?', PaymentStatusEnum::Form->value)
             ->where('payments.created_at >= ?', $from)
             ->order('payments.created_at DESC');
     }
