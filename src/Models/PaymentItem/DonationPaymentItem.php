@@ -13,7 +13,7 @@ final class DonationPaymentItem implements PaymentItemInterface
     public function __construct(
         string $name,
         float $price,
-        int $vat,
+        float $vat,
         array $meta = []
     ) {
         $this->name = $name;

@@ -10,7 +10,7 @@ trait PaymentItemTrait
 
     private float $price;
 
-    private int $vat;
+    private float $vat;
 
     private int $count;
 
@@ -36,7 +36,7 @@ trait PaymentItemTrait
         return $this->unitPrice() * $this->count();
     }
 
-    public function vat(): int
+    public function vat(): float
     {
         return $this->vat;
     }
@@ -61,7 +61,7 @@ trait PaymentItemTrait
         return $this->unitPriceWithoutVAT() * $this->count();
     }
 
-    public function forceVat(int $vat): static
+    public function forceVat(float $vat): static
     {
         $this->vat = $vat;
         return $this;

@@ -16,7 +16,7 @@ interface PaymentItemInterface
 
     public function totalPrice(): float;
 
-    public function vat(): int;
+    public function vat(): float;
 
     public function count(): int;
 
@@ -28,7 +28,7 @@ interface PaymentItemInterface
 
     public function meta(): array;
 
-    public function forceVat(int $vat): static;
+    public function forceVat(float $vat): static;
 
     public static function fromPaymentItem(ActiveRow $paymentItem): static;
 }

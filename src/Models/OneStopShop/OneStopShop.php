@@ -202,9 +202,7 @@ final class OneStopShop
         }
 
         foreach ($paymentItemContainer->items() as $paymentItem) {
-            $vatRate = $this->getCountryVatRate($paymentCountry, $paymentItem);
-            // Currently, VAT is stored as int in payment_items table
-            $paymentItem->forceVat((int) $vatRate);
+            $paymentItem->forceVat($this->getCountryVatRate($paymentCountry, $paymentItem));
         }
     }
 
@@ -243,12 +241,11 @@ final class OneStopShop
         return $data;
     }
 
-    public function getCountryVatRate(ActiveRow $paymentCountry, PaymentItemInterface|ActiveRow $paymentItem): float|int
+    public function getCountryVatRate(ActiveRow $paymentCountry, PaymentItemInterface|ActiveRow $paymentItem): float
     {
         $vatRates = $this->vatRatesRepository->getByCountry($paymentCountry);
         if (!$vatRates) {
             // If no VAT is recorded, return 0.
-            //throw new \RuntimeException("Missing VAT rates for country [{$paymentCountry->iso_code}]");
             return 0;
         }
 
