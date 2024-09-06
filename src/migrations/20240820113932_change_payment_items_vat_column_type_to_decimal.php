@@ -12,13 +12,24 @@ final class ChangePaymentItemsVatColumnTypeToDecimal extends AbstractMigration
 ALTER TABLE `payment_items` ADD COLUMN `vat_decimal` DECIMAL(10,2) AFTER `vat`;
         ");
 
-        // Migrate last two months
+        // Migrate last two months first
         $sql = <<<SQL
 UPDATE `payment_items` 
 SET `vat_decimal` = `vat`
 WHERE `created_at` >= DATE_SUB(NOW(), INTERVAL 2 MONTH);
 SQL;
         $this->execute($sql);
+
+        // Migrate rest of data (by 50000 items to prevent table lock)
+        $sql = <<<SQL
+UPDATE `payment_items` 
+SET `vat_decimal` = `vat`
+WHERE `vat_decimal` IS NULL and `vat` IS NOT NULL
+LIMIT 50000;
+SQL;
+        do {
+            $rowsCount = $this->execute($sql);
+        } while ($rowsCount > 0);
 
         // Switch columns
         $this->execute("
@@ -28,16 +39,13 @@ ALTER TABLE `payment_items` RENAME COLUMN `vat` TO `vat_backup`;
 ALTER TABLE `payment_items` RENAME COLUMN `vat_decimal` TO `vat`;
         ");
 
-        // Copy rest of data (by 50000 items)
+        // Copy remaining new data
         $sql = <<<SQL
 UPDATE `payment_items` 
 SET `vat` = `vat_backup`
 WHERE `vat` IS NULL and `vat_backup` IS NOT NULL
-LIMIT 50000;
 SQL;
-        do {
-            $rowsCount = $this->execute($sql);
-        } while ($rowsCount > 0);
+        $rowsCount = $this->execute($sql);
 
         // Remove old column
         $this->execute("
