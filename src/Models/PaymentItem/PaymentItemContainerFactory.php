@@ -16,13 +16,26 @@ final class PaymentItemContainerFactory
         return $this->create($payment, new PaymentItemContainer(), $includedPaymentItemTypes, $excludedPaymentItemTypes);
     }
 
-    public function addItemsFromPaymentToContainer(
+    public function addItemsFromPayment(
         ActiveRow $payment,
         PaymentItemContainer $container,
         ?array $includedPaymentItemTypes = [],
         ?array $excludedPaymentItemTypes = [],
     ): PaymentItemContainer {
         return $this->create($payment, $container, $includedPaymentItemTypes, $excludedPaymentItemTypes);
+    }
+
+    public function addItemFromPaymentItem(
+        ActiveRow $paymentItem,
+        PaymentItemContainer $container,
+    ): void {
+        if (isset($this->registeredPaymentItemClasses[$paymentItem->type])) {
+            $item = $this->registeredPaymentItemClasses[$paymentItem->type]::fromPaymentItem($paymentItem);
+        } else {
+            $item = GenericPaymentItem::fromPaymentItem($paymentItem);
+            $container->setUnreliable();
+        }
+        $container->addItem($item);
     }
     
     private function create(
@@ -39,13 +52,7 @@ final class PaymentItemContainerFactory
             $q = $q->where('type NOT IN (?)', $excludedPaymentItemTypes);
         }
         foreach ($q as $paymentItem) {
-            if (isset($this->registeredPaymentItemClasses[$paymentItem->type])) {
-                $item = $this->registeredPaymentItemClasses[$paymentItem->type]::fromPaymentItem($paymentItem);
-            } else {
-                $item = GenericPaymentItem::fromPaymentItem($paymentItem);
-                $container->setUnreliable();
-            }
-            $container->addItem($item);
+            $this->addItemFromPaymentItem($paymentItem, $container);
         }
 
         return $container;

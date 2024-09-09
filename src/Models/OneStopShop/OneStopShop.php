@@ -13,10 +13,12 @@ use Crm\PaymentsModule\Models\GeoIp\GeoIpException;
 use Crm\PaymentsModule\Models\GeoIp\GeoIpInterface;
 use Crm\PaymentsModule\Models\PaymentItem\DonationPaymentItem;
 use Crm\PaymentsModule\Models\PaymentItem\PaymentItemContainer;
-use Crm\PaymentsModule\Models\PaymentItem\PaymentItemHelper;
+use Crm\PaymentsModule\Models\PaymentItem\PaymentItemContainerFactory;
 use Crm\PaymentsModule\Models\PaymentItem\PaymentItemInterface;
 use Crm\PaymentsModule\Repositories\PaymentItemsRepository;
 use Crm\PaymentsModule\Repositories\VatRatesRepository;
+use Crm\SubscriptionsModule\Models\PaymentItem\SubscriptionTypePaymentItem;
+use Crm\SubscriptionsModule\Repositories\SubscriptionTypeItemsRepository;
 use Crm\UsersModule\Repositories\CountriesRepository;
 use Crm\UsersModule\Repositories\UsersRepository;
 use Nette\Database\Table\ActiveRow;
@@ -36,6 +38,8 @@ final class OneStopShop
         private readonly CountriesRepository $countriesRepository,
         private readonly User $user,
         private readonly UsersRepository $usersRepository,
+        private readonly PaymentItemContainerFactory $paymentItemContainerFactory,
+        private readonly SubscriptionTypeItemsRepository $subscriptionTypeItemsRepository,
     ) {
     }
 
@@ -53,7 +57,8 @@ final class OneStopShop
      * @param string|false|null $ipAddress Set to enforce specific IP address.
      *                                     If null, IP of current request will be used.
      *                                     If set to false, IP address will be ignored during resolving.
-     * @param ActiveRow|null $previousPayment Set if there is a relevant previous payment, e.g. when doing recurrent payment
+     * @param ActiveRow|null $previousPayment Set if there is a relevant previous payment, e.g. when doing recurrent
+     *                                        payment
      * @param ActiveRow|null $payment Set only when resolving existing payment
      *
      * @return CountryResolution|null
@@ -164,20 +169,30 @@ final class OneStopShop
             $defaultCountry = true;
         }
 
-        foreach ($payment->related('payment_items') as $paymentItem) {
-            // for default country and payment item with reference to subscription type item,
-            // load original VAT
-            if ($defaultCountry && $paymentItem->subscription_type_item) {
-                $vatRate = $paymentItem->subscription_type_item->vat;
-            } else {
-                $vatRate = $this->getCountryVatRate($paymentCountry, $paymentItem);
+        // First create container containing all items
+        $paymentItemContainer = $this->paymentItemContainerFactory->createFromPayment($payment);
+
+        // Use container with all items for VAT resolving
+        foreach ($paymentItemContainer->items() as $paymentItem) {
+            $vatRate = null;
+
+            // When setting payment country back to default country, we can retrieve VAT rates directly from
+            // subscription type items
+            if ($defaultCountry && $paymentItem instanceof SubscriptionTypePaymentItem) {
+                $subscriptionTypeItem = $this->subscriptionTypeItemsRepository->find($paymentItem->getSubscriptionTypeItemId());
+                $vatRate = $subscriptionTypeItem?->vat;
             }
 
-            $this->paymentItemsRepository->update($paymentItem, [
-                'vat' => $vatRate,
-                'amount_without_vat' =>  PaymentItemHelper::getPriceWithoutVAT($paymentItem->amount, $vatRate),
-            ]);
+            if ($vatRate === null) {
+                $vatRate = $this->getCountryVatRate($paymentCountry, $paymentItem, $paymentItemContainer);
+            }
+
+            $paymentItem->forceVat($vatRate);
         }
+
+        // Remove and re-add all payment items - to correctly initialize related data such as revenues
+        $this->paymentItemsRepository->deleteByPayment($payment);
+        $this->paymentItemsRepository->add($payment, $paymentItemContainer);
     }
 
     public function adjustPaymentItemContainerVatRates(
@@ -202,7 +217,8 @@ final class OneStopShop
         }
 
         foreach ($paymentItemContainer->items() as $paymentItem) {
-            $paymentItem->forceVat($this->getCountryVatRate($paymentCountry, $paymentItem));
+            $vatRate = $this->getCountryVatRate($paymentCountry, $paymentItem, $paymentItemContainer);
+            $paymentItem->forceVat($vatRate);
         }
     }
 
@@ -241,8 +257,11 @@ final class OneStopShop
         return $data;
     }
 
-    public function getCountryVatRate(ActiveRow $paymentCountry, PaymentItemInterface|ActiveRow $paymentItem): float
-    {
+    public function getCountryVatRate(
+        ActiveRow $paymentCountry,
+        PaymentItemInterface $paymentItem,
+        PaymentItemContainer $paymentItemContainer = null,
+    ): float {
         $vatRates = $this->vatRatesRepository->getByCountry($paymentCountry);
         if (!$vatRates) {
             // If no VAT is recorded, return 0.
@@ -252,6 +271,7 @@ final class OneStopShop
         $dataProviderParams = [
             'vat_rates' => $vatRates,
             'payment_item' => $paymentItem,
+            'payment_item_container' => $paymentItemContainer,
         ];
 
         /** @var OneStopShopVatRateDataProviderInterface[] $providers */

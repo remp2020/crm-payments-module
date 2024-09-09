@@ -211,7 +211,7 @@ class PaymentsRepository extends Repository
         }
 
         // Copy all other payment types except for subscription type payment items (copied in previous step)
-        $paymentItemContainer = $this->paymentItemContainerFactory->addItemsFromPaymentToContainer(
+        $paymentItemContainer = $this->paymentItemContainerFactory->addItemsFromPayment(
             payment: $payment,
             container: $paymentItemContainer,
             excludedPaymentItemTypes: [SubscriptionTypePaymentItem::TYPE],
