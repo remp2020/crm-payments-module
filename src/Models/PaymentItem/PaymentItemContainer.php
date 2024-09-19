@@ -11,6 +11,8 @@ class PaymentItemContainer
 
     private bool $unreliable = false;
 
+    private bool $zeroPriceAllowed = false;
+
     /**
      * Is true if container contains GenericPaymentItem, which means
      * some payment item type was not registered in PaymentItemContainerFactory
@@ -24,6 +26,16 @@ class PaymentItemContainer
     public function setUnreliable(bool $unreliable = true): void
     {
         $this->unreliable = $unreliable;
+    }
+
+    public function isZeroPriceAllowed(): bool
+    {
+        return $this->zeroPriceAllowed;
+    }
+
+    public function setZeroPriceAllowed(bool $zeroPriceAllowed = true): void
+    {
+        $this->zeroPriceAllowed = $zeroPriceAllowed;
     }
 
     public function addItem(PaymentItemInterface $item): self

@@ -60,6 +60,7 @@ class MethodsPresenter extends FrontendPresenter
         $paymentItemContainer = (new PaymentItemContainer())->addItem(
             new AuthorizationPaymentItem('authorization', $gateway->getAuthorizationAmount())
         );
+        $paymentItemContainer->setZeroPriceAllowed();
 
         $countryResolution  = $this->oneStopShop->resolveCountry(
             user: $userRow,
