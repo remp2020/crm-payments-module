@@ -14,12 +14,13 @@ final class DonationPaymentItem implements PaymentItemInterface
         string $name,
         float $price,
         float $vat,
-        array $meta = []
+        array $meta = [],
+        int $count = 1,
     ) {
         $this->name = $name;
         $this->price = $price;
         $this->vat = $vat;
-        $this->count = 1;
+        $this->count = $count;
         $this->meta = $meta;
     }
 
