@@ -725,7 +725,7 @@ frontend:
         delay_info: "Připsání platby na účet může trvat 1 až 2 pracovní dny. Nákup vám bude potvrzen po připsání platby na náš účet."
     select_card:
         title: 'Vyberte kartu k dokončení platby'
-        lead: 'Pamatujeme si Vámi použité karty, takže ich číslo nemusíte zadávat znovu.'
+        lead: 'Pamatujeme si Vámi použité karty, takže jejich číslo nemusíte zadávat znovu.'
         subtitle: 'Seznam uložených karet'
         card_with_expiration: 'Karta s expirací'
         use_card: 'Použít uloženou kartu a zaplatit %sum%'
