@@ -33,6 +33,7 @@ use Crm\PaymentsModule\Commands\ConfirmCsobPaymentsCommand;
 use Crm\PaymentsModule\Commands\CsobMailConfirmationCommand;
 use Crm\PaymentsModule\Commands\FillReferenceToSubscriptionTypeItemInPaymentItemsCommand;
 use Crm\PaymentsModule\Commands\LastPaymentsCheckCommand;
+use Crm\PaymentsModule\Commands\MigratePaymentMethodsCommand;
 use Crm\PaymentsModule\Commands\OneStopShopAddPaymentCountryCommand;
 use Crm\PaymentsModule\Commands\RecurrentPaymentsCardCheckCommand;
 use Crm\PaymentsModule\Commands\RecurrentPaymentsChargeCommand;
@@ -389,6 +390,7 @@ class PaymentsModule extends CrmModule
         $commandsContainer->registerCommand($this->getInstance(CidGetterCommand::class));
         $commandsContainer->registerCommand($this->getInstance(StopRecurrentPaymentsExpiresCommand::class));
         $commandsContainer->registerCommand($this->getInstance(LastPaymentsCheckCommand::class));
+        $commandsContainer->registerCommand($this->getInstance(MigratePaymentMethodsCommand::class));
         $commandsContainer->registerCommand($this->getInstance(CalculateAveragesCommand::class));
         $commandsContainer->registerCommand($this->getInstance(SingleChargeCommand::class));
         $commandsContainer->registerCommand($this->getInstance(SkCsobMailConfirmationCommand::class));

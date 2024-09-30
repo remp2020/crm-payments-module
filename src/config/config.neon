@@ -71,6 +71,7 @@ services:
 	- Crm\PaymentsModule\Commands\UpdateRecurrentPaymentsExpiresCommand
 	- Crm\PaymentsModule\Commands\StopRecurrentPaymentsExpiresCommand
 	- Crm\PaymentsModule\Commands\LastPaymentsCheckCommand
+	- Crm\PaymentsModule\Commands\MigratePaymentMethodsCommand
 	- Crm\PaymentsModule\Commands\CidGetterCommand
 	- Crm\PaymentsModule\Commands\SingleChargeCommand
 	- Crm\PaymentsModule\Commands\SkCsobMailConfirmationCommand
