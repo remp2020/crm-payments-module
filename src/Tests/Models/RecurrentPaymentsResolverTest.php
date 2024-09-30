@@ -319,8 +319,14 @@ class RecurrentPaymentsResolverTest extends PaymentsTestCase
         $payment = $this->paymentsRepository->add($subscriptionType, $this->getPaymentGateway(), $this->getUser(), $paymentItemContainer);
         $this->paymentsRepository->updateStatus($payment, PaymentsRepository::STATUS_PAID);
 
-        return $this->recurrentPaymentsRepository->add(
+        $paymentMethod = $this->paymentMethodsRepository->findOrAdd(
+            $payment->user_id,
+            $payment->payment_gateway_id,
             'CID',
+        );
+
+        return $this->recurrentPaymentsRepository->add(
+            $paymentMethod,
             $payment,
             (new \DateTime())->modify('+1 months'),
             null,

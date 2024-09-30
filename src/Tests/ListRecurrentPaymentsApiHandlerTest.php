@@ -148,8 +148,14 @@ class ListRecurrentPaymentsApiHandlerTest extends PaymentsTestCase
 
     private function createRecurrentPayment(string $cid, ActiveRow $payment, \DateTime $chargeAt)
     {
-        return $this->recurrentPaymentsRepository->add(
+        $paymentMethod = $this->paymentMethodsRepository->findOrAdd(
+            $payment->user_id,
+            $payment->payment_gateway_id,
             $cid,
+        );
+
+        return $this->recurrentPaymentsRepository->add(
+            $paymentMethod,
             $payment,
             $chargeAt,
             null,

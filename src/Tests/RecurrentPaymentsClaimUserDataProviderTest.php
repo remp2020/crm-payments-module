@@ -9,6 +9,7 @@ use Crm\PaymentsModule\Models\GatewayFactory;
 use Crm\PaymentsModule\Models\Gateways\Paypal;
 use Crm\PaymentsModule\Models\PaymentItem\PaymentItemContainer;
 use Crm\PaymentsModule\Repositories\PaymentGatewaysRepository;
+use Crm\PaymentsModule\Repositories\PaymentMethodsRepository;
 use Crm\PaymentsModule\Repositories\PaymentsRepository;
 use Crm\PaymentsModule\Repositories\RecurrentPaymentsRepository;
 use Crm\PaymentsModule\Seeders\PaymentGatewaysSeeder;
@@ -21,38 +22,23 @@ use Crm\UsersModule\Models\User\UnclaimedUser;
 use Crm\UsersModule\Repositories\UserMetaRepository;
 use Crm\UsersModule\Repositories\UsersRepository;
 use Crm\UsersModule\Seeders\UsersSeeder;
+use Nette\Database\Table\ActiveRow;
 use Nette\Utils\DateTime;
 
 class RecurrentPaymentsClaimUserDataProviderTest extends DatabaseTestCase
 {
-    private $dataProvider;
-
-    /** @var GatewayFactory */
-    private $gatewayFactory;
-
-    /** @var RecurrentPaymentsRepository */
-    private $recurrentPaymentsRepository;
-
-    /** @var PaymentsRepository */
-    private $paymentsRepository;
-
-    /** @var PaymentGatewaysRepository */
-    private $paymentGatewaysRepository;
-
-    /** @var SubscriptionTypeBuilder */
-    private $subscriptionTypeBuilder;
-
-    /** @var UsersRepository */
-    private $usersRepository;
-
-    /** @var UnclaimedUser */
-    private $unclaimedUser;
-
-    private $unclaimedUserObj;
-
-    private $loggedUser;
-
-    private $payment;
+    private RecurrentPaymentsClaimUserDataProvider $dataProvider;
+    private GatewayFactory $gatewayFactory;
+    private RecurrentPaymentsRepository $recurrentPaymentsRepository;
+    private PaymentMethodsRepository $paymentMethodsRepository;
+    private PaymentsRepository $paymentsRepository;
+    private PaymentGatewaysRepository $paymentGatewaysRepository;
+    private SubscriptionTypeBuilder $subscriptionTypeBuilder;
+    private UsersRepository $usersRepository;
+    private UnclaimedUser $unclaimedUser;
+    private ActiveRow $unclaimedUserObj;
+    private ActiveRow $loggedUser;
+    private ActiveRow $payment;
 
     protected function requiredRepositories(): array
     {
@@ -60,6 +46,7 @@ class RecurrentPaymentsClaimUserDataProviderTest extends DatabaseTestCase
             PaymentsRepository::class,
             PaymentGatewaysRepository::class,
             RecurrentPaymentsRepository::class,
+            PaymentMethodsRepository::class,
             SubscriptionTypesRepository::class,
             SubscriptionTypeItemsRepository::class,
             UsersRepository::class,
@@ -86,6 +73,7 @@ class RecurrentPaymentsClaimUserDataProviderTest extends DatabaseTestCase
         $this->paymentsRepository = $this->getRepository(PaymentsRepository::class);
         $this->paymentGatewaysRepository = $this->getRepository(PaymentGatewaysRepository::class);
         $this->recurrentPaymentsRepository = $this->getRepository(RecurrentPaymentsRepository::class);
+        $this->paymentMethodsRepository = $this->getRepository(PaymentMethodsRepository::class);
         $this->unclaimedUser = $this->inject(UnclaimedUser::class);
         $this->usersRepository = $this->getRepository(UsersRepository::class);
         $this->gatewayFactory = $this->inject(GatewayFactory::class);
@@ -119,7 +107,8 @@ class RecurrentPaymentsClaimUserDataProviderTest extends DatabaseTestCase
 
     public function testClaimUserRecurrentPayments(): void
     {
-        $recurrentPayment = $this->recurrentPaymentsRepository->add('322520', $this->payment, new DateTime(), 1, 1);
+        $paymentMethod = $this->paymentMethodsRepository->findOrAdd($this->payment->user_id, $this->payment->payment_gateway_id, '322520');
+        $recurrentPayment = $this->recurrentPaymentsRepository->add($paymentMethod, $this->payment, new DateTime(), 1, 1);
 
         $this->dataProvider->provide(['unclaimedUser' => $this->unclaimedUserObj, 'loggedUser' => $this->loggedUser]);
 

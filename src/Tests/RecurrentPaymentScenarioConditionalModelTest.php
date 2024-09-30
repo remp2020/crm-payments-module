@@ -5,6 +5,7 @@ namespace Crm\PaymentsModule\Tests;
 
 use Crm\PaymentsModule\Models\PaymentItem\PaymentItemContainer;
 use Crm\PaymentsModule\Repositories\PaymentGatewaysRepository;
+use Crm\PaymentsModule\Repositories\PaymentMethodsRepository;
 use Crm\PaymentsModule\Repositories\PaymentsRepository;
 use Crm\PaymentsModule\Repositories\RecurrentPaymentsRepository;
 use Crm\PaymentsModule\Scenarios\RecurrentPaymentScenarioConditionModel;
@@ -31,6 +32,7 @@ class RecurrentPaymentScenarioConditionalModelTest extends BaseTestCase
             ...parent::requiredRepositories(),
             OrdersRepository::class,
             RecurrentPaymentsRepository::class,
+            PaymentMethodsRepository::class,
         ];
     }
 
@@ -61,10 +63,18 @@ class RecurrentPaymentScenarioConditionalModelTest extends BaseTestCase
             amount: 1,
         );
 
+        /** @var PaymentMethodsRepository $paymentMethodsRepository */
+        $paymentMethodsRepository = $this->getRepository(PaymentMethodsRepository::class);
+        $paymentMethod = $paymentMethodsRepository->findOrAdd(
+            $user->id,
+            $gateway->id,
+            'someCid',
+        );
+
         /** @var RecurrentPaymentsRepository $recurrentPaymentsRepository */
         $recurrentPaymentsRepository = $this->getRepository(RecurrentPaymentsRepository::class);
         $recurrentPayment = $recurrentPaymentsRepository->add(
-            'someCid',
+            $paymentMethod,
             $payment,
             chargeAt: new DateTime(),
             customAmount: null,

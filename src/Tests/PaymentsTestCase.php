@@ -14,6 +14,7 @@ use Crm\PaymentsModule\Repositories\PaymentGatewaysRepository;
 use Crm\PaymentsModule\Repositories\PaymentItemMetaRepository;
 use Crm\PaymentsModule\Repositories\PaymentItemsRepository;
 use Crm\PaymentsModule\Repositories\PaymentMetaRepository;
+use Crm\PaymentsModule\Repositories\PaymentMethodsRepository;
 use Crm\PaymentsModule\Repositories\PaymentsRepository;
 use Crm\PaymentsModule\Repositories\RecurrentPaymentsRepository;
 use Crm\PaymentsModule\Seeders\ConfigsSeeder;
@@ -33,21 +34,12 @@ use Crm\UsersModule\Repositories\UsersRepository;
 class PaymentsTestCase extends DatabaseTestCase
 {
     public const TEST_GATEWAY_CODE = 'my_pay';
-
-    /** @var PaymentsRepository */
-    protected $paymentsRepository;
-
-    /** @var PaymentItemsRepository */
-    protected $paymentItemsRepository;
-
-    /** @var RecurrentPaymentsRepository */
-    protected $recurrentPaymentsRepository;
-
-    /** @var PaymentGatewaysRepository */
-    protected $paymentGatewaysRepository;
-
-    /** @var AccessTokensRepository */
-    protected $accessTokensRepository;
+    protected PaymentsRepository $paymentsRepository;
+    protected PaymentItemsRepository $paymentItemsRepository;
+    protected PaymentMethodsRepository $paymentMethodsRepository;
+    protected RecurrentPaymentsRepository $recurrentPaymentsRepository;
+    protected PaymentGatewaysRepository $paymentGatewaysRepository;
+    protected AccessTokensRepository $accessTokensRepository;
 
     public function requiredSeeders(): array
     {
@@ -71,6 +63,7 @@ class PaymentsTestCase extends DatabaseTestCase
             PaymentItemMetaRepository::class,
             PaymentGatewaysRepository::class,
             PaymentGatewayMetaRepository::class,
+            PaymentMethodsRepository::class,
             RecurrentPaymentsRepository::class,
             SubscriptionTypesRepository::class,
             SubscriptionTypesMetaRepository::class,
@@ -91,6 +84,7 @@ class PaymentsTestCase extends DatabaseTestCase
         $this->paymentsRepository = $this->getRepository(PaymentsRepository::class);
         $this->paymentItemsRepository = $this->getRepository(PaymentItemsRepository::class);
         $this->paymentGatewaysRepository = $this->getRepository(PaymentGatewaysRepository::class);
+        $this->paymentMethodsRepository = $this->getRepository(PaymentMethodsRepository::class);
         $this->recurrentPaymentsRepository = $this->getRepository(RecurrentPaymentsRepository::class);
 
         $gatewayFactory = $this->inject(GatewayFactory::class);

@@ -53,24 +53,50 @@ class RecurrentPaymentsRepository extends Repository
     public function __construct(
         Explorer $database,
         AuditLogRepository $auditLogRepository,
-        private PaymentGatewayMetaRepository $paymentGatewayMetaRepository,
-        private Emitter $emitter,
-        private ApplicationConfig $applicationConfig,
-        private \Tomaj\Hermes\Emitter $hermesEmitter,
-        private GatewayFactory $gatewayFactory,
-        private CacheRepository $cacheRepository
+        private readonly PaymentGatewayMetaRepository $paymentGatewayMetaRepository,
+        private readonly Emitter $emitter,
+        private readonly ApplicationConfig $applicationConfig,
+        private readonly \Tomaj\Hermes\Emitter $hermesEmitter,
+        private readonly GatewayFactory $gatewayFactory,
+        private readonly CacheRepository $cacheRepository,
+        private readonly PaymentMethodsRepository $paymentMethodsRepository,
     ) {
         parent::__construct($database);
         $this->auditLogRepository = $auditLogRepository;
     }
 
-    final public function add($cid, $payment, $chargeAt, $customAmount, $retries, string $note = null)
+    final public function add(ActiveRow $paymentMethod, $payment, $chargeAt, $customAmount, $retries, string $note = null)
     {
         return $this->insert([
-            'cid' => $cid,
+            'cid' => $paymentMethod->external_token,
             'created_at' => $this->getNow(),
             'updated_at' => $this->getNow(),
             'charge_at' => $chargeAt,
+            'payment_method_id' => $paymentMethod->id,
+            'payment_gateway_id' => $payment->payment_gateway->id,
+            'subscription_type_id' => $payment->subscription_type_id,
+            'custom_amount' => $customAmount,
+            'retries' => $retries,
+            'user_id' => $payment->user->id,
+            'parent_payment_id' => $payment->id,
+            'state' => self::STATE_ACTIVE,
+            'note' => $note,
+        ]);
+    }
+
+    /**
+     * @deprecated
+     */
+    final public function addV1($cid, $payment, $chargeAt, $customAmount, $retries, string $note = null)
+    {
+        $paymentMethod = $this->paymentMethodsRepository->findOrAdd($payment->user->id, $payment->payment_gateway->id, $cid);
+
+        return $this->insert([
+            'cid' => $paymentMethod->external_token,
+            'created_at' => $this->getNow(),
+            'updated_at' => $this->getNow(),
+            'charge_at' => $chargeAt,
+            'payment_method_id' => $paymentMethod->id,
             'payment_gateway_id' => $payment->payment_gateway->id,
             'subscription_type_id' => $payment->subscription_type_id,
             'custom_amount' => $customAmount,
@@ -118,12 +144,18 @@ class RecurrentPaymentsRepository extends Repository
             }
         }
 
-        $recurrentPayment = $this->add(
+        $paymentMethod = $this->paymentMethodsRepository->findOrAdd(
+            $payment->user->id,
+            $payment->payment_gateway->id,
             $recurrentToken,
+        );
+
+        $recurrentPayment = $this->add(
+            $paymentMethod,
             $payment,
             $chargeAt,
             $customChargeAmount,
-            --$retries
+            --$retries,
         );
 
         $this->emitter->emit(new RecurrentPaymentCreatedEvent($recurrentPayment));
@@ -135,6 +167,12 @@ class RecurrentPaymentsRepository extends Repository
         $fireEvent = false;
         if (isset($data['state']) && $data['state'] !== $row->state) {
             $fireEvent = true;
+        }
+
+        // Backwards compatibility for old `cid` field
+        if (isset($data['cid']) && $data['cid'] !== $row->payment_method->external_token) {
+            $paymentMethod = $this->paymentMethodsRepository->findOrAdd($row->user_id, $row->payment_gateway_id, $data['cid']);
+            $data['payment_method_id'] = $paymentMethod->id;
         }
 
         $data['updated_at'] = $this->getNow();
@@ -243,7 +281,7 @@ class RecurrentPaymentsRepository extends Repository
         }
 
         $newRecurrentPayment = $this->add(
-            $recurrentPayment->cid,
+            $recurrentPayment->payment_method,
             $recurrentPayment->payment,
             (new DateTime())->modify('+24 hours'),
             $recurrentPayment->custom_amount,

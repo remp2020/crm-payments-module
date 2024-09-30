@@ -16,6 +16,7 @@ class PaymentsPopulator extends AbstractPopulator
     {
         $payments = $this->database->table('payments');
         $recurrentPayments = $this->database->table('recurrent_payments');
+        $paymentMethods = $this->database->table('payment_methods');
 
         for ($i = 0; $i < $this->count; $i++) {
             $user = $this->getRecord('users');
@@ -52,8 +53,19 @@ class PaymentsPopulator extends AbstractPopulator
 
             $payment = $payments->insert($data);
             if ($payment->payment_gateway->is_recurrent) {
+                $creditCardNumber = $this->faker->creditCardNumber();
+
+                $paymentMethod = $paymentMethods->insert([
+                    'user_id' => $user->id,
+                    'payment_gateway_id' => 2,
+                    'external_token' => $creditCardNumber,
+                    'created_at' => $this->faker->dateTimeBetween('-1 years'),
+                    'updated_at' => $this->faker->dateTimeBetween('-1 years'),
+                ]);
+
                 $recurrentPaymentData = [
-                    'cid' => $this->faker->creditCardNumber(),
+                    'cid' => $creditCardNumber,
+                    'payment_method_id' => $paymentMethod->id,
                     'created_at' => $this->faker->dateTimeBetween('-1 years'),
                     'updated_at' => $this->faker->dateTimeBetween('-1 years'),
                     'payment_gateway_id' => 2,

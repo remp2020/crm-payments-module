@@ -14,6 +14,7 @@ services:
 	paymentLogsRepository: Crm\PaymentsModule\Repositories\PaymentLogsRepository
 	paymentMetaRepository: Crm\PaymentsModule\Repositories\PaymentMetaRepository
 	recurrentPaymentsRepository: Crm\PaymentsModule\Repositories\RecurrentPaymentsRepository
+	paymentMethodsRepository: Crm\PaymentsModule\Repositories\PaymentMethodsRepository
 	parsedMailLogsRepository: Crm\PaymentsModule\Repositories\ParsedMailLogsRepository
 	paymentItemsRepository: Crm\PaymentsModule\Repositories\PaymentItemsRepository
 	paymentItemMetaRepository: Crm\PaymentsModule\Repositories\PaymentItemMetaRepository

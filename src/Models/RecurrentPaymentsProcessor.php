@@ -18,28 +18,13 @@ use Tracy\Debugger;
 
 class RecurrentPaymentsProcessor
 {
-    private $recurrentPaymentsRepository;
-
-    private $paymentsRepository;
-
-    private $paymentLogsRepository;
-
-    private $applicationConfig;
-
-    private $emitter;
-
     public function __construct(
-        RecurrentPaymentsRepository $recurrentPaymentsRepository,
-        PaymentsRepository $paymentsRepository,
-        PaymentLogsRepository $paymentLogsRepository,
-        ApplicationConfig $applicationConfig,
-        Emitter $emitter
+        private readonly RecurrentPaymentsRepository $recurrentPaymentsRepository,
+        private readonly PaymentsRepository $paymentsRepository,
+        private readonly PaymentLogsRepository $paymentLogsRepository,
+        private readonly ApplicationConfig $applicationConfig,
+        private readonly Emitter $emitter,
     ) {
-        $this->recurrentPaymentsRepository = $recurrentPaymentsRepository;
-        $this->paymentsRepository = $paymentsRepository;
-        $this->paymentLogsRepository = $paymentLogsRepository;
-        $this->applicationConfig = $applicationConfig;
-        $this->emitter = $emitter;
     }
 
     public function processChargedRecurrent(
@@ -99,11 +84,11 @@ class RecurrentPaymentsProcessor
         $nextCharge->add($next);
 
         $this->recurrentPaymentsRepository->add(
-            $recurrentPayment->cid,
+            $recurrentPayment->payment_method,
             $payment,
             $nextCharge,
             $customChargeAmount,
-            $recurrentPayment->retries - 1
+            $recurrentPayment->retries - 1,
         );
 
         if (isset($resultMessage) && strlen($resultMessage) > 250) {
@@ -144,11 +129,11 @@ class RecurrentPaymentsProcessor
         $this->paymentsRepository->updateStatus($payment, PaymentsRepository::STATUS_FAIL);
 
         $this->recurrentPaymentsRepository->add(
-            $recurrentPayment->cid,
+            $recurrentPayment->payment_method,
             $payment,
             $nextCharge,
             $customChargeAmount,
-            $recurrentPayment->retries
+            $recurrentPayment->retries,
         );
 
         $this->recurrentPaymentsRepository->update($recurrentPayment, [

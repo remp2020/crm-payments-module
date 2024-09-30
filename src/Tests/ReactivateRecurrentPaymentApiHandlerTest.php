@@ -25,7 +25,6 @@ class ReactivateRecurrentPaymentApiHandlerTest extends PaymentsTestCase
         parent::setUp();
 
         $this->userManager = $this->inject(UserManager::class);
-        $this->recurrentPaymentsRepository = $this->inject(RecurrentPaymentsRepository::class);
 
         // Api handler we want to test
         $this->handler = $this->inject(ReactivateRecurrentPaymentApiHandler::class);
@@ -232,8 +231,14 @@ class ReactivateRecurrentPaymentApiHandlerTest extends PaymentsTestCase
 
     private function createRecurrentPayment(string $cid, ActiveRow $payment, \DateTime $chargeAt)
     {
-        return $this->recurrentPaymentsRepository->add(
+        $paymentMethod = $this->paymentMethodsRepository->findOrAdd(
+            $payment->user_id,
+            $payment->payment_gateway_id,
             $cid,
+        );
+
+        return $this->recurrentPaymentsRepository->add(
+            $paymentMethod,
             $payment,
             $chargeAt,
             null,
