@@ -87,7 +87,7 @@ class UpdateRecurrentPaymentsExpiresCommand extends Command
                 $output->writeln("<error>ERROR: gateway <info>{$code}</info> doesn't exist:</error>");
                 return Command::FAILURE;
             }
-            $recurrentPayments->where(['payment_gateway_id' => $gateway->id]);
+            $recurrentPayments->where(['recurrent_payments.payment_gateway_id' => $gateway->id]);
         }
 
         $totalCount = (clone $recurrentPayments)->count('*');
