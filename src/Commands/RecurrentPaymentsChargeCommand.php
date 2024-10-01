@@ -134,7 +134,7 @@ class RecurrentPaymentsChargeCommand extends Command
         $customChargeAmount = $this->recurrentPaymentsResolver->resolveCustomChargeAmount($recurrentPayment);
 
         // ability to modify payment
-        $this->emitter->emit(new BeforeRecurrentPaymentChargeEvent($recurrentPayment->payment, $recurrentPayment->cid));
+        $this->emitter->emit(new BeforeRecurrentPaymentChargeEvent($recurrentPayment->payment, $recurrentPayment->payment_method->external_token));
         $payment = $this->paymentsRepository->find($recurrentPayment->payment_id); // reload
 
         if (!$payment) {
@@ -157,14 +157,14 @@ class RecurrentPaymentsChargeCommand extends Command
                     $customChargeAmount
                 );
             } else {
-                $result = $gateway->charge($payment, $recurrentPayment->cid);
+                $result = $gateway->charge($payment, $recurrentPayment->payment_method->external_token);
                 switch ($result) {
                     case RecurrentPaymentInterface::CHARGE_OK:
                         $paymentStatus = PaymentsRepository::STATUS_PAID;
                         $chargeAt = null;
                         if ($gateway instanceof ExternallyChargedRecurrentPaymentInterface) {
                             $paymentStatus = $gateway->getChargedPaymentStatus();
-                            $chargeAt = $gateway->getSubscriptionExpiration($recurrentPayment->cid);
+                            $chargeAt = $gateway->getSubscriptionExpiration($recurrentPayment->payment_method->external_token);
                         }
                         $this->recurrentPaymentsProcessor->processChargedRecurrent(
                             $recurrentPayment,
@@ -212,7 +212,7 @@ class RecurrentPaymentsChargeCommand extends Command
         );
 
         $now = new DateTime();
-        $this->line("[{$now->format(DATE_RFC3339)}] Recurrent payment: #{$recurrentPayment->id} (<comment>cid {$recurrentPayment->cid}</comment>)");
+        $this->line("[{$now->format(DATE_RFC3339)}] Recurrent payment: #{$recurrentPayment->id} (<comment>external_token {$recurrentPayment->payment_method->external_token}</comment>)");
         $this->line("  * status: <info>{$gateway->getResultCode()}</info>");
         $this->line("  * message: {$gateway->getResultMessage()}");
     }

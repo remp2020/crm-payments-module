@@ -115,7 +115,7 @@ class RecurrentPresenter extends FrontendPresenter
             throw new \Exception('gateway is not instance of RecurrentPaymentInterface: ' . get_class($gateway));
         }
 
-        $success = $this->recurrentPaymentsProcessor->chargeRecurrentUsingCid($payment, $recurrentPayment->cid, $gateway);
+        $success = $this->recurrentPaymentsProcessor->chargeRecurrentUsingCid($payment, $recurrentPayment->payment_method->external_token, $gateway);
         if ($success) {
             $this->resolveRedirect($payment, PaymentCompleteRedirectResolver::PAID);
         }

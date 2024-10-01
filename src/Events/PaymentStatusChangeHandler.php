@@ -2,6 +2,7 @@
 
 namespace Crm\PaymentsModule\Events;
 
+use Crm\PaymentsModule\Repositories\PaymentMethodsRepository;
 use Crm\PaymentsModule\Repositories\PaymentsRepository;
 use Crm\PaymentsModule\Repositories\RecurrentPaymentsRepository;
 use Crm\SubscriptionsModule\Repositories\SubscriptionsRepository;
@@ -13,20 +14,12 @@ use Tracy\ILogger;
 
 class PaymentStatusChangeHandler extends AbstractListener
 {
-    private $subscriptionsRepository;
-
-    private $paymentsRepository;
-
-    private $recurrentPaymentsRepository;
-
     public function __construct(
-        SubscriptionsRepository $subscriptionsRepository,
-        PaymentsRepository $paymentsRepository,
-        RecurrentPaymentsRepository $recurrentPaymentsRepository
+        private readonly SubscriptionsRepository $subscriptionsRepository,
+        private readonly PaymentsRepository $paymentsRepository,
+        private readonly RecurrentPaymentsRepository $recurrentPaymentsRepository,
+        private readonly PaymentMethodsRepository $paymentMethodsRepository,
     ) {
-        $this->subscriptionsRepository = $subscriptionsRepository;
-        $this->paymentsRepository = $paymentsRepository;
-        $this->recurrentPaymentsRepository = $recurrentPaymentsRepository;
     }
 
     public function handle(EventInterface $event)
@@ -128,7 +121,7 @@ class PaymentStatusChangeHandler extends AbstractListener
 
     private function changeRecurrentPaymentCid(ActiveRow $payment)
     {
-        $newCid = $payment->related('payment_meta')
+        $newExternalToken = $payment->related('payment_meta')
             ->where('key', 'card_id')
             ->fetchField('value');
 
@@ -136,7 +129,7 @@ class PaymentStatusChangeHandler extends AbstractListener
             ->where('key', 'recurrent_payment_id_to_update_cid')
             ->fetchField('value');
 
-        if (!$newCid || !$recurrentPaymentIdToUpdate) {
+        if (!$newExternalToken || !$recurrentPaymentIdToUpdate) {
             return;
         }
 
@@ -146,14 +139,20 @@ class PaymentStatusChangeHandler extends AbstractListener
             return;
         }
 
-        if ($recurrentPaymentRow->cid === $newCid) {
+        if ($recurrentPaymentRow->payment_method->external_token === $newExternalToken) {
             // Nothing to update. We'd just bloat the note field.
             return;
         }
 
-        $note = "Changed CID from: {$recurrentPaymentRow->cid} to: $newCid";
+        $note = "Changed external token from: {$recurrentPaymentRow->payment_method->external_token} to: $newExternalToken";
+        $paymentMethod = $this->paymentMethodsRepository->findOrAdd(
+            $payment->user_id,
+            $payment->payment_gateway_id,
+            $newExternalToken,
+        );
         $this->recurrentPaymentsRepository->update($recurrentPaymentRow, [
-            'cid' => $newCid,
+            'cid' => $newExternalToken,
+            'payment_method_id' => $paymentMethod->id,
             'expires_at' => null,
             'note' => $recurrentPaymentRow->note ? $recurrentPaymentRow->note . ' ' . $note : $note,
         ]);

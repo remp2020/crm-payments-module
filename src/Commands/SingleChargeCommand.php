@@ -67,7 +67,7 @@ class SingleChargeCommand extends Command
     {
         $cid = $input->getOption('cid');
         $recurrentPayment = $this->recurrentPaymentsRepository->getTable()
-            ->where(['cid' => (string) $cid])
+            ->where(['payment_method.external_token' => (string) $cid])
             ->order('created_at DESC')
             ->limit(1)
             ->fetch();
@@ -129,12 +129,12 @@ class SingleChargeCommand extends Command
             paymentCountryResolutionReason: $countryResolution?->getReasonValue(),
         );
 
-        $this->emitter->emit(new BeforeRecurrentPaymentChargeEvent($payment, $recurrentPayment->cid)); // ability to modify payment
+        $this->emitter->emit(new BeforeRecurrentPaymentChargeEvent($payment, $recurrentPayment->payment_method->external_token)); // ability to modify payment
         $payment = $this->paymentsRepository->find($payment->id); // reload
 
         /** @var RecurrentPaymentInterface $gateway */
         $gateway = $this->gatewayFactory->getGateway($payment->payment_gateway->code);
-        $gateway->charge($payment, $recurrentPayment->cid);
+        $gateway->charge($payment, $recurrentPayment->payment_method->external_token);
         $this->paymentsRepository->updateStatus($payment, PaymentsRepository::STATUS_PAID);
 
         return Command::SUCCESS;

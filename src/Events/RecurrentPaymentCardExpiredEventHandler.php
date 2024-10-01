@@ -11,20 +11,11 @@ use League\Event\EventInterface;
 
 class RecurrentPaymentCardExpiredEventHandler extends AbstractListener
 {
-    private $recurrentPaymentsRepository;
-
-    private $emitter;
-
-    private $activeRowFactory;
-
     public function __construct(
-        RecurrentPaymentsRepository $recurrentPaymentsRepository,
-        Emitter $emitter,
-        ActiveRowFactory $activeRowFactory
+        private readonly RecurrentPaymentsRepository $recurrentPaymentsRepository,
+        private readonly Emitter $emitter,
+        private readonly ActiveRowFactory $activeRowFactory
     ) {
-        $this->recurrentPaymentsRepository = $recurrentPaymentsRepository;
-        $this->emitter = $emitter;
-        $this->activeRowFactory = $activeRowFactory;
     }
 
     public function handle(EventInterface $event)
@@ -36,7 +27,7 @@ class RecurrentPaymentCardExpiredEventHandler extends AbstractListener
         $recurrentPayment = $event->getRecurrentPayment();
         $hasChargeableRecurrent = $this->recurrentPaymentsRepository->all()->where([
                 'user_id' => $recurrentPayment->user_id,
-                'cid != ?' => $recurrentPayment->cid,
+                'payment_method.external_token != ?' => $recurrentPayment->payment_method->external_token,
                 'charge_at > ?' => $recurrentPayment->charge_at,
                 'status' => RecurrentPaymentsRepository::STATE_ACTIVE,
             ])->count('*') > 0;

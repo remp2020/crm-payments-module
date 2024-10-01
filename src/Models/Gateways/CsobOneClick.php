@@ -363,7 +363,7 @@ class CsobOneClick extends GatewayAbstract implements RecurrentPaymentInterface,
 
         // 2. try to find initial payment from first recurrent payment
         $initialRecurrentPayment = $this->recurrentPaymentsRepository->getTable()
-            ->where(['cid' => $token])
+            ->where(['payment_method.external_token' => $token])
             ->order('created_at ASC')
             ->fetch();
         if ($initialRecurrentPayment !== null && isset($initialRecurrentPayment->payment->ip)) {

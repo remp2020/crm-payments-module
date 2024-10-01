@@ -230,7 +230,7 @@ class RecurrentPaymentsRepository extends Repository
         return $this->getTable()
             ->where([
                 'state' => RecurrentPaymentsRepository::STATE_ACTIVE,
-                'user_id' => $userId,
+                'recurrent_payments.user_id' => $userId,
             ])
             ->where('status IS NULL')
             ->where('retries >= 0')
@@ -244,7 +244,7 @@ class RecurrentPaymentsRepository extends Repository
     final public function userRecurrentPayments($userId)
     {
         return $this->getTable()
-            ->where(['user_id' => $userId]);
+            ->where(['recurrent_payments.user_id' => $userId]);
     }
 
     final public function reactivateByUser($id, $userId)
@@ -384,7 +384,7 @@ class RecurrentPaymentsRepository extends Repository
             $where['state'] = [self::STATE_SYSTEM_STOP, self::STATE_CHARGE_FAILED];
         }
         if ($cid) {
-            $where['cid'] = $cid;
+            $where['payment_method.external_token'] = $cid;
         }
         return $this->getTable()->where($where)->order('recurrent_payments.charge_at DESC, recurrent_payments.created_at DESC');
     }
@@ -415,7 +415,7 @@ class RecurrentPaymentsRepository extends Repository
         if ($recurrent->state == self::STATE_CHARGE_FAILED) {
             // najdeme najnovsi rekurent s tymto cid a zistime ci je stopnuty
             $newRecurrent = $this->getTable()->where([
-                    'cid' => $recurrent->cid,
+                    'payment_method.external_token' => $recurrent->payment_method->external_token,
                     'charge_at > ' => $recurrent->charge_at,
                 ])
                 ->order('charge_at DESC')
@@ -446,9 +446,9 @@ class RecurrentPaymentsRepository extends Repository
     final public function getLastWithState(ActiveRow $recurrentPayment, $state)
     {
         return $this->getTable()->where([
-            'cid' => $recurrentPayment->cid,
-            'payment_gateway_id' => $recurrentPayment->payment_gateway_id,
-            'user_id' => $recurrentPayment->user_id,
+            'payment_method.external_token' => $recurrentPayment->payment_method->external_token,
+            'recurrent_payments.payment_gateway_id' => $recurrentPayment->payment_gateway_id,
+            'recurrent_payments.user_id' => $recurrentPayment->user_id,
             'state' => $state,
         ])->order('charge_at DESC')->fetch();
     }
@@ -624,7 +624,7 @@ class RecurrentPaymentsRepository extends Repository
 
         $usableRecurrents = $this->userRecurrentPayments($user->id)
             ->where(['payment_gateway.code = ?' => $paymentGateway->code])
-            ->where(['cid IS NOT NULL AND expires_at > ?' => new DateTime()])
+            ->where(['expires_at > ?' => new DateTime()])
             ->where('state != ?', self::STATE_SYSTEM_STOP)
             ->order('id DESC, charge_at DESC');
 

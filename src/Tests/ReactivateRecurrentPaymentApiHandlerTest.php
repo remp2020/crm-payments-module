@@ -199,36 +199,6 @@ class ReactivateRecurrentPaymentApiHandlerTest extends PaymentsTestCase
         $this->assertEquals(RecurrentPaymentsRepository::STATE_USER_STOP, $recurrentPaymentReloaded->state);
     }
 
-    public function testMissingCid()
-    {
-        // create payment & recurrent payment & stop it (by user)
-        $user = $this->createUser('test@example.com');
-        $payment = $this->createPaymentWithUser('0000000001', $user);
-        $recurrentPayment = $this->createRecurrentPayment('card', $payment, clone($payment->created_at)->modify('-1 day'));
-        $this->assertEquals(RecurrentPaymentsRepository::STATE_ACTIVE, $recurrentPayment->state);
-        $recurrentPayment = $this->recurrentPaymentsRepository->stoppedByUser($recurrentPayment, $user);
-        $this->assertEquals(RecurrentPaymentsRepository::STATE_USER_STOP, $recurrentPayment->state);
-
-        // remove CID to fail reactivation
-        $this->recurrentPaymentsRepository->update($recurrentPayment, ['cid' => null]);
-
-        // call API
-        $this->handler->setRawPayload(json_encode(['id' => $recurrentPayment->id]));
-        $this->handler->setAuthorization($this->getTestAuthorization($user));
-        $response = $this->runJsonApi($this->handler);
-
-        // validate API response
-        $this->assertEquals(JsonApiResponse::class, get_class($response));
-        $this->assertEquals(Response::S500_INTERNAL_SERVER_ERROR, $response->getCode());
-        $payload = $response->getPayload();
-        // status should change to `active`; other fields are same
-        $this->assertEquals('recurrent_payment_missing_cid', $payload['code']);
-
-        // validate state in DB (to be sure)
-        $recurrentPaymentReloaded = $this->recurrentPaymentsRepository->find($recurrentPayment->id);
-        $this->assertEquals(RecurrentPaymentsRepository::STATE_USER_STOP, $recurrentPaymentReloaded->state);
-    }
-
     private function createRecurrentPayment(string $cid, ActiveRow $payment, \DateTime $chargeAt)
     {
         $paymentMethod = $this->paymentMethodsRepository->findOrAdd(

@@ -30,7 +30,7 @@
                                 <small>#{$payment->id}</small>
                                 <i n:if="$payment->note" class="fa fa-info-circle text-danger fa-wh" data-toggle="tooltip" data-placement="top" title="{$payment->note|breaklines}"></i>
                             </td>
-                            <td><code>{$payment->cid}</code></td>
+                            <td><code>{$payment->payment_method->external_token}</code></td>
                             <td class="text-muted">{$payment->created_at|userDate}</td>
                             <td class="text-muted">{$payment->updated_at|userDate}</td>
                             <td>{$payment->charge_at|userDate}</td>

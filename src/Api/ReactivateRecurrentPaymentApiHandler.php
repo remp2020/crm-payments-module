@@ -79,14 +79,6 @@ class ReactivateRecurrentPaymentApiHandler extends ApiHandler
             return $response;
         }
 
-        if (!$recurrentPayment->cid) {
-            Debugger::log("User stopped recurrent payment with ID [$recurrentPaymentID] is missing CID.", Debugger::ERROR);
-            $response = new JsonApiResponse(Response::S500_INTERNAL_SERVER_ERROR, [
-                'message' => "Recurrent payment with ID [$recurrentPaymentID] cannot be reactivated. Recurrent payment is missing CID.",
-                'code' => 'recurrent_payment_missing_cid',
-            ]);
-            return $response;
-        }
         if ($recurrentPayment->charge_at < new DateTime()) {
             $response = new JsonApiResponse(Response::S400_BAD_REQUEST, [
                 'message' => "Recurrent payment with ID [$recurrentPaymentID] cannot be reactivated. Next charge is in past.",

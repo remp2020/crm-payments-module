@@ -17,21 +17,12 @@ class UpdateRecurrentPaymentsExpiresCommand extends Command
 {
     use DecoratedCommandTrait;
 
-    private $recurrentPaymentsRepository;
-
-    private $gatewayFactory;
-
-    private $paymentGatewaysRepository;
-
     public function __construct(
-        RecurrentPaymentsRepository $recurrentPaymentsRepository,
-        GatewayFactory $gatewayFactory,
-        PaymentGatewaysRepository $paymentGatewaysRepository
+        private readonly RecurrentPaymentsRepository $recurrentPaymentsRepository,
+        private readonly GatewayFactory $gatewayFactory,
+        private readonly PaymentGatewaysRepository $paymentGatewaysRepository
     ) {
         parent::__construct();
-        $this->recurrentPaymentsRepository = $recurrentPaymentsRepository;
-        $this->gatewayFactory = $gatewayFactory;
-        $this->paymentGatewaysRepository = $paymentGatewaysRepository;
     }
 
     protected function configure()
@@ -42,7 +33,7 @@ class UpdateRecurrentPaymentsExpiresCommand extends Command
                 'limit',
                 null,
                 InputOption::VALUE_REQUIRED,
-                'Number of cids to process'
+                'Number of recurrent payments to process'
             )
             ->addOption(
                 'gateway',
@@ -74,11 +65,11 @@ class UpdateRecurrentPaymentsExpiresCommand extends Command
         }
 
         $recurrentPayments = $this->recurrentPaymentsRepository->all()
-            ->select('payment_gateway.code, cid')
+            ->select('payment_gateway.code, payment_method_id')
             ->where([
                 'state' => RecurrentPaymentsRepository::STATE_ACTIVE,
             ])
-            ->group('payment_gateway.code, cid');
+            ->group('payment_gateway.code, payment_method.external_token');
 
         if (!$input->getOption('all')) {
             $recurrentPayments->where(['expires_at' => null]);
@@ -106,15 +97,17 @@ class UpdateRecurrentPaymentsExpiresCommand extends Command
 
         $gateways = [];
         foreach ($recurrentPayments as $recurrentPayment) {
-            $gateways[$recurrentPayment->code][$recurrentPayment->cid] = $recurrentPayment->cid;
+            $externalToken = $recurrentPayment->payment_method->external_token;
+            $gateways[$recurrentPayment->code][$externalToken] = $externalToken;
         }
         if (empty($gateways)) {
             $output->writeln('<info>No cards.</info>');
         }
 
-        $output->writeln("Processing <comment>{$recurrentPayments->count()}</comment>/<info>{$totalCount}</info> CIDs");
+        $output->writeln("Processing <comment>{$recurrentPayments->count()}</comment>/<info>{$totalCount}</info> recurrent payments");
 
-        foreach ($gateways as $code => $cids) {
+        foreach ($gateways as $code => $externalTokens) {
+            /** @var RecurrentPaymentInterface $gateway */
             $gateway = $this->gatewayFactory->getGateway($code);
             if (!$gateway instanceof RecurrentPaymentInterface) {
                 $output->writeln("<error>Error: gateway {$code} does not implement RecurrentPaymentInterface</error>");
@@ -122,23 +115,23 @@ class UpdateRecurrentPaymentsExpiresCommand extends Command
             $paymentGateway = $this->paymentGatewaysRepository->findByCode($code);
 
             try {
-                foreach (array_chunk($cids, 200) as $chunk) {
+                foreach (array_chunk($externalTokens, 200) as $chunk) {
                     $result = $gateway->checkExpire($chunk);
-                    foreach ($result as $token => $expire) {
-                        $cidRecurrentPayments = $this->recurrentPaymentsRepository->getTable()
-                            ->where(['cid' => (string) $token]);
+                    foreach ($result as $externalToken => $expire) {
+                        $filteredRecurrentPayments = $this->recurrentPaymentsRepository->getTable()
+                            ->where(['payment_method.external_token' => (string) $externalToken]);
 
                         $previousExpiration = null;
                         $updated = false;
 
-                        foreach ($cidRecurrentPayments as $cidPayment) {
-                            if ($cidPayment->expires_at == $expire) {
+                        foreach ($filteredRecurrentPayments as $filteredRecurrentPayment) {
+                            if ($filteredRecurrentPayment->expires_at == $expire) {
                                 continue;
                             }
-                            if (!$previousExpiration && $cidPayment->expires_at) {
-                                $previousExpiration = $cidPayment->expires_at;
+                            if (!$previousExpiration && $filteredRecurrentPayment->expires_at) {
+                                $previousExpiration = $filteredRecurrentPayment->expires_at;
                             }
-                            $this->recurrentPaymentsRepository->update($cidPayment, [
+                            $this->recurrentPaymentsRepository->update($filteredRecurrentPayment, [
                                 'expires_at' => $expire
                             ]);
                             $updated = true;
@@ -146,17 +139,17 @@ class UpdateRecurrentPaymentsExpiresCommand extends Command
 
                         if ($updated) {
                             $output->writeln(sprintf(
-                                '  * %s CID <comment>%s</comment> expires at %s %s',
+                                '  * %s EXTERNAL_TOKEN <comment>%s</comment> expires at %s %s',
                                 $paymentGateway->name,
-                                $token,
+                                $externalToken,
                                 $expire->format('Y-m-d'),
                                 $previousExpiration ? "(previously {$previousExpiration->format('Y-m-d')})" : ''
                             ));
                         } else {
                             $output->writeln(sprintf(
-                                '  * %s CID <comment>%s</comment> skipped, no change in expiration',
+                                '  * %s EXTERNAL_TOKEN <comment>%s</comment> skipped, no change in expiration',
                                 $paymentGateway->name,
-                                $token,
+                                $externalToken,
                             ));
                         }
                     }

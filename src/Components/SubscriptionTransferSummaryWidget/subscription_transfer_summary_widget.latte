@@ -98,7 +98,7 @@
           <table class="table table-responsive table-clear table-left-label">
             <tr>
               <td>{_payments.admin.payments_recurrent.cid}</td>
-              <td>{$recurrentPayment->cid|userDate}</td>
+              <td>{$recurrentPayment->payment_method->external_token}</td>
             </tr>
             <tr>
               <td>{_payments.admin.payments_recurrent.created_at}</td>

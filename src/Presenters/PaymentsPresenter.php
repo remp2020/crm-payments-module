@@ -48,10 +48,6 @@ class PaymentsPresenter extends FrontendPresenter
             $this->flashMessage($this->translator->translate('payments.frontend.reactivate.error'), 'error');
             $this->redirect('my');
         }
-        if (!$recurrent->cid) {
-            $this->flashMessage($this->translator->translate('payments.frontend.reactivate.error_create_new'), 'error');
-            $this->redirect('my');
-        }
         if ($recurrent->charge_at < new DateTime()) {
             $this->flashMessage($this->translator->translate('payments.frontend.reactivate.error_create_new'), 'error');
             $this->redirect('my');

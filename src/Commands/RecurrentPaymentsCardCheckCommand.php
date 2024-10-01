@@ -44,8 +44,10 @@ class RecurrentPaymentsCardCheckCommand extends Command
             $gateway = $this->gatewayFactory->getGateway($recurrentPayment->payment_gateway->code);
 
             try {
-                $response = $gateway->checkValid($recurrentPayment->cid);
-                $output->writeln('<info>Card_id: ' . $recurrentPayment->cid . ' User_id: ' . $recurrentPayment->user_id . ' Response: ' . ($response ? 'TRUE' : '<error>FALSE</error>') . '</info>');
+                $externalToken = $recurrentPayment->payment_method->external_token;
+
+                $response = $gateway->checkValid($externalToken);
+                $output->writeln('<info>Payment_method_token: ' . $externalToken . ' User_id: ' . $recurrentPayment->user_id . ' Response: ' . ($response ? 'TRUE' : '<error>FALSE</error>') . '</info>');
             } catch (\Exception $e) {
                 Debugger::log($e->getMessage());
             }

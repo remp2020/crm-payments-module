@@ -46,7 +46,7 @@
           {foreach $recurrentPayments as $recurrentPayment}
 		    <tr>
 		      <td>#{$recurrentPayment->id}</td>
-              <td><code class="muted">{$recurrentPayment->cid}</code></td>
+              <td><code class="muted">{$recurrentPayment->payment_method->external_token}</code></td>
 		      <td>{$recurrentPayment->charge_at|userDate}</td>
 		      <td>{$recurrentPayment->created_at|userDate}</td>
 		      <td>{$recurrentPayment->subscription_type->name}</td>

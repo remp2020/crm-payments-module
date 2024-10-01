@@ -40,7 +40,7 @@ class RecurrentPaymentsProcessor
 
         $this->recurrentPaymentsRepository->createFromPayment(
             $payment,
-            $recurrentPayment->cid,
+            $recurrentPayment->payment_method->external_token,
             $chargeAt,
             $customChargeAmount
         );

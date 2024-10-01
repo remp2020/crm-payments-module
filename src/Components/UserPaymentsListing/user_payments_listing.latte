@@ -166,7 +166,7 @@
           <small>#{$recurrentPayment->id}</small>
           <i n:if="$recurrentPayment->note" class="fa fa-info-circle text-danger fa-wh" data-toggle="tooltip" data-placement="top" title="{$recurrentPayment->note|breaklines}"></i>
         </td>
-        <td><code class="clip cid-truncated" data-clipboard-text="{$recurrentPayment->cid}">{$recurrentPayment->cid}</code></td>
+        <td><code class="clip cid-truncated" data-clipboard-text="{$recurrentPayment->payment_method->external_token}">{$recurrentPayment->payment_method->external_token}</code></td>
         <td class="text-muted">{$recurrentPayment->created_at|userDate}</td>
         <td class="text-muted">{$recurrentPayment->updated_at|userDate}</td>
         <td>{$recurrentPayment->charge_at|userDate}</td>
