@@ -52,18 +52,18 @@ class AttachRenewalPaymentEventHandler extends AbstractListener
             throw new \Exception("User ID: `{$userId}` not found.");
         }
 
-        // check for next subscription type id
-        $newSubscriptionType = $subscription->subscription_type->next_subscription_type;
+        // find default subscription with sames length and content access
+        $contentAccesses = $this->contentAccessRepository->allForSubscriptionType($subscription->subscription_type)->fetchPairs('name', 'name');
+        $newSubscriptionType = $this->subscriptionTypesRepository->findDefaultForLengthAndContentAccesses($subscription->length, ...$contentAccesses);
 
-        // if current subscription type has no next subscription type set
-        // find new subscription type with same length and content accesses
-        if (!$newSubscriptionType) {
-            $contentAccesses = $this->contentAccessRepository->allForSubscriptionType($subscription->subscription_type)->fetchPairs('name', 'name');
-            $newSubscriptionType = $this->subscriptionTypesRepository->findDefaultForLengthAndContentAccesses($subscription->length, ...$contentAccesses);
-            if ($newSubscriptionType === null) {
-                $contentAccesses = implode(', ', $contentAccesses);
-                throw new \Exception("Default subscription for content accesses: {$contentAccesses} not found.");
-            }
+        // check for subscription types next_subscription_type_id
+        if ($newSubscriptionType === null) {
+            $newSubscriptionType = $subscription->subscription_type->next_subscription_type;
+        }
+
+        if ($newSubscriptionType === null) {
+            $contentAccesses = implode(', ', $contentAccesses);
+            throw new \Exception("Next subscription type for content accesses: {$contentAccesses} not found.");
         }
 
         // create new payment
