@@ -1,11 +1,14 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Crm\PaymentsModule\Commands;
 
 use Crm\ApplicationModule\Commands\DecoratedCommandTrait;
 use Crm\PaymentsModule\Repositories\PaymentsRepository;
 use Crm\SegmentModule\Models\SegmentFactory;
 use Crm\SubscriptionsModule\Models\PaymentItem\SubscriptionTypePaymentItem;
+use Crm\SubscriptionsModule\Repositories\SubscriptionTypesRepository;
 use Crm\UsersModule\Repositories\UserMetaRepository;
 use Crm\UsersModule\Repositories\UserStatsRepository;
 use Crm\UsersModule\Repositories\UsersRepository;
@@ -32,11 +35,13 @@ class CalculateAveragesCommand extends Command
     private int $minimalSubscriptionLength = 1;
     private ?int $calculatedPeriod = null;
     private ?DateTime $startDate = null;
+    private array $excludedSubscriptionTypeIds = [];
 
     public function __construct(
         private readonly Explorer $database,
         private readonly PaymentsRepository $paymentsRepository,
         private readonly SegmentFactory $segmentFactory,
+        private readonly SubscriptionTypesRepository $subscriptionTypesRepository,
         private readonly UserStatsRepository $userStatsRepository,
         private readonly UsersRepository $usersRepository,
         private readonly UserMetaRepository $userMetaRepository
@@ -204,6 +209,13 @@ class CalculateAveragesCommand extends Command
             }
         }
 
+        // get excluded subscription types (under minimal subscription length
+        // or subscription types without subscription (eg. crowdfunding)
+        $this->excludedSubscriptionTypeIds = $this->subscriptionTypesRepository->getTable()
+            ->where(['length < ?' => $this->minimalSubscriptionLength])
+            ->whereOr(['no_subscription' => 1]) // subscription types without subscription shouldn't be in this calculations
+            ->fetchPairs('id', 'id');
+
         if (!empty($userIDs)) {
             $this->computeUserSubscriptionPaymentCounts(userIDs: $userIDs);
             $this->computeUserSubscriptionPaymentAmounts(userIDs: $userIDs);
@@ -215,6 +227,9 @@ class CalculateAveragesCommand extends Command
                 $this->computeUserAvgPaymentAmount(interval: $interval);
             }
         }
+
+        $this->line('**** ' . self::getCommandName() . ' (end date: ' . (new DateTime())->format(DATE_RFC3339) . ') ****', 'info');
+        $this->line('All done.');
 
         return Command::SUCCESS;
     }
@@ -238,113 +253,120 @@ class CalculateAveragesCommand extends Command
 
     private function computeUserSubscriptionPaymentCounts(array $userIDs = null, array $interval = null)
     {
+        $paymentPaidAt = $this->startDate;
+        $subscriptionTypeItem = SubscriptionTypePaymentItem::TYPE;
+
+        $paymentsQuery = $this->paymentsRepository->getTable()
+            ->select(implode(',', [
+                'payments.user_id AS user_id',
+                'COUNT(DISTINCT(payments.id)) AS subscription_payments',
+            ]))
+            ->joinWhere(
+                tableChain: ':payment_items',
+                condition: "payments.id = :payment_items.payment_id AND :payment_items.type IN (?)",
+                params: $subscriptionTypeItem,
+            )
+            ->where([
+                'user.deleted_at IS NULL',
+                'payments.status IN (?)' => self::PAYMENT_STATUSES,
+                'payments.paid_at > ?' => $paymentPaidAt,
+                ':payment_items.id IS NOT NULL'
+            ])
+            ->group('payments.user_id');
+
         if (isset($userIDs)) {
             $this->line("  * computing '<info>subscription_payments</info>' for provided user IDs");
-            $userIdsCondition = "`payments`.`user_id` IN (?)";
-            $userIdsParams = [$userIDs];
+            $paymentsQuery->where(['payments.user_id IN (?)' => $userIDs]);
         } elseif (isset($interval)) {
             $this->line("  * computing '<info>subscription_payments</info>' for user IDs between [<info>{$interval[0]}</info>, <info>{$interval[1]}</info>]");
-            $userIdsCondition = "`payments`.`user_id` BETWEEN ? AND ?";
-            $userIdsParams = $interval;
+            $paymentsQuery->where(['payments.user_id BETWEEN ? AND ?' => $interval]);
         } else {
             throw new \RuntimeException('Either array of user IDs (e.g. [1,2,3,4,...]) or interval of user IDs (e.g. [1,1000]) need to be provided');
         }
 
-        $paymentPaidAt = $this->startDate;
-        $subscriptionTypeItem = SubscriptionTypePaymentItem::TYPE;
+        if (!empty($this->excludedSubscriptionTypeIds)) {
+            $paymentsQuery->where(['payments.subscription_type_id NOT IN (?)' => $this->excludedSubscriptionTypeIds,]);
+        }
 
-        $values = $this->database->query(<<<SQL
-            SELECT
-                `payments`.`user_id` AS `user_id`,
-                COUNT(DISTINCT(`payments`.`id`)) AS `subscription_payments`
-            FROM `payment_items`
-            INNER JOIN `payments`
-                ON `payments`.`id` = `payment_items`.`payment_id`
-                AND `payments`.`status` IN (?)
-                AND `payments`.`paid_at` > ?
-            INNER JOIN `subscription_types`
-                ON `subscription_types`.`id` = `payments`.`subscription_type_id`
-                AND `subscription_types`.`length` >= ?
-            WHERE
-                `payment_items`.`type` IN (?)
-                AND {$userIdsCondition}
-            GROUP BY `payments`.`user_id`
-        SQL, self::PAYMENT_STATUSES, $paymentPaidAt, $this->minimalSubscriptionLength, $subscriptionTypeItem, ...$userIdsParams)
-            ->fetchPairs('user_id', 'subscription_payments');
+        $values = $paymentsQuery->fetchPairs('user_id', 'subscription_payments');
 
         $this->userStatsRepository->upsertUsersValues('subscription_payments', $values);
     }
 
     private function computeUserSubscriptionPaymentAmounts(array $userIDs = null, array $interval = null)
     {
+        $paymentPaidAt = $this->startDate;
+        $subscriptionTypeItem = SubscriptionTypePaymentItem::TYPE;
+
+        $paymentsQuery = $this->paymentsRepository->getTable()
+            ->select(implode(',', [
+                'payments.user_id AS user_id',
+                'COALESCE(SUM(:payment_items.amount * :payment_items.count), 0) AS subscription_payments_amount',
+            ]))
+            ->joinWhere(
+                tableChain: ':payment_items',
+                condition: "payments.id = :payment_items.payment_id AND :payment_items.type IN (?)",
+                params: $subscriptionTypeItem,
+            )
+            ->where([
+                'user.deleted_at IS NULL',
+                'payments.status IN (?)' => self::PAYMENT_STATUSES,
+                'payments.paid_at > ?' => $paymentPaidAt,
+                ':payment_items.id IS NOT NULL'
+            ])
+            ->group('payments.user_id');
+
         if (isset($userIDs)) {
             $this->line("  * computing '<info>subscription_payments_amount</info>' for provided user IDs");
-            $userIdsCondition = "`payments`.`user_id` IN (?)";
-            $userIdsParams = [$userIDs];
+            $paymentsQuery->where(['payments.user_id IN (?)' => $userIDs]);
         } elseif (isset($interval)) {
             $this->line("  * computing '<info>subscription_payments_amount</info>' for user IDs between [<info>{$interval[0]}</info>, <info>{$interval[1]}</info>]");
-            $userIdsCondition = "`payments`.`user_id` BETWEEN ? AND ?";
-            $userIdsParams = $interval;
+            $paymentsQuery->where(['payments.user_id BETWEEN ? AND ?' => $interval]);
         } else {
             throw new \RuntimeException('Either array of user IDs (e.g. [1,2,3,4,...]) or interval of user IDs (e.g. [1,1000]) need to be provided');
         }
 
-        $paymentPaidAt = $this->startDate;
-        $subscriptionTypeItem = SubscriptionTypePaymentItem::TYPE;
+        if (!empty($this->excludedSubscriptionTypeIds)) {
+            $paymentsQuery->where(['payments.subscription_type_id NOT IN (?)' => $this->excludedSubscriptionTypeIds,]);
+        }
 
-        $values = $this->database->query(<<<SQL
-            SELECT
-                `payments`.`user_id` AS `user_id`,
-                COALESCE(SUM(`payment_items`.`amount` * `payment_items`.`count`), 0) AS `subscription_payments_amount`
-            FROM `payment_items`
-            INNER JOIN `payments`
-                ON `payments`.`id` = `payment_items`.`payment_id`
-                AND `payments`.`status` IN (?)
-                AND `payments`.`paid_at` > ?
-            INNER JOIN `subscription_types`
-                ON `subscription_types`.`id` = `payments`.`subscription_type_id`
-                AND `subscription_types`.`length` >= ?
-            WHERE
-                `payment_items`.`type` IN (?)
-                AND {$userIdsCondition}
-            GROUP BY `payments`.`user_id`
-        SQL, self::PAYMENT_STATUSES, $paymentPaidAt, $this->minimalSubscriptionLength, $subscriptionTypeItem, ...$userIdsParams)
-            ->fetchPairs('user_id', 'subscription_payments_amount');
+        $values = $paymentsQuery->fetchPairs('user_id', 'subscription_payments_amount');
 
         $this->userStatsRepository->upsertUsersValues('subscription_payments_amount', $values);
     }
 
     public function computeUserAvgPaymentAmount(array $userIDs = null, array $interval = null)
     {
+        $paymentPaidAt = $this->startDate;
+
+        $paymentsQuery = $this->paymentsRepository->getTable()
+            ->select(implode(',', [
+                'payments.user_id AS user_id',
+                "COALESCE(AVG((payments.amount / subscription_type.length) * {$this->subscriptionPeriod}), 0) AS avg_month_payment_amount",
+            ]))
+            ->where([
+                'user.deleted_at IS NULL',
+                'payments.status IN (?)' => self::PAYMENT_STATUSES,
+                'payments.paid_at > ?' => $paymentPaidAt,
+                'subscription_type.id IS NOT NULL'
+            ])
+            ->group('payments.user_id');
+
         if (isset($userIDs)) {
             $this->line("  * computing '<info>avg_month_payment</info>' for provided user IDs");
-            $userIdsCondition = "`payments`.`user_id` IN (?)";
-            $userIdsParams = [$userIDs];
+            $paymentsQuery->where(['payments.user_id IN (?)' => $userIDs]);
         } elseif (isset($interval)) {
             $this->line("  * computing '<info>avg_month_payment</info>' for user IDs between [<info>{$interval[0]}</info>, <info>{$interval[1]}</info>]");
-            $userIdsCondition = "`payments`.`user_id` BETWEEN ? AND ?";
-            $userIdsParams = $interval;
+            $paymentsQuery->where(['payments.user_id BETWEEN ? AND ?' => $interval]);
         } else {
             throw new \RuntimeException('Either array of user IDs (e.g. [1,2,3,4,...]) or interval of user IDs (e.g. [1,1000]) need to be provided');
         }
 
-        $paymentPaidAt = $this->startDate;
+        if (!empty($this->excludedSubscriptionTypeIds)) {
+            $paymentsQuery->where(['payments.subscription_type_id NOT IN (?)' => $this->excludedSubscriptionTypeIds,]);
+        }
 
-        $values = $this->database->query(<<<SQL
-            SELECT
-                `payments`.`user_id` AS `user_id`,
-                COALESCE(AVG((`payments`.`amount` / `subscription_types`.`length`) * {$this->subscriptionPeriod}), 0) AS `avg_month_payment_amount`
-            FROM `payments`
-            INNER JOIN `subscription_types`
-                ON `subscription_types`.`id` = `payments`.`subscription_type_id`
-                AND `subscription_types`.`length` >= ?
-            WHERE
-                `payments`.`status` IN (?)
-                AND `payments`.`paid_at` > ?
-                AND {$userIdsCondition}
-            GROUP BY `payments`.`user_id`
-        SQL, $this->minimalSubscriptionLength, self::PAYMENT_STATUSES, $paymentPaidAt, ...$userIdsParams)
-            ->fetchPairs('user_id', 'avg_month_payment_amount');
+        $values = $paymentsQuery->fetchPairs('user_id', 'avg_month_payment_amount');
 
         $this->userStatsRepository->upsertUsersValues('avg_month_payment', $values);
     }
