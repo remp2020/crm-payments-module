@@ -14,7 +14,6 @@ use Crm\PaymentsModule\Repositories\PaymentMetaRepository;
 use Crm\PaymentsModule\Repositories\PaymentsRepository;
 use Crm\UsersModule\Models\User\UserData;
 use Crm\UsersModule\Repositories\UserMetaRepository;
-use Crm\UsersModule\Repositories\UsersRepository;
 use Crm\ViamoModule\Gateways\Viamo;
 use Nette\Application\Attributes\Persistent;
 use Nette\DI\Attributes\Inject;
@@ -144,18 +143,6 @@ class ReturnPresenter extends FrontendPresenter
                 // confirmed payment == agreed to terms
                 if (!$this->userMetaRepository->exists($payment->user, 'gdpr')) {
                     $this->userMetaRepository->setMeta($payment->user, ['gdpr' => 'confirm_payment']);
-                }
-
-                // autologin user after the payment (unless he's an admin)
-                if (!$this->getUser()->isLoggedIn()) {
-                    // autologin regular user with regular payment
-                    if ($payment->user->role !== UsersRepository::ROLE_ADMIN) {
-                        $presenter->getUser()->login(['user' => $payment->user, 'autoLogin' => true]);
-                    } else {
-                        // redirect admin user to sign in form (no autologin allowed)
-                        $presenter->flashMessage($this->translator->translate('sales_funnel.frontend.disabled_auto_login.title'), 'warning');
-                        $presenter->redirect($this->applicationConfig->get('not_logged_in_route'), ['back' => $this->storeRequest()]);
-                    }
                 }
 
                 // update all user tokens with new access data
