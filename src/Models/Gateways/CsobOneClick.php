@@ -97,6 +97,10 @@ class CsobOneClick extends GatewayAbstract implements RecurrentPaymentInterface,
         $this->initialize();
 
         $requestParams = [
+            // To have an authenticated admin user in the payment redirect request, we need to make a return request using GET.
+            // Otherwise, the session cookie (PHPSESSID) is not sent, as it is a SameSite=Lax cookie and such cookie
+            // is omitted in POST cross-site requests.
+            'returnMethod' => $payment->user->role === 'admin' ? 'GET' : 'POST',
             'returnUrl' => $this->generateReturnUrl($payment, [
                 'VS' => $payment->variable_symbol,
             ]),
