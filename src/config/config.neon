@@ -184,6 +184,8 @@ services:
 	- Crm\PaymentsModule\DataProviders\PaymentItemTypesFilterDataProvider
 	- Crm\PaymentsModule\DataProviders\SubscriptionFormDataProvider
 	- Crm\PaymentsModule\DataProviders\SubscriptionTransferDataProvider
+	- Crm\PaymentsModule\DataProviders\PaypalPaymentsUniversalSearchDataProvider
+	- Crm\PaymentsModule\DataProviders\PaypalIdAdminFilterFormDataProvider
 
 	cardPayDirectLogger:
 		factory: Monolog\Logger('card-pay-direct')

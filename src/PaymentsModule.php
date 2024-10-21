@@ -82,6 +82,8 @@ use Crm\PaymentsModule\DataProviders\PaymentFromVariableSymbolDataProvider;
 use Crm\PaymentsModule\DataProviders\PaymentItemTypesFilterDataProvider;
 use Crm\PaymentsModule\DataProviders\PaymentsClaimUserDataProvider;
 use Crm\PaymentsModule\DataProviders\PaymentsUserDataProvider;
+use Crm\PaymentsModule\DataProviders\PaypalIdAdminFilterFormDataProvider;
+use Crm\PaymentsModule\DataProviders\PaypalPaymentsUniversalSearchDataProvider;
 use Crm\PaymentsModule\DataProviders\RecurrentPaymentsClaimUserDataProvider;
 use Crm\PaymentsModule\DataProviders\RecurrentPaymentsUserDataProvider;
 use Crm\PaymentsModule\DataProviders\SalesFunnelTwigVariablesDataProvider;
@@ -571,6 +573,16 @@ class PaymentsModule extends CrmModule
         $dataProviderManager->registerDataProvider(
             'subscriptions.dataprovider.transfer',
             $this->getInstance(SubscriptionTransferDataProvider::class),
+        );
+
+        $dataProviderManager->registerDataProvider(
+            'admin.dataprovider.universal_search',
+            $this->getInstance(PaypalPaymentsUniversalSearchDataProvider::class)
+        );
+
+        $dataProviderManager->registerDataProvider(
+            'payments.dataprovider.payments_filter_form',
+            $this->getInstance(PaypalIdAdminFilterFormDataProvider::class)
         );
     }
 
