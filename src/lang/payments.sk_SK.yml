@@ -252,6 +252,19 @@ admin:
             recurrent_payment_transfer_notice: Opakovaná platba bude presunutá spolu s predplatným.
             payment_transfer_notice: Platba bude presunutá spolu s predplatným.
 
+        renewal_payment_for_subscription_widget:
+            menu: Nastaviť platbu pre obnovu
+            title: Nastaviť platbu pre obnovu predplatného
+            success: Platba pre obnovu predplatneho bola upravená.
+
+        assign_renewal_payment_subscription_form:
+            error: Platbu ID %payment_id% nie je možné nastaviť pre obnovu predplatného ID %subscription_id%
+            renewal_payment: Platba pre obnovu
+            submit: Nastav platbu pre obnovu
+
+        show_renewal_payment_for_subscription_widget:
+            title: Platba ID %renewal_payment_id% nastavená pre obnovu predplatného.
+
     donation: Dar k predplatnému
 
     arpu:

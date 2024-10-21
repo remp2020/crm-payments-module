@@ -64,6 +64,8 @@ use Crm\PaymentsModule\Components\PaymentToSubscriptionMenu\PaymentToSubscriptio
 use Crm\PaymentsModule\Components\ReactivateFailedRecurrentPaymentWidget\ReactivateFailedRecurrentPaymentWidget;
 use Crm\PaymentsModule\Components\RefundPaymentItemsListWidget\RefundPaymentItemsListWidget;
 use Crm\PaymentsModule\Components\RefundPaymentsListWidget\RefundPaymentsListWidget;
+use Crm\PaymentsModule\Components\RenewalPaymentForSubscriptionWidget\RenewalPaymentForSubscriptionWidget;
+use Crm\PaymentsModule\Components\ShowRenewalPaymentForSubscriptionWidget\ShowRenewalPaymentForSubscriptionWidget;
 use Crm\PaymentsModule\Components\SubscribersWithPaymentWidget\SubscribersWithPaymentWidgetFactory;
 use Crm\PaymentsModule\Components\SubscriptionDetailWidget\SubscriptionDetailWidget;
 use Crm\PaymentsModule\Components\SubscriptionTransferInformationWidget\SubscriptionTransferInformationWidget;
@@ -364,6 +366,11 @@ class PaymentsModule extends CrmModule
         );
 
         $widgetManager->registerWidget(
+            'subscriptions.admin.user_subscriptions_listing.action.menu',
+            RenewalPaymentForSubscriptionWidget::class,
+        );
+
+        $widgetManager->registerWidget(
             'admin.refund_payment.show.left',
             RefundPaymentItemsListWidget::class
         );
@@ -377,6 +384,11 @@ class PaymentsModule extends CrmModule
         $widgetManager->registerWidget(
             'admin.subscriptions.transfer.summary.right',
             SubscriptionTransferSummaryWidget::class
+        );
+
+        $widgetManager->registerWidget(
+            'subscriptions.admin.user_subscriptions_listing.subscription',
+            ShowRenewalPaymentForSubscriptionWidget::class
         );
     }
 

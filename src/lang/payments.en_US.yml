@@ -252,6 +252,19 @@ admin:
             recurrent_payment_transfer_notice: The recurring payment will be transferred together with the subscription.
             payment_transfer_notice: The payment will be transferred together with the subscription.
 
+        renewal_payment_for_subscription_widget:
+            menu: Set renewal payment
+            title: Set renewal payment for subscription
+            success: Subscription renewal payment set.
+
+        assign_renewal_payment_subscription_form:
+            error: Renewal payment ID %payment_id% cannot be set for subscription ID %subscription_id%
+            renewal_payment: Renewal payment
+            submit: Set renewal payment
+
+        show_renewal_payment_for_subscription_widget:
+            title: Payment ID %renewal_payment_id% set for subscription renewal.
+
     donation: Donation
 
     arpu:
