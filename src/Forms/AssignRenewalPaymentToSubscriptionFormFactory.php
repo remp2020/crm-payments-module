@@ -34,9 +34,13 @@ class AssignRenewalPaymentToSubscriptionFormFactory
         $form->setRenderer(new BootstrapRenderer());
 
         $subscription = $this->subscriptionsRepository->find($subscriptionId);
+        $assignedRenewalPayment = $this->renewalPayment->getRenewalPayment($subscription);
 
         $paymentOptions = $this->paymentsRepository->userPayments($subscription->user_id)
-            ->where('status', PaymentStatusEnum::Form->value);
+            ->whereOr([
+                'status' => PaymentStatusEnum::Form->value,
+                'id' => $assignedRenewalPayment?->id
+            ]);
 
         $disableOptions = $this->subscriptionMetaRepository->getTable()
             ->where([
@@ -66,7 +70,7 @@ class AssignRenewalPaymentToSubscriptionFormFactory
 
         $form->setDefaults([
             'subscription_id' => $subscription->id,
-            'renewal_payment_id' => $this->renewalPayment->getRenewalPayment($subscription)?->id,
+            'renewal_payment_id' => $assignedRenewalPayment?->id,
         ]);
 
         $form->onValidate[] = [$this, 'onValidate'];
@@ -83,6 +87,11 @@ class AssignRenewalPaymentToSubscriptionFormFactory
 
         $renewalPayment = $this->paymentsRepository->find($renewalPaymentId);
         $subscription = $this->subscriptionsRepository->find($data['subscription_id']);
+
+        $assignedRenewalPayment = $this->renewalPayment->getRenewalPayment($subscription);
+        if ($assignedRenewalPayment?->id === $renewalPaymentId) {
+            return;
+        }
 
         if ($renewalPayment->status !== PaymentStatusEnum::Form->value || $renewalPayment->user_id !== $subscription->user_id) {
             $form->addError($this->translator->translate(
