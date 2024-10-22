@@ -213,6 +213,69 @@ class RecurrentPaymentsResolverTest extends PaymentsTestCase
         }
     }
 
+    #[DataProvider('dataProviderForTestMultipleSubscriptionsWithTrialPeriods')]
+    public function testRecurrentWithNextTrial(
+        int $existingRecurrentPayments,
+        int $trialPeriods,
+        bool $shouldReturnNextSubscriptionType,
+    ) {
+        $subscriptionType = $this->getSubscriptionTypeByCode('subscription_type');
+        $nextSubscriptionType = $this->getSubscriptionTypeByCode('NEXT_subscription_type');
+        $upgradedSubscriptionType = $this->getSubscriptionTypeByCode('upgraded_subscription_type');
+        $nextUpgradedSubscriptionType = $this->getSubscriptionTypeByCode('NEXT_upgraded_subscription_type');
+
+        // set trial periods
+        if ($trialPeriods > 0) {
+            $this->subscriptionTypesRepository->update(
+                $subscriptionType,
+                [
+                'next_subscription_type_id' => $nextSubscriptionType->id,
+                'trial_periods' => $trialPeriods,
+                ],
+            );
+            $this->subscriptionTypesRepository->update(
+                $upgradedSubscriptionType,
+                [
+                    'next_subscription_type_id' => $nextUpgradedSubscriptionType->id,
+                    'trial_periods' => $trialPeriods,
+                ],
+            );
+        }
+
+        // create recurrents (one (current) has to exist)
+        $recurrentPayment = $this->createRecurrentPaymentWithSubscriptionType($subscriptionType);
+        if ($existingRecurrentPayments > 1) {
+            $cnt = $existingRecurrentPayments - 1;
+            $currentRecurrentPayment = $recurrentPayment;
+            while ($cnt > 0) {
+                $rpTmp = $this->createRecurrentPaymentWithSubscriptionType($subscriptionType);
+                $this->recurrentPaymentsRepository->update($rpTmp, [
+                    'charge_at' => $rpTmp->charge_at->modify('-' . $cnt . ' months'), // move to past
+                    'state' => 'charged',
+                    'payment_id' => $currentRecurrentPayment->parent_payment_id,
+                ]);
+                $cnt--;
+                $currentRecurrentPayment = $rpTmp;
+            }
+        }
+
+        // set next subscription for trial (upgrades do this)
+        $this->recurrentPaymentsRepository->update($recurrentPayment, [
+            'next_subscription_type_id' => $upgradedSubscriptionType,
+        ]);
+        $recurrentPayment = $this->recurrentPaymentsRepository->find($recurrentPayment->id);
+
+        // verify
+        $this->assertEquals($existingRecurrentPayments, $this->recurrentPaymentsRepository->all()->count());
+
+        $resolvedSubscriptionType = $this->recurrentPaymentsResolver->resolveSubscriptionType($recurrentPayment);
+        if ($shouldReturnNextSubscriptionType) {
+            $this->assertEquals($nextUpgradedSubscriptionType->id, $resolvedSubscriptionType->id);
+        } else {
+            $this->assertEquals($upgradedSubscriptionType->id, $resolvedSubscriptionType->id);
+        }
+    }
+
     public static function dataProviderForTestMultipleSubscriptionsWithTrialPeriods(): array
     {
         return [

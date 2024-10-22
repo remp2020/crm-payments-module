@@ -14,7 +14,6 @@ use Crm\PaymentsModule\Models\PaymentItem\PaymentItemContainerFactory;
 use Crm\PaymentsModule\Models\RecurrentPaymentsResolver\PaymentData;
 use Crm\PaymentsModule\Repositories\RecurrentPaymentsRepository;
 use Crm\SubscriptionsModule\Models\PaymentItem\SubscriptionTypePaymentItem;
-use Crm\SubscriptionsModule\Repositories\SubscriptionTypesRepository;
 use League\Event\Emitter;
 use Nette\Database\Table\ActiveRow;
 use Nette\Localization\Translator;
@@ -26,7 +25,6 @@ class RecurrentPaymentsResolver
 
     public function __construct(
         private RecurrentPaymentsRepository $recurrentPaymentsRepository,
-        private SubscriptionTypesRepository $subscriptionTypesRepository,
         private Translator $translator,
         private ApplicationConfig $applicationConfig,
         private Emitter $emitter,
@@ -37,34 +35,29 @@ class RecurrentPaymentsResolver
     }
 
     /**
-     * resolveSubscriptionType determines which subscriptionType will be used within the next charge.
+     * Determines which subscriptionType will be used within the next charge.
      *
      * Returns:
      * - $recurrent_payment.subscription_type
-     *   - If $subscription_type.trial_periods or $subscription_type.next_subscription_type are NOT set.
+     *   - If $subscription_type.trial_periods or $subscription_type.next_subscription_type are NOT set
+     *     AND $recurrent_payment.next_subscription_type is not set
      * - $recurrent_payment.subscription_type.next_subscription_type
      *   - If $subscription_type.next_subscription_type is set
      *     AND number of used trials is same or greater than $subscription_type.trial_periods.
+     *     AND $recurrent_payment.next_subscription_type is not set
      * - $recurrent_payment.next_subscription_type
-     *   - If this is set. This is override of trial periods set on subscription type.
+     *   - If this is set.
      * - $recurrent_payment.next_subscription_type.next_subscription_type
-     *   - If this is set. This is override of trial periods set on subscription type.
-     *   - Note: This is kept, so we don't introduce breaking change. Until now, it worked this way in case
-     *           helpdesk manually set next subscription type to trial type. We wanted to skip second trial.
+     *   - If this is set
+     *     AND number of used trials is same or greater than $recurrent_payment.next_subscription_type.trial_periods.
      */
     public function resolveSubscriptionType(ActiveRow $recurrentPayment): ActiveRow
     {
-        // if override is set directly on recurrent payment, return it
-        if ($recurrentPayment->next_subscription_type_id) {
-            // TODO: consider removing this in the future (breaking change), it looks ridiculous
-            if ($recurrentPayment->next_subscription_type->next_subscription_type_id) {
-                return $recurrentPayment->next_subscription_type->next_subscription_type;
-            }
-            return $recurrentPayment->next_subscription_type;
+        if ($recurrentPayment->next_subscription_type) {
+            $subscriptionType = $recurrentPayment->next_subscription_type;
+        } else {
+            $subscriptionType = $recurrentPayment->subscription_type;
         }
-
-        /** @var ActiveRow $subscriptionType */
-        $subscriptionType = $this->subscriptionTypesRepository->find($recurrentPayment->subscription_type_id);
 
         // next subscription OR trial periods NOT set; return current subscription type
         if ($subscriptionType->next_subscription_type_id === null || $subscriptionType->trial_periods === 0) {
@@ -73,7 +66,7 @@ class RecurrentPaymentsResolver
 
         // next_subscription_type_id is SET and there is single trial period (which was used by payment
         // which created this recurrent) => return next subscription type
-        if ($subscriptionType->trial_periods === 1) {
+        if ($subscriptionType->next_subscription_type_id && $subscriptionType->trial_periods === 1) {
             return $subscriptionType->next_subscription_type;
         }
 
