@@ -36,11 +36,12 @@ class AssignRenewalPaymentToSubscriptionFormFactory
         $subscription = $this->subscriptionsRepository->find($subscriptionId);
         $assignedRenewalPayment = $this->renewalPayment->getRenewalPayment($subscription);
 
-        $paymentOptions = $this->paymentsRepository->userPayments($subscription->user_id)
+        $paymentOptions = $this->paymentsRepository->getTable()
             ->whereOr([
-                'status' => PaymentStatusEnum::Form->value,
+                'status = ? AND user_id = ?' => [PaymentStatusEnum::Form->value, $subscription->user_id],
                 'id' => $assignedRenewalPayment?->id
-            ]);
+            ])
+            ->order('created_at DESC');
 
         $disableOptions = $this->subscriptionMetaRepository->getTable()
             ->where([
