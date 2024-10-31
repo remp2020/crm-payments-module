@@ -570,13 +570,13 @@ class PaymentFormFactory
                     $amount = str_replace(",", ".", $item->amount);
 
                     $paymentItem = new SubscriptionTypePaymentItem(
-                        $item->subscription_type_id,
-                        $item->name,
-                        (float) $amount,
-                        $item->vat,
-                        $item->count,
-                        $meta,
-                        $item->subscription_type_item_id,
+                        subscriptionTypeId: $item->subscription_type_id,
+                        name: $item->name,
+                        price: (float) $amount,
+                        vat: $item->vat,
+                        count: $item->count,
+                        meta: $meta,
+                        subscriptionTypeItemId: $item->subscription_type_item_id,
                     );
                     $paymentItemContainer->addItem($paymentItem);
                 }

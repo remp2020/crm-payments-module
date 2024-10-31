@@ -134,7 +134,11 @@
                         // Meta already contains stringified JSON, therefore parse it first before serialization (to avoid double encoding)
                         item[$(this).data('tag')] = JSON.parse($(this).val());
                     } else {
-                        item[$(this).data('tag')] = $(this).val().replace(',', '.')
+                        let itemValue = $(this).val().replace(',', '.');
+                        if (itemValue === "") {
+                            itemValue = null;
+                        }
+                        item[$(this).data('tag')] = itemValue;
                     }
                 });
                 items.push(item);
