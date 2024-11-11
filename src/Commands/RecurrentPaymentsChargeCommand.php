@@ -131,7 +131,7 @@ class RecurrentPaymentsChargeCommand extends Command
 
     private function chargeRecurrentPayment($recurrentPayment): void
     {
-        $customChargeAmount = $this->recurrentPaymentsResolver->resolveCustomChargeAmount($recurrentPayment);
+        $customChargeAmount = $recurrentPayment->custom_amount;
 
         // ability to modify payment
         $this->emitter->emit(new BeforeRecurrentPaymentChargeEvent($recurrentPayment->payment, $recurrentPayment->payment_method->external_token));

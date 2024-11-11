@@ -67,6 +67,12 @@ trait PaymentItemTrait
         return $this;
     }
 
+    public function forcePrice(float $price): static
+    {
+        $this->price = $price;
+        return $this;
+    }
+
     public static function loadMeta(ActiveRow $paymentItem): array
     {
         return $paymentItem->related('payment_item_meta')->fetchPairs('key', 'value');

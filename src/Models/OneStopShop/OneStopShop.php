@@ -27,6 +27,8 @@ use Tracy\Debugger;
 
 final class OneStopShop
 {
+    public const PAYMENT_META_ONE_STOP_SHOP = 'one_stop_shop';
+
     private array $frontendDataRequestCache = [];
 
     public function __construct(
@@ -220,6 +222,8 @@ final class OneStopShop
             $vatRate = $this->getCountryVatRate($paymentCountry, $paymentItem, $paymentItemContainer);
             $paymentItem->forceVat($vatRate);
         }
+
+        $paymentItemContainer->setPaymentMeta(self::PAYMENT_META_ONE_STOP_SHOP, 1);
     }
 
     public function getFrontendData(bool $enableRequestCache = true): OneStopShopFrontendData

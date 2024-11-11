@@ -17,6 +17,7 @@ use Crm\PaymentsModule\Models\PaymentItem\PaymentItemContainer;
 use Crm\PaymentsModule\Models\PaymentItem\PaymentItemContainerFactory;
 use Crm\PaymentsModule\Models\VariableSymbolInterface;
 use Crm\PaymentsModule\Models\VariableSymbolVariant;
+use Crm\PaymentsModule\Models\VatRate\VatProcessor;
 use Crm\SubscriptionsModule\Models\PaymentItem\SubscriptionTypePaymentItem;
 use Crm\SubscriptionsModule\Repositories\SubscriptionTypesRepository;
 use Crm\SubscriptionsModule\Repositories\SubscriptionsRepository;
@@ -67,6 +68,7 @@ class PaymentsRepository extends Repository
         protected CacheRepository $cacheRepository,
         protected PaymentGatewaysRepository $paymentGatewaysRepository,
         private OneStopShop $oneStopShop,
+        private VatProcessor $vatProcessor,
         private CountriesRepository $countriesRepository,
         private PaymentItemContainerFactory $paymentItemContainerFactory,
         private UsersRepository $usersRepository,
@@ -106,7 +108,8 @@ class PaymentsRepository extends Repository
             }
         }
 
-        $this->oneStopShop->adjustPaymentItemContainerVatRates($paymentItemContainer, $paymentCountry);
+        $this->vatProcessor->applyVatAdjustments($paymentItemContainer, $user, $paymentCountry);
+        $metaData = array_merge($metaData, $paymentItemContainer->getPaymentMetas());
 
         $data = [
             'user_id' => $user->id,
@@ -160,7 +163,7 @@ class PaymentsRepository extends Repository
         $this->paymentItemsRepository->add($payment, $paymentItemContainer);
 
         if (!empty($metaData)) {
-            $this->addMeta($payment, $metaData);
+            $this->addMeta($payment, array_filter($metaData));
         }
 
         $this->emitter->emit(new NewPaymentEvent($payment));
@@ -310,12 +313,17 @@ class PaymentsRepository extends Repository
         }
 
         if ($paymentItemContainer) {
-            $this->oneStopShop->adjustPaymentItemContainerVatRates(
+            $this->vatProcessor->applyVatAdjustments(
                 $paymentItemContainer,
+                $row->user,
                 $newPaymentCountry ?? $row->payment_country,
             );
             $this->paymentItemsRepository->deleteByPayment($row);
             $this->paymentItemsRepository->add($row, $paymentItemContainer);
+
+            if (!empty($paymentItemContainer->getPaymentMetas())) {
+                $this->addMeta($row, array_filter($paymentItemContainer->getPaymentMetas()));
+            }
         } elseif ($newPaymentCountry) {
             $this->oneStopShop->adjustPaymentVatRates($row, $newPaymentCountry);
         }

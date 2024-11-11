@@ -95,15 +95,6 @@ class RecurrentPaymentsResolver
     }
 
     /**
-     * resolveCustomChargeAmount calculates only non-standard charge amount which can be used
-     * as "amount" parameter in PaymentsRepository::add().
-     */
-    public function resolveCustomChargeAmount(ActiveRow $recurrentPayment) : ?float
-    {
-        return $recurrentPayment->custom_amount;
-    }
-
-    /**
      * resolveChargeAmount calculates final amount of money to be charged next time, including
      * the standard subscription price.
      */
@@ -162,7 +153,6 @@ class RecurrentPaymentsResolver
     private function createPaymentItemContainer(
         ActiveRow $recurrentPayment,
         ActiveRow $subscriptionType,
-        ?float $customChargeAmount,
         null|float|int $additionalAmount,
         ?string $additionalType,
     ): PaymentItemContainer {
@@ -171,20 +161,19 @@ class RecurrentPaymentsResolver
         // let modules rewrite PaymentItemContainer creation logic
         /** @var RecurrentPaymentPaymentItemContainerDataProviderInterface[] $providers */
         $providers = $this->dataProviderManager->getProviders(
-            'payments.dataprovider.recurrent_payment_payment_item_container',
+            RecurrentPaymentPaymentItemContainerDataProviderInterface::PATH,
+            //'payments.dataprovider.recurrent_payment_payment_item_container',
             RecurrentPaymentPaymentItemContainerDataProviderInterface::class
         );
         foreach ($providers as $s => $provider) {
-            $resolvedContainer = $provider->provide([
-                'recurrent_payment' => $recurrentPayment,
-                'subscription_type' => $subscriptionType,
-                'custom_charge_amount' => $customChargeAmount,
-            ]);
+            $resolvedContainer = $provider->createPaymentItemContainer($recurrentPayment, $subscriptionType);
             if ($resolvedContainer) {
                 $paymentItemContainer = $resolvedContainer;
                 break;
             }
         }
+
+        $customChargeAmount = $recurrentPayment->custom_amount;
 
         if (!$paymentItemContainer) {
             $paymentItemContainer = new PaymentItemContainer();
@@ -226,17 +215,7 @@ class RecurrentPaymentsResolver
 
         // Recurrent donation item are added directly
         if ($additionalType === 'recurrent' && $additionalAmount) {
-            $donationPaymentVat = $this->applicationConfig->get('donation_vat_rate');
-            if ($donationPaymentVat === null) {
-                throw new \RuntimeException("Config 'donation_vat_rate' is not set");
-            }
-            $paymentItemContainer->addItem(
-                new DonationPaymentItem(
-                    $this->translator->translate('payments.admin.donation'),
-                    (float) $additionalAmount,
-                    (int) $donationPaymentVat
-                )
-            );
+            $this->addRecurrentDonation($paymentItemContainer, $additionalAmount);
         }
 
         // let modules add own items to PaymentItemContainer
@@ -246,6 +225,21 @@ class RecurrentPaymentsResolver
         ));
 
         return $paymentItemContainer;
+    }
+
+    private function addRecurrentDonation(PaymentItemContainer $paymentItemContainer, float $additionalAmount): void
+    {
+        $donationPaymentVat = $this->applicationConfig->get('donation_vat_rate');
+        if ($donationPaymentVat === null) {
+            throw new \RuntimeException("Config 'donation_vat_rate' is not set");
+        }
+        $paymentItemContainer->addItem(
+            new DonationPaymentItem(
+                $this->translator->translate('payments.admin.donation'),
+                $additionalAmount,
+                (int) $donationPaymentVat
+            )
+        );
     }
 
     protected function getSubscriptionTypeItemsForCustomChargeAmount($subscriptionType, $customChargeAmount): array
@@ -290,7 +284,6 @@ class RecurrentPaymentsResolver
     public function resolvePaymentData(ActiveRow $recurrentPayment, ?ActiveRow $forceSubscriptionType = null): PaymentData
     {
         $subscriptionType = $forceSubscriptionType ?? $this->resolveSubscriptionType($recurrentPayment);
-        $customChargeAmount = $this->resolveCustomChargeAmount($recurrentPayment);
         $address = $this->resolveAddress($recurrentPayment);
 
         $additionalAmount = 0;
@@ -304,7 +297,6 @@ class RecurrentPaymentsResolver
         $paymentItemContainer = $this->createPaymentItemContainer(
             $recurrentPayment,
             $subscriptionType,
-            $customChargeAmount,
             $additionalAmount,
             $additionalType
         );
@@ -347,7 +339,7 @@ class RecurrentPaymentsResolver
         return new PaymentData(
             $paymentItemContainer,
             $subscriptionType,
-            $customChargeAmount,
+            $recurrentPayment->custom_amount,
             $additionalAmount,
             $additionalType,
             $address,

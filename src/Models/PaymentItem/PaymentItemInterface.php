@@ -30,5 +30,7 @@ interface PaymentItemInterface
 
     public function forceVat(float $vat): static;
 
+    public function forcePrice(float $price): static;
+
     public static function fromPaymentItem(ActiveRow $paymentItem): static;
 }

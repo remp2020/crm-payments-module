@@ -105,6 +105,7 @@ services:
 	csobOneClickGateway: Crm\PaymentsModule\Models\Gateways\CsobOneClick(@csobLogger)
 	- Crm\PaymentsModule\Models\Gateways\CardPayAuthorization
 	- Crm\PaymentsModule\Models\VatRate\VatRateValidator
+	- Crm\PaymentsModule\Models\VatRate\VatProcessor
 	- Crm\PaymentsModule\Segment\PaymentCriteria
 	- Crm\PaymentsModule\Segment\PaymentCountsCriteria
 	- Crm\PaymentsModule\Segment\RecurrentPaymentCriteria

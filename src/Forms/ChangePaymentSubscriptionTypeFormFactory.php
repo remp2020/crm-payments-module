@@ -5,7 +5,6 @@ namespace Crm\PaymentsModule\Forms;
 use Crm\ApplicationModule\Models\Database\ActiveRow;
 use Crm\PaymentsModule\Forms\Controls\SubscriptionTypesSelectItemsBuilder;
 use Crm\PaymentsModule\Models\PaymentItem\PaymentItemContainer;
-use Crm\PaymentsModule\Repositories\PaymentItemsRepository;
 use Crm\PaymentsModule\Repositories\PaymentsRepository;
 use Crm\SubscriptionsModule\Models\PaymentItem\SubscriptionTypePaymentItem;
 use Crm\SubscriptionsModule\Repositories\SubscriptionTypesRepository;
@@ -24,7 +23,6 @@ class ChangePaymentSubscriptionTypeFormFactory
         private readonly Translator $translator,
         private readonly SubscriptionTypesRepository $subscriptionTypesRepository,
         private readonly PaymentsRepository $paymentsRepository,
-        private readonly PaymentItemsRepository $paymentItemsRepository,
         private readonly Explorer $database,
         private readonly SubscriptionTypesSelectItemsBuilder $subscriptionTypesSelectItemsBuilder,
     ) {
@@ -75,36 +73,22 @@ class ChangePaymentSubscriptionTypeFormFactory
 
     public function formSucceeded($form, $values)
     {
-        $paymentId = $values['payment_id'];
-        $payment = $this->paymentsRepository->find($paymentId);
+        $payment = $this->paymentsRepository->find($values['payment_id']);
 
-        $newSubscriptionTypeId = $values['subscription_type_id'];
-        $newSubscriptionType = $this->subscriptionTypesRepository->find($newSubscriptionTypeId);
+        $newSubscriptionType = $this->subscriptionTypesRepository->find($values['subscription_type_id']);
+        if (!$newSubscriptionType) {
+            throw new \RuntimeException("Unable to find subscription type with ID [{$values['subscription_type_id']}]");
+        }
 
         $this->database->beginTransaction();
 
-        $oldSubscriptionTypeId = $payment->subscription_type_id;
-        $paymentItemsToDelete = $this->paymentItemsRepository->getTable()
-            ->where('payment_id', $payment->id)
-            ->where('subscription_type_id', $oldSubscriptionTypeId)
-            ->fetchAll();
-        foreach ($paymentItemsToDelete as $paymentItemToDelete) {
-            $this->paymentItemsRepository->deletePaymentItem($paymentItemToDelete);
-        }
-
-        $paymentItemContainer = (new PaymentItemContainer())->addItems(SubscriptionTypePaymentItem::fromSubscriptionType($newSubscriptionType));
-        $this->paymentItemsRepository->add($payment, $paymentItemContainer);
-
-        $paymentItems = $this->paymentItemsRepository->getByPayment($payment);
-        $amount = 0;
-        foreach ($paymentItems as $paymentItem) {
-            $amount += $paymentItem->count * $paymentItem->amount;
-        }
+        $paymentItemContainer = new PaymentItemContainer;
+        $paymentItemContainer->addItems(SubscriptionTypePaymentItem::fromSubscriptionType($newSubscriptionType));
 
         $this->paymentsRepository->update($payment, [
             'subscription_type_id' => $newSubscriptionType->id,
-            'amount' => $amount,
-        ]);
+            'amount' => $paymentItemContainer->totalPrice(),
+        ], $paymentItemContainer);
 
         $this->database->commit();
         if ($this->onSave) {

@@ -13,6 +13,8 @@ class PaymentItemContainer
 
     private bool $zeroPriceAllowed = false;
 
+    private array $paymentMetas = [];
+
     /**
      * Is true if container contains GenericPaymentItem, which means
      * some payment item type was not registered in PaymentItemContainerFactory
@@ -122,5 +124,16 @@ class PaymentItemContainer
     {
         $this->preventOssVatChange = $value;
         return $this;
+    }
+
+    public function setPaymentMeta(string $key, $value): self
+    {
+        $this->paymentMetas[$key] = $value;
+        return $this;
+    }
+
+    public function getPaymentMetas(): array
+    {
+        return $this->paymentMetas;
     }
 }
