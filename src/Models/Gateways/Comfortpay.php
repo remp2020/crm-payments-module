@@ -12,7 +12,7 @@ use Omnipay\Omnipay;
 use Tracy\Debugger;
 use Tracy\ILogger;
 
-class Comfortpay extends GatewayAbstract implements RecurrentPaymentInterface
+class Comfortpay extends GatewayAbstract implements RecurrentPaymentInterface, CancellableTokenInterface
 {
     public const GATEWAY_CODE = 'comfortpay';
 
@@ -202,5 +202,19 @@ class Comfortpay extends GatewayAbstract implements RecurrentPaymentInterface
             Debugger::log("Comfortpay response data doesn't include RES: " . Json::encode($data), ILogger::WARNING);
         }
         return $data['RES'] === "TOUT";
+    }
+
+    public function cancelToken(string $token): bool
+    {
+        $this->initialize();
+
+        $this->gateway->setCertPath($this->applicationConfig->get('comfortpay_local_cert_path'));
+        $this->gateway->setCertPass($this->applicationConfig->get('comfortpay_local_passphrase_path'));
+
+        $this->response = $this->gateway->unRegisterCard(
+            ['cardId' => $token]
+        )->send();
+
+        return $this->response->isSuccessful();
     }
 }

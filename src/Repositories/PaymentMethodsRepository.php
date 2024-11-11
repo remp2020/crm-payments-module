@@ -31,6 +31,13 @@ class PaymentMethodsRepository extends Repository
         ])->fetch();
     }
 
+    final public function findAllForUser(int $userId): ?array
+    {
+        return $this->getTable()->where([
+            'user_id' => $userId,
+        ])->fetchAll();
+    }
+
     final public function findOrAdd(int $userId, int $paymentGatewayId, string $externalToken): ActiveRow
     {
         $card = $this->findByCard($userId, $externalToken);

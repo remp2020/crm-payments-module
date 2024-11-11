@@ -109,6 +109,7 @@ use Crm\PaymentsModule\Events\StopRecurrentPaymentEvent;
 use Crm\PaymentsModule\Events\StopRecurrentPaymentEventHandler;
 use Crm\PaymentsModule\Events\SubscriptionMovedHandler;
 use Crm\PaymentsModule\Events\SubscriptionPreUpdateHandler;
+use Crm\PaymentsModule\Hermes\AnonymizedExternalTokenHandler;
 use Crm\PaymentsModule\Hermes\ExportPaymentsHandler;
 use Crm\PaymentsModule\Hermes\RetentionAnalysisJobHandler;
 use Crm\PaymentsModule\Models\AverageMonthPayment;
@@ -624,6 +625,10 @@ class PaymentsModule extends CrmModule
         $dispatcher->registerHandler(
             'export-payments',
             $this->getInstance(ExportPaymentsHandler::class)
+        );
+        $dispatcher->registerHandler(
+            'payment-method-anonymized-external-token',
+            $this->getInstance(AnonymizedExternalTokenHandler::class)
         );
     }
 

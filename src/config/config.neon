@@ -151,6 +151,7 @@ services:
 		factory: Crm\PaymentsModule\Hermes\RetentionAnalysisJobHandler
 
 	- Crm\PaymentsModule\Hermes\ExportPaymentsHandler
+	- Crm\PaymentsModule\Hermes\AnonymizedExternalTokenHandler
 
 	paymentCompleteRedirect:
 		factory: Crm\PaymentsModule\Models\SuccessPageResolver\PaymentCompleteRedirectManager
