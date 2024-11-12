@@ -519,7 +519,7 @@ class RecurrentPaymentsRepository extends Repository
             if ($newEndTime < $subscription->start_time) {
                 throw new Exception(
                     "Calculated next charge of recurrent payment would be before subscription's start time." .
-                    " Check payment [{$payment->id}] and subscription [{$subscription?->id}]."
+                    " Check payment [{$payment->id}] and subscription [{$subscription->id}]."
                 );
             }
             if ($newEndTime < $payment->paid_at) {
@@ -531,7 +531,7 @@ class RecurrentPaymentsRepository extends Repository
             if ($newEndTime <= $this->getNow()) {
                 throw new Exception(
                     "Calculated next charge of recurrent payment would be in the past." .
-                    " Check payment [{$payment->id}] and subscription [{$subscription?->id}]."
+                    " Check payment [{$payment->id}] and subscription [{$subscription->id}]."
                 );
             }
             $endTime = $newEndTime;

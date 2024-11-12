@@ -173,18 +173,14 @@ class PaymentsRepository extends Repository
         return $payment;
     }
 
-    final public function addMeta($payment, $data)
+    final public function addMeta(ActiveRow $payment, array $data)
     {
         if (empty($data)) {
-            return null;
+            return;
         }
-        $added = [];
         foreach ($data as $key => $value) {
-            if (!$this->paymentMetaRepository->add($payment, $key, $value)) {
-                return false;
-            }
+            $this->paymentMetaRepository->add($payment, $key, $value);
         }
-        return $added;
     }
 
     final public function copyPayment(ActiveRow $payment, array $changes = [])

@@ -46,7 +46,7 @@ class VatRatesRepository extends Repository
                 $changed = true;
             } else {
                 // remove spaces added into json by database and compare with current vats
-                $currentReducedVats = $countryVats?->reduced !== null ? str_replace(' ', '', $countryVats->reduced) : Json::encode([]);
+                $currentReducedVats = $countryVats->reduced !== null ? str_replace(' ', '', $countryVats->reduced) : Json::encode([]);
                 if ($reduced !== $currentReducedVats) {
                     $changed = true;
                 }

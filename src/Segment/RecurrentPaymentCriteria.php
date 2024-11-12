@@ -3,21 +3,12 @@
 namespace Crm\PaymentsModule\Segment;
 
 use Crm\ApplicationModule\Models\Criteria\CriteriaInterface;
-use Crm\PaymentsModule\Repositories\RecurrentPaymentsRepository;
 use Crm\SegmentModule\Models\Criteria\Fields;
 use Crm\SegmentModule\Models\Params\BooleanParam;
 use Crm\SegmentModule\Models\Params\ParamsBag;
 
 class RecurrentPaymentCriteria implements CriteriaInterface
 {
-    private $recurrentPaymentsRepository;
-
-    public function __construct(
-        RecurrentPaymentsRepository $recurrentPaymentsRepository
-    ) {
-        $this->recurrentPaymentsRepository = $recurrentPaymentsRepository;
-    }
-
     public function label(): string
     {
         return "Recurrent payment";

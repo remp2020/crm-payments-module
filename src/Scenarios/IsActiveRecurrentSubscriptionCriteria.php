@@ -30,9 +30,8 @@ class IsActiveRecurrentSubscriptionCriteria implements ScenariosCriteriaInterfac
     {
         $values = $paramValues[self::KEY];
 
-        $isActiveRecurrentSubscriptionCondition = $subscriptionRow &&
-            $subscriptionRow->is_recurrent &&
-            !$this->recurrentPaymentsRepository->isStoppedBySubscription($subscriptionRow);
+        $isActiveRecurrentSubscriptionCondition = $subscriptionRow->is_recurrent
+            && !$this->recurrentPaymentsRepository->isStoppedBySubscription($subscriptionRow);
 
         if ($values->selection && !$isActiveRecurrentSubscriptionCondition) {
             return false;

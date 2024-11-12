@@ -5,7 +5,6 @@ namespace Crm\PaymentsModule\Scenarios;
 use Crm\ApplicationModule\Models\Criteria\ScenarioParams\StringLabeledArrayParam;
 use Crm\ApplicationModule\Models\Criteria\ScenariosCriteriaInterface;
 use Crm\PaymentsModule\Repositories\PaymentGatewaysRepository;
-use Crm\PaymentsModule\Repositories\PaymentsRepository;
 use Nette\Database\Table\ActiveRow;
 use Nette\Database\Table\Selection;
 
@@ -13,15 +12,11 @@ class PaymentGatewayCriteria implements ScenariosCriteriaInterface
 {
     public const KEY = 'payment_gateway';
 
-    private $paymentsRepository;
-
     private $paymentGatewaysRepository;
 
     public function __construct(
-        PaymentsRepository $paymentsRepository,
         PaymentGatewaysRepository $paymentGatewaysRepository
     ) {
-        $this->paymentsRepository = $paymentsRepository;
         $this->paymentGatewaysRepository = $paymentGatewaysRepository;
     }
 

@@ -114,7 +114,6 @@ use Crm\PaymentsModule\Hermes\ExportPaymentsHandler;
 use Crm\PaymentsModule\Hermes\RetentionAnalysisJobHandler;
 use Crm\PaymentsModule\Models\AverageMonthPayment;
 use Crm\PaymentsModule\Models\PaymentsHistogramFactory;
-use Crm\PaymentsModule\Repositories\ParsedMailLogsRepository;
 use Crm\PaymentsModule\Repositories\PaymentLogsRepository;
 use Crm\PaymentsModule\Repositories\PaymentsRepository;
 use Crm\PaymentsModule\Scenarios\DonationAmountCriteria;
@@ -151,8 +150,6 @@ class PaymentsModule extends CrmModule
 {
     private $paymentsRepository;
 
-    private $parsedMailLogsRepository;
-
     private $paymentsHistogramFactory;
     private $averageMonthPayment;
 
@@ -160,13 +157,11 @@ class PaymentsModule extends CrmModule
         Container $container,
         Translator $translator,
         PaymentsRepository $paymentsRepository,
-        ParsedMailLogsRepository $parsedMailLogsRepository,
         PaymentsHistogramFactory $paymentsHistogramFactory,
         AverageMonthPayment $averageMonthPayment
     ) {
         parent::__construct($container, $translator);
         $this->paymentsRepository = $paymentsRepository;
-        $this->parsedMailLogsRepository = $parsedMailLogsRepository;
         $this->paymentsHistogramFactory = $paymentsHistogramFactory;
         $this->averageMonthPayment = $averageMonthPayment;
     }

@@ -106,7 +106,7 @@ final class VatProcessor
             }
 
             $defaultVat = $subscriptionTypeItem->vat;
-            if ($defaultVat !== 0 && $item->vat() === 0 && $item->unitPrice() !== $subscriptionTypeItem->amount) {
+            if ($defaultVat !== 0.0 && $item->vat() === 0.0 && $item->unitPrice() !== $subscriptionTypeItem->amount) {
                 throw new ReverseChargeException("Non reverse-charge payment contains subscription type payment item (id=[{$subscriptionTypeItem->id}]) with 0% VAT and different price " .
                 "from its original subscription_type_item prototype. This looks suspicious, it might be caused by un-marked reverse-charged PaymentItemContainer." .
                 "Continuing working with the container may cause reverse-charge to be applied multiple times, therefore stopping here. Make sure to correctly mark PaymentItemContainer");
