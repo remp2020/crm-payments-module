@@ -349,6 +349,109 @@ each subscription type - therefore they cannot automatically determine that mont
 to monthly web + print subscription. Each upgrade has to be configured manually and all upgrade options are always
 determined based on actual subscription, price of actual subscription type and price of upgraded subscription type.
 
+## VAT modes
+
+Before each payment is created, CRM internally assigns it one of the VAT modes - one of _B2C_, _B2B_ or _B2B Reverse-charge_ mode. Each payment is then processed according to the selected mode.
+
+B2C mode is selected by default by payments module. If you want to set different mode for a payment, the options are:
+- Include invoice module in your CRM configuration. The module provides mode selecting functionality out-of-the-box. It uses invoice address for deciding who is a valid B2B customer. 
+- Implement `VatModeDataProviderInterface` data provider. It provides `getVatMode` function, which decides who is considered a valid B2B customer.  
+
+
+### B2B 
+
+No VAT related changes are applied.
+
+### B2B Reverse-charge
+
+When B2B reverse-charge mode is applied, VAT is not included in the payment. Practically, this is done by subtracting the VAT from the final sum (as if 0% VAT was set). 
+
+### B2C 
+
+No VAT related changes are applied, unless One Stop Shop mode is turned on.
+
+#### One Stop Shop
+
+One Stop Shop (OSS) is an optional VAT feature, that can be turned on for payments made in B2C mode. For more details about its specifics, see https://vat-one-stop-shop.ec.europa.eu/index_en. 
+
+> ⚠ One Stop Shop works for EU countries only.
+ 
+**Prerequisites and setup**
+
+For turning on the OSS feature, you need:
+
+- Populated `vat_rates` table with current VAT rates. See [Vatstack setup](Loading VAT rates using Vatstack service) for more details.
+
+The feature can be turned on in CRM settings in `/admin/config-admin/` in Payments section.
+
+**How it works**
+
+If turned on, each payment is assigned a _payment country_ when the payment is created. Payment country is resolved according to multiple rules, sorted by priority:
+- country provided by `OneStopShopCountryResolutionDataProviderInterface` data provider 
+  - for example, `InvoiceModule` resolves the payment country depending on invoice address country 
+- payment address country 
+- explicitly selected payment country, for example by user in sales funnel
+- derived from previous payment (e.g. for recurrent payments)
+- derived from user's IP address location
+
+After resolving, _payment country_ is stored along with other payment data. Next, if payment is made outside the default country, OSS adjust VAT rates of the payment items. 
+
+VAT rate is adjusted accordingly:
+ - VAT rates for particular payment country are loaded from `vat_rates` DB table.
+ - Table `vat_rates` contains only VAT rates of EU countries.
+ - If no record is found, meaning it's one of the third countries (outside of EU), **0%** VAT rate is set .   
+ - Otherwise, one of the loaded VAT rates (each country may have several VAT levels) is set. 
+ - VAT rate level is selected either by `OneStopShopVatRateDataProviderInterface` data provider or a "standard" VAT rate is applied. 
+   - Data provider may select VAT rate level depending on arbitrary rules, for example, for "print" payment items, "reduced" VAT rate level may be applied.  
+
+## European Union VAT
+
+### Loading VAT rates using Vatstack service
+
+To load current VAT rates of EU member countries, we decided to use free VAT rate service https://vatstack.com/ which handles all issues with official [EU VAT rates list](https://ec.europa.eu/taxation_customs/business/vat/telecommunications-broadcasting-electronic-services/vat-rates_en) for us.
+
+After registration you'll find your API keys on page [Developers->Api Keys](https://dashboard.vatstack.com/keys). Add your public API key into your `config.neon`:
+
+```neon
+services:
+	vatStackApiClient:
+		setup:
+			- setApiKey('{VATSTACK_PUBLIC_API_KEY}')
+			# or load it from environment variable
+			#- setApiKey(@environmentConfig::get('PAYMENTS_VATSTACK_API_KEY'))
+```
+
+Or you can provide API key with option `--vatstack_api_key={VAT-STACK-PUBLIC-API-KEY}` when running command.
+
+#### Usage
+
+```sh
+# upsert all EU members; API key loaded from config.neon
+php bin/command.php payments:upsert_eu_vat_rates
+# upsert all EU members; API key loaded from option
+php bin/command.php payments:upsert_eu_vat_rates --vatstack_api_key={VAT-STACK-PUBLIC-API-KEY}
+
+# upsert only one country (Slovakia in this example)
+php bin/command.php payments:upsert_eu_vat_rates --country_code=SK
+```
+
+VAT rates are stored into `vat_rates` table for each EU member country _(linked to `countries` table with foreign key `country_id`)_.
+
+VAT rates do not change often, but we recommend to add this command into your scheduler _(eg. cron)_. Expired VAT rates are kept with column `valid_to` set to date when system _(this command)_ expired them. _Do not set this into future; only entries with `valid_to` set to `NULL` are considered current._
+
+### Get current VAT rates for one country
+
+To get current VAT rates for one country, call method `VatRatesRepository->getByCountryAndDate()`.
+
+```php
+$country = $this->countriesRepository->findByIsoCode('SK');
+// currently valid vat rates for country
+$currentVatRates = $this->vatRatesRepository->getByCountry($country);
+// country vat rates valid when payment was paid
+$pastVatRates = $this->vatRatesRepository->getByCountryAndDate($country, $payment->created_at);
+```
+
+
 ## API documentation
 
 All examples use `http://crm.press` as a base domain. Please change the host to the one you use

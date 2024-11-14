@@ -43,6 +43,7 @@ use Crm\PaymentsModule\Commands\StopRecurrentPaymentsExpiresCommand;
 use Crm\PaymentsModule\Commands\TatraBankaMailConfirmationCommand;
 use Crm\PaymentsModule\Commands\TatraBankaStatementMailConfirmationCommand;
 use Crm\PaymentsModule\Commands\UpdateRecurrentPaymentsExpiresCommand;
+use Crm\PaymentsModule\Commands\UpsertEuVatRatesCommand;
 use Crm\PaymentsModule\Components\ActualFreeSubscribersStatWidget\ActualFreeSubscribersStatWidget;
 use Crm\PaymentsModule\Components\ActualPaidSubscribersStatWidget\ActualPaidSubscribersStatWidget;
 use Crm\PaymentsModule\Components\AddressWidget\AddressWidget;
@@ -409,6 +410,7 @@ class PaymentsModule extends CrmModule
         $commandsContainer->registerCommand($this->getInstance(FillReferenceToSubscriptionTypeItemInPaymentItemsCommand::class));
         $commandsContainer->registerCommand($this->getInstance(ConfirmCsobPaymentsCommand::class));
         $commandsContainer->registerCommand($this->getInstance(OneStopShopAddPaymentCountryCommand::class));
+        $commandsContainer->registerCommand($this->getInstance(UpsertEuVatRatesCommand::class));
     }
 
     public function registerApiCalls(ApiRoutersContainerInterface $apiRoutersContainer)

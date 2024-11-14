@@ -47,6 +47,7 @@ services:
 			- registerPaymentItemType(Crm\PaymentsModule\Models\PaymentItem\DonationPaymentItem)
 	mailDownloader: Crm\PaymentsModule\Models\MailConfirmation\ImapMailDownloader
 	- Crm\PaymentsModule\Models\MailConfirmation\MailProcessor
+	vatStackApiClient: Crm\PaymentsModule\Models\Api\VatStack\Client
 	- Crm\PaymentsModule\Components\ChangePaymentStatus\ChangePaymentStatusFactoryInterface
 	- Crm\PaymentsModule\Components\DuplicateRecurrentPayments\DuplicateRecurrentPaymentsControlFactoryInterface
 	- Crm\PaymentsModule\Components\LastPayments\LastPaymentsControlFactoryInterface
@@ -84,6 +85,7 @@ services:
 	- Crm\PaymentsModule\Commands\FillReferenceToSubscriptionTypeItemInPaymentItemsCommand
 	- Crm\PaymentsModule\Commands\ConfirmCsobPaymentsCommand
 	- Crm\PaymentsModule\Commands\OneStopShopAddPaymentCountryCommand
+	- Crm\PaymentsModule\Commands\UpsertEuVatRatesCommand
 	- Crm\PaymentsModule\Api\VariableSymbolApiHandler
 	- Crm\PaymentsModule\Api\ListRecurrentPaymentsApiHandler
 	- Crm\PaymentsModule\Api\ReactivateRecurrentPaymentApiHandler
