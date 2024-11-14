@@ -93,7 +93,11 @@ class MethodsPresenter extends FrontendPresenter
             throw new \RuntimeException("Unable to load payment with ID [{$paymentId}]");
         }
         if ($paymentRow->status === PaymentsRepository::STATUS_AUTHORIZED) {
-            $this->flashMessage($this->translator->translate('payments.frontend.add_card.success'));
+            if ($paymentRow->amount === 0.0) {
+                $this->flashMessage($this->translator->translate('payments.frontend.add_card.zero_amount_success'));
+            } else {
+                $this->flashMessage($this->translator->translate('payments.frontend.add_card.success'));
+            }
             $this->redirect('Payments:my');
         }
 

@@ -551,8 +551,9 @@ frontend:
         card_with_expiration: Abblaufdatum der Karte
         use_card: Die Summe von %sum% mit der hinterlegten Karte bezahlen
     add_card:
-        error: Die Karte konnte nicht hinzugefügt werden. Bitte probieren Sie es später noch einmal.
+        zero_amount_success: Die Karte wurde erfolgreich hinzugefügt.
         success: Die Karte wurde erfolgreich hinzugefügt. Eine eventuell im Rahmen der Kartenprüfung erfolgte Abbuchung wird Ihnen wieder zurückerstattet.
+        error: Die Karte konnte nicht hinzugefügt werden. Bitte probieren Sie es später noch einmal.
 
 form:
     controls:

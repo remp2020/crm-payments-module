@@ -590,6 +590,7 @@ frontend:
         thank_you: 'Köszönjük rendelését, az előlegszámlát 3 munkanapon belül e-mailben küldjük.'
 
     add_card:
+        zero_amount_success: A kártya hozzáadása sikeres volt.
         success: A kártya hozzáadása sikeres volt. A kártya hitelesítéshez szükséges fizetés összegét hamarosan visszautaljuk.
         error: A kártya hozzáadása sikertelen. Kérjük, próbálja meg újra.
 config:

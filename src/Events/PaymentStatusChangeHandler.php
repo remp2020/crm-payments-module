@@ -2,6 +2,7 @@
 
 namespace Crm\PaymentsModule\Events;
 
+use Crm\PaymentsModule\Models\Gateways\AuthorizationInterface;
 use Crm\PaymentsModule\Repositories\PaymentMethodsRepository;
 use Crm\PaymentsModule\Repositories\PaymentsRepository;
 use Crm\PaymentsModule\Repositories\RecurrentPaymentsRepository;
@@ -122,7 +123,7 @@ class PaymentStatusChangeHandler extends AbstractListener
     private function changeRecurrentPaymentCid(ActiveRow $payment)
     {
         $newExternalToken = $payment->related('payment_meta')
-            ->where('key', 'card_id')
+            ->where('key', AuthorizationInterface::PAYMENT_META_CARD_ID)
             ->fetchField('value');
 
         $recurrentPaymentIdToUpdate = $payment->related('payment_meta')
