@@ -80,17 +80,16 @@ class ChangePaymentSubscriptionTypeFormFactory
             throw new \RuntimeException("Unable to find subscription type with ID [{$values['subscription_type_id']}]");
         }
 
-        $this->database->beginTransaction();
+        $this->subscriptionTypesRepository->getTransaction()->wrap(function () use ($payment, $newSubscriptionType): void {
+            $paymentItemContainer = new PaymentItemContainer;
+            $paymentItemContainer->addItems(SubscriptionTypePaymentItem::fromSubscriptionType($newSubscriptionType));
 
-        $paymentItemContainer = new PaymentItemContainer;
-        $paymentItemContainer->addItems(SubscriptionTypePaymentItem::fromSubscriptionType($newSubscriptionType));
+            $this->paymentsRepository->update($payment, [
+                'subscription_type_id' => $newSubscriptionType->id,
+                'amount' => $paymentItemContainer->totalPrice(),
+            ], $paymentItemContainer);
+        });
 
-        $this->paymentsRepository->update($payment, [
-            'subscription_type_id' => $newSubscriptionType->id,
-            'amount' => $paymentItemContainer->totalPrice(),
-        ], $paymentItemContainer);
-
-        $this->database->commit();
         if ($this->onSave) {
             $this->onSave->__invoke();
         }

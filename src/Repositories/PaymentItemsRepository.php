@@ -16,7 +16,6 @@ use Crm\SubscriptionsModule\Models\PaymentItem\SubscriptionTypePaymentItem;
 use Exception;
 use League\Event\Emitter;
 use Nette\Caching\Storage;
-use Nette\Database\DriverException;
 use Nette\Database\Explorer;
 use Nette\Database\Table\ActiveRow;
 use Nette\Utils\DateTime;
@@ -26,15 +25,14 @@ class PaymentItemsRepository extends Repository
     protected $tableName = 'payment_items';
 
     public function __construct(
-        Explorer $database,
-        private Emitter $emitter,
-        private PaymentItemMetaRepository $paymentItemMetaRepository,
-        private DataProviderManager $dataProviderManager,
+        private readonly Emitter $emitter,
+        private readonly PaymentItemMetaRepository $paymentItemMetaRepository,
+        private readonly DataProviderManager $dataProviderManager,
+        private readonly Explorer $dbContext,
         AuditLogRepository $auditLogRepository,
-        private Explorer $dbContext,
         Storage $cacheStorage = null
     ) {
-        parent::__construct($database, $cacheStorage);
+        parent::__construct($this->dbContext, $cacheStorage);
         $this->auditLogRepository = $auditLogRepository;
     }
 
@@ -77,62 +75,30 @@ class PaymentItemsRepository extends Repository
         return parent::update($row, $data);
     }
 
-    final public function deleteByPayment(ActiveRow $payment)
+    final public function deleteByPayment(ActiveRow $payment): bool
     {
-        $inTransaction = false;
-        try {
-            $this->dbContext->beginTransaction();
-            $inTransaction = true;
-        } catch (DriverException $e) {
-            // transaction already in progress, ignore exception
-        }
-
-        try {
+        $this->paymentItemMetaRepository->getTransaction()->wrap(function () use ($payment): void {
             // remove payment item meta
             $this->paymentItemMetaRepository->deleteByPayment($payment);
 
-            $paymentItems = $this->getTable()
-                ->where('payment_id', $payment->id);
+            $paymentItems = $this->getTable()->where('payment_id', $payment->id);
             foreach ($paymentItems as $paymentItem) {
                 $this->emitter->emit(new BeforeRemovePaymentItemEvent($paymentItem));
                 $this->delete($paymentItem);
             }
-        } catch (\Exception $exception) {
-            $this->dbContext->rollBack();
-            throw $exception;
-        }
-
-        if ($inTransaction) {
-            $this->dbContext->commit();
-        }
+        });
 
         return true;
     }
 
     final public function deletePaymentItem(ActiveRow $paymentItem): bool
     {
-        $inTransaction = false;
-        try {
-            $this->dbContext->beginTransaction();
-            $inTransaction = true;
-        } catch (DriverException $e) {
-            // transaction already in progress, ignore exception
-        }
-
-        try {
+        return $this->paymentItemMetaRepository->getTransaction()->wrap(function () use ($paymentItem): bool {
             $this->paymentItemMetaRepository->deleteByPaymentItem($paymentItem);
             $this->emitter->emit(new BeforeRemovePaymentItemEvent($paymentItem));
-            $result = $this->delete($paymentItem);
-        } catch (\Exception $exception) {
-            $this->dbContext->rollBack();
-            throw $exception;
-        }
 
-        if ($inTransaction) {
-            $this->dbContext->commit();
-        }
-
-        return $result;
+            return $this->delete($paymentItem);
+        });
     }
 
     /**
