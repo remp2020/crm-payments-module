@@ -43,19 +43,19 @@ class AdminFilterFormData
         }
 
         if ($this->getPaidAtFrom()) {
-            $payments->where('paid_at >= ?', DateTime::from($this->getPaidAtFrom()));
+            $payments->where('payments.paid_at >= ?', DateTime::from($this->getPaidAtFrom()));
         }
 
         if ($this->getPaidAtTo()) {
-            $payments->where('paid_at < ?', DateTime::from($this->getPaidAtTo()));
+            $payments->where('payments.paid_at < ?', DateTime::from($this->getPaidAtTo()));
         }
 
         if ($this->getAmountFrom()) {
-            $payments->where('amount >= ?', $this->getAmountFrom());
+            $payments->where('payments.amount >= ?', $this->getAmountFrom());
         }
 
         if ($this->getAmountTo()) {
-            $payments->where('amount <= ?', $this->getAmountTo());
+            $payments->where('payments.amount <= ?', $this->getAmountTo());
         }
 
         /** @var AdminFilterFormDataProviderInterface[] $providers */
