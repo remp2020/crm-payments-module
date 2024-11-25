@@ -59,8 +59,8 @@ class ParsedMailLogsRepository extends Repository
         ?string $vs = null,
         ?string $state = null,
         ?string $paymentStatus = null,
-        ?int $amountFrom = null,
-        ?int $amountTo = null,
+        ?float $amountFrom = null,
+        ?float $amountTo = null,
         ?string $sourceAccountNumber = null,
     ): Selection {
         $where = [];
