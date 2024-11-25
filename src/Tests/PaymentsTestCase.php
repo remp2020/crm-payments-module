@@ -24,6 +24,8 @@ use Crm\SubscriptionsModule\Models\PaymentItem\SubscriptionTypePaymentItem;
 use Crm\SubscriptionsModule\Repositories\SubscriptionTypeItemsRepository;
 use Crm\SubscriptionsModule\Repositories\SubscriptionTypesMetaRepository;
 use Crm\SubscriptionsModule\Repositories\SubscriptionTypesRepository;
+use Crm\SubscriptionsModule\Repositories\SubscriptionsRepository;
+use Crm\SubscriptionsModule\Seeders\ContentAccessSeeder;
 use Crm\SubscriptionsModule\Seeders\SubscriptionExtensionMethodsSeeder;
 use Crm\SubscriptionsModule\Seeders\SubscriptionLengthMethodSeeder;
 use Crm\SubscriptionsModule\Seeders\SubscriptionTypeNamesSeeder;
@@ -50,6 +52,7 @@ class PaymentsTestCase extends DatabaseTestCase
             PaymentGatewaysSeeder::class,
             ConfigsSeeder::class,
             CountriesSeeder::class,
+            ContentAccessSeeder::class,
         ];
     }
 
@@ -73,6 +76,7 @@ class PaymentsTestCase extends DatabaseTestCase
             ParsedMailLogsRepository::class,
             ConfigsRepository::class,
             CountriesRepository::class,
+            SubscriptionsRepository::class,
         ];
     }
 

@@ -7,8 +7,10 @@ use Crm\PaymentsModule\Models\OneStopShop\CountryResolution;
 use Crm\PaymentsModule\Models\OneStopShop\OneStopShop;
 use Crm\PaymentsModule\Models\Payment\RenewalPayment;
 use Crm\PaymentsModule\Models\PaymentItem\PaymentItemContainer;
+use Crm\PaymentsModule\Models\RecurrentPaymentsResolver;
 use Crm\PaymentsModule\Repositories\PaymentGatewaysRepository;
 use Crm\PaymentsModule\Repositories\PaymentsRepository;
+use Crm\PaymentsModule\Repositories\RecurrentPaymentsRepository;
 use Crm\SubscriptionsModule\Models\PaymentItem\SubscriptionTypePaymentItem;
 use Crm\SubscriptionsModule\Repositories\ContentAccessRepository;
 use Crm\SubscriptionsModule\Repositories\SubscriptionTypesRepository;
@@ -31,6 +33,8 @@ class AttachRenewalPaymentEventHandler extends AbstractListener
         private readonly Emitter $emitter,
         private readonly OneStopShop $oneStopShop,
         private readonly RenewalPayment $renewalPayment,
+        private readonly RecurrentPaymentsResolver $recurrentPaymentsResolver,
+        private readonly RecurrentPaymentsRepository $recurrentPaymentsRepository,
     ) {
     }
 
@@ -70,8 +74,24 @@ class AttachRenewalPaymentEventHandler extends AbstractListener
 
     private function createRenewalPayment($subscription, $user): ?ActiveRow
     {
-        // find default subscription with sames length and content access
-        $contentAccesses = $this->contentAccessRepository->allForSubscriptionType($subscription->subscription_type)->fetchPairs('name', 'name');
+        $contentAccesses = null;
+
+        // use recurrent payment resolver if recurrent payment is involved, but only to resolve content access
+        // of the following subscription, not its subscription type
+        $payment = $this->paymentsRepository->subscriptionPayment($subscription);
+        if ($payment) {
+            $recurrentPayment = $this->recurrentPaymentsRepository->recurrent($payment);
+            if ($recurrentPayment) {
+                $nextSubscriptionType = $this->recurrentPaymentsResolver->resolveSubscriptionType($recurrentPayment);
+                $contentAccesses = $this->contentAccessRepository->allForSubscriptionType($nextSubscriptionType)->fetchPairs('name', 'name');
+            }
+        }
+
+        if (!$contentAccesses) {
+            // find default subscription with sames length and content access
+            $contentAccesses = $this->contentAccessRepository->allForSubscriptionType($subscription->subscription_type)->fetchPairs('name', 'name');
+        }
+
         $newSubscriptionType = $this->subscriptionTypesRepository->findDefaultForLengthAndContentAccesses($subscription->length, ...$contentAccesses);
 
         // check for subscription types next_subscription_type_id
