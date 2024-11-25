@@ -349,6 +349,15 @@ each subscription type - therefore they cannot automatically determine that mont
 to monthly web + print subscription. Each upgrade has to be configured manually and all upgrade options are always
 determined based on actual subscription, price of actual subscription type and price of upgraded subscription type.
 
+## Change of VAT rates
+
+If the VAT rate changes in your country, there are two commands that help you update the system. Schedule them to be executed on the date of VAT change.
+
+- `payments:change_vat --original-vat=X --target-vat=Y`
+  - Command changes all existing subscription type items and each affected (`type=subscription_type`) payment item. You can test the command before the VAT change date by using `--dry-run` and `--verbose` options.
+- `application:change_config_value vat_default Y`
+  - Command changes system default VAT to the new default VAT rate. Use this only when the standard VAT rate changes.
+
 ## VAT modes
 
 Before each payment is created, CRM internally assigns it one of the VAT modes - one of _B2C_, _B2B_ or _B2B Reverse-charge_ mode. Each payment is then processed according to the selected mode.

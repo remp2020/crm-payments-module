@@ -9,6 +9,7 @@ use Crm\ApplicationModule\Repositories\AuditLogRepository;
 use Crm\PaymentsModule\DataProviders\CanUpdatePaymentItemDataProviderInterface;
 use Crm\PaymentsModule\Events\BeforeRemovePaymentItemEvent;
 use Crm\PaymentsModule\Events\NewPaymentItemEvent;
+use Crm\PaymentsModule\Events\PaymentItemUpdatedEvent;
 use Crm\PaymentsModule\Models\PaymentItem\PaymentItemContainer;
 use Crm\PaymentsModule\Models\PaymentItem\PaymentItemHelper;
 use Crm\PaymentsModule\Models\PaymentItem\PaymentItemInterface;
@@ -72,7 +73,11 @@ class PaymentItemsRepository extends Repository
         }
 
         $data['updated_at'] = new DateTime();
-        return parent::update($row, $data);
+        $result = parent::update($row, $data);
+
+        $this->emitter->emit(new PaymentItemUpdatedEvent($row));
+
+        return $result;
     }
 
     final public function deleteByPayment(ActiveRow $payment): bool

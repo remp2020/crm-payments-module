@@ -86,6 +86,7 @@ services:
 	- Crm\PaymentsModule\Commands\ConfirmCsobPaymentsCommand
 	- Crm\PaymentsModule\Commands\OneStopShopAddPaymentCountryCommand
 	- Crm\PaymentsModule\Commands\UpsertEuVatRatesCommand
+	- Crm\PaymentsModule\Commands\ChangeVatCommand
 	- Crm\PaymentsModule\Api\VariableSymbolApiHandler
 	- Crm\PaymentsModule\Api\ListRecurrentPaymentsApiHandler
 	- Crm\PaymentsModule\Api\ReactivateRecurrentPaymentApiHandler

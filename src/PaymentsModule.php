@@ -28,6 +28,7 @@ use Crm\PaymentsModule\Api\StopRecurrentPaymentApiHandler;
 use Crm\PaymentsModule\Api\VariableSymbolApiHandler;
 use Crm\PaymentsModule\Commands\CalculateAveragesCommand;
 use Crm\PaymentsModule\Commands\CancelAuthorizationCommand;
+use Crm\PaymentsModule\Commands\ChangeVatCommand;
 use Crm\PaymentsModule\Commands\CidGetterCommand;
 use Crm\PaymentsModule\Commands\ConfirmCsobPaymentsCommand;
 use Crm\PaymentsModule\Commands\CsobMailConfirmationCommand;
@@ -411,6 +412,7 @@ class PaymentsModule extends CrmModule
         $commandsContainer->registerCommand($this->getInstance(ConfirmCsobPaymentsCommand::class));
         $commandsContainer->registerCommand($this->getInstance(OneStopShopAddPaymentCountryCommand::class));
         $commandsContainer->registerCommand($this->getInstance(UpsertEuVatRatesCommand::class));
+        $commandsContainer->registerCommand($this->getInstance(ChangeVatCommand::class));
     }
 
     public function registerApiCalls(ApiRoutersContainerInterface $apiRoutersContainer)
