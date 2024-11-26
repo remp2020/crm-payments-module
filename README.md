@@ -355,6 +355,7 @@ If the VAT rate changes in your country, there are two commands that help you up
 
 - `payments:change_vat --original-vat=X --target-vat=Y`
   - Command changes all existing subscription type items and each affected (`type=subscription_type`) payment item. You can test the command before the VAT change date by using `--dry-run` and `--verbose` options.
+  - If you used other types of payments (e.g. `type=product` made by `remp/crm-products-module`), read their READMEs or create your own command to handle the change based on the command from this module.
 - `application:change_config_value vat_default Y`
   - Command changes system default VAT to the new default VAT rate. Use this only when the standard VAT rate changes.
 
