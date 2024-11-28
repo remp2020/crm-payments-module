@@ -354,9 +354,9 @@ determined based on actual subscription, price of actual subscription type and p
 Before each payment is created, CRM internally assigns it one of the VAT modes - one of _B2C_, _B2B_ or _B2B Reverse-charge_ mode. Each payment is then processed according to the selected mode.
 
 B2C mode is selected by default by payments module. If you want to set different mode for a payment, the options are:
-- Include invoice module in your CRM configuration. The module provides mode selecting functionality out-of-the-box. It uses invoice address for deciding who is a valid B2B customer. 
-- Implement `VatModeDataProviderInterface` data provider. It provides `getVatMode` function, which decides who is considered a valid B2B customer.  
 
+- Include invoice module in your CRM configuration. The module provides mode selecting functionality out-of-the-box. It uses invoice address for deciding who is a valid B2B customer. 
+- Or implement `VatModeDataProviderInterface` data provider. It provides `getVatMode` function, which decides who is considered a valid B2B customer.
 
 ### B2B 
 
@@ -368,7 +368,7 @@ When B2B reverse-charge mode is applied, VAT is not included in the payment. Pra
 
 ### B2C 
 
-No VAT related changes are applied, unless One Stop Shop mode is turned on.
+No VAT related changes are applied, unless One Stop Shop mode is enabled.
 
 #### One Stop Shop
 
@@ -386,20 +386,22 @@ The feature can be turned on in CRM settings in `/admin/config-admin/` in Paymen
 
 **How it works**
 
-If turned on, each payment is assigned a _payment country_ when the payment is created. Payment country is resolved according to multiple rules, sorted by priority:
-- country provided by `OneStopShopCountryResolutionDataProviderInterface` data provider 
-  - for example, `InvoiceModule` resolves the payment country depending on invoice address country 
-- payment address country 
-- explicitly selected payment country, for example by user in sales funnel
-- derived from previous payment (e.g. for recurrent payments)
-- derived from user's IP address location
+If enabled, each payment is assigned a _payment country_ when the payment is created. Payment country is resolved according to multiple rules, sorted by priority:
+
+- Country provided by `OneStopShopCountryResolutionDataProviderInterface` data provider.
+  - For example, `InvoiceModule` resolves the payment country depending on invoice address country.
+- Payment address country.
+- Explicitly selected payment country, for example by user in sales funnel.
+- Derived from previous payment (e.g. for recurrent payments).
+- Derived from user's IP address location.
 
 After resolving, _payment country_ is stored along with other payment data. Next, if payment is made outside the default country, OSS adjust VAT rates of the payment items. 
 
 VAT rate is adjusted accordingly:
+
  - VAT rates for particular payment country are loaded from `vat_rates` DB table.
  - Table `vat_rates` contains only VAT rates of EU countries.
- - If no record is found, meaning it's one of the third countries (outside of EU), **0%** VAT rate is set .   
+ - If no record is found, system considers that as the third country (outside of EU), **0%** VAT rate is used.
  - Otherwise, one of the loaded VAT rates (each country may have several VAT levels) is set. 
  - VAT rate level is selected either by `OneStopShopVatRateDataProviderInterface` data provider or a "standard" VAT rate is applied. 
    - Data provider may select VAT rate level depending on arbitrary rules, for example, for "print" payment items, "reduced" VAT rate level may be applied.  
@@ -437,7 +439,7 @@ php bin/command.php payments:upsert_eu_vat_rates --country_code=SK
 
 VAT rates are stored into `vat_rates` table for each EU member country _(linked to `countries` table with foreign key `country_id`)_.
 
-VAT rates do not change often, but we recommend to add this command into your scheduler _(eg. cron)_. Expired VAT rates are kept with column `valid_to` set to date when system _(this command)_ expired them. _Do not set this into future; only entries with `valid_to` set to `NULL` are considered current._
+VAT rates do not change often, but we strongly recommend to add this command into your scheduler _(eg. cron)_. Expired VAT rates are kept with column `valid_to` set to date when system _(this command)_ expired them.
 
 ### Get current VAT rates for one country
 
@@ -450,7 +452,6 @@ $currentVatRates = $this->vatRatesRepository->getByCountry($country);
 // country vat rates valid when payment was paid
 $pastVatRates = $this->vatRatesRepository->getByCountryAndDate($country, $payment->created_at);
 ```
-
 
 ## API documentation
 
