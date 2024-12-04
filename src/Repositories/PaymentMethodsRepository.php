@@ -23,7 +23,7 @@ class PaymentMethodsRepository extends Repository
         ]);
     }
 
-    final public function findByCard(int $userId, string $externalToken): ?ActiveRow
+    final public function findByExternalToken(int $userId, string $externalToken): ?ActiveRow
     {
         return $this->getTable()->where([
             'user_id' => $userId,
@@ -40,7 +40,7 @@ class PaymentMethodsRepository extends Repository
 
     final public function findOrAdd(int $userId, int $paymentGatewayId, string $externalToken): ActiveRow
     {
-        $card = $this->findByCard($userId, $externalToken);
+        $card = $this->findByExternalToken($userId, $externalToken);
         if ($card) {
             return $card;
         }
