@@ -132,7 +132,7 @@ final class VatProcessor
         }
 
         // if nothing else, apply 'vat_default' config rate
-        return $this->applicationConfig->get('vat_default') ?: 0;
+        return ((float) $this->applicationConfig->get('vat_default')) ?: 0;
     }
 
     public function isReverseChargePayment(ActiveRow $payment): bool
