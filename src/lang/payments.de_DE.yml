@@ -216,6 +216,9 @@ admin:
         subscription_transfer_information_widget:
             recurrent_payment_transfer_notice: Die wiederkehrende Zahlung wird zusammen mit dem Abonnement überwiesen.
             payment_transfer_notice: Die Zahlung erfolgt zusammen mit dem Abonnement.
+        change_payment_country_button_widget:
+            section_header: Zahlungen
+            change_button: Zahlungsland ändern
     arpu:
         all:
             title: ARPU - Summe aller Zahlungen / Anzahl
@@ -498,6 +501,46 @@ admin:
             title: Doppelte wiederkehrende Zahlungen
     address:
         cant_delete: '{1}Diese Adresse wird für die Zahlung verwendet: %payments%|[2,Inf]Diese Adresse wird für die Zahlungen verwendet: %payments%'
+
+    change_payment_country:
+        title: Zahlungsland ändern
+        back_to_payment: Zurück zur Zahlung
+        not_available: "-"
+        confirm_button: Land ändern
+        disabled_oss_message: Der One-Stop-Shop-Modus zum Ändern des Landes ist deaktiviert.
+        oss_conflict_error_message: Eine Länderänderung ist aufgrund eines Adresskonflikts im One-Stop-Shop-Modus nicht möglich.
+        success_message: Das Zahlungsland wurde geändert.
+        changing_data_warning_message: Das Ändern des Zahlungslandes ändert auch den Mehrwertsteuersatz der Zahlungsposten.
+        same_country_info_message: Die vorgeschlagene Länderänderung ist identisch mit der ursprünglichen. Es ist keine Änderung notwendig.
+        country_resolution_changed_error_message: Der vorgeschlagene Länderwechsel hat sich inzwischen geändert. Überprüfen Sie die Angaben noch einmal.
+        items:
+            short_unit_price: Stückpreis
+            payment_item: Zahlungsposten
+            amount: Betrag
+            vat: MwSt. %
+            amount_without_vat: Betrag ohne MwSt.
+            vat_rate: Mehrwertsteuersatz
+
+        actual_payment:
+            title: Aktuelle Zahlung
+            actual_country: Aktuelles Land
+            resolution_reason: Methode zur Landauswahl
+
+        suggested_country_resolution:
+            title: Vorgeschlagene Änderung des Zahlungslandes
+            country: Land
+            resolution_reason: Methode zur Landauswahl
+
+        resolution_reasons:
+            ip_address: IP-Adresse
+            invoice_address: Rechnungsadresse
+            payment_address: Zahlungsadresse
+            print_address: Druckadresse
+            user_selected: Vom Benutzer ausgewählt
+            admin_selected: Vom Administrator ausgewählt
+            previous_payment: Vorherige Zahlung
+            default_country: Standardland
+
 frontend:
     proforma_invoice:
         form_title: Bitte füllen Sie die Rechnungsdaten aus, um die Bestellung abzuschließen

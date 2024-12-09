@@ -33,6 +33,7 @@ services:
 	- Crm\PaymentsModule\Forms\ChangePaymentSubscriptionTypeFormFactory
 	- Crm\PaymentsModule\Forms\ParsedMailLogFactory
 	- Crm\PaymentsModule\Forms\AssignRenewalPaymentToSubscriptionFormFactory
+	- Crm\PaymentsModule\Forms\PaymentCountryChangeFormFactory
 	- Crm\PaymentsModule\Models\PaymentProcessor
 	- Crm\PaymentsModule\Models\RecurrentPaymentsProcessor
 	- Crm\PaymentsModule\Models\Builder\ParsedMailLogsBuilder
@@ -69,6 +70,7 @@ services:
 	- Crm\PaymentsModule\Components\SubscriptionTransferSummaryWidget\SubscriptionTransferSummaryWidget
 	- Crm\PaymentsModule\Components\RenewalPaymentForSubscriptionWidget\RenewalPaymentForSubscriptionWidget
 	- Crm\PaymentsModule\Components\ShowRenewalPaymentForSubscriptionWidget\ShowRenewalPaymentForSubscriptionWidget
+	- Crm\PaymentsModule\Components\ChangePaymentCountryButtonWidget\ChangePaymentCountryButtonWidget
 	- Crm\PaymentsModule\Commands\RecurrentPaymentsCardCheckCommand
 	- Crm\PaymentsModule\Commands\RecurrentPaymentsChargeCommand
 	- Crm\PaymentsModule\Commands\CsobMailConfirmationCommand
@@ -119,6 +121,7 @@ services:
 	- Crm\PaymentsModule\DataProviders\RecurrentPaymentsClaimUserDataProvider
 	- Crm\PaymentsModule\DataProviders\UniversalSearchDataProvider
 	- Crm\PaymentsModule\DataProviders\SalesFunnelTwigVariablesDataProvider
+	- Crm\PaymentsModule\DataProviders\ChangePaymentCountryDataProvider
 	- Crm\PaymentsModule\Scenarios\PaymentStatusCriteria
 	- Crm\PaymentsModule\Scenarios\RecurrentPaymentStatusCriteria
 	- Crm\PaymentsModule\Scenarios\PaymentIsRecurrentChargeCriteria
@@ -172,6 +175,7 @@ services:
 	- Crm\PaymentsModule\Components\AvgSubscriptionPaymentWidget\AvgSubscriptionPaymentWidget
 	- Crm\PaymentsModule\Components\UserPaymentsListing\UserPaymentsListing
 	- Crm\PaymentsModule\Components\ParsedMailsFailedNotification\ParsedMailsFailedNotification
+	- Crm\PaymentsModule\Components\PaymentDetailPanelWidget\PaymentDetailPanelWidget
 	- Crm\PaymentsModule\Components\TotalAmountStatWidget\TotalAmountStatWidget
 	- Crm\PaymentsModule\Components\TodayAmountStatWidget\TodayAmountStatWidget
 	- Crm\PaymentsModule\Components\MonthAmountStatWidget\MonthAmountStatWidget

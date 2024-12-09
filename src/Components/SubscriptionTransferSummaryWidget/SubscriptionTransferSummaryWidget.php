@@ -38,7 +38,6 @@ class SubscriptionTransferSummaryWidget extends BaseLazyWidget
         
         $recurrentPayment = $this->recurrentPaymentsRepository->recurrent($payment);
 
-        $this->template->payment = $payment;
         $this->template->recurrentPayment = $recurrentPayment;
 
         $this->template->setFile(__DIR__ . DIRECTORY_SEPARATOR . 'subscription_transfer_summary_widget.latte');

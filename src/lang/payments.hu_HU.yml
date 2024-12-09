@@ -225,6 +225,11 @@ admin:
         subscription_transfer_information_widget:
             recurrent_payment_transfer_notice: Az ismétlődő fizetés az előfizetéssel együtt kerül átutalásra.
             payment_transfer_notice: A fizetés az előfizetéssel együtt kerül átutalásra.
+
+        change_payment_country_button_widget:
+            section_header: Fizetések
+            change_button: Módosítsa a fizetési országot
+
     donation: Adomány
 
     arpu:
@@ -436,6 +441,45 @@ admin:
             label: "Vásárolt előfizetés típus (mind)"
         total_recurrent_subscriptions:
             label: "Vásárolt előfizetés típus (ismétlődő)"
+
+    change_payment_country:
+        title: Fizetési ország módosítása
+        back_to_payment: Vissza a fizetéshez
+        not_available: "-"
+        confirm_button: Ország módosítása
+        disabled_oss_message: Az országváltáshoz szükséges One Stop Shop mód le van tiltva.
+        oss_conflict_error_message: Az ország megváltoztatása nem hajtható végre az Egyablakos ügyintézés mód címütközése miatt.
+        success_message: A fizetési ország módosítva lett.
+        changing_data_warning_message: A fizetési ország módosítása a fizetési tételek ÁFA-kulcsát is megváltoztatja.
+        same_country_info_message: A javasolt országváltás megegyezik az eredetivel. Nincs szükség változtatásra.
+        country_resolution_changed_error_message: A javasolt országváltás azóta megváltozott. Ellenőrizze újra az információkat.
+        items:
+            short_unit_price: Egységár
+            payment_item: Fizetési tétel
+            amount: Összeg
+            vat: ÁFA %
+            amount_without_vat: Összeg ÁFA nélkül
+            vat_rate: ÁFA-kulcs
+
+        actual_payment:
+            title: Aktuális fizetés
+            actual_country: Aktuális ország
+            resolution_reason: Országválasztás módja
+
+        suggested_country_resolution:
+            title: Javasolt fizetési ország módosítása
+            country: Ország
+            resolution_reason: Országválasztás módja
+
+        resolution_reasons:
+            ip_address: IP-cím
+            invoice_address: Számlázási cím
+            payment_address: Fizetési cím
+            print_address: Nyomtatási cím
+            user_selected: Felhasználó által kiválasztva
+            admin_selected: Admin által kiválasztva
+            previous_payment: Előző fizetés
+            default_country: Alapértelmezett ország
 
 form:
     controls:

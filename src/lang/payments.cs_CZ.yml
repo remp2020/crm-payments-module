@@ -265,6 +265,10 @@ admin:
         show_renewal_payment_for_subscription_widget:
             title: Platba ID %renewal_payment_id% nastavena pro obnovu předplatného.
 
+        change_payment_country_button_widget:
+            section_header: Platba
+            change_button: Změnit zemi platby
+
     donation: Dar k předplatnému
 
     arpu:
@@ -576,6 +580,45 @@ admin:
         recurrent_payment_subscription_type_content_access:
             label: Přístup k obsahu pro typ předplatného rekurentní platby
             param_label: Typ přístupu k obsahu
+
+    change_payment_country:
+        title: Změnit zemi platby
+        back_to_payment: Zpět na platbu
+        not_available: "-"
+        confirm_button: Změnit zemi
+        disabled_oss_message: One Stop Shop mód pro změnu země je vypnutý.
+        oss_conflict_error_message: Změna země nemůže být provedena z důvodu konfliktu adres režimu One Stop Shop.
+        success_message: Země na platbě byla změněna.
+        changing_data_warning_message: Při změně země platby se změní i DPH sazba položek platby.
+        same_country_info_message: Navrhovaná změna země je stejná jako původní. Změna není nutná.
+        country_resolution_changed_error_message: Navrhovaná změna země se mezitím změnila. Zkontrolujte informace znovu.
+        items:
+            short_unit_price: Jedn. cena
+            payment_item: Položka platby
+            amount: Suma
+            vat: DPH %
+            amount_without_vat: Částka bez DPH
+            vat_rate: Sadzba DPH
+
+        actual_payment:
+            title: Aktuální platba
+            actual_country: Aktuální země
+            resolution_reason: Způsob výběru země
+
+        suggested_country_resolution:
+            title: Navrhovaná změna země platby
+            country: Země
+            resolution_reason: Způsob výběru země
+
+        resolution_reasons:
+            ip_address: IP adresa
+            invoice_address: Fakturační adresa
+            payment_address: Adresa z platby
+            print_address: Printová adresa
+            user_selected: Výběr uživatelem
+            admin_selected: Výběr administrátorem
+            previous_payment: Předchozí platba
+            default_country: Výchozí země
 
 form:
     controls:

@@ -265,6 +265,10 @@ admin:
         show_renewal_payment_for_subscription_widget:
             title: Payment ID %renewal_payment_id% set for subscription renewal.
 
+        change_payment_country_button_widget:
+            section_header: Payment
+            change_button: Change the payment country
+
     donation: Donation
 
     arpu:
@@ -576,6 +580,45 @@ admin:
         recurrent_payment_subscription_type_content_access:
             label: Recurrent payment subscription type content access
             param_label: Content access type
+
+    change_payment_country:
+        title: Change the payment country
+        back_to_payment: Back to payment
+        not_available: "-"
+        confirm_button: Change Country
+        disabled_oss_message: One Stop Shop mode for changing the country is disabled.
+        oss_conflict_error_message: The country change cannot be made due to a One Stop Shop address conflict.
+        success_message: The country for payment has been changed.
+        changing_data_warning_message: Changing the payment country will also change the VAT rate for the payment items.
+        same_country_info_message: The proposed change of country is the same as the original. No change is necessary.
+        country_resolution_changed_error_message: The proposed country change has since changed. Please check the information again.
+        items:
+            short_unit_price: Unit price
+            payment_item: Payment item
+            amount: Amount
+            vat: VAT %
+            amount_without_vat: Amount without VAT
+            vat_rate: VAT Rate
+
+        actual_payment:
+            title: Current payment
+            actual_country: Current country
+            resolution_reason: Country selection method
+
+        suggested_country_resolution:
+            title: Suggested payment country change
+            country: Country
+            resolution_reason: Country selection method
+
+        resolution_reasons:
+            ip_address: IP Address
+            invoice_address: Invoice address
+            payment_address: Payment address
+            print_address: Print address
+            user_selected: Selected by user
+            admin_selected: Selected by admin
+            previous_payment: Previous payment
+            default_country: Default country
 
 form:
     controls:

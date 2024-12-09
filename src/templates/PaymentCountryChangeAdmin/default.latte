@@ -1,0 +1,170 @@
+{block #title}{_payments.admin.change_payment_country.title}{/block}
+
+{define countryResolutionReason, $reasonValue}
+    {if $reasonValue !== null}
+        {if \Crm\PaymentsModule\Models\OneStopShop\CountryResolutionTypeEnum::tryFrom($reasonValue) !== null}
+            {_'payments.admin.change_payment_country.resolution_reasons.' . $reasonValue}
+        {else}
+            {$reasonValue}
+        {/if}
+    {else}
+        {_'payments.admin.change_payment_country.not_available'}
+    {/if}
+{/define}
+
+{block #content}
+<div class="row">
+    <div class="col-md-12">
+        <a n:href=":Payments:PaymentsAdmin:Show $payment->id">
+            <i class="fa fa-angle-left"></i> {_payments.admin.change_payment_country.back_to_payment}
+        </a>
+
+        <div class="page-header">
+            <h1>
+                <small>[#{$payment->id}]</small>
+                {_payments.admin.change_payment_country.title} VS {$payment->variable_symbol}
+            </h1>
+        </div>
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-xs-12 col-lg-3 col-lg-push-7">
+        {control simpleWidget 'admin.payment.payment_country_change.right', [
+            'payment' => $payment,
+        ]}
+    </div>
+
+    <div class="col-xs-12 col-lg-6 col-lg-offset-1 col-lg-pull-3">
+        <div class="panel panel-default">
+            <div class="panel-heading">
+                {_payments.admin.change_payment_country.actual_payment.title}
+            </div>
+
+            <div class="panel-body">
+                <div class="row">
+                    <div class="col-xs-6 text-center">
+                        <p>
+                            {_payments.admin.change_payment_country.actual_payment.actual_country}:<br>
+                            <span class="h3">{$payment->payment_country?->name ?? 'payments.admin.change_payment_country.not_available'|translate}</span>
+                        </p>
+                    </div>
+                    <div class="col-xs-6 text-center">
+                        <p>
+                            {_payments.admin.change_payment_country.actual_payment.resolution_reason}:<br>
+                            <span class="h3">
+                                {include countryResolutionReason, $payment->payment_country_resolution_reason}
+                            </span>
+                        </p>
+                    </div>
+                </div>
+
+                <table class="table table-responsive table-striped">
+                    <thead>
+                    <tr>
+                        <th>
+                            {_payments.admin.change_payment_country.items.payment_item}
+                        </th>
+                        <th>
+                            {_payments.admin.change_payment_country.items.short_unit_price}
+                        </th>
+                        <th>
+                            {_payments.admin.change_payment_country.items.amount}
+                        </th>
+                        <th class="text-right">
+                            {_payments.admin.change_payment_country.items.vat_rate}
+                        </th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    {var $totalAmount = 0}
+                    {var $totalAmountWithoutVat = 0}
+                    {foreach $payment->related('payment_items') as $paymentItem}
+                        <tr>
+                            <td class="truncate-text">{$paymentItem->name}</td>
+                            <td>{$paymentItem->amount|price}</td>
+                            <td>{($paymentItem->amount * $paymentItem->count)|price}</td>
+                            <td class="text-right">{$paymentItem->vat} %</td>
+                        </tr>
+
+                        {php $totalAmount += $paymentItem->amount * $paymentItem->count}
+                        {php $totalAmountWithoutVat += $paymentItem->amount_without_vat * $paymentItem->count}
+                    {/foreach}
+                    </tbody>
+                </table>
+
+                <div class="row">
+                    <div class="col-sm-6 col-sm-offset-6 col-xs-12">
+                        <table class="table table-clear table-left-label">
+                            <tr class="text-right" style="font-size: 1.2em;">
+                                <td>{_payments.admin.change_payment_country.items.amount}</td>
+                                <td><b>{$totalAmount|price}</b></td>
+                            </tr>
+                            <tr class="text-right">
+                                <td>{_payments.admin.change_payment_country.items.amount_without_vat}</td>
+                                <td>{$totalAmountWithoutVat|price}</td>
+                            </tr>
+                            <tr class="text-right">
+                                <td>{_payments.admin.change_payment_country.items.vat}</td>
+                                <td>{($totalAmount-$totalAmountWithoutVat)|price}</td>
+                            </tr>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="panel panel-default">
+            <div class="panel-heading">
+                {_payments.admin.change_payment_country.suggested_country_resolution.title}
+            </div>
+
+            <div class="panel-body">
+                <div n:if="$hasOssConflict" class="alert alert-danger">
+                    <p>
+                        {_payments.admin.change_payment_country.oss_conflict_error_message}
+                    </p>
+                </div>
+
+                <div class="row">
+                    <div class="col-xs-6 text-center">
+                        <p>
+                            {_payments.admin.change_payment_country.suggested_country_resolution.country}:<br>
+                            <span class="h3">{$countryResolution?->country->name ?? 'payments.admin.change_payment_country.not_available'|translate}</span>
+                        </p>
+                    </div>
+                    <div class="col-xs-6 text-center">
+                        <p>
+                            {_payments.admin.change_payment_country.suggested_country_resolution.resolution_reason}:<br>
+                            <span class="h3">
+                                {include countryResolutionReason, $countryResolution?->getReasonValue()}
+                            </span>
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        {php $isSameCountry = $payment->payment_country_id && $countryResolution?->country->id === $payment->payment_country_id}
+
+        {if !$isSameCountry}
+            {control simpleWidget 'admin.payment.payment_country_change.content', [
+                'payment' => $payment,
+            ]}
+
+            <div class="alert alert-warning">
+                <p>
+                    {_payments.admin.change_payment_country.changing_data_warning_message}
+                </p>
+            </div>
+        {/if}
+
+        <div n:if="$isSameCountry" class="alert alert-info">
+            <p>
+                {_payments.admin.change_payment_country.same_country_info_message}
+            </p>
+        </div>
+
+        {control paymentCountryChangeConfirmation}
+    </div>
+</div>

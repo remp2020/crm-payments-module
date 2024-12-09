@@ -51,6 +51,7 @@ use Crm\PaymentsModule\Components\AddressWidget\AddressWidget;
 use Crm\PaymentsModule\Components\AuthorizationPaymentItemListWidget\AuthorizationPaymentItemListWidget;
 use Crm\PaymentsModule\Components\AvgMonthPaymentWidget\AvgMonthPaymentWidget;
 use Crm\PaymentsModule\Components\AvgSubscriptionPaymentWidget\AvgSubscriptionPaymentWidget;
+use Crm\PaymentsModule\Components\ChangePaymentCountryButtonWidget\ChangePaymentCountryButtonWidget;
 use Crm\PaymentsModule\Components\ChangePaymentSubscriptionTypeWidget\ChangePaymentSubscriptionTypeWidget;
 use Crm\PaymentsModule\Components\DeviceUserListingWidget\DeviceUserListingWidget;
 use Crm\PaymentsModule\Components\DonationPaymentItemsListWidget\DonationPaymentItemsListWidget;
@@ -59,6 +60,7 @@ use Crm\PaymentsModule\Components\MonthToDateAmountStatWidget\MonthToDateAmountS
 use Crm\PaymentsModule\Components\MyNextRecurrentPayment\MyNextRecurrentPayment;
 use Crm\PaymentsModule\Components\PaidSubscriptionsWithoutExtensionEndingWithinPeriodWidget\PaidSubscriptionsWithoutExtensionEndingWithinPeriodWidget;
 use Crm\PaymentsModule\Components\ParsedMailsFailedNotification\ParsedMailsFailedNotification;
+use Crm\PaymentsModule\Components\PaymentDetailPanelWidget\PaymentDetailPanelWidget;
 use Crm\PaymentsModule\Components\PaymentDonationLabelWidget\PaymentDonationLabelWidget;
 use Crm\PaymentsModule\Components\PaymentItemsListWidget\PaymentItemsListWidget;
 use Crm\PaymentsModule\Components\PaymentStatusDropdownMenuWidget\PaymentStatusDropdownMenuWidget;
@@ -80,6 +82,7 @@ use Crm\PaymentsModule\Components\TotalAmountStatWidget\TotalAmountStatWidget;
 use Crm\PaymentsModule\Components\TotalUserPayments\TotalUserPayments;
 use Crm\PaymentsModule\Components\UserPaymentsListing\UserPaymentsListing;
 use Crm\PaymentsModule\DataProviders\CanDeleteAddressDataProvider;
+use Crm\PaymentsModule\DataProviders\ChangePaymentCountryDataProvider;
 use Crm\PaymentsModule\DataProviders\PaymentFromVariableSymbolDataProvider;
 use Crm\PaymentsModule\DataProviders\PaymentItemTypesFilterDataProvider;
 use Crm\PaymentsModule\DataProviders\PaymentsClaimUserDataProvider;
@@ -374,11 +377,19 @@ class PaymentsModule extends CrmModule
             'admin.refund_payment.show.left',
             RefundPaymentItemsListWidget::class
         );
+        $widgetManager->registerWidget(
+            'admin.refund_payment.show.right',
+            PaymentDetailPanelWidget::class
+        );
 
         $widgetManager->registerWidget(
             'admin.subscriptions.transfer.summary.content',
             SubscriptionTransferInformationWidget::class,
             priority: 110
+        );
+        $widgetManager->registerWidget(
+            'admin.subscriptions.transfer.summary.right',
+            PaymentDetailPanelWidget::class
         );
 
         $widgetManager->registerWidget(
@@ -389,6 +400,15 @@ class PaymentsModule extends CrmModule
         $widgetManager->registerWidget(
             'subscriptions.admin.user_subscriptions_listing.subscription',
             ShowRenewalPaymentForSubscriptionWidget::class
+        );
+
+        $widgetManager->registerWidget(
+            'admin.payment.payment_country_change.right',
+            PaymentDetailPanelWidget::class
+        );
+        $widgetManager->registerWidget(
+            'admin.payments.listing.action.menu',
+            ChangePaymentCountryButtonWidget::class,
         );
     }
 
@@ -583,6 +603,11 @@ class PaymentsModule extends CrmModule
         $dataProviderManager->registerDataProvider(
             'payments.dataprovider.payments_filter_form',
             $this->getInstance(PaypalIdAdminFilterFormDataProvider::class)
+        );
+
+        $dataProviderManager->registerDataProvider(
+            'payments.dataprovider.change_payment_country',
+            $this->getInstance(ChangePaymentCountryDataProvider::class),
         );
     }
 

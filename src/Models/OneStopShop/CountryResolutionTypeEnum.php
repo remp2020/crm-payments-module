@@ -2,6 +2,7 @@
 
 namespace Crm\PaymentsModule\Models\OneStopShop;
 
+// If there will be any changes in this enum, please update also language keys in 'payments.admin.change_payment_country.resolution_reasons.*' translations
 enum CountryResolutionTypeEnum: string
 {
     case IpAddress = 'ip_address';

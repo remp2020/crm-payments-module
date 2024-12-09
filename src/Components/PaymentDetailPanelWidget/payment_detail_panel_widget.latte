@@ -1,0 +1,103 @@
+<div class="row">
+    <div class="col-lg-12">
+        <div class="panel panel-default">
+            <div class="panel-heading">
+                {_payments.admin.payments.payment_info}
+                <a href="{plink :Payments:PaymentsAdmin:show $payment->id}" target="_blank"
+                   class="btn btn-link btn-xs pull-right">{_system.show}</a>
+            </div>
+            <div class="panel-body">
+                <table class="table table-responsive table-clear table-left-label">
+                    <tr>
+                        {var $labelClass = 'label-default'}
+                        {if $payment->status == \Crm\PaymentsModule\Models\Payment\PaymentStatusEnum::Paid->value}
+                            {var $labelClass = 'label-success'}
+                        {elseif $payment->status == \Crm\PaymentsModule\Models\Payment\PaymentStatusEnum::Form->value}
+                            {var $labelClass = 'label-info'}
+                        {elseif $payment->status == \Crm\PaymentsModule\Models\Payment\PaymentStatusEnum::Fail->value || $payment->status == \Crm\PaymentsModule\Models\Payment\PaymentStatusEnum::Timeout->value}
+                            {var $labelClass = 'label-danger'}
+                        {/if}
+                        <td>{_payments.admin.payments.status}:</td>
+                        <td><span class="label {$labelClass}">{$payment->status}</span></td>
+                    </tr>
+                    <tr>
+                        <td>{_payments.admin.payments.variable_symbol}:</td>
+                        <td>{$payment->variable_symbol}</td>
+                    </tr>
+                    <tr>
+                        <td>{_payments.admin.payments.gateway}:</td>
+                        <td>
+                            <a target="_blank"
+                               href="{plink :Payments:PaymentGatewaysAdmin:Show $payment->payment_gateway->id}">
+                                {$payment->payment_gateway->name}
+                            </a>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>{_payments.admin.payment_refund.subscription.automatic_renewal}:</td>
+                        <td>
+                            {if $payment->recurrent_charge}
+                                {_system.yes}
+                            {else}
+                                {_system.no}
+                            {/if}
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>{_payments.admin.payments.paid_at}:</td>
+                        <td>{$payment->paid_at ? ($payment->paid_at|userDate) : '-'}</td>
+                    </tr>
+                    <tr>
+                        <td>{_payments.admin.payments.modified_at}:</td>
+                        <td>{$payment->modified_at ? ($payment->modified_at|userDate) : '-'}</td>
+                    </tr>
+                    <tr>
+                        <td>{_payments.admin.payments.created_at}:</td>
+                        <td>{$payment->created_at ? ($payment->created_at|userDate) : '-'}</td>
+                    </tr>
+                    {if $payment->address}
+                        <tr>
+                            <td style="vertical-align: top;">{_payments.admin.payment_refund.user.address}:</td>
+                            <td>
+                                {if $payment->address->company_name}
+                                    {$payment->address->company_name} ({$payment->address->first_name} {$payment->address->last_name}),
+                                {else}
+                                    {$payment->address->first_name} {$payment->address->last_name},
+                                {/if}
+                                <br />
+                                {$payment->address->address} {$payment->address->number}, {$payment->address->zip} {$payment->address->city}
+                                <br />
+                                {$payment->address->country?->name}
+                                <a href="{plink :Users:AddressAdmin:edit $payment->address->id}" target="_blank">
+                                    <i class="fa-solid fa-square-arrow-up-right"></i>
+                                </a>
+                            </td>
+                        </tr>
+                    {/if}
+                    <tr>
+                        <td>{_payments.admin.payments.referer}:</td>
+                        <td class="truncate-text" title="{$payment->referer}">
+                            {if $payment->referer}
+                                <a href="{$payment->referer}" target="_blank">{$payment->referer}</a>
+                            {else}
+                                -
+                            {/if}
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>{_payments.admin.payments.show.ip}:</td>
+                        <td>{$payment->ip ?? '-'}</td>
+                    </tr>
+                    <tr>
+                        <td>User agent:</td>
+                        <td class="truncate-text" title="{$payment->user_agent}">{$payment->user_agent ?? '-'}</td>
+                    </tr>
+                    <tr>
+                        <td style="vertical-align: top;">{_payments.admin.payments.note}:</td>
+                        <td>{$payment->note ?? '-'}</td>
+                    </tr>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
