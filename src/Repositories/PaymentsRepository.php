@@ -163,7 +163,7 @@ class PaymentsRepository extends Repository
         $this->paymentItemsRepository->add($payment, $paymentItemContainer);
 
         if (!empty($metaData)) {
-            $this->addMeta($payment, array_filter($metaData));
+            $this->addMeta($payment, $metaData);
         }
 
         $this->emitter->emit(new NewPaymentEvent($payment));
@@ -179,6 +179,10 @@ class PaymentsRepository extends Repository
             return;
         }
         foreach ($data as $key => $value) {
+            if ($value === null) {
+                // no need to store null values
+                continue;
+            }
             $this->paymentMetaRepository->add($payment, $key, $value);
         }
     }
