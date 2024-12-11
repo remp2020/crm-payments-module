@@ -54,6 +54,12 @@ class PaymentItemContainer
         return $this;
     }
 
+    public function setItems(array $items): self
+    {
+        $this->items = $items;
+        return $this;
+    }
+
     /**
      * Switch $oldItem in PaymentItemContainer with $newItem
      *

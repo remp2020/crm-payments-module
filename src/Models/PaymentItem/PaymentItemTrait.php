@@ -73,6 +73,12 @@ trait PaymentItemTrait
         return $this;
     }
 
+    public function addMeta(string $key, $value): static
+    {
+        $this->meta[$key] = $value;
+        return $this;
+    }
+
     public static function loadMeta(ActiveRow $paymentItem): array
     {
         return $paymentItem->related('payment_item_meta')->fetchPairs('key', 'value');
