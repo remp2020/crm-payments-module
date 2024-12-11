@@ -1,3 +1,9 @@
+<script>
+    if (window.self !== window.top) { // checking if it is an iframe
+        window.top.location = window.location;
+    }
+</script>
+
 {block #head}
     <style>
         .select-card hr {
