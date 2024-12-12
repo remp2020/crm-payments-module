@@ -556,7 +556,7 @@ class PaymentFormFactory
                     return [$paymentItemContainer, $allowEditPaymentItems];
                 }
 
-                if ($subscriptionType && $item->type === SubscriptionTypePaymentItem::TYPE) {
+                if ($item->type === SubscriptionTypePaymentItem::TYPE) {
                     $meta = [];
                     if ($item->meta) {
                         if (is_string($item->meta)) {
