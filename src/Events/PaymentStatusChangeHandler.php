@@ -2,7 +2,10 @@
 
 namespace Crm\PaymentsModule\Events;
 
+use Crm\PaymentsModule\Models\GatewayFactory;
 use Crm\PaymentsModule\Models\Gateways\AuthorizationInterface;
+use Crm\PaymentsModule\Models\Gateways\RecurrentAuthorizationInterface;
+use Crm\PaymentsModule\Models\Payment\PaymentStatusEnum;
 use Crm\PaymentsModule\Repositories\PaymentMethodsRepository;
 use Crm\PaymentsModule\Repositories\PaymentsRepository;
 use Crm\PaymentsModule\Repositories\RecurrentPaymentsRepository;
@@ -20,6 +23,7 @@ class PaymentStatusChangeHandler extends AbstractListener
         private readonly PaymentsRepository $paymentsRepository,
         private readonly RecurrentPaymentsRepository $recurrentPaymentsRepository,
         private readonly PaymentMethodsRepository $paymentMethodsRepository,
+        private readonly GatewayFactory $gatewayFactory,
     ) {
     }
 
@@ -38,11 +42,14 @@ class PaymentStatusChangeHandler extends AbstractListener
         // hard reload, other handlers could have alter the payment already
         $payment = $this->paymentsRepository->find($payment->id);
 
-        if ($payment->status === PaymentsRepository::STATUS_REFUND) {
+        if ($payment->status === PaymentStatusEnum::Refund->value) {
             $this->stopRecurrentPayment($payment);
         }
 
-        if ($payment->status === PaymentsRepository::STATUS_AUTHORIZED) {
+        $gateway = $this->gatewayFactory->getGateway($payment->payment_gateway->code);
+        if ($payment->status === PaymentStatusEnum::Authorized->value && $gateway instanceof AuthorizationInterface) {
+            // Change CID only for authorized payments using non-recurrent payment gateway. Recurrent authorizations
+            // are be used to create new recurrent payment chains.
             $this->changeRecurrentPaymentCid($payment);
         }
 
@@ -58,7 +65,10 @@ class PaymentStatusChangeHandler extends AbstractListener
             return;
         }
 
-        if (in_array($payment->status, [PaymentsRepository::STATUS_PAID, PaymentsRepository::STATUS_PREPAID], true)) {
+        $gateway = $this->gatewayFactory->getGateway($payment->payment_gateway->code);
+        if (in_array($payment->status, [PaymentStatusEnum::Paid->value, PaymentStatusEnum::Prepaid], true)
+            || ($payment->status === PaymentStatusEnum::Authorized->value && $gateway instanceof RecurrentAuthorizationInterface)
+        ) {
             $this->createSubscriptionFromPayment($payment, $sendEmail);
         }
     }

@@ -3,6 +3,7 @@
 namespace Crm\PaymentsModule\Presenters;
 
 use Crm\ApplicationModule\Presenters\FrontendPresenter;
+use Crm\PaymentsModule\Models\Payment\PaymentStatusEnum;
 use Crm\PaymentsModule\Models\RecurrentPaymentsResolver;
 use Crm\PaymentsModule\Repositories\PaymentsRepository;
 use Crm\PaymentsModule\Repositories\RecurrentPaymentsRepository;
@@ -36,6 +37,11 @@ class PaymentsPresenter extends FrontendPresenter
         $this->template->resolver = $this->recurrentPaymentsResolver;
         $this->template->canBeStopped = function ($recurrentPayment) {
             return $this->recurrentPaymentsRepository->canBeStoppedByUser($recurrentPayment);
+        };
+        $this->template->shouldDisplay = function ($payment) {
+            return $payment->status === PaymentStatusEnum::Paid->value
+                || $payment->status === PaymentStatusEnum::Prepaid->value
+                || ($payment->status === PaymentStatusEnum::Authorized->value && $payment->payment_gateway->is_recurrent);
         };
     }
 

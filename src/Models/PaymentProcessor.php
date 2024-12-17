@@ -5,6 +5,7 @@ namespace Crm\PaymentsModule\Models;
 use Crm\PaymentsModule\Events\BeforePaymentBeginEvent;
 use Crm\PaymentsModule\Models\Gateways\AuthorizationInterface;
 use Crm\PaymentsModule\Models\Gateways\GatewayAbstract;
+use Crm\PaymentsModule\Models\Gateways\RecurrentAuthorizationInterface;
 use Crm\PaymentsModule\Models\Gateways\RecurrentPaymentInterface;
 use Crm\PaymentsModule\Repositories\PaymentLogsRepository;
 use Crm\PaymentsModule\Repositories\PaymentsRepository;
@@ -85,7 +86,7 @@ class PaymentProcessor
         $result = $gateway->complete($payment);
         if ($result === true) {
             $status = PaymentsRepository::STATUS_PAID;
-            if ($gateway instanceof AuthorizationInterface) {
+            if ($gateway instanceof AuthorizationInterface || $gateway instanceof RecurrentAuthorizationInterface) {
                 $status = PaymentsRepository::STATUS_AUTHORIZED;
             }
 

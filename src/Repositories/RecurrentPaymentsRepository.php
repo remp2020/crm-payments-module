@@ -16,8 +16,10 @@ use Crm\PaymentsModule\Events\RecurrentPaymentStoppedByAdminEvent;
 use Crm\PaymentsModule\Events\RecurrentPaymentStoppedByUserEvent;
 use Crm\PaymentsModule\Models\Gateway;
 use Crm\PaymentsModule\Models\GatewayFactory;
+use Crm\PaymentsModule\Models\Gateways\RecurrentAuthorizationInterface;
 use Crm\PaymentsModule\Models\Gateways\RecurrentPaymentInterface;
 use Crm\PaymentsModule\Models\Gateways\ReusableCardPaymentInterface;
+use Crm\PaymentsModule\Models\Payment\PaymentStatusEnum;
 use DateTime;
 use Exception;
 use League\Event\Emitter;
@@ -60,20 +62,28 @@ class RecurrentPaymentsRepository extends Repository
         private readonly GatewayFactory $gatewayFactory,
         private readonly CacheRepository $cacheRepository,
         private readonly PaymentMethodsRepository $paymentMethodsRepository,
+        private readonly PaymentGatewaysRepository $paymentGatewaysRepository,
     ) {
         parent::__construct($database);
         $this->auditLogRepository = $auditLogRepository;
     }
 
-    final public function add(ActiveRow $paymentMethod, $payment, $chargeAt, $customAmount, $retries, string $note = null)
-    {
+    final public function add(
+        ActiveRow $paymentMethod,
+        ActiveRow $payment,
+        \DateTime $chargeAt,
+        ?float $customAmount,
+        int $retries,
+        ActiveRow $paymentGateway = null,
+        string $note = null,
+    ) {
         return $this->insert([
             'cid' => $paymentMethod->external_token,
             'created_at' => $this->getNow(),
             'updated_at' => $this->getNow(),
             'charge_at' => $chargeAt,
             'payment_method_id' => $paymentMethod->id,
-            'payment_gateway_id' => $payment->payment_gateway->id,
+            'payment_gateway_id' => $paymentGateway->id ?? $payment->payment_gateway->id,
             'subscription_type_id' => $payment->subscription_type_id,
             'custom_amount' => $customAmount,
             'retries' => $retries,
@@ -114,12 +124,20 @@ class RecurrentPaymentsRepository extends Repository
         ?\DateTime $chargeAt = null,
         ?float $customChargeAmount = null
     ): ?ActiveRow {
-        if (!in_array($payment->status, [PaymentsRepository::STATUS_PAID, PaymentsRepository::STATUS_PREPAID], true)) {
+        if (!in_array($payment->status, [PaymentStatusEnum::Paid->value, PaymentStatusEnum::Prepaid->value, PaymentStatusEnum::Authorized->value], true)) {
             Debugger::log(
                 "Could not create recurrent payment from payment [{$payment->id}], invalid payment status: [{$payment->status}]",
                 Debugger::ERROR
             );
             return null;
+        }
+
+        $paymentGateway = $payment->payment_gateway;
+        if ($payment->status === PaymentStatusEnum::Authorized->value) {
+            $gateway = $this->gatewayFactory->getGateway($payment->payment_gateway->code);
+            if ($gateway instanceof RecurrentAuthorizationInterface) {
+                $paymentGateway = $this->paymentGatewaysRepository->findByCode($gateway->getAuthorizedRecurrentPaymentGatewayCode());
+            }
         }
 
         // check if recurrent payment already exists and return existing instance
@@ -151,11 +169,12 @@ class RecurrentPaymentsRepository extends Repository
         );
 
         $recurrentPayment = $this->add(
-            $paymentMethod,
-            $payment,
-            $chargeAt,
-            $customChargeAmount,
-            --$retries,
+            paymentMethod: $paymentMethod,
+            payment: $payment,
+            chargeAt: $chargeAt,
+            customAmount: $customChargeAmount,
+            retries: --$retries,
+            paymentGateway: $paymentGateway,
         );
 
         $this->emitter->emit(new RecurrentPaymentCreatedEvent($recurrentPayment));

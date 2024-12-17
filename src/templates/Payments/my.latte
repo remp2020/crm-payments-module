@@ -44,11 +44,7 @@
                 </div>
             </div>
             {foreach $payments as $payment}
-                <div class="row border-bottom border-bottom-light"
-                    n:if="in_array($payment->status, [
-                            \Crm\PaymentsModule\Repositories\PaymentsRepository::STATUS_PAID,
-                            \Crm\PaymentsModule\Repositories\PaymentsRepository::STATUS_PREPAID
-                    ])">
+                <div class="row border-bottom border-bottom-light" n:if="$shouldDisplay($payment)">
                     <div class="col-sm-3 col-xs-5">
                         {$payment->payment_gateway->name}<br>
                         {$payment->paid_at|localizedDate:true}
