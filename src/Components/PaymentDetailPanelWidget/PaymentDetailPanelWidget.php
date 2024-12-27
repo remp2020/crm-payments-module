@@ -18,7 +18,7 @@ class PaymentDetailPanelWidget extends BaseLazyWidget
     public function render(array $params)
     {
         if (!isset($params['payment'])) {
-            throw new Exception("Missing required param 'payment'.");
+            return;
         }
 
         if (!is_a($params['payment'], ActiveRow::class)) {
