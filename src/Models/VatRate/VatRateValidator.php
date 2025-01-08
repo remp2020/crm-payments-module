@@ -12,7 +12,7 @@ class VatRateValidator
     {
         // if no country VAT rate is provided, 0% VAT is OK
         if (!$countryVatRate) {
-            $allowedVatRates = [0];
+            $allowedVatRates = [0.0];
         } else {
             $allowedVatRates = $this->getAllowedVatRates($countryVatRate, $allowZeroVatRate);
         }
