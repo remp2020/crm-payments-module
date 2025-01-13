@@ -48,6 +48,12 @@ class UpdateRecurrentPaymentsExpiresCommand extends Command
                 'Update all recurrent payments not only without expires_at.'
             )
             ->addOption(
+                'recurrent_payment_ids',
+                null,
+                InputOption::VALUE_REQUIRED,
+                "IDs of records from 'recurrent_payments' table. Expects list of values separated by comma."
+            )
+            ->addOption(
                 'charge_before',
                 null,
                 InputOption::VALUE_REQUIRED,
@@ -79,6 +85,13 @@ class UpdateRecurrentPaymentsExpiresCommand extends Command
             $chargeBefore = new DateTime($input->getOption('charge_before'));
             $recurrentPayments->where('charge_at >= NOW()')
                 ->where('charge_at < ?', $chargeBefore);
+        }
+
+        if ($input->getOption('recurrent_payment_ids')) {
+            $recurrentPaymentIdsOption = $input->getOption('recurrent_payment_ids');
+            $recurrentPaymentIds = explode(',', $recurrentPaymentIdsOption);
+            $recurrentPayments
+                ->where('recurrent_payments.id IN (?)', $recurrentPaymentIds);
         }
 
         if ($code = $input->getOption('gateway')) {
