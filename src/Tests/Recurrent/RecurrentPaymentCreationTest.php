@@ -5,7 +5,6 @@ namespace Crm\PaymentsModule\Tests\Recurrent;
 
 use Crm\ApplicationModule\Repositories\ConfigsRepository;
 use Crm\PaymentsModule\Commands\RecurrentPaymentsChargeCommand;
-use Crm\PaymentsModule\Models\GatewayFactory;
 use Crm\PaymentsModule\Models\OneStopShop\CountryResolutionTypeEnum;
 use Crm\PaymentsModule\Models\PaymentItem\DonationPaymentItem;
 use Crm\PaymentsModule\Models\PaymentItem\PaymentItemContainer;
