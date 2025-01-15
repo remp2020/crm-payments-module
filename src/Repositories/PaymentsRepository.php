@@ -136,7 +136,7 @@ class PaymentsRepository extends Repository
         // directly on payment_items and be removed from here. additional_amount should not affect total amount anymore.
 
         // If amount is not provided, it's calculated based on payment items in container.
-        if ($amount) {
+        if ($amount !== null) {
             $data['amount'] = $amount;
         } else {
             $data['amount'] = $paymentItemContainer->totalPrice();
