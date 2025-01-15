@@ -33,7 +33,6 @@ class RecurrentPaymentCreationTest extends PaymentsTestCase
 
     private ActiveRow $user;
 
-
     public function setUp(): void
     {
         $this->refreshContainer();
@@ -44,9 +43,6 @@ class RecurrentPaymentCreationTest extends PaymentsTestCase
         $configsRepository = $this->inject(ConfigsRepository::class);
         $donationVatRateConfig = $configsRepository->loadByName('donation_vat_rate');
         $configsRepository->update($donationVatRateConfig, ['value' => 0]);
-
-        $gatewayFactory = $this->inject(GatewayFactory::class);
-        $gatewayFactory->registerGateway(TestRecurrentGateway::GATEWAY_CODE, TestRecurrentGateway::class);
 
         $userManager = $this->inject(UserManager::class);
         $this->user = $userManager->addNewUser('user@example.com', false);
