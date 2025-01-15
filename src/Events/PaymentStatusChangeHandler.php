@@ -66,7 +66,7 @@ class PaymentStatusChangeHandler extends AbstractListener
         }
 
         $gateway = $this->gatewayFactory->getGateway($payment->payment_gateway->code);
-        if (in_array($payment->status, [PaymentStatusEnum::Paid->value, PaymentStatusEnum::Prepaid], true)
+        if (in_array($payment->status, [PaymentStatusEnum::Paid->value, PaymentStatusEnum::Prepaid->value], true)
             || ($payment->status === PaymentStatusEnum::Authorized->value && $gateway instanceof RecurrentAuthorizationInterface)
         ) {
             $this->createSubscriptionFromPayment($payment, $sendEmail);
