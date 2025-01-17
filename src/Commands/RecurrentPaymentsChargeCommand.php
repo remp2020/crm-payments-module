@@ -5,6 +5,7 @@ namespace Crm\PaymentsModule\Commands;
 use Crm\ApplicationModule\Commands\DecoratedCommandTrait;
 use Crm\ApplicationModule\Models\Config\ApplicationConfig;
 use Crm\PaymentsModule\Events\BeforeRecurrentPaymentChargeEvent;
+use Crm\PaymentsModule\Events\RecurrentPaymentChargeGatewayFailEvent;
 use Crm\PaymentsModule\Models\GatewayFactory;
 use Crm\PaymentsModule\Models\GatewayFail;
 use Crm\PaymentsModule\Models\Gateways\ExternallyChargedRecurrentPaymentInterface;
@@ -196,12 +197,17 @@ class RecurrentPaymentsChargeCommand extends Command
                 $gateway->getResultMessage()
             );
         } catch (GatewayFail $exception) {
-            $this->recurrentPaymentsProcessor->processRecurrentChargeError(
-                $recurrentPayment,
-                $exception->getCode(),
-                $exception->getMessage(),
-                $customChargeAmount
-            );
+            $gatewayFailEvent = new RecurrentPaymentChargeGatewayFailEvent($recurrentPayment, $exception);
+            $this->emitter->emit($gatewayFailEvent);
+
+            if (!$gatewayFailEvent->isFailedRecurrentPaymentProcessed()) {
+                $this->recurrentPaymentsProcessor->processRecurrentChargeError(
+                    $recurrentPayment,
+                    $exception->getCode(),
+                    $exception->getMessage(),
+                    $customChargeAmount
+                );
+            }
         }
 
         $this->paymentLogsRepository->add(
