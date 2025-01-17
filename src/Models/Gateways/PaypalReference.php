@@ -130,7 +130,7 @@ class PaypalReference extends GatewayAbstract implements RecurrentPaymentInterfa
                 'message' => $exception->getMessage(),
             ];
             Debugger::log(Json::encode($log));
-            throw new GatewayFail($exception->getMessage(), $exception->getCode());
+            throw new GatewayFail($exception->getMessage(), $exception->getCode(), $exception);
         }
 
         $this->checkChargeStatus($payment, $this->getResultCode());
