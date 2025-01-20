@@ -300,12 +300,12 @@ class RecurrentPaymentsRepository extends Repository
         }
 
         $newRecurrentPayment = $this->add(
-            $recurrentPayment->payment_method,
-            $recurrentPayment->payment,
-            (new DateTime())->modify('+24 hours'),
-            $recurrentPayment->custom_amount,
-            $retries - 1,
-            "Recurrent payment created by reactivation of system stopped recurrent payment [{$recurrentPayment->id}].",
+            paymentMethod: $recurrentPayment->payment_method,
+            payment: $recurrentPayment->payment,
+            chargeAt: (new DateTime())->modify('+24 hours'),
+            customAmount: $recurrentPayment->custom_amount,
+            retries: $retries - 1,
+            note: "Recurrent payment created by reactivation of system stopped recurrent payment [{$recurrentPayment->id}].",
         );
         return ($newRecurrentPayment instanceof ActiveRow) ? $newRecurrentPayment : null;
     }
