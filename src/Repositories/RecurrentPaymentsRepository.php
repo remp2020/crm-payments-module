@@ -4,11 +4,13 @@ namespace Crm\PaymentsModule\Repositories;
 
 use Crm\ApplicationModule\Hermes\HermesMessage;
 use Crm\ApplicationModule\Models\Config\ApplicationConfig;
+use Crm\ApplicationModule\Models\DataProvider\DataProviderManager;
 use Crm\ApplicationModule\Models\Database\Repository;
 use Crm\ApplicationModule\Models\Database\Selection;
 use Crm\ApplicationModule\Models\NowTrait;
 use Crm\ApplicationModule\Repositories\AuditLogRepository;
 use Crm\ApplicationModule\Repositories\CacheRepository;
+use Crm\PaymentsModule\DataProviders\BaseSubscriptionDataProviderInterface;
 use Crm\PaymentsModule\Events\RecurrentPaymentCreatedEvent;
 use Crm\PaymentsModule\Events\RecurrentPaymentRenewedEvent;
 use Crm\PaymentsModule\Events\RecurrentPaymentStateChangedEvent;
@@ -63,6 +65,7 @@ class RecurrentPaymentsRepository extends Repository
         private readonly CacheRepository $cacheRepository,
         private readonly PaymentMethodsRepository $paymentMethodsRepository,
         private readonly PaymentGatewaysRepository $paymentGatewaysRepository,
+        private readonly DataProviderManager $dataProviderManager,
     ) {
         parent::__construct($database);
         $this->auditLogRepository = $auditLogRepository;
@@ -413,9 +416,30 @@ class RecurrentPaymentsRepository extends Repository
         return $this->getTable()->select('status')->group('status')->fetchPairs('status', 'status');
     }
 
-    final public function isStoppedBySubscription(ActiveRow $subscription)
+    final public function isStoppedBySubscription(ActiveRow $subscription): bool
     {
-        $payment = $this->database->table('payments')->where(['subscription_id' => $subscription->id])->limit(1)->fetch();
+        $subscriptionToCheck = $subscription;
+
+        // Data provider may replace subscription to check against
+        // e.g. in case of upgrades, we want to check the original subscription, not the upgraded one
+        // (recurrent_payment parent payment references the original subscription payment)
+        /** @var BaseSubscriptionDataProviderInterface[] $providers */
+        $providers = $this->dataProviderManager->getProviders(
+            'payments.dataprovider.base_subscription',
+            BaseSubscriptionDataProviderInterface::class
+        );
+        foreach ($providers as $provider) {
+            $replacedSubscription = $provider->getPeriodBaseSubscription($subscription);
+            if ($replacedSubscription) {
+                $subscriptionToCheck = $replacedSubscription;
+                break;
+            }
+        }
+
+        $payment = $this->database->table('payments')
+            ->where(['subscription_id' => $subscriptionToCheck->id])
+            ->limit(1)
+            ->fetch();
         if ($payment) {
             $recurrent = $this->recurrent($payment);
             return $this->isStopped($recurrent);
