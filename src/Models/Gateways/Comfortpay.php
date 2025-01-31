@@ -2,12 +2,20 @@
 
 namespace Crm\PaymentsModule\Models\Gateways;
 
+use Crm\ApplicationModule\Models\Config\ApplicationConfig;
 use Crm\PaymentsModule\Models\CannotCheckExpiration;
 use Crm\PaymentsModule\Models\GatewayFail;
+use Crm\PaymentsModule\Models\TransactionStatus;
+use Crm\PaymentsModule\Repositories\RecurrentPaymentsRepository;
+use Nette\Application\LinkGenerator;
+use Nette\Database\Table\ActiveRow;
+use Nette\Http\Response;
+use Nette\Localization\Translator;
 use Nette\Utils\DateTime;
 use Nette\Utils\Json;
 use Nette\Utils\Strings;
 use Omnipay\ComfortPay\Gateway;
+use Omnipay\ComfortPay\Message\CardTransactionResponse;
 use Omnipay\Omnipay;
 use Tracy\Debugger;
 use Tracy\ILogger;
@@ -17,6 +25,21 @@ class Comfortpay extends GatewayAbstract implements RecurrentPaymentInterface, C
     public const GATEWAY_CODE = 'comfortpay';
 
     protected Gateway $gateway;
+
+    public function __construct(
+        LinkGenerator $linkGenerator,
+        ApplicationConfig $applicationConfig,
+        Response $httpResponse,
+        Translator $translator,
+        private readonly RecurrentPaymentsRepository $recurrentPaymentsRepository,
+    ) {
+        parent::__construct(
+            linkGenerator: $linkGenerator,
+            applicationConfig: $applicationConfig,
+            httpResponse: $httpResponse,
+            translator: $translator,
+        );
+    }
 
     protected function initialize()
     {
@@ -165,6 +188,33 @@ class Comfortpay extends GatewayAbstract implements RecurrentPaymentInterface, C
         $this->checkChargeStatus($payment, $this->getResultCode());
 
         return self::CHARGE_OK;
+    }
+
+    public function getTransactionStatus(ActiveRow $payment): ?TransactionStatus
+    {
+        $this->initialize();
+
+        $this->gateway->setCertPath($this->applicationConfig->get('comfortpay_local_cert_path'));
+        $this->gateway->setCertPass($this->applicationConfig->get('comfortpay_local_passphrase_path'));
+
+        $recurrentPayment = $this->recurrentPaymentsRepository->findByPayment($payment);
+        if (!$recurrentPayment) {
+            return null;
+        }
+
+        $request = [
+            'transactionId' => $payment->id,
+            'cid' => $recurrentPayment->payment_method->external_token,
+        ];
+
+        /** @var CardTransactionResponse $response */
+        $response = $this->gateway->checkTransaction($request)->send();
+
+        return new TransactionStatus(
+            isSuccessful: $response->isSuccessful(),
+            status: $response->getTransactionStatus() ?: null,
+            message: $response->getTransactionApproval() ?: null,
+        );
     }
 
     public function hasRecurrentToken(): bool
