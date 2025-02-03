@@ -2,6 +2,7 @@
 
 namespace Crm\PaymentsModule\Models\MailConfirmation;
 
+use Crm\PaymentsModule\Events\BankTransferPaymentApprovalEvent;
 use Crm\PaymentsModule\Events\BeforeBankTransferMailProcessingEvent;
 use Crm\PaymentsModule\Models\Builder\ParsedMailLogsBuilder;
 use Crm\PaymentsModule\Models\Gateways\BankTransfer;
@@ -89,6 +90,13 @@ class MailProcessor
 
         // we will not approve payment when amount in email (real payment) is lower than payment (in db)
         if ($payment->amount > $this->mailContent->getAmount()) {
+            return false;
+        }
+
+        $bankTransferPaymentApprovalEvent = new BankTransferPaymentApprovalEvent($payment, $this->mailContent);
+        $this->emitter->emit($bankTransferPaymentApprovalEvent);
+
+        if (!$bankTransferPaymentApprovalEvent->isApproved()) {
             return false;
         }
 

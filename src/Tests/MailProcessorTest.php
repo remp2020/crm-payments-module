@@ -2,6 +2,7 @@
 
 namespace Crm\PaymentsModule\Tests;
 
+use Crm\PaymentsModule\Events\BankTransferPaymentApprovalEvent;
 use Crm\PaymentsModule\Events\BeforeBankTransferMailProcessingEvent;
 use Crm\PaymentsModule\Models\Gateways\BankTransfer;
 use Crm\PaymentsModule\Models\Gateways\CsobOneClick;
@@ -242,6 +243,33 @@ class MailProcessorTest extends PaymentsTestCase
         $this->assertEquals($newPayment->id, $payment->id);
         $this->assertEquals($newPayment->variable_symbol, $payment->variable_symbol);
         $this->assertEquals(PaymentsRepository::STATUS_PAID, $newPayment->status);
+    }
+
+    public function testDisapprovedBankTransferByApprovalEvent(): void
+    {
+        $variableSymbol = '7492857611';
+        $amount = 10.2;
+
+        $payment = $this->createPayment($variableSymbol);
+        $this->paymentsRepository->update($payment, array('amount' => $amount));
+        $this->assertEquals(PaymentsRepository::STATUS_FORM, $payment->status);
+
+        $mailContent = new MailContent();
+        $mailContent->setAmount($amount);
+        $mailContent->setTransactionDate(strtotime('2.3.2015 13:43'));
+        $mailContent->setVs($variableSymbol);
+
+        $eventListener = Mockery::mock(AbstractListener::class)
+            ->shouldReceive('handle')
+            ->withArgs(function (BankTransferPaymentApprovalEvent $event) {
+                $event->disapprove();
+                return true;
+            })
+            ->getMock();
+        $this->emitter->addListener(BankTransferPaymentApprovalEvent::class, $eventListener);
+
+        $result = $this->mailProcessor->processMail($mailContent, new TestOutput());
+        $this->assertFalse($result);
     }
 
     // should test that VS set by library has precedence over VS found by MailProcessor in receiver message
@@ -489,5 +517,6 @@ class MailProcessorTest extends PaymentsTestCase
     {
         parent::tearDown();
         $this->emitter->removeAllListeners(BeforeBankTransferMailProcessingEvent::class);
+        $this->emitter->removeAllListeners(BankTransferPaymentApprovalEvent::class);
     }
 }
