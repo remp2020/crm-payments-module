@@ -87,11 +87,19 @@ class PaymentMetaRepository extends Repository
         ])->delete();
     }
 
+    final public function findByKeyAndValue(string $key, string $value): Selection
+    {
+        return $this->getTable()->where([
+            'key' => $key,
+            'value' => $value,
+        ]);
+    }
+
     final public function findByMeta(string $key, string $value)
     {
         return $this->getTable()->where([
             'key' => $key,
-            'value' => $value
+            'value' => $value,
         ])->fetch();
     }
 
