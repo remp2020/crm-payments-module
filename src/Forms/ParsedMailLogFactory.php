@@ -2,8 +2,8 @@
 
 namespace Crm\PaymentsModule\Forms;
 
+use Crm\ApplicationModule\UI\Form;
 use Crm\PaymentsModule\Models\ParsedMailLog\StateEnum;
-use Nette\Application\UI\Form;
 use Nette\Localization\Translator;
 use Tomaj\Form\Renderer\BootstrapRenderer;
 

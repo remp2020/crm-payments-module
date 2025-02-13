@@ -4,6 +4,7 @@ namespace Crm\PaymentsModule\Forms;
 
 use Crm\ApplicationModule\Models\DataProvider\DataProviderException;
 use Crm\ApplicationModule\Models\DataProvider\DataProviderManager;
+use Crm\ApplicationModule\UI\Form;
 use Crm\PaymentsModule\DataProviders\PaymentRefundFormDataProviderInterface;
 use Crm\PaymentsModule\Repositories\PaymentsRepository;
 use Crm\PaymentsModule\Repositories\RecurrentPaymentsRepository;
@@ -12,7 +13,6 @@ use Crm\SubscriptionsModule\Models\Subscription\StopSubscriptionHandler;
 use Crm\SubscriptionsModule\Repositories\SubscriptionsRepository;
 use DateTime;
 use League\Event\Emitter;
-use Nette\Application\UI\Form;
 use Nette\Database\Table\ActiveRow;
 use Nette\Localization\Translator;
 use Nette\Utils\ArrayHash;

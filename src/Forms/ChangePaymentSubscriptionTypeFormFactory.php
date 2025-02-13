@@ -3,12 +3,12 @@
 namespace Crm\PaymentsModule\Forms;
 
 use Crm\ApplicationModule\Models\Database\ActiveRow;
+use Crm\ApplicationModule\UI\Form;
 use Crm\PaymentsModule\Forms\Controls\SubscriptionTypesSelectItemsBuilder;
 use Crm\PaymentsModule\Models\PaymentItem\PaymentItemContainer;
 use Crm\PaymentsModule\Repositories\PaymentsRepository;
 use Crm\SubscriptionsModule\Models\PaymentItem\SubscriptionTypePaymentItem;
 use Crm\SubscriptionsModule\Repositories\SubscriptionTypesRepository;
-use Nette\Application\UI\Form;
 use Nette\Database\Explorer;
 use Nette\Localization\Translator;
 use Tomaj\Form\Renderer\BootstrapRenderer;

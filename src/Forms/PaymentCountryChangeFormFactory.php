@@ -3,6 +3,7 @@
 namespace Crm\PaymentsModule\Forms;
 
 use Crm\ApplicationModule\Models\DataProvider\DataProviderManager;
+use Crm\ApplicationModule\UI\Form;
 use Crm\PaymentsModule\DataProviders\ChangePaymentCountryDataProviderInterface;
 use Crm\PaymentsModule\Models\OneStopShop\CountryResolution;
 use Crm\PaymentsModule\Models\OneStopShop\CountryResolutionTypeEnum;
@@ -11,7 +12,6 @@ use Crm\PaymentsModule\Models\OneStopShop\OneStopShopCountryConflictException;
 use Crm\PaymentsModule\Repositories\PaymentsRepository;
 use Crm\UsersModule\Repositories\CountriesRepository;
 use Exception;
-use Nette\Application\UI\Form;
 use Nette\Database\Table\ActiveRow;
 use Nette\Localization\Translator;
 use Tomaj\Form\Renderer\BootstrapInlineRenderer;

@@ -4,9 +4,9 @@ namespace Crm\PaymentsModule\Presenters;
 
 use Crm\AdminModule\Presenters\AdminPresenter;
 use Crm\ApplicationModule\Models\DataProvider\DataProviderException;
+use Crm\ApplicationModule\UI\Form;
 use Crm\PaymentsModule\Forms\PaymentRefundFormFactory;
 use Crm\PaymentsModule\Repositories\PaymentsRepository;
-use Nette\Application\UI\Form;
 
 class PaymentsRefundAdminPresenter extends AdminPresenter
 {

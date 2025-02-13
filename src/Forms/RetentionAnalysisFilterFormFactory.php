@@ -3,6 +3,7 @@
 namespace Crm\PaymentsModule\Forms;
 
 use Crm\ApplicationModule\Models\DataProvider\DataProviderManager;
+use Crm\ApplicationModule\UI\Form;
 use Crm\PaymentsModule\DataProviders\RetentionAnalysisDataProviderInterface;
 use Crm\PaymentsModule\Models\Retention\RetentionAnalysis;
 use Crm\PaymentsModule\Repositories\PaymentsRepository;
@@ -10,7 +11,6 @@ use Crm\SegmentModule\Repositories\SegmentsRepository;
 use Crm\SubscriptionsModule\Repositories\SubscriptionTypeTagsRepository;
 use Crm\SubscriptionsModule\Repositories\SubscriptionTypesRepository;
 use Crm\UsersModule\Repositories\UsersRepository;
-use Nette\Application\UI\Form;
 use Nette\Localization\Translator;
 use Tomaj\Form\Renderer\BootstrapRenderer;
 

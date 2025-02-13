@@ -4,12 +4,12 @@ namespace Crm\PaymentsModule\Forms;
 
 use Contributte\Translation\Translator;
 use Crm\ApplicationModule\Helpers\PriceHelper;
+use Crm\ApplicationModule\UI\Form;
 use Crm\PaymentsModule\Models\Payment\PaymentStatusEnum;
 use Crm\PaymentsModule\Models\Payment\RenewalPayment;
 use Crm\PaymentsModule\Repositories\PaymentsRepository;
 use Crm\SubscriptionsModule\Repositories\SubscriptionMetaRepository;
 use Crm\SubscriptionsModule\Repositories\SubscriptionsRepository;
-use Nette\Application\UI\Form;
 use Tomaj\Form\Renderer\BootstrapRenderer;
 
 class AssignRenewalPaymentToSubscriptionFormFactory

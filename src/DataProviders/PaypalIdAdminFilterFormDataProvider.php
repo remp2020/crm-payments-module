@@ -3,10 +3,10 @@
 namespace Crm\PaymentsModule\DataProviders;
 
 use Crm\ApplicationModule\Models\DataProvider\DataProviderException;
+use Crm\ApplicationModule\UI\Form;
 use Crm\PaymentsModule\Models\Gateways\Paypal;
 use Crm\PaymentsModule\Models\Gateways\PaypalReference;
 use Crm\PaymentsModule\Repositories\PaymentsRepository;
-use Nette\Application\UI\Form;
 use Nette\Database\Table\Selection;
 
 class PaypalIdAdminFilterFormDataProvider implements AdminFilterFormDataProviderInterface
