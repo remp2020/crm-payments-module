@@ -43,6 +43,7 @@ class PaymentsPresenter extends FrontendPresenter
                 || $payment->status === PaymentStatusEnum::Prepaid->value
                 || ($payment->status === PaymentStatusEnum::Authorized->value && $payment->payment_gateway->is_recurrent);
         };
+        $this->template->noPaymentsRoute = $this->applicationConfig->get('default_route');
     }
 
     public function handleReactivate($recurrentId)
