@@ -26,11 +26,11 @@ use Crm\UsersModule\Repositories\CountriesRepository;
 use Crm\UsersModule\Repositories\UsersRepository;
 use DateTime;
 use League\Event\Emitter;
+use Malkusch\Lock\Mutex\RedisMutex;
 use Nette\Database\Explorer;
 use Nette\Database\Table\ActiveRow;
 use Nette\Database\Table\Selection;
 use Tracy\Debugger;
-use malkusch\lock\mutex\PredisMutex;
 
 class PaymentsRepository extends Repository
 {
@@ -336,7 +336,7 @@ class PaymentsRepository extends Repository
     {
         // Updates of payment status may come from multiple sources simultaneously,
         // therefore we avoid running this code in parallel using mutex
-        $mutex = new PredisMutex([$this->redis()], 'payments_repository_update_status_' . $payment->id, 10);
+        $mutex = new RedisMutex($this->redis(), 'payments_repository_update_status_' . $payment->id, 10);
         $updated = $mutex->synchronized(function () use ($payment, $status, $note, $errorMessage) {
             // refresh payment since it may be stalled (because of waiting for mutex)
             $payment = $this->find($payment->id);
