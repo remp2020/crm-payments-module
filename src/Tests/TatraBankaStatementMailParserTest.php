@@ -9,7 +9,6 @@ class TatraBankaStatementMailParserTest extends PaymentsTestCase
 {
     /**
      * TODO: this causes phpunit test to crash with ErrorException: Allowed memory size when run together with other tests, try to fix
-     * @group unreliable
      */
     public function testTransferPayments()
     {
