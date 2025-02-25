@@ -129,7 +129,7 @@ class PaymentRefundFormFactory
             $this->stopRecurrentChargeInRefundedPayment($payment);
         }
 
-        $this->paymentsRepository->updateStatus($payment, $newPaymentStatus);
+        $this->paymentsRepository->updateStatus($payment, $newPaymentStatus, true);
 
         /** @var PaymentRefundFormDataProviderInterface[] $providers */
         $providers = $this->dataProviderManager->getProviders(
