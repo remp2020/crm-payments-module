@@ -36,6 +36,7 @@ services:
 	- Crm\PaymentsModule\Forms\PaymentCountryChangeFormFactory
 	- Crm\PaymentsModule\Models\PaymentProcessor
 	- Crm\PaymentsModule\Models\RecurrentPaymentsProcessor
+	- Crm\PaymentsModule\Models\RefundPaymentProcessor
 	- Crm\PaymentsModule\Models\Builder\ParsedMailLogsBuilder
 	- Crm\PaymentsModule\Models\AdminFilterFormData
 	- Crm\PaymentsModule\Models\AverageMonthPayment
