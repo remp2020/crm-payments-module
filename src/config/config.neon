@@ -129,6 +129,7 @@ services:
 	- Crm\PaymentsModule\Scenarios\PaymentGatewayCriteria
 	- Crm\PaymentsModule\Scenarios\RecurrentPaymentStateCriteria
 	- Crm\PaymentsModule\Scenarios\RecurrentPaymentSubscriptionTypeContentAccessCriteria
+	- Crm\PaymentsModule\Scenarios\RecurrentPaymentCardExpiredCriteria
 	- Crm\PaymentsModule\Scenarios\PaymentHasSubscriptionCriteria
 	- Crm\PaymentsModule\Scenarios\RecurrentPaymentScenarioConditionModel
 	- Crm\PaymentsModule\Scenarios\DonationAmountCriteria

@@ -580,6 +580,8 @@ admin:
         recurrent_payment_subscription_type_content_access:
             label: Přístup k obsahu pro typ předplatného rekurentní platby
             param_label: Typ přístupu k obsahu
+        recurrent_payment_card_expired:
+            label: Platební karta expiruje dříve než datum platby
 
     change_payment_country:
         title: Změnit zemi platby
