@@ -462,9 +462,11 @@ admin:
         header: Vrácení platby
         confirm_refund: Vrátit platbu
         default_ends_at: Původní datum konce
+        submit_confirm: Opravdu chcete vrátit platbu?
         form:
             cancel_subscription_date: Ukončit předplatné ke dni
             refund_was_successful: Vrácení platby bylo úspěšné!
+            successful_with_warnings: Změna stavu proběhla, ale s problémy!
             stop_recurrent_charge: Zastavit automatickou obnovu
             required:
                 subscription_ends_at: Datum konce předplatného je povinen údaj
@@ -479,6 +481,12 @@ admin:
             active: Aktivní
             source: Zdroj
             language: Jazyk
+
+        instant_refund_widget:
+            instant_refund:
+                label: Okamžité vrácení peněz
+            description: Vrácení platby automaticky odešle peníze zpět zákazníkovi. Platba se provede přes platební bránu, přes kterou byla realizována i původní platba.
+            refund_error: Okamžité vrácení peněz selhalo. Prověřte stav platby přímo na platební bráně, případně odešlete peníze manuálně.
 
     payments:
         payment_info: Informace o platbě

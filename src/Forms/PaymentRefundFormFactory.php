@@ -20,10 +20,10 @@ use Tomaj\Form\Renderer\BootstrapRenderer;
 
 class PaymentRefundFormFactory
 {
-    const PAYMENT_ID_KEY = 'payment_id';
-    const SUBSCRIPTION_ENDS_AT_KEY = 'subscription_ends_at';
-    const NEW_PAYMENT_STATUS = 'new_payment_status';
-    const STOP_RECURRENT_CHARGE_KEY = 'stop_recurrent_charge';
+    public const PAYMENT_ID_KEY = 'payment_id';
+    public const SUBSCRIPTION_ENDS_AT_KEY = 'subscription_ends_at';
+    public const NEW_PAYMENT_STATUS = 'new_payment_status';
+    public const STOP_RECURRENT_CHARGE_KEY = 'stop_recurrent_charge';
 
     /** @var callable */
     public $onSave;
@@ -106,7 +106,7 @@ class PaymentRefundFormFactory
             PaymentRefundFormDataProviderInterface::class
         );
         foreach ($providers as $provider) {
-            $form = $provider->provide(['form' => $form]);
+            $form = $provider->provide(['form' => $form, 'payment' => $payment]);
         }
 
         $form->onSuccess[] = [$this, 'formSucceeded'];
@@ -141,7 +141,7 @@ class PaymentRefundFormFactory
         }
 
         if (isset($this->onSave)) {
-            ($this->onSave)($values[self::PAYMENT_ID_KEY]);
+            ($this->onSave)($payment, $form->getOwnErrors());
         }
     }
 

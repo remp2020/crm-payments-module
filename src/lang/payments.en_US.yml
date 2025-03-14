@@ -462,9 +462,11 @@ admin:
         header: Refund
         confirm_refund: Confirm refund
         default_ends_at: Default end date
+        submit_confirm: Are you sure you want to refund the payment?
         form:
             cancel_subscription_date: End subscription to date
             refund_was_successful: The refund was successful!
+            successful_with_warnings: The status change was successful, but with problems!
             stop_recurrent_charge: Stop automatic renewal
             required:
                 subscription_ends_at: The subscription end date is required
@@ -479,6 +481,12 @@ admin:
             active: Active
             source: Source
             language: Language
+
+        instant_refund_widget:
+            instant_refund:
+                label: Instant Refund
+            description: A refund automatically sends the money back to the customer. The payment will be made through the same payment gateway that the original payment was made through.
+            refund_error: Instant refund failed. Check the payment status directly on the payment gateway, or send the money manually.
 
     payments:
         payment_info: Payment information

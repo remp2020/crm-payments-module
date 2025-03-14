@@ -100,7 +100,7 @@
                         {snippet additionalRefundFormData}
                             {control simpleWidget 'admin.refund_payment.show.left', ['form' => $control['paymentRefundForm'], 'payment' => $payment]}
                             {ifset $control['paymentRefundForm']['submit']}
-                                {input submit}
+                                {input submit, data-confirm => ("payments.admin.payment_refund.submit_confirm"|translate)}
                             {/ifset}
                         {/snippet}
                     {/form}

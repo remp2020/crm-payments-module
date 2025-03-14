@@ -63,6 +63,7 @@ use Crm\PaymentsModule\Components\ParsedMailsFailedNotification\ParsedMailsFaile
 use Crm\PaymentsModule\Components\PaymentDetailPanelWidget\PaymentDetailPanelWidget;
 use Crm\PaymentsModule\Components\PaymentDonationLabelWidget\PaymentDonationLabelWidget;
 use Crm\PaymentsModule\Components\PaymentItemsListWidget\PaymentItemsListWidget;
+use Crm\PaymentsModule\Components\PaymentRefund\InstantRefundWidget;
 use Crm\PaymentsModule\Components\PaymentStatusDropdownMenuWidget\PaymentStatusDropdownMenuWidget;
 use Crm\PaymentsModule\Components\PaymentToSubscriptionMenu\PaymentToSubscriptionMenu;
 use Crm\PaymentsModule\Components\ReactivateFailedRecurrentPaymentWidget\ReactivateFailedRecurrentPaymentWidget;
@@ -85,6 +86,7 @@ use Crm\PaymentsModule\DataProviders\CanDeleteAddressDataProvider;
 use Crm\PaymentsModule\DataProviders\ChangePaymentCountryDataProvider;
 use Crm\PaymentsModule\DataProviders\PaymentFromVariableSymbolDataProvider;
 use Crm\PaymentsModule\DataProviders\PaymentItemTypesFilterDataProvider;
+use Crm\PaymentsModule\DataProviders\PaymentRefundFormDataProviderInterface;
 use Crm\PaymentsModule\DataProviders\PaymentsClaimUserDataProvider;
 use Crm\PaymentsModule\DataProviders\PaymentsUserDataProvider;
 use Crm\PaymentsModule\DataProviders\PaypalIdAdminFilterFormDataProvider;
@@ -382,6 +384,10 @@ class PaymentsModule extends CrmModule
             'admin.refund_payment.show.right',
             PaymentDetailPanelWidget::class
         );
+        $widgetManager->registerWidget(
+            'admin.refund_payment.show.left',
+            InstantRefundWidget::class,
+        );
 
         $widgetManager->registerWidget(
             'admin.subscriptions.transfer.summary.content',
@@ -610,6 +616,11 @@ class PaymentsModule extends CrmModule
         $dataProviderManager->registerDataProvider(
             'payments.dataprovider.change_payment_country',
             $this->getInstance(ChangePaymentCountryDataProvider::class),
+        );
+
+        $dataProviderManager->registerDataProvider(
+            PaymentRefundFormDataProviderInterface::PATH,
+            $this->getInstance(InstantRefundWidget::class),
         );
     }
 

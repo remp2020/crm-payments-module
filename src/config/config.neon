@@ -72,6 +72,7 @@ services:
 	- Crm\PaymentsModule\Components\RenewalPaymentForSubscriptionWidget\RenewalPaymentForSubscriptionWidget
 	- Crm\PaymentsModule\Components\ShowRenewalPaymentForSubscriptionWidget\ShowRenewalPaymentForSubscriptionWidget
 	- Crm\PaymentsModule\Components\ChangePaymentCountryButtonWidget\ChangePaymentCountryButtonWidget
+	- Crm\PaymentsModule\Components\PaymentRefund\InstantRefundWidget
 	- Crm\PaymentsModule\Commands\RecurrentPaymentsCardCheckCommand
 	- Crm\PaymentsModule\Commands\RecurrentPaymentsChargeCommand
 	- Crm\PaymentsModule\Commands\CsobMailConfirmationCommand

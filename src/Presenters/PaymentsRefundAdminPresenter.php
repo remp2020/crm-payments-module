@@ -4,6 +4,7 @@ namespace Crm\PaymentsModule\Presenters;
 
 use Crm\AdminModule\Presenters\AdminPresenter;
 use Crm\ApplicationModule\Models\DataProvider\DataProviderException;
+use Crm\ApplicationModule\Models\Database\ActiveRow;
 use Crm\ApplicationModule\UI\Form;
 use Crm\PaymentsModule\Forms\PaymentRefundFormFactory;
 use Crm\PaymentsModule\Repositories\PaymentsRepository;
@@ -32,11 +33,21 @@ class PaymentsRefundAdminPresenter extends AdminPresenter
     {
         $form = $paymentRefundFormFactory->create($this->getParameter('paymentId'));
 
-        $paymentRefundFormFactory->onSave = function (int $paymentId) {
-            $this->flashMessage(
-                $this->translator->translate('payments.admin.payment_refund.form.refund_was_successful')
-            );
-            $this->redirect(':Payments:PaymentsAdmin:Show', $paymentId);
+        $paymentRefundFormFactory->onSave = function (ActiveRow $payment, array $warnings) {
+            if (count($warnings)) {
+                $message = sprintf(
+                    '%s %s',
+                    $this->translator->translate('payments.admin.payment_refund.form.successful_with_warnings'),
+                    implode(' ', $warnings),
+                );
+                $this->flashMessage($message, 'warning');
+            } else {
+                $this->flashMessage(
+                    message: $this->translator->translate('payments.admin.payment_refund.form.refund_was_successful')
+                );
+            }
+
+            $this->redirect(':Payments:PaymentsAdmin:Show', $payment->id);
         };
 
         return $form;
