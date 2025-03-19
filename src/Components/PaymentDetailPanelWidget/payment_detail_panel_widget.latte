@@ -65,7 +65,7 @@
                                     {$payment->address->first_name} {$payment->address->last_name},
                                 {/if}
                                 <br />
-                                {$payment->address->address} {$payment->address->number}, {$payment->address->zip} {$payment->address->city}
+                                {$payment->address->street} {$payment->address->number}, {$payment->address->zip} {$payment->address->city}
                                 <br />
                                 {$payment->address->country?->name}
                                 <a href="{plink :Users:AddressAdmin:edit $payment->address->id}" target="_blank">
