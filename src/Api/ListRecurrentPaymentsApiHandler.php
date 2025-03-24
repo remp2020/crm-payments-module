@@ -4,7 +4,6 @@ namespace Crm\PaymentsModule\Api;
 
 use Crm\ApiModule\Models\Api\ApiHandler;
 use Crm\ApiModule\Models\Params\InputParam;
-use Crm\ApiModule\Models\Params\ParamsProcessor;
 use Crm\PaymentsModule\Repositories\RecurrentPaymentsRepository;
 use Nette\Http\Response;
 use Nette\Utils\DateTime;
@@ -48,9 +47,6 @@ class ListRecurrentPaymentsApiHandler extends ApiHandler
             return $response;
         }
         $user = $data['token']->user;
-
-        $paramsProcessor = new ParamsProcessor($this->params());
-        $params = $paramsProcessor->getValues();
 
         $recurrentPayments = $this->recurrentPaymentsRepository->userRecurrentPayments($user->id);
         if ($params['states'] ?? false) {
