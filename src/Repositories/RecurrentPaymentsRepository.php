@@ -22,6 +22,7 @@ use Crm\PaymentsModule\Models\Gateways\RecurrentAuthorizationInterface;
 use Crm\PaymentsModule\Models\Gateways\RecurrentPaymentInterface;
 use Crm\PaymentsModule\Models\Gateways\ReusableCardPaymentInterface;
 use Crm\PaymentsModule\Models\Payment\PaymentStatusEnum;
+use Crm\PaymentsModule\Models\RecurrentPayment\StateEnum;
 use DateTime;
 use Exception;
 use League\Event\Emitter;
@@ -644,10 +645,10 @@ class RecurrentPaymentsRepository extends Repository
     final public function activeFirstChargeBetween(DateTime $chargeAtFrom, DateTime $chargeAtTo)
     {
         $where = [
-            'state' => self::STATE_ACTIVE,
+            'state' => StateEnum::Active,
             'charge_at >=' => $chargeAtFrom,
             'charge_at <=' => $chargeAtTo,
-            'parent_payment_id.status' => [PaymentsRepository::STATUS_PAID, PaymentsRepository::STATUS_PREPAID]
+            'parent_payment_id.status' => [PaymentStatusEnum::Paid, PaymentStatusEnum::Prepaid, PaymentStatusEnum::Authorized],
         ];
 
         return $this->getTable()->where($where);
