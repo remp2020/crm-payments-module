@@ -3,10 +3,10 @@
 namespace Crm\PaymentsModule\Api;
 
 use Crm\ApiModule\Models\Api\ApiHandler;
-use Crm\ApiModule\Models\Params\InputParam;
 use Crm\PaymentsModule\Repositories\RecurrentPaymentsRepository;
 use Nette\Http\Response;
 use Nette\Utils\DateTime;
+use Tomaj\NetteApi\Params\GetInputParam;
 use Tomaj\NetteApi\Response\JsonApiResponse;
 use Tomaj\NetteApi\Response\ResponseInterface;
 
@@ -22,18 +22,8 @@ class ListRecurrentPaymentsApiHandler extends ApiHandler
     public function params(): array
     {
         return [
-            new InputParam(
-                InputParam::TYPE_GET,
-                'states',
-                InputParam::OPTIONAL,
-                $this->recurrentPaymentsRepository->getStates(),
-                true
-            ),
-            new InputParam(
-                InputParam::TYPE_GET,
-                'chargeable_from',
-                InputParam::OPTIONAL
-            ),
+            (new GetInputParam('states'))->setAvailableValues($this->recurrentPaymentsRepository->getStates())->setMulti(),
+            new GetInputParam('chargeable_from'),
         ];
     }
 
