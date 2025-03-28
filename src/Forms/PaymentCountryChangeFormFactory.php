@@ -116,7 +116,7 @@ class PaymentCountryChangeFormFactory
     }
 
     /**
-     * @throws \Crm\PaymentsModule\Models\OneStopShop\OneStopShopCountryConflictException
+     * @throws OneStopShopCountryConflictException
      */
     public function getCountryResolution(ActiveRow $payment): ?CountryResolution
     {

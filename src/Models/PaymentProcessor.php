@@ -13,6 +13,7 @@ use Crm\PaymentsModule\Repositories\RecurrentPaymentsRepository;
 use League\Event\Emitter;
 use Nette\Http\Request;
 use Nette\Utils\Json;
+use Nette\Utils\JsonException;
 use Tracy\Debugger;
 use Tracy\ILogger;
 
@@ -57,7 +58,7 @@ class PaymentProcessor
      *
      * @return void
      * @throws UnknownPaymentMethodCode
-     * @throws \Nette\Utils\JsonException
+     * @throws JsonException
      */
     public function complete($payment, $callback, bool $preventPaymentStatusUpdate = false)
     {
