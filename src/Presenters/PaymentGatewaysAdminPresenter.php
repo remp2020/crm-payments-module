@@ -8,8 +8,8 @@ use Crm\ApplicationModule\Models\Graphs\Criteria;
 use Crm\ApplicationModule\Models\Graphs\GraphDataItem;
 use Crm\PaymentsModule\Components\LastPayments\LastPaymentsControlFactoryInterface;
 use Crm\PaymentsModule\Forms\PaymentGatewayFormFactory;
+use Crm\PaymentsModule\Models\Payment\PaymentStatusEnum;
 use Crm\PaymentsModule\Repositories\PaymentGatewaysRepository;
-use Crm\PaymentsModule\Repositories\PaymentsRepository;
 use Nette\Application\BadRequestException;
 use Nette\DI\Attributes\Inject;
 
@@ -86,9 +86,9 @@ class PaymentGatewaysAdminPresenter extends AdminPresenter
     protected function createComponentPaymentGatewayGraph(GoogleLineGraphGroupControlFactoryInterface $factory)
     {
         $paymentStatusCompleted = "'" . implode("', '", [
-            PaymentsRepository::STATUS_PAID,
-            PaymentsRepository::STATUS_IMPORTED,
-            PaymentsRepository::STATUS_PREPAID
+            PaymentStatusEnum::Paid->value,
+            PaymentStatusEnum::Imported->value,
+            PaymentStatusEnum::Prepaid->value
             ]) . "'";
         $graphDataItem1 = new GraphDataItem();
         $graphDataItem1->setCriteria((new Criteria())

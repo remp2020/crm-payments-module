@@ -4,6 +4,7 @@ namespace Crm\PaymentsModule\Repositories;
 
 use Crm\ApplicationModule\Models\Database\Repository;
 use Crm\ApplicationModule\Repositories\AuditLogRepository;
+use Crm\PaymentsModule\Models\Payment\PaymentStatusEnum;
 use Crm\PaymentsModule\Models\VariableSymbolVariant;
 use Nette\Caching\Storage;
 use Nette\Database\Explorer;
@@ -102,7 +103,7 @@ class ParsedMailLogsRepository extends Repository
     {
         $wrongAmountPaymentLogs = $this->getTable()
             ->where('state = ?', 'different_amount')
-            ->where('payment.status = ?', PaymentsRepository::STATUS_FORM)
+            ->where('payment.status = ?', PaymentStatusEnum::Form->value)
             ->order('created_at DESC');
 
         if ($deliveredFrom) {

@@ -5,6 +5,7 @@ namespace Crm\PaymentsModule\Commands;
 use Crm\ApplicationModule\Commands\DecoratedCommandTrait;
 use Crm\PaymentsModule\Models\OneStopShop\OneStopShop;
 use Crm\PaymentsModule\Models\OneStopShop\OneStopShopCountryConflictException;
+use Crm\PaymentsModule\Models\Payment\PaymentStatusEnum;
 use Crm\PaymentsModule\Models\PaymentItem\PaymentItemContainerFactory;
 use Crm\PaymentsModule\Models\RecurrentPaymentsResolver;
 use Crm\PaymentsModule\Repositories\PaymentItemsRepository;
@@ -57,7 +58,7 @@ class OneStopShopAddPaymentCountryCommand extends Command
                 null,
                 InputOption::VALUE_REQUIRED,
                 "Payment status(es) to include. Expects list of values separated by comma. By default, only 'paid' are included.",
-                default: PaymentsRepository::STATUS_PAID,
+                default: PaymentStatusEnum::Paid->value,
             );
     }
 
@@ -165,7 +166,7 @@ class OneStopShopAddPaymentCountryCommand extends Command
     {
         return $this->paymentsRepository->getTable()
             ->where([
-                'status' => [PaymentsRepository::STATUS_PAID, PaymentsRepository::STATUS_PREPAID],
+                'status' => [PaymentStatusEnum::Paid->value, PaymentStatusEnum::Prepaid->value],
                 'payment_country_id IS NULL',
                 'user.active = ?' => 1,
             ])

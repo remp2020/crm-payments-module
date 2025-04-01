@@ -36,23 +36,6 @@ class PaymentsRepository extends Repository
 {
     use RedisClientTrait;
 
-    /** @deprecated Use \Crm\PaymentsModule\Models\Payment\PaymentStatusEnum::Form enum instead. */
-    public const STATUS_FORM = 'form';
-    /** @deprecated Use \Crm\PaymentsModule\Models\Payment\PaymentStatusEnum::Paid enum instead. */
-    public const STATUS_PAID = 'paid';
-    /** @deprecated Use \Crm\PaymentsModule\Models\Payment\PaymentStatusEnum::Fail enum instead. */
-    public const STATUS_FAIL = 'fail';
-    /** @deprecated Use \Crm\PaymentsModule\Models\Payment\PaymentStatusEnum::Timeout enum instead. */
-    public const STATUS_TIMEOUT = 'timeout';
-    /** @deprecated Use \Crm\PaymentsModule\Models\Payment\PaymentStatusEnum::Refund enum instead. */
-    public const STATUS_REFUND = 'refund';
-    /** @deprecated Use \Crm\PaymentsModule\Models\Payment\PaymentStatusEnum::Imported enum instead. */
-    public const STATUS_IMPORTED = 'imported';
-    /** @deprecated Use \Crm\PaymentsModule\Models\Payment\PaymentStatusEnum::Prepaid enum instead. */
-    public const STATUS_PREPAID = 'prepaid';
-    /** @deprecated Use \Crm\PaymentsModule\Models\Payment\PaymentStatusEnum::Authorized enum instead. */
-    public const STATUS_AUTHORIZED = 'authorized';
-
     protected $tableName = 'payments';
 
     public function __construct(

@@ -7,6 +7,7 @@ use Crm\PaymentsModule\Events\BeforeBankTransferMailProcessingEvent;
 use Crm\PaymentsModule\Models\Builder\ParsedMailLogsBuilder;
 use Crm\PaymentsModule\Models\Gateways\BankTransfer;
 use Crm\PaymentsModule\Models\Gateways\GatewayAbstract;
+use Crm\PaymentsModule\Models\Payment\PaymentStatusEnum;
 use Crm\PaymentsModule\Models\PaymentProcessor;
 use Crm\PaymentsModule\Repositories\ParsedMailLogsRepository;
 use Crm\PaymentsModule\Repositories\PaymentGatewaysRepository;
@@ -104,7 +105,7 @@ class MailProcessor
 
         $createdNewPayment = false;
 
-        if ($payment->status == PaymentsRepository::STATUS_PAID && $payment->created_at < $newPaymentThreshold) {
+        if ($payment->status == PaymentStatusEnum::Paid->value && $payment->created_at < $newPaymentThreshold) {
             try {
                 $newPayment = $this->paymentsRepository->copyPayment($payment);
             } catch (\Exception $exception) {
@@ -130,14 +131,14 @@ class MailProcessor
             return false;
         }
 
-        if ($payment->status == PaymentsRepository::STATUS_PAID) {
+        if ($payment->status == PaymentStatusEnum::Paid->value) {
             $this->logBuilder
                 ->setState(ParsedMailLogsRepository::STATE_ALREADY_PAID)
                 ->save();
             return false;
         }
 
-        if ($payment->status == PaymentsRepository::STATUS_REFUND) {
+        if ($payment->status == PaymentStatusEnum::Refund->value) {
             $this->logBuilder
                 ->setState(ParsedMailLogsRepository::STATE_ALREADY_REFUNDED)
                 ->save();
@@ -147,8 +148,8 @@ class MailProcessor
         $beforeBankTransferMailProcessingEvent = new BeforeBankTransferMailProcessingEvent($payment);
         $this->emitter->emit($beforeBankTransferMailProcessingEvent);
 
-        if (in_array($payment->status, [PaymentsRepository::STATUS_FORM, PaymentsRepository::STATUS_FAIL, PaymentsRepository::STATUS_TIMEOUT], true)) {
-            $payment = $this->paymentsRepository->updateStatus($payment, PaymentsRepository::STATUS_PAID, true);
+        if (in_array($payment->status, [PaymentStatusEnum::Form->value, PaymentStatusEnum::Fail->value, PaymentStatusEnum::Timeout->value], true)) {
+            $payment = $this->paymentsRepository->updateStatus($payment, PaymentStatusEnum::Paid->value, true);
 
             if ($payment) {
                 $isWrongPaymentGateway = $payment->payment_gateway->code !== BankTransfer::GATEWAY_CODE;
@@ -210,12 +211,12 @@ class MailProcessor
         $fields['RC'] = $this->mailContent->getRc();
         $fields['TXN'] = $this->mailContent->getTxn();
 
-        if (!$skipCheck && $payment->status == PaymentsRepository::STATUS_PAID) {
+        if (!$skipCheck && $payment->status == PaymentStatusEnum::Paid->value) {
             $this->logBuilder->setState(ParsedMailLogsRepository::STATE_ALREADY_PAID)->save();
             return false;
         }
 
-        if (!$skipCheck && $payment->status == PaymentsRepository::STATUS_REFUND) {
+        if (!$skipCheck && $payment->status == PaymentStatusEnum::Refund->value) {
             $this->logBuilder->setState(ParsedMailLogsRepository::STATE_ALREADY_REFUNDED)->save();
             return false;
         }
@@ -223,7 +224,7 @@ class MailProcessor
         if ($this->mailContent->getRes() !== 'OK') {
             $this->paymentsRepository->updateStatus(
                 $payment,
-                PaymentsRepository::STATUS_FAIL,
+                PaymentStatusEnum::Fail->value,
                 false,
                 "non-OK RES mail param: {$this->mailContent->getRes()}"
             );
@@ -252,7 +253,7 @@ class MailProcessor
             }
 
             $this->paymentProcessor->complete($payment, function ($payment, GatewayAbstract $gateway) {
-                if ($payment->status === PaymentsRepository::STATUS_PAID) {
+                if ($payment->status === PaymentStatusEnum::Paid->value) {
                     $this->logBuilder->setState(ParsedMailLogsRepository::STATE_CHANGED_TO_PAID)->save();
                 }
             });

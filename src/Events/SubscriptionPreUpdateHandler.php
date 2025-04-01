@@ -2,6 +2,7 @@
 
 namespace Crm\PaymentsModule\Events;
 
+use Crm\PaymentsModule\Models\Payment\PaymentStatusEnum;
 use Crm\PaymentsModule\Repositories\PaymentsRepository;
 use Crm\SubscriptionsModule\Events\SubscriptionPreUpdateEvent;
 use League\Event\AbstractListener;
@@ -31,7 +32,7 @@ class SubscriptionPreUpdateHandler extends AbstractListener
         $subscription = $event->getSubscription();
 
         $payment = $this->paymentsRepository->subscriptionPayment($subscription);
-        if ($payment && $payment->status == PaymentsRepository::STATUS_PAID) {
+        if ($payment && $payment->status == PaymentStatusEnum::Paid->value) {
             if ($payment->paid_at > $event->getValues()->start_time) {
                 $event->getForm()['start_time']->addError($this->translator->translate('subscriptions.data.subscriptions.errors.start_time_before_paid_at', ['paid_at' => $payment->paid_at]));
                 return;

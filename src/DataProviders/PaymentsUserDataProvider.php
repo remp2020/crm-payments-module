@@ -3,6 +3,7 @@
 namespace Crm\PaymentsModule\DataProviders;
 
 use Crm\ApplicationModule\Models\User\UserDataProviderInterface;
+use Crm\PaymentsModule\Models\Payment\PaymentStatusEnum;
 use Crm\PaymentsModule\Repositories\PaymentsRepository;
 
 class PaymentsUserDataProvider implements UserDataProviderInterface
@@ -27,13 +28,13 @@ class PaymentsUserDataProvider implements UserDataProviderInterface
 
     public function download($userId)
     {
-        $payments = $this->paymentsRepository->userPayments($userId)->where(['status != ?' => PaymentsRepository::STATUS_FORM]);
+        $payments = $this->paymentsRepository->userPayments($userId)->where(['status != ?' => PaymentStatusEnum::Form->value]);
 
         $results = [];
         foreach ($payments as $payment) {
             $paidAt = $payment->paid_at ? $payment->paid_at->format(\DateTime::RFC3339) : null;
             // prepaid payments don't have paid_at date, load created_at instead
-            if (is_null($paidAt) && $payment->status === PaymentsRepository::STATUS_PREPAID) {
+            if (is_null($paidAt) && $payment->status === PaymentStatusEnum::Prepaid->value) {
                 $paidAt = $payment->created_at ? $payment->created_at->format(\DateTime::RFC3339) : null;
             }
             $result = [

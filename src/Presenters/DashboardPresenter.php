@@ -10,8 +10,8 @@ use Crm\ApplicationModule\Models\DataProvider\DataProviderManager;
 use Crm\ApplicationModule\Models\Graphs\Criteria;
 use Crm\ApplicationModule\Models\Graphs\GraphDataItem;
 use Crm\PaymentsModule\DataProviders\PaymentItemTypesFilterDataProviderInterface;
+use Crm\PaymentsModule\Models\Payment\PaymentStatusEnum;
 use Crm\PaymentsModule\Repositories\PaymentItemsRepository;
-use Crm\PaymentsModule\Repositories\PaymentsRepository;
 use Nette\Application\Attributes\Persistent;
 use Nette\DI\Attributes\Inject;
 use Nette\Utils\DateTime;
@@ -20,8 +20,8 @@ use Nette\Utils\Json;
 class DashboardPresenter extends AdminPresenter
 {
     const PAID_PAYMENT_STATUSES = [
-        PaymentsRepository::STATUS_PAID,
-        PaymentsRepository::STATUS_PREPAID,
+        PaymentStatusEnum::Paid->value,
+        PaymentStatusEnum::Prepaid->value,
     ];
 
     #[Inject]

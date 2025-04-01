@@ -2,7 +2,7 @@
 
 namespace Crm\PaymentsModule\Events;
 
-use Crm\PaymentsModule\Repositories\PaymentsRepository;
+use Crm\PaymentsModule\Models\Payment\PaymentStatusEnum;
 use League\Event\AbstractEvent;
 use Nette\Database\Table\ActiveRow;
 
@@ -16,7 +16,7 @@ class PaymentChangeStatusEvent extends AbstractEvent implements PaymentEventInte
 
     public function isPaid(): bool
     {
-        return in_array($this->payment->status, [PaymentsRepository::STATUS_PAID, PaymentsRepository::STATUS_PREPAID], true);
+        return in_array($this->payment->status, [PaymentStatusEnum::Paid->value, PaymentStatusEnum::Prepaid->value], true);
     }
 
     public function getPayment(): ActiveRow

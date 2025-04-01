@@ -6,6 +6,7 @@ use Crm\ApplicationModule\Components\Widgets\SimpleWidget\SimpleWidgetFactoryInt
 use Crm\ApplicationModule\Models\Widget\BaseLazyWidget;
 use Crm\ApplicationModule\Models\Widget\LazyWidgetManager;
 use Crm\PaymentsModule\Components\ChangePaymentStatus\ChangePaymentStatusFactoryInterface;
+use Crm\PaymentsModule\Models\Payment\PaymentStatusEnum;
 use Crm\PaymentsModule\Models\RecurrentPaymentsResolver;
 use Crm\PaymentsModule\Repositories\ParsedMailLogsRepository;
 use Crm\PaymentsModule\Repositories\PaymentsRepository;
@@ -45,7 +46,7 @@ class UserPaymentsListing extends BaseLazyWidget
             $header .= ' <small>(' . $this->totalCount($id) . ')</small>';
         }
         $todayPayments = $this->paymentsRepository->userPayments($id)->where([
-            'status' => PaymentsRepository::STATUS_PAID,
+            'status' => PaymentStatusEnum::Paid->value,
             'paid_at > ?' => DateTime::from(strtotime('today 00:00')),
         ])->count('*');
         if ($todayPayments) {

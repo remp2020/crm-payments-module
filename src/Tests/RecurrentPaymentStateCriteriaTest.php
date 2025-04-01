@@ -4,6 +4,7 @@ namespace Crm\PaymentsModule\Tests;
 
 use Crm\ApplicationModule\Tests\DatabaseTestCase;
 use Crm\PaymentsModule\Models\Gateways\Paypal;
+use Crm\PaymentsModule\Models\Payment\PaymentStatusEnum;
 use Crm\PaymentsModule\Models\PaymentItem\PaymentItemContainer;
 use Crm\PaymentsModule\Repositories\PaymentGatewaysRepository;
 use Crm\PaymentsModule\Repositories\PaymentsRepository;
@@ -169,7 +170,7 @@ class RecurrentPaymentStateCriteriaTest extends DatabaseTestCase
 
         $this->paymentsRepository->addSubscriptionToPayment($subscriptionRow, $paymentRow);
 
-        $paymentRow = $this->paymentsRepository->updateStatus($paymentRow, PaymentsRepository::STATUS_PAID);
+        $paymentRow = $this->paymentsRepository->updateStatus($paymentRow, PaymentStatusEnum::Paid->value);
 
         $recurrentPaymentRow = $this->recurrentPaymentsRepository->createFromPayment($paymentRow, 'recurrentToken');
         $this->recurrentPaymentsRepository->update($recurrentPaymentRow, ['state' => $recurrentPaymentState]);

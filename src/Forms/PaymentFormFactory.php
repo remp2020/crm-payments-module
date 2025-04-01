@@ -8,6 +8,7 @@ use Crm\ApplicationModule\Models\DataProvider\DataProviderManager;
 use Crm\ApplicationModule\UI\Form;
 use Crm\PaymentsModule\DataProviders\PaymentFormDataProviderInterface;
 use Crm\PaymentsModule\Forms\Controls\SubscriptionTypesSelectItemsBuilder;
+use Crm\PaymentsModule\Models\Payment\PaymentStatusEnum;
 use Crm\PaymentsModule\Models\PaymentItem\DonationPaymentItem;
 use Crm\PaymentsModule\Models\PaymentItem\PaymentItemContainer;
 use Crm\PaymentsModule\Repositories\PaymentGatewaysRepository;
@@ -211,14 +212,14 @@ class PaymentFormFactory
             ->setHtmlAttribute('flatpickr_datetime', "1")
             ->setHtmlAttribute('flatpickr_maxdatetime', (new DateTime())->format(DateTime::ATOM));
         $paidAt->setOption('id', 'paid-at');
-        $paidAt->addConditionOn($status, Form::EQUAL, PaymentsRepository::STATUS_PAID)
+        $paidAt->addConditionOn($status, Form::EQUAL, PaymentStatusEnum::Paid->value)
             ->setRequired('payments.form.payment.paid_at.required');
 
         $paidAt = $form->addCheckbox('send_notification', 'payments.form.payment.send_notification.label');
         $paidAt->setOption('id', 'send-notification');
 
-        $status->addCondition(Form::EQUAL, PaymentsRepository::STATUS_PAID)->toggle('paid-at');
-        $status->addCondition(Form::EQUAL, PaymentsRepository::STATUS_PAID)->toggle('send-notification');
+        $status->addCondition(Form::EQUAL, PaymentStatusEnum::Paid->value)->toggle('paid-at');
+        $status->addCondition(Form::EQUAL, PaymentStatusEnum::Paid->value)->toggle('send-notification');
 
         $manualSubscription = $form->addSelect('manual_subscription', 'payments.form.payment.manual_subscription.label', [
             self::MANUAL_SUBSCRIPTION_START => $this->translator->translate('payments.form.payment.manual_subscription.start'),
@@ -324,7 +325,7 @@ class PaymentFormFactory
         $values = clone($values);
 
         $sendNotification = $values['send_notification'];
-        if ($values['status'] === PaymentsRepository::STATUS_REFUND) {
+        if ($values['status'] === PaymentStatusEnum::Refund->value) {
             $sendNotification = true;
         }
 
@@ -417,7 +418,7 @@ class PaymentFormFactory
             }
 
             // we don't want to update subscription dates on payment if it's already paid
-            if ($currentStatus === PaymentsRepository::STATUS_FORM) {
+            if ($currentStatus === PaymentStatusEnum::Form->value) {
                 $values['subscription_start_at'] = $subscriptionStartAt;
                 $values['subscription_end_at'] = $subscriptionEndAt;
             }

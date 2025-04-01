@@ -8,6 +8,7 @@ use Crm\PaymentsModule\Events\RecurrentPaymentFailEvent;
 use Crm\PaymentsModule\Events\RecurrentPaymentFailTryEvent;
 use Crm\PaymentsModule\Models\Gateways\GatewayAbstract;
 use Crm\PaymentsModule\Models\Gateways\RecurrentPaymentInterface;
+use Crm\PaymentsModule\Models\Payment\PaymentStatusEnum;
 use Crm\PaymentsModule\Repositories\PaymentLogsRepository;
 use Crm\PaymentsModule\Repositories\PaymentsRepository;
 use Crm\PaymentsModule\Repositories\RecurrentPaymentsRepository;
@@ -71,7 +72,7 @@ class RecurrentPaymentsProcessor
             return;
         }
 
-        $this->paymentsRepository->updateStatus($recurrentPayment->payment, PaymentsRepository::STATUS_FAIL);
+        $this->paymentsRepository->updateStatus($recurrentPayment->payment, PaymentStatusEnum::Fail->value);
         $payment = $this->paymentsRepository->find($recurrentPayment->payment_id); // refresh to get fresh object
 
         $charges = explode(', ', $this->applicationConfig->get('recurrent_payment_charges'));
@@ -108,7 +109,7 @@ class RecurrentPaymentsProcessor
     public function processStoppedRecurrent($recurrentPayment, $resultCode, $resultMessage)
     {
         $payment = $this->paymentsRepository->find($recurrentPayment->payment_id);
-        $this->paymentsRepository->updateStatus($payment, PaymentsRepository::STATUS_FAIL);
+        $this->paymentsRepository->updateStatus($payment, PaymentStatusEnum::Fail->value);
 
         $this->recurrentPaymentsRepository->update($recurrentPayment, [
             'state' => RecurrentPaymentsRepository::STATE_SYSTEM_STOP,
@@ -126,7 +127,7 @@ class RecurrentPaymentsProcessor
         $nextCharge->add($next);
 
         $payment = $this->paymentsRepository->find($recurrentPayment->payment_id);
-        $this->paymentsRepository->updateStatus($payment, PaymentsRepository::STATUS_FAIL);
+        $this->paymentsRepository->updateStatus($payment, PaymentStatusEnum::Fail->value);
 
         $this->recurrentPaymentsRepository->add(
             $recurrentPayment->payment_method,
@@ -159,7 +160,7 @@ class RecurrentPaymentsProcessor
         } catch (\Exception $e) {
             $this->paymentsRepository->updateStatus(
                 $payment,
-                PaymentsRepository::STATUS_FAIL,
+                PaymentStatusEnum::Fail->value,
                 false,
                 $payment->note . '; failed: ' . $gateway->getResultCode()
             );
@@ -173,11 +174,11 @@ class RecurrentPaymentsProcessor
         );
 
         if (!$gateway->isSuccessful()) {
-            $this->paymentsRepository->updateStatus($payment, PaymentsRepository::STATUS_FAIL);
+            $this->paymentsRepository->updateStatus($payment, PaymentStatusEnum::Fail->value);
             return false;
         }
 
-        $this->paymentsRepository->updateStatus($payment, PaymentsRepository::STATUS_PAID, true);
+        $this->paymentsRepository->updateStatus($payment, PaymentStatusEnum::Paid->value, true);
 
         // Refresh model to load subscription details
         $payment = $this->paymentsRepository->find($payment->id);

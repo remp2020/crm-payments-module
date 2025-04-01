@@ -7,10 +7,10 @@ use Crm\PaymentsModule\Events\BeforeBankTransferMailProcessingEvent;
 use Crm\PaymentsModule\Models\Gateways\BankTransfer;
 use Crm\PaymentsModule\Models\Gateways\CsobOneClick;
 use Crm\PaymentsModule\Models\MailConfirmation\MailProcessor;
+use Crm\PaymentsModule\Models\Payment\PaymentStatusEnum;
 use Crm\PaymentsModule\Models\PaymentItem\PaymentItemContainer;
 use Crm\PaymentsModule\Models\PaymentItem\PaymentItemHelper;
 use Crm\PaymentsModule\Repositories\ParsedMailLogsRepository;
-use Crm\PaymentsModule\Repositories\PaymentsRepository;
 use Crm\SubscriptionsModule\Models\PaymentItem\SubscriptionTypePaymentItem;
 use Crm\SubscriptionsModule\Repositories\SubscriptionTypeItemsRepository;
 use DateTime;
@@ -80,7 +80,7 @@ class MailProcessorTest extends PaymentsTestCase
         $amount = 10.2;
 
         $payment = $this->createPayment($variableSymbol);
-        $this->paymentsRepository->update($payment, array('amount' => $amount, 'status' => PaymentsRepository::STATUS_PAID));
+        $this->paymentsRepository->update($payment, array('amount' => $amount, 'status' => PaymentStatusEnum::Paid->value));
 
         $mailContent = new MailContent();
         $mailContent->setAmount($amount);
@@ -144,7 +144,7 @@ class MailProcessorTest extends PaymentsTestCase
         $newPayment = $this->paymentsRepository->find($payment->id);
         $this->assertEquals($newPayment->id, $payment->id);
         $this->assertEquals($newPayment->variable_symbol, $payment->variable_symbol);
-        $this->assertEquals(PaymentsRepository::STATUS_PAID, $newPayment->status);
+        $this->assertEquals(PaymentStatusEnum::Paid->value, $newPayment->status);
     }
 
     public function testVariableSymbolInReceiverMessageWithoutPrefix()
@@ -171,7 +171,7 @@ class MailProcessorTest extends PaymentsTestCase
         $newPayment = $this->paymentsRepository->find($payment->id);
         $this->assertEquals($newPayment->id, $payment->id);
         $this->assertEquals($newPayment->variable_symbol, $payment->variable_symbol);
-        $this->assertEquals(PaymentsRepository::STATUS_PAID, $newPayment->status);
+        $this->assertEquals(PaymentStatusEnum::Paid->value, $newPayment->status);
     }
 
     public function testIncorrectVariableSymbolInReceiverMessage()
@@ -225,7 +225,7 @@ class MailProcessorTest extends PaymentsTestCase
 
         $payment = $this->createPayment($variableSymbol);
         $this->paymentsRepository->update($payment, array('amount' => $amount));
-        $this->assertEquals(PaymentsRepository::STATUS_FORM, $payment->status);
+        $this->assertEquals(PaymentStatusEnum::Form->value, $payment->status);
 
         $mailContent = new MailContent();
         $mailContent->setAmount($amount);
@@ -242,7 +242,7 @@ class MailProcessorTest extends PaymentsTestCase
         $newPayment = $this->paymentsRepository->find($payment->id);
         $this->assertEquals($newPayment->id, $payment->id);
         $this->assertEquals($newPayment->variable_symbol, $payment->variable_symbol);
-        $this->assertEquals(PaymentsRepository::STATUS_PAID, $newPayment->status);
+        $this->assertEquals(PaymentStatusEnum::Paid->value, $newPayment->status);
     }
 
     public function testDisapprovedBankTransferByApprovalEvent(): void
@@ -252,7 +252,7 @@ class MailProcessorTest extends PaymentsTestCase
 
         $payment = $this->createPayment($variableSymbol);
         $this->paymentsRepository->update($payment, array('amount' => $amount));
-        $this->assertEquals(PaymentsRepository::STATUS_FORM, $payment->status);
+        $this->assertEquals(PaymentStatusEnum::Form->value, $payment->status);
 
         $mailContent = new MailContent();
         $mailContent->setAmount($amount);
@@ -285,7 +285,7 @@ class MailProcessorTest extends PaymentsTestCase
         $payment2 = $this->createPayment($variableSymbolPayment2);
         $this->paymentsRepository->update($payment2, array('amount' => $amount));
 
-        $paidPayments = $this->paymentsRepository->getTable()->where('status = ?', PaymentsRepository::STATUS_PAID)->count('*');
+        $paidPayments = $this->paymentsRepository->getTable()->where('status = ?', PaymentStatusEnum::Paid->value)->count('*');
         $this->assertEquals(0, $paidPayments); // zero paid payments
 
         $mailContent = new MailContent();
@@ -300,14 +300,14 @@ class MailProcessorTest extends PaymentsTestCase
         $log = $this->parsedMailLogsRepository->lastLog();
         $this->assertEquals(ParsedMailLogsRepository::STATE_CHANGED_TO_PAID, $log->state);
 
-        $paidPayments = $this->paymentsRepository->getTable()->where('status = ?', PaymentsRepository::STATUS_PAID)->count('*');
+        $paidPayments = $this->paymentsRepository->getTable()->where('status = ?', PaymentStatusEnum::Paid->value)->count('*');
         $this->assertEquals(1, $paidPayments); // one one payment is paid
 
         $firstPayment = $this->paymentsRepository->find($payment1->id);
         $secondPayment = $this->paymentsRepository->find($payment2->id);
 
-        $this->assertEquals(PaymentsRepository::STATUS_PAID, $firstPayment->status); // confirmed / paid by mail processor
-        $this->assertEquals(PaymentsRepository::STATUS_FORM, $secondPayment->status); // not confirmed by mail processor
+        $this->assertEquals(PaymentStatusEnum::Paid->value, $firstPayment->status); // confirmed / paid by mail processor
+        $this->assertEquals(PaymentStatusEnum::Form->value, $secondPayment->status); // not confirmed by mail processor
     }
 
     public function testRepeatedPaymentFromBank()
@@ -318,7 +318,7 @@ class MailProcessorTest extends PaymentsTestCase
         $payment = $this->createPayment($variableSymbol);
         $this->paymentsRepository->update($payment, [
             'amount' => $amount,
-            'status' => PaymentsRepository::STATUS_PAID,
+            'status' => PaymentStatusEnum::Paid->value,
             'created_at' => new DateTime('23 days ago'),
         ]);
 
@@ -340,7 +340,7 @@ class MailProcessorTest extends PaymentsTestCase
         $newPayment = $this->paymentsRepository->findLastByVS($variableSymbol);
         $this->assertNotEquals($newPayment->id, $payment->id);
         $this->assertEquals($newPayment->variable_symbol, $payment->variable_symbol);
-        $this->assertEquals(PaymentsRepository::STATUS_PAID, $newPayment->status);
+        $this->assertEquals(PaymentStatusEnum::Paid->value, $newPayment->status);
 
         foreach ($payment->related('payment_items') as $paymentItem) {
             $newPaymentItem = $newPayment->related('payment_items')->where('name', $paymentItem->name)->fetch();
@@ -384,7 +384,7 @@ class MailProcessorTest extends PaymentsTestCase
         $payment = $this->createPayment($variableSymbol);
         $this->paymentsRepository->update($payment, array(
             'amount' => $amount,
-            'status' => PaymentsRepository::STATUS_PAID,
+            'status' => PaymentStatusEnum::Paid->value,
             'created_at' => new DateTime('2 days ago'),
         ));
         $this->parsedMailLogsRepository->insert([
@@ -416,7 +416,7 @@ class MailProcessorTest extends PaymentsTestCase
         $payment = $this->createPayment($variableSymbol);
         $this->paymentsRepository->update($payment, array(
             'amount' => $amount,
-            'status' => PaymentsRepository::STATUS_REFUND,
+            'status' => PaymentStatusEnum::Refund->value,
             'created_at' => new DateTime('23 days ago')
         ));
 

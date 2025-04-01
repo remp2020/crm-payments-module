@@ -3,7 +3,7 @@
 namespace Crm\PaymentsModule\Populator;
 
 use Crm\ApplicationModule\Populators\AbstractPopulator;
-use Crm\PaymentsModule\Repositories\PaymentsRepository;
+use Crm\PaymentsModule\Models\Payment\PaymentStatusEnum;
 use Crm\PaymentsModule\Repositories\RecurrentPaymentsRepository;
 use Symfony\Component\Console\Helper\ProgressBar;
 
@@ -87,9 +87,9 @@ class PaymentsPopulator extends AbstractPopulator
     private function getErrorPaymentStatus()
     {
         $statuses = [
-            PaymentsRepository::STATUS_FORM,
-            PaymentsRepository::STATUS_FAIL,
-            PaymentsRepository::STATUS_TIMEOUT,
+            PaymentStatusEnum::Form->value,
+            PaymentStatusEnum::Fail->value,
+            PaymentStatusEnum::Timeout->value,
         ];
         return $statuses[random_int(0, count($statuses)-1)];
     }

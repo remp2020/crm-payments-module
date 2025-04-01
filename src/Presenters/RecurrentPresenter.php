@@ -7,6 +7,7 @@ use Crm\PaymentsModule\Models\CannotProcessPayment;
 use Crm\PaymentsModule\Models\GatewayFactory;
 use Crm\PaymentsModule\Models\Gateways\RecurrentPaymentInterface;
 use Crm\PaymentsModule\Models\Gateways\ReusableCardPaymentInterface;
+use Crm\PaymentsModule\Models\Payment\PaymentStatusEnum;
 use Crm\PaymentsModule\Models\PaymentProcessor;
 use Crm\PaymentsModule\Models\RecurrentPaymentsProcessor;
 use Crm\PaymentsModule\Models\SuccessPageResolver\PaymentCompleteRedirectManager;
@@ -136,7 +137,7 @@ class RecurrentPresenter extends FrontendPresenter
 
     private function checkPaymentBelongsToUser(User $user, ActiveRow $payment)
     {
-        if ($payment->user_id !== $user->getId() || $payment->status !== PaymentsRepository::STATUS_FORM) {
+        if ($payment->user_id !== $user->getId() || $payment->status !== PaymentStatusEnum::Form->value) {
             $this->redirect('error');
         }
     }

@@ -4,6 +4,7 @@ namespace Crm\PaymentsModule\Commands;
 
 use Crm\ApplicationModule\Models\Database\ActiveRow;
 use Crm\ApplicationModule\Models\Database\ActiveRowFactory;
+use Crm\PaymentsModule\Models\Payment\PaymentStatusEnum;
 use Crm\PaymentsModule\Repositories\PaymentGatewaysRepository;
 use Crm\PaymentsModule\Repositories\PaymentsRepository;
 use Crm\UsersModule\Events\NotificationEvent;
@@ -193,7 +194,7 @@ EOH
         }
 
         $paidGatewayPayments = $this->paymentsRepository->all('', $gateway)
-            ->where('status = ?', PaymentsRepository::STATUS_PAID)
+            ->where('status = ?', PaymentStatusEnum::Paid->value)
             ->where('paid_at > ?', DateTime::from("now - {$hours} hours"));
 
         // all payments check (whole day)
@@ -235,16 +236,16 @@ EOH
         $error = 0;
         $timeout = 0;
         foreach ($lastPayments as $payment) {
-            if ($payment->status == PaymentsRepository::STATUS_PAID) {
+            if ($payment->status == PaymentStatusEnum::Paid->value) {
                 $paid++;
             }
-            if ($payment->status == PaymentsRepository::STATUS_FORM) {
+            if ($payment->status == PaymentStatusEnum::Form->value) {
                 $form++;
             }
-            if ($payment->status == PaymentsRepository::STATUS_FAIL) {
+            if ($payment->status == PaymentStatusEnum::Fail->value) {
                 $error++;
             }
-            if ($payment->status == PaymentsRepository::STATUS_TIMEOUT) {
+            if ($payment->status == PaymentStatusEnum::Timeout->value) {
                 $timeout++;
             }
         }

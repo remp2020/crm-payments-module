@@ -95,7 +95,7 @@ class PaymentStatusChangeHandler extends AbstractListener
         }
 
         $subscriptionType = SubscriptionsRepository::TYPE_REGULAR;
-        if ($payment->status === PaymentsRepository::STATUS_PREPAID) {
+        if ($payment->status === PaymentStatusEnum::Prepaid->value) {
             $subscriptionType = SubscriptionsRepository::TYPE_PREPAID;
         }
 

@@ -120,6 +120,7 @@ use Crm\PaymentsModule\Hermes\AnonymizedExternalTokenHandler;
 use Crm\PaymentsModule\Hermes\ExportPaymentsHandler;
 use Crm\PaymentsModule\Hermes\RetentionAnalysisJobHandler;
 use Crm\PaymentsModule\Models\AverageMonthPayment;
+use Crm\PaymentsModule\Models\Payment\PaymentStatusEnum;
 use Crm\PaymentsModule\Models\PaymentsHistogramFactory;
 use Crm\PaymentsModule\Repositories\PaymentLogsRepository;
 use Crm\PaymentsModule\Repositories\PaymentsRepository;
@@ -698,11 +699,11 @@ class PaymentsModule extends CrmModule
             $this->paymentsRepository->subscriptionsWithActiveUnchargedRecurrentEndingNextMonthCount(true);
 
             $cachedPaymentStatusHistograms = [
-                PaymentsRepository::STATUS_FORM,
-                PaymentsRepository::STATUS_PAID,
-                PaymentsRepository::STATUS_FAIL,
-                PaymentsRepository::STATUS_TIMEOUT,
-                PaymentsRepository::STATUS_REFUND,
+                PaymentStatusEnum::Form->value,
+                PaymentStatusEnum::Paid->value,
+                PaymentStatusEnum::Fail->value,
+                PaymentStatusEnum::Timeout->value,
+                PaymentStatusEnum::Refund->value,
             ];
 
             foreach ($cachedPaymentStatusHistograms as $status) {

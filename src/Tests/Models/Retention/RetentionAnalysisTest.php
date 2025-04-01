@@ -3,6 +3,7 @@
 namespace Crm\PaymentsModule\Tests\Models\Retention;
 
 use Crm\ApplicationModule\Tests\DatabaseTestCase;
+use Crm\PaymentsModule\Models\Payment\PaymentStatusEnum;
 use Crm\PaymentsModule\Models\PaymentItem\PaymentItemContainer;
 use Crm\PaymentsModule\Models\Retention\RetentionAnalysis;
 use Crm\PaymentsModule\Repositories\PaymentGatewaysRepository;
@@ -375,7 +376,7 @@ class RetentionAnalysisTest extends DatabaseTestCase
         ));
 
         $payment = $this->paymentsRepository->add($subscriptionType, $paymentGateway, $user, $paymentItemContainer, null, $subscriptionType->price);
-        $this->paymentsRepository->updateStatus($payment, PaymentsRepository::STATUS_PAID);
+        $this->paymentsRepository->updateStatus($payment, PaymentStatusEnum::Paid->value);
         $this->paymentsRepository->update($payment, ['paid_at' => $paidAt]);
 
         return $this->paymentsRepository->find($payment->id);

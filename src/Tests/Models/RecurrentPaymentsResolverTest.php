@@ -3,9 +3,9 @@ declare(strict_types=1);
 
 namespace Crm\PaymentsModule\Tests\Models;
 
+use Crm\PaymentsModule\Models\Payment\PaymentStatusEnum;
 use Crm\PaymentsModule\Models\PaymentItem\PaymentItemContainer;
 use Crm\PaymentsModule\Models\RecurrentPaymentsResolver;
-use Crm\PaymentsModule\Repositories\PaymentsRepository;
 use Crm\PaymentsModule\Tests\PaymentsTestCase;
 use Crm\SubscriptionsModule\Models\Builder\SubscriptionTypeBuilder;
 use Crm\SubscriptionsModule\Models\PaymentItem\SubscriptionTypePaymentItem;
@@ -343,7 +343,7 @@ class RecurrentPaymentsResolverTest extends PaymentsTestCase
         $recurrentPayment = $this->createRecurrentPaymentWithSubscriptionType($subscriptionType);
         $this->paymentsRepository->update(
             $recurrentPayment->parent_payment,
-            ['status' => PaymentsRepository::STATUS_FAIL],
+            ['status' => PaymentStatusEnum::Fail->value],
         );
         // reload is needed (Nette cache)
         $recurrentPayment = $this->recurrentPaymentsRepository->find($recurrentPayment->id);
@@ -380,7 +380,7 @@ class RecurrentPaymentsResolverTest extends PaymentsTestCase
     {
         $paymentItemContainer = (new PaymentItemContainer())->addItems(SubscriptionTypePaymentItem::fromSubscriptionType($subscriptionType));
         $payment = $this->paymentsRepository->add($subscriptionType, $this->getPaymentGateway(), $this->getUser(), $paymentItemContainer);
-        $this->paymentsRepository->updateStatus($payment, PaymentsRepository::STATUS_PAID);
+        $this->paymentsRepository->updateStatus($payment, PaymentStatusEnum::Paid->value);
 
         $paymentMethod = $this->paymentMethodsRepository->findOrAdd(
             $payment->user_id,

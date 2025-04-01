@@ -4,6 +4,7 @@ namespace Crm\PaymentsModule\Commands;
 
 use Crm\PaymentsModule\Models\Gateways\Csob;
 use Crm\PaymentsModule\Models\Gateways\CsobOneClick;
+use Crm\PaymentsModule\Models\Payment\PaymentStatusEnum;
 use Crm\PaymentsModule\Models\PaymentProcessor;
 use Crm\PaymentsModule\Repositories\PaymentsRepository;
 use Symfony\Component\Console\Command\Command;
@@ -50,7 +51,7 @@ class ConfirmCsobPaymentsCommand extends Command
             $this->paymentProcessor->complete(
                 payment: $unconfirmedPayment,
                 callback: function ($payment, $gateway, $status) {
-                    if ($payment->status !== $status && $status !== PaymentsRepository::STATUS_FAIL) {
+                    if ($payment->status !== $status && $status !== PaymentStatusEnum::Fail->value) {
                         $this->paymentsRepository->updateStatus($payment, $status, true);
                         $payment = $this->paymentsRepository->find($payment->id);
                         $this->paymentProcessor->createRecurrentPayment($payment, $gateway);

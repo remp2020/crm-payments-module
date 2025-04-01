@@ -620,7 +620,7 @@ class RecurrentPaymentsRepository extends Repository
         }
 
         // TODO: Consider deprecation of this check in favor of unstoppable flags in the next major release.
-        return $recurrentPayment->parent_payment->status !== PaymentsRepository::STATUS_PREPAID;
+        return $recurrentPayment->parent_payment->status !== PaymentStatusEnum::Prepaid->value;
     }
 
     final public function latestSuccessfulRecurrentPayment(ActiveRow $recurrentPayment): ?ActiveRow
@@ -630,7 +630,7 @@ class RecurrentPaymentsRepository extends Repository
             return null;
         }
 
-        if (in_array($parentPayment->status, [PaymentsRepository::STATUS_PAID, PaymentsRepository::STATUS_PREPAID], true)) {
+        if (in_array($parentPayment->status, [PaymentStatusEnum::Paid->value, PaymentStatusEnum::Prepaid->value], true)) {
             return $recurrentPayment;
         }
 

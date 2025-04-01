@@ -61,9 +61,9 @@
               {/if}
             </td>
             <td>
-                {if $log->payment?->status == \Crm\PaymentsModule\Repositories\PaymentsRepository::STATUS_PAID}
+                {if $log->payment?->status === \Crm\PaymentsModule\Models\Payment\PaymentStatusEnum::Paid->value}
                     <span class="label label-success">{$log->payment->status}</span>
-                {elseif $log->payment?->status == \Crm\PaymentsModule\Repositories\PaymentsRepository::STATUS_FAIL}
+                {elseif $log->payment?->status === \Crm\PaymentsModule\Models\Payment\PaymentStatusEnum::Fail->value}
                     <span class="label label-danger">{$log->payment->status}</span>
                 {else}
                     <span class="label label-default">{$log->payment?->status}</span>

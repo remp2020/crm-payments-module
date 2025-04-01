@@ -14,6 +14,7 @@ use Crm\PaymentsModule\Forms\Controls\SubscriptionTypesSelectItemsBuilder;
 use Crm\PaymentsModule\Forms\PaymentFormFactory;
 use Crm\PaymentsModule\Models\AdminFilterFormData;
 use Crm\PaymentsModule\Models\OneStopShop\OneStopShop;
+use Crm\PaymentsModule\Models\Payment\PaymentStatusEnum;
 use Crm\PaymentsModule\Models\PaymentsHistogramFactory;
 use Crm\PaymentsModule\Repositories\PaymentGatewaysRepository;
 use Crm\PaymentsModule\Repositories\PaymentItemMetaRepository;
@@ -221,7 +222,7 @@ class PaymentsAdminPresenter extends AdminPresenter
     public function actionChangeStatus()
     {
         $payment = $this->paymentsRepository->find($this->params['payment']);
-        if ($this->params['status'] === PaymentsRepository::STATUS_REFUND) {
+        if ($this->params['status'] === PaymentStatusEnum::Refund->value) {
             $this->paymentsRepository->updateStatus($payment, $this->params['status'], true);
         } else {
             $this->paymentsRepository->updateStatus($payment, $this->params['status']);
@@ -345,22 +346,22 @@ class PaymentsAdminPresenter extends AdminPresenter
 
     protected function createComponentFormPaymentsSmallBarGraph(SmallBarGraphControlFactoryInterface $factory)
     {
-        return $this->generateSmallBarGraphComponent(PaymentsRepository::STATUS_FORM, 'Form', $factory);
+        return $this->generateSmallBarGraphComponent(PaymentStatusEnum::Form->value, 'Form', $factory);
     }
 
     protected function createComponentPaidPaymentsSmallBarGraph(SmallBarGraphControlFactoryInterface $factory)
     {
-        return $this->generateSmallBarGraphComponent(PaymentsRepository::STATUS_PAID, 'Paid', $factory);
+        return $this->generateSmallBarGraphComponent(PaymentStatusEnum::Paid->value, 'Paid', $factory);
     }
 
     protected function createComponentFailPaymentsSmallBarGraph(SmallBarGraphControlFactoryInterface $factory)
     {
-        return $this->generateSmallBarGraphComponent(PaymentsRepository::STATUS_FAIL, 'Fail', $factory);
+        return $this->generateSmallBarGraphComponent(PaymentStatusEnum::Fail->value, 'Fail', $factory);
     }
 
     protected function createComponentRefundedPaymentsSmallBarGraph(SmallBarGraphControlFactoryInterface $factory)
     {
-        return $this->generateSmallBarGraphComponent(PaymentsRepository::STATUS_REFUND, 'Refunded', $factory);
+        return $this->generateSmallBarGraphComponent(PaymentStatusEnum::Refund->value, 'Refunded', $factory);
     }
 
     private function generateSmallBarGraphComponent($status, $title, SmallBarGraphControlFactoryInterface $factory)

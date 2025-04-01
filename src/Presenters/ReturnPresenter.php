@@ -6,6 +6,7 @@ use Crm\ApplicationModule\Models\DataProvider\DataProviderManager;
 use Crm\ApplicationModule\Presenters\FrontendPresenter;
 use Crm\PaymentsModule\DataProviders\PaymentReturnGatewayDataProviderInterface;
 use Crm\PaymentsModule\Models\Gateways\GatewayAbstract;
+use Crm\PaymentsModule\Models\Payment\PaymentStatusEnum;
 use Crm\PaymentsModule\Models\PaymentProcessor;
 use Crm\PaymentsModule\Models\SuccessPageResolver\PaymentCompleteRedirectManager;
 use Crm\PaymentsModule\Models\SuccessPageResolver\PaymentCompleteRedirectResolver;
@@ -139,7 +140,7 @@ class ReturnPresenter extends FrontendPresenter
         $presenter = $this;
 
         $this->paymentProcessor->complete($payment, function ($payment, GatewayAbstract $gateway) use ($presenter) {
-            if (in_array($payment->status, [PaymentsRepository::STATUS_PAID, PaymentsRepository::STATUS_PREPAID], true)) {
+            if (in_array($payment->status, [PaymentStatusEnum::Paid->value, PaymentStatusEnum::Prepaid->value], true)) {
                 // confirmed payment == agreed to terms
                 if (!$this->userMetaRepository->exists($payment->user, 'gdpr')) {
                     $this->userMetaRepository->setMeta($payment->user, ['gdpr' => 'confirm_payment']);
@@ -156,7 +157,7 @@ class ReturnPresenter extends FrontendPresenter
                 );
 
                 $this->resolveRedirect($payment, PaymentCompleteRedirectResolver::PAID);
-            } elseif ($payment->status === PaymentsRepository::STATUS_AUTHORIZED) {
+            } elseif ($payment->status === PaymentStatusEnum::Authorized->value) {
                 $presenter->paymentLogsRepository->add(
                     'OK',
                     "Redirecting to success url with vs '{$payment->variable_symbol}'",
@@ -174,7 +175,7 @@ class ReturnPresenter extends FrontendPresenter
                 );
 
                 $this->resolveRedirect($payment, PaymentCompleteRedirectResolver::NOT_SETTLED);
-            } elseif ($payment->status === PaymentsRepository::STATUS_FAIL) {
+            } elseif ($payment->status === PaymentStatusEnum::Fail->value) {
                 $presenter->paymentLogsRepository->add(
                     'ERROR',
                     'Complete payment with unpaid payment',

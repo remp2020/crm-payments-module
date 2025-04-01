@@ -6,6 +6,7 @@ use Crm\PaymentsModule\Events\BeforeRecurrentPaymentChargeEvent;
 use Crm\PaymentsModule\Models\GatewayFactory;
 use Crm\PaymentsModule\Models\Gateways\RecurrentPaymentInterface;
 use Crm\PaymentsModule\Models\OneStopShop\OneStopShop;
+use Crm\PaymentsModule\Models\Payment\PaymentStatusEnum;
 use Crm\PaymentsModule\Models\PaymentItem\PaymentItemContainer;
 use Crm\PaymentsModule\Repositories\PaymentsRepository;
 use Crm\PaymentsModule\Repositories\RecurrentPaymentsRepository;
@@ -135,7 +136,7 @@ class SingleChargeCommand extends Command
         /** @var RecurrentPaymentInterface $gateway */
         $gateway = $this->gatewayFactory->getGateway($payment->payment_gateway->code);
         $gateway->charge($payment, $recurrentPayment->payment_method->external_token);
-        $this->paymentsRepository->updateStatus($payment, PaymentsRepository::STATUS_PAID);
+        $this->paymentsRepository->updateStatus($payment, PaymentStatusEnum::Paid->value);
 
         return Command::SUCCESS;
     }

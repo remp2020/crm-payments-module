@@ -6,6 +6,7 @@ use Crm\ApplicationModule\Presenters\FrontendPresenter;
 use Crm\PaymentsModule\Models\GatewayFactory;
 use Crm\PaymentsModule\Models\Gateways\AuthorizationInterface;
 use Crm\PaymentsModule\Models\OneStopShop\OneStopShop;
+use Crm\PaymentsModule\Models\Payment\PaymentStatusEnum;
 use Crm\PaymentsModule\Models\PaymentItem\AuthorizationPaymentItem;
 use Crm\PaymentsModule\Models\PaymentItem\PaymentItemContainer;
 use Crm\PaymentsModule\Models\PaymentProcessor;
@@ -92,7 +93,7 @@ class MethodsPresenter extends FrontendPresenter
         if (!$paymentRow) {
             throw new \RuntimeException("Unable to load payment with ID [{$paymentId}]");
         }
-        if ($paymentRow->status === PaymentsRepository::STATUS_AUTHORIZED) {
+        if ($paymentRow->status === PaymentStatusEnum::Authorized->value) {
             if ($paymentRow->amount === 0.0) {
                 $this->flashMessage($this->translator->translate('payments.frontend.add_card.zero_amount_success'));
             } else {

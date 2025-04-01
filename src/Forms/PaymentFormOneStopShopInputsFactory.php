@@ -8,10 +8,10 @@ use Crm\PaymentsModule\Models\OneStopShop\CountryResolution;
 use Crm\PaymentsModule\Models\OneStopShop\CountryResolutionTypeEnum;
 use Crm\PaymentsModule\Models\OneStopShop\OneStopShop;
 use Crm\PaymentsModule\Models\OneStopShop\OneStopShopCountryConflictException;
+use Crm\PaymentsModule\Models\Payment\PaymentStatusEnum;
 use Crm\PaymentsModule\Models\PaymentItem\DonationPaymentItem;
 use Crm\PaymentsModule\Models\PaymentItem\PaymentItemContainer;
 use Crm\PaymentsModule\Models\VatRate\VatRateValidator;
-use Crm\PaymentsModule\Repositories\PaymentsRepository;
 use Crm\PaymentsModule\Repositories\VatRatesRepository;
 use Crm\UsersModule\Repositories\CountriesRepository;
 use Nette\Database\Table\ActiveRow;
@@ -53,7 +53,7 @@ final class PaymentFormOneStopShopInputsFactory
             ->setPrompt('--');
         $paymentCountryInput->setOption('id', 'payment-country-id');
 
-        if ($payment && $payment->status !== PaymentsRepository::STATUS_FORM) {
+        if ($payment && $payment->status !== PaymentStatusEnum::Form->value) {
             $paymentCountryInput->setDisabled();
         }
 

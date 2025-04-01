@@ -3,6 +3,7 @@
 namespace Crm\PaymentsModule\Segment;
 
 use Crm\ApplicationModule\Models\Criteria\CriteriaInterface;
+use Crm\PaymentsModule\Models\Payment\PaymentStatusEnum;
 use Crm\PaymentsModule\Repositories\PaymentItemsRepository;
 use Crm\PaymentsModule\Repositories\PaymentsRepository;
 use Crm\SegmentModule\Models\Criteria\Fields;
@@ -59,7 +60,7 @@ class PaymentCriteria implements CriteriaInterface
                 "Status",
                 "Filters users with payments with specific status",
                 false,
-                [PaymentsRepository::STATUS_PAID],
+                [PaymentStatusEnum::Paid->value],
                 null,
                 array_keys($this->paymentsRepository->getStatusPairs())
             ),

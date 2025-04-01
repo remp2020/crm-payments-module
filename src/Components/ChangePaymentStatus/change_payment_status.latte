@@ -19,7 +19,7 @@
           <br>
           {_"payments.admin.component.change_payment_status.status"}: <b>{$payment->status|upper}</b>
           {_"payments.admin.component.change_payment_status.change_to"}
-          <b>{\Crm\PaymentsModule\Repositories\PaymentsRepository::STATUS_PAID|upper}</b>
+          <b>{\Crm\PaymentsModule\Models\Payment\PaymentStatusEnum::Paid->value|upper}</b>
           <br>
         </p>
       </div>

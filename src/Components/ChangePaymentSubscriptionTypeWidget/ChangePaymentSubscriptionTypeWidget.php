@@ -7,7 +7,7 @@ use Crm\ApplicationModule\Models\Widget\BaseLazyWidget;
 use Crm\ApplicationModule\Models\Widget\LazyWidgetManager;
 use Crm\ApplicationModule\UI\Form;
 use Crm\PaymentsModule\Forms\ChangePaymentSubscriptionTypeFormFactory;
-use Crm\PaymentsModule\Repositories\PaymentsRepository;
+use Crm\PaymentsModule\Models\Payment\PaymentStatusEnum;
 use Nette\Localization\Translator;
 
 class ChangePaymentSubscriptionTypeWidget extends BaseLazyWidget
@@ -38,7 +38,7 @@ class ChangePaymentSubscriptionTypeWidget extends BaseLazyWidget
 
     public function render($payment)
     {
-        if ($payment->status !== PaymentsRepository::STATUS_FORM || !$payment->subscription_type_id) {
+        if ($payment->status !== PaymentStatusEnum::Form->value || !$payment->subscription_type_id) {
             return false;
         }
 

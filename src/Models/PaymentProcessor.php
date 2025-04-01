@@ -7,6 +7,7 @@ use Crm\PaymentsModule\Models\Gateways\AuthorizationInterface;
 use Crm\PaymentsModule\Models\Gateways\GatewayAbstract;
 use Crm\PaymentsModule\Models\Gateways\RecurrentAuthorizationInterface;
 use Crm\PaymentsModule\Models\Gateways\RecurrentPaymentInterface;
+use Crm\PaymentsModule\Models\Payment\PaymentStatusEnum;
 use Crm\PaymentsModule\Repositories\PaymentLogsRepository;
 use Crm\PaymentsModule\Repositories\PaymentsRepository;
 use Crm\PaymentsModule\Repositories\RecurrentPaymentsRepository;
@@ -67,28 +68,28 @@ class PaymentProcessor
             throw new \Exception('To use PaymentProcessor, the gateway must be implementation of GatewayAbstract: ' . get_class($gateway));
         }
 
-        if ($payment->status === PaymentsRepository::STATUS_PAID) {
-            $callback($payment, $gateway, PaymentsRepository::STATUS_PAID);
+        if ($payment->status === PaymentStatusEnum::Paid->value) {
+            $callback($payment, $gateway, PaymentStatusEnum::Paid->value);
             return;
         }
 
-        if ($payment->status === PaymentsRepository::STATUS_PREPAID) {
+        if ($payment->status === PaymentStatusEnum::Prepaid->value) {
             $this->paymentLogsRepository->add(
                 'OK',
                 Json::encode([]),
                 $this->request->getUrl(),
                 $payment->id
             );
-            $callback($payment, $gateway, PaymentsRepository::STATUS_PREPAID);
+            $callback($payment, $gateway, PaymentStatusEnum::Prepaid->value);
             return;
         }
 
         $status = $payment->status;
         $result = $gateway->complete($payment);
         if ($result === true) {
-            $status = PaymentsRepository::STATUS_PAID;
+            $status = PaymentStatusEnum::Paid->value;
             if ($gateway instanceof AuthorizationInterface || $gateway instanceof RecurrentAuthorizationInterface) {
-                $status = PaymentsRepository::STATUS_AUTHORIZED;
+                $status = PaymentStatusEnum::Authorized->value;
             }
 
             if (!$preventPaymentStatusUpdate) {
@@ -97,7 +98,7 @@ class PaymentProcessor
                 $this->createRecurrentPayment($payment, $gateway);
             }
         } elseif ($result === false) {
-            $status = PaymentsRepository::STATUS_FAIL;
+            $status = PaymentStatusEnum::Fail->value;
             if (!$preventPaymentStatusUpdate) {
                 $this->paymentsRepository->updateStatus($payment, $status);
             }

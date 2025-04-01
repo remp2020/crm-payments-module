@@ -4,6 +4,7 @@ namespace Crm\PaymentsModule\Components\ChangePaymentStatus;
 
 use Crm\ApplicationModule\Models\Widget\BaseLazyWidget;
 use Crm\ApplicationModule\Models\Widget\LazyWidgetManager;
+use Crm\PaymentsModule\Models\Payment\PaymentStatusEnum;
 use Crm\PaymentsModule\Repositories\PaymentsRepository;
 use Nette\Localization\Translator;
 
@@ -64,8 +65,8 @@ class ChangePaymentStatus extends BaseLazyWidget
     private function changeStatusToPaid($paymentId, $sendEmail)
     {
         $payment = $this->paymentsRepository->find($paymentId);
-        if ($payment->status != PaymentsRepository::STATUS_PAID) {
-            $this->paymentsRepository->updateStatus($payment, PaymentsRepository::STATUS_PAID, $sendEmail);
+        if ($payment->status != PaymentStatusEnum::Paid->value) {
+            $this->paymentsRepository->updateStatus($payment, PaymentStatusEnum::Paid->value, $sendEmail);
 
             $this->presenter->flashMessage($this->translator->translate('payments.admin.component.change_payment_status.messages.status_changed_successfully'));
             $this->presenter->redirect(':Users:UsersAdmin:Show', $payment->user_id);

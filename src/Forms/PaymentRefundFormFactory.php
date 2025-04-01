@@ -6,6 +6,7 @@ use Crm\ApplicationModule\Models\DataProvider\DataProviderException;
 use Crm\ApplicationModule\Models\DataProvider\DataProviderManager;
 use Crm\ApplicationModule\UI\Form;
 use Crm\PaymentsModule\DataProviders\PaymentRefundFormDataProviderInterface;
+use Crm\PaymentsModule\Models\Payment\PaymentStatusEnum;
 use Crm\PaymentsModule\Repositories\PaymentsRepository;
 use Crm\PaymentsModule\Repositories\RecurrentPaymentsRepository;
 use Crm\SubscriptionsModule\Events\SubscriptionShortenedEvent;
@@ -56,11 +57,11 @@ class PaymentRefundFormFactory
         // For case, if you want to change final payment status via dataProvider
         $form->addHidden(self::NEW_PAYMENT_STATUS)
             ->setRequired()
-            ->setDefaultValue(PaymentsRepository::STATUS_REFUND);
+            ->setDefaultValue(PaymentStatusEnum::Refund->value);
 
         $now = new DateTime();
         if ($payment->subscription && $payment->subscription->end_time > $now) {
-            if ($payment->status != PaymentsRepository::STATUS_REFUND) {
+            if ($payment->status != PaymentStatusEnum::Refund->value) {
                 $form->addText(
                     self::SUBSCRIPTION_ENDS_AT_KEY,
                     'payments.admin.payment_refund.form.cancel_subscription_date'
@@ -84,7 +85,7 @@ class PaymentRefundFormFactory
                 ->setDefaultValue($payment->subscription->start_time);
         }
 
-        if ($this->recurrentPaymentCanBeStoppedInRefund($payment) && $payment->status != PaymentsRepository::STATUS_REFUND) {
+        if ($this->recurrentPaymentCanBeStoppedInRefund($payment) && $payment->status != PaymentStatusEnum::Refund->value) {
             $form->addCheckbox(
                 self::STOP_RECURRENT_CHARGE_KEY,
                 'payments.admin.payment_refund.form.stop_recurrent_charge'
@@ -93,7 +94,7 @@ class PaymentRefundFormFactory
                 ->setDefaultValue(true);
         }
 
-        if ($payment->status != PaymentsRepository::STATUS_REFUND) {
+        if ($payment->status != PaymentStatusEnum::Refund->value) {
             $form->addSubmit('submit', 'payments.admin.payment_refund.confirm_refund')
                 ->getControlPrototype()
                 ->setName('button')

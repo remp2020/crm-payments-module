@@ -12,6 +12,7 @@ use Crm\PaymentsModule\Models\Gateways\ExternallyChargedRecurrentPaymentInterfac
 use Crm\PaymentsModule\Models\Gateways\GatewayAbstract;
 use Crm\PaymentsModule\Models\Gateways\RecurrentPaymentInterface;
 use Crm\PaymentsModule\Models\OneStopShop\OneStopShopCountryConflictException;
+use Crm\PaymentsModule\Models\Payment\PaymentStatusEnum;
 use Crm\PaymentsModule\Models\RecurrentPaymentFailStop;
 use Crm\PaymentsModule\Models\RecurrentPaymentFailTry;
 use Crm\PaymentsModule\Models\RecurrentPaymentFastCharge;
@@ -149,7 +150,7 @@ class RecurrentPaymentsChargeCommand extends Command
         }
 
         try {
-            if ($payment->status === PaymentsRepository::STATUS_PAID) {
+            if ($payment->status === PaymentStatusEnum::Paid->value) {
                 $this->recurrentPaymentsProcessor->processChargedRecurrent(
                     $recurrentPayment,
                     $payment->status,
@@ -161,7 +162,7 @@ class RecurrentPaymentsChargeCommand extends Command
                 $result = $gateway->charge($payment, $recurrentPayment->payment_method->external_token);
                 switch ($result) {
                     case RecurrentPaymentInterface::CHARGE_OK:
-                        $paymentStatus = PaymentsRepository::STATUS_PAID;
+                        $paymentStatus = PaymentStatusEnum::Paid->value;
                         $chargeAt = null;
                         if ($gateway instanceof ExternallyChargedRecurrentPaymentInterface) {
                             $paymentStatus = $gateway->getChargedPaymentStatus();
