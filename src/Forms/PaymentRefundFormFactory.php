@@ -7,6 +7,7 @@ use Crm\ApplicationModule\Models\DataProvider\DataProviderManager;
 use Crm\ApplicationModule\UI\Form;
 use Crm\PaymentsModule\DataProviders\PaymentRefundFormDataProviderInterface;
 use Crm\PaymentsModule\Models\Payment\PaymentStatusEnum;
+use Crm\PaymentsModule\Models\RecurrentPayment\RecurrentPaymentStateEnum;
 use Crm\PaymentsModule\Repositories\PaymentsRepository;
 use Crm\PaymentsModule\Repositories\RecurrentPaymentsRepository;
 use Crm\SubscriptionsModule\Events\SubscriptionShortenedEvent;
@@ -165,7 +166,7 @@ class PaymentRefundFormFactory
 
         $lastRecurrentPayment = $this->recurrentPaymentsRepository->getLastWithState(
             $recurrentPayment,
-            RecurrentPaymentsRepository::STATE_ACTIVE,
+            RecurrentPaymentStateEnum::Active->value,
         );
 
         return $lastRecurrentPayment
@@ -177,7 +178,7 @@ class PaymentRefundFormFactory
         $recurrentPayment = $this->recurrentPaymentsRepository->recurrent($payment);
         $lastRecurrentPayment = $this->recurrentPaymentsRepository->getLastWithState(
             $recurrentPayment,
-            RecurrentPaymentsRepository::STATE_ACTIVE,
+            RecurrentPaymentStateEnum::Active->value,
         );
 
         $this->recurrentPaymentsRepository->stoppedByAdmin($lastRecurrentPayment);

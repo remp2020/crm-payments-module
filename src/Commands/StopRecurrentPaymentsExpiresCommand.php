@@ -3,6 +3,7 @@
 namespace Crm\PaymentsModule\Commands;
 
 use Crm\PaymentsModule\Events\RecurrentPaymentCardExpiredEvent;
+use Crm\PaymentsModule\Models\RecurrentPayment\RecurrentPaymentStateEnum;
 use Crm\PaymentsModule\Repositories\RecurrentPaymentsRepository;
 use League\Event\Emitter;
 use Nette\Utils\DateTime;
@@ -47,7 +48,7 @@ class StopRecurrentPaymentsExpiresCommand extends Command
 
         $recurrentPayments = $this->recurrentPaymentsRepository->all()->where([
             'expires_at <= ?' => $date,
-            'state' => RecurrentPaymentsRepository::STATE_ACTIVE,
+            'state' => RecurrentPaymentStateEnum::Active->value,
             'charge_at >= ?' => $date,
             'charge_at <= ?' => $nextMonth,
         ]);
@@ -60,7 +61,7 @@ class StopRecurrentPaymentsExpiresCommand extends Command
 
             $note = 'AutoStop on expired card';
             $this->recurrentPaymentsRepository->update($recurrentPayment, [
-                'state' => RecurrentPaymentsRepository::STATE_SYSTEM_STOP,
+                'state' => RecurrentPaymentStateEnum::SystemStop->value,
                 'note' => $recurrentPayment->note ? $recurrentPayment->note . ' ' . $note : $note,
             ]);
 

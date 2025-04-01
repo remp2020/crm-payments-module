@@ -13,6 +13,7 @@ use Crm\ApplicationModule\UI\Form;
 use Crm\PaymentsModule\Components\DuplicateRecurrentPayments\DuplicateRecurrentPaymentsControlFactoryInterface;
 use Crm\PaymentsModule\Forms\Controls\SubscriptionTypesSelectItemsBuilder;
 use Crm\PaymentsModule\Forms\RecurrentPaymentFormFactory;
+use Crm\PaymentsModule\Models\RecurrentPayment\RecurrentPaymentStateEnum;
 use Crm\PaymentsModule\Repositories\RecurrentPaymentsRepository;
 use Crm\SubscriptionsModule\Repositories\SubscriptionTypesRepository;
 use Nette\Application\Attributes\Persistent;
@@ -125,7 +126,7 @@ class PaymentsRecurrentAdminPresenter extends AdminPresenter
     protected function createComponentFormRecurrentPaymentsSmallBarGraph(SmallBarGraphControlFactoryInterface $factory)
     {
         return $this->generateSmallBarGraphComponent(
-            RecurrentPaymentsRepository::STATE_ACTIVE,
+            RecurrentPaymentStateEnum::Active->value,
             'Active',
             $factory
         );

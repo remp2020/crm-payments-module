@@ -6,6 +6,7 @@ use Crm\ApplicationModule\Tests\DatabaseTestCase;
 use Crm\PaymentsModule\Models\Gateways\Paypal;
 use Crm\PaymentsModule\Models\Payment\PaymentStatusEnum;
 use Crm\PaymentsModule\Models\PaymentItem\PaymentItemContainer;
+use Crm\PaymentsModule\Models\RecurrentPayment\RecurrentPaymentStateEnum;
 use Crm\PaymentsModule\Repositories\PaymentGatewaysRepository;
 use Crm\PaymentsModule\Repositories\PaymentsRepository;
 use Crm\PaymentsModule\Repositories\RecurrentPaymentsRepository;
@@ -64,11 +65,11 @@ class RecurrentPaymentStateCriteriaTest extends DatabaseTestCase
 
     public function testPositiveResultWithOneSelectedValue(): void
     {
-        [$recurrentPaymentSelection, $recurrentPaymentRow] = $this->prepareData(RecurrentPaymentsRepository::STATE_ACTIVE);
+        [$recurrentPaymentSelection, $recurrentPaymentRow] = $this->prepareData(RecurrentPaymentStateEnum::Active->value);
 
         $recurrentPaymentStateCriteria = new RecurrentPaymentStateCriteria($this->recurrentPaymentsRepository);
 
-        $values = (object)['selection' => [RecurrentPaymentsRepository::STATE_ACTIVE]];
+        $values = (object)['selection' => [RecurrentPaymentStateEnum::Active->value]];
         $this->assertTrue(
             $recurrentPaymentStateCriteria->addConditions($recurrentPaymentSelection, [RecurrentPaymentStateCriteria::KEY => $values], $recurrentPaymentRow)
         );
@@ -77,14 +78,14 @@ class RecurrentPaymentStateCriteriaTest extends DatabaseTestCase
 
     public function testPositiveResultWithMoreSelectedValues(): void
     {
-        [$recurrentPaymentSelection, $recurrentPaymentRow] = $this->prepareData(RecurrentPaymentsRepository::STATE_ACTIVE);
+        [$recurrentPaymentSelection, $recurrentPaymentRow] = $this->prepareData(RecurrentPaymentStateEnum::Active->value);
 
         $recurrentPaymentStateCriteria = new RecurrentPaymentStateCriteria($this->recurrentPaymentsRepository);
 
         $values = (object)['selection' => [
-            RecurrentPaymentsRepository::STATE_ACTIVE,
-            RecurrentPaymentsRepository::STATE_PENDING,
-            RecurrentPaymentsRepository::STATE_CHARGED,
+            RecurrentPaymentStateEnum::Active->value,
+            RecurrentPaymentStateEnum::Pending->value,
+            RecurrentPaymentStateEnum::Charged->value,
         ]];
 
         $this->assertTrue(
@@ -99,11 +100,11 @@ class RecurrentPaymentStateCriteriaTest extends DatabaseTestCase
 
     public function testNegativeResultWithOneSelectedValue(): void
     {
-        [$recurrentPaymentSelection, $recurrentPaymentRow] = $this->prepareData(RecurrentPaymentsRepository::STATE_SYSTEM_STOP);
+        [$recurrentPaymentSelection, $recurrentPaymentRow] = $this->prepareData(RecurrentPaymentStateEnum::SystemStop->value);
 
         $recurrentPaymentStateCriteria = new RecurrentPaymentStateCriteria($this->recurrentPaymentsRepository);
 
-        $values = (object)['selection' => [RecurrentPaymentsRepository::STATE_CHARGED]];
+        $values = (object)['selection' => [RecurrentPaymentStateEnum::Charged->value]];
 
         $this->assertTrue(
             $recurrentPaymentStateCriteria->addConditions($recurrentPaymentSelection, [RecurrentPaymentStateCriteria::KEY => $values], $recurrentPaymentRow)
@@ -113,14 +114,14 @@ class RecurrentPaymentStateCriteriaTest extends DatabaseTestCase
 
     public function testNegativeResultWithMoreSelectedValues(): void
     {
-        [$recurrentPaymentSelection, $recurrentPaymentRow] = $this->prepareData(RecurrentPaymentsRepository::STATE_SYSTEM_STOP);
+        [$recurrentPaymentSelection, $recurrentPaymentRow] = $this->prepareData(RecurrentPaymentStateEnum::SystemStop->value);
 
         $recurrentPaymentStateCriteria = new RecurrentPaymentStateCriteria($this->recurrentPaymentsRepository);
 
         $values = (object)['selection' => [
-            RecurrentPaymentsRepository::STATE_ACTIVE,
-            RecurrentPaymentsRepository::STATE_CHARGED,
-            RecurrentPaymentsRepository::STATE_CHARGE_FAILED,
+            RecurrentPaymentStateEnum::Active->value,
+            RecurrentPaymentStateEnum::Charged->value,
+            RecurrentPaymentStateEnum::ChargeFailed->value,
         ]];
 
         $this->assertTrue(

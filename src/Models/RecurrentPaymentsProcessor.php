@@ -9,6 +9,7 @@ use Crm\PaymentsModule\Events\RecurrentPaymentFailTryEvent;
 use Crm\PaymentsModule\Models\Gateways\GatewayAbstract;
 use Crm\PaymentsModule\Models\Gateways\RecurrentPaymentInterface;
 use Crm\PaymentsModule\Models\Payment\PaymentStatusEnum;
+use Crm\PaymentsModule\Models\RecurrentPayment\RecurrentPaymentStateEnum;
 use Crm\PaymentsModule\Repositories\PaymentLogsRepository;
 use Crm\PaymentsModule\Repositories\PaymentsRepository;
 use Crm\PaymentsModule\Repositories\RecurrentPaymentsRepository;
@@ -52,7 +53,7 @@ class RecurrentPaymentsProcessor
     public function processPendingRecurrent(ActiveRow $recurrentPayment)
     {
         $this->recurrentPaymentsRepository->update($recurrentPayment, [
-            'state' => RecurrentPaymentsRepository::STATE_PENDING,
+            'state' => RecurrentPaymentStateEnum::Pending->value,
         ]);
     }
 
@@ -98,7 +99,7 @@ class RecurrentPaymentsProcessor
         }
 
         $this->recurrentPaymentsRepository->update($recurrentPayment, [
-            'state' => RecurrentPaymentsRepository::STATE_CHARGE_FAILED,
+            'state' => RecurrentPaymentStateEnum::ChargeFailed->value,
             'status' => $resultCode,
             'approval' => $resultMessage,
         ]);
@@ -112,7 +113,7 @@ class RecurrentPaymentsProcessor
         $this->paymentsRepository->updateStatus($payment, PaymentStatusEnum::Fail->value);
 
         $this->recurrentPaymentsRepository->update($recurrentPayment, [
-            'state' => RecurrentPaymentsRepository::STATE_SYSTEM_STOP,
+            'state' => RecurrentPaymentStateEnum::SystemStop->value,
             'status' => $resultCode,
             'approval' => $resultMessage,
         ]);
@@ -138,7 +139,7 @@ class RecurrentPaymentsProcessor
         );
 
         $this->recurrentPaymentsRepository->update($recurrentPayment, [
-            'state' => RecurrentPaymentsRepository::STATE_CHARGE_FAILED,
+            'state' => RecurrentPaymentStateEnum::ChargeFailed->value,
             'status' => $resultCode,
             'approval' => $resultMessage,
         ]);

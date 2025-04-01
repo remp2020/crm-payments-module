@@ -2,6 +2,7 @@
 
 namespace Crm\PaymentsModule\Events;
 
+use Crm\PaymentsModule\Models\RecurrentPayment\RecurrentPaymentStateEnum;
 use Crm\PaymentsModule\Repositories\PaymentsRepository;
 use Crm\PaymentsModule\Repositories\RecurrentPaymentsRepository;
 use Crm\SubscriptionsModule\Events\SubscriptionMovedEvent;
@@ -37,7 +38,7 @@ class SubscriptionMovedHandler extends AbstractListener
             return;
         }
         $recurrentPayment = $this->recurrentPaymentsRepository->recurrent($payment);
-        if (!$recurrentPayment || $recurrentPayment->state !== RecurrentPaymentsRepository::STATE_ACTIVE) {
+        if (!$recurrentPayment || $recurrentPayment->state !== RecurrentPaymentStateEnum::Active->value) {
             return;
         }
 

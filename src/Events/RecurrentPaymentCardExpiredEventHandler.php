@@ -3,6 +3,7 @@
 namespace Crm\PaymentsModule\Events;
 
 use Crm\ApplicationModule\Models\Database\ActiveRowFactory;
+use Crm\PaymentsModule\Models\RecurrentPayment\RecurrentPaymentStateEnum;
 use Crm\PaymentsModule\Repositories\RecurrentPaymentsRepository;
 use Crm\UsersModule\Events\NotificationEvent;
 use League\Event\AbstractListener;
@@ -29,7 +30,7 @@ class RecurrentPaymentCardExpiredEventHandler extends AbstractListener
                 'user_id' => $recurrentPayment->user_id,
                 'payment_method.external_token != ?' => $recurrentPayment->payment_method->external_token,
                 'charge_at > ?' => $recurrentPayment->charge_at,
-                'status' => RecurrentPaymentsRepository::STATE_ACTIVE,
+                'status' => RecurrentPaymentStateEnum::Active->value,
             ])->count('*') > 0;
 
         if ($hasChargeableRecurrent) {

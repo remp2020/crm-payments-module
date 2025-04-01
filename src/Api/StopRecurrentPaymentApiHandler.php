@@ -4,6 +4,7 @@ namespace Crm\PaymentsModule\Api;
 
 use Crm\ApiModule\Models\Api\ApiHandler;
 use Crm\ApiModule\Models\Api\JsonValidationTrait;
+use Crm\PaymentsModule\Models\RecurrentPayment\RecurrentPaymentStateEnum;
 use Crm\PaymentsModule\Repositories\RecurrentPaymentsRepository;
 use Nette\Http\Response;
 use Tomaj\NetteApi\Response\JsonApiResponse;
@@ -70,7 +71,7 @@ class StopRecurrentPaymentApiHandler extends ApiHandler
         }
 
         // check state; user can stop only active recurrent payments
-        if ($recurrentPayment->state !== RecurrentPaymentsRepository::STATE_ACTIVE) {
+        if ($recurrentPayment->state !== RecurrentPaymentStateEnum::Active->value) {
             $response = new JsonApiResponse(Response::S409_CONFLICT, [
                 'message' => "Only active recurrent payment can be stopped by user. Recurrent payment with ID [$recurrentPaymentID] is in state [$recurrentPayment->state].",
                 'code' => 'recurrent_payment_not_active'

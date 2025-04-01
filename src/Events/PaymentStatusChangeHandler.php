@@ -6,6 +6,7 @@ use Crm\PaymentsModule\Models\GatewayFactory;
 use Crm\PaymentsModule\Models\Gateways\AuthorizationInterface;
 use Crm\PaymentsModule\Models\Gateways\RecurrentAuthorizationInterface;
 use Crm\PaymentsModule\Models\Payment\PaymentStatusEnum;
+use Crm\PaymentsModule\Models\RecurrentPayment\RecurrentPaymentStateEnum;
 use Crm\PaymentsModule\Repositories\PaymentMethodsRepository;
 use Crm\PaymentsModule\Repositories\PaymentsRepository;
 use Crm\PaymentsModule\Repositories\RecurrentPaymentsRepository;
@@ -121,12 +122,12 @@ class PaymentStatusChangeHandler extends AbstractListener
     private function stopRecurrentPayment(ActiveRow $payment)
     {
         $recurrent = $this->recurrentPaymentsRepository->recurrent($payment);
-        if (!$recurrent || $recurrent->state !== RecurrentPaymentsRepository::STATE_ACTIVE) {
+        if (!$recurrent || $recurrent->state !== RecurrentPaymentStateEnum::Active->value) {
             return;
         }
 
         $this->recurrentPaymentsRepository->update($recurrent, [
-            'state' => RecurrentPaymentsRepository::STATE_SYSTEM_STOP
+            'state' => RecurrentPaymentStateEnum::SystemStop->value
         ]);
     }
 

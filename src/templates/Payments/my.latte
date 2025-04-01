@@ -61,15 +61,15 @@
                             <div class="col-xs-12 col-sm-6 text-center mb-2">
                                 {foreach $payment->related('recurrent_payments', 'parent_payment_id') as $recurrent}
                                     {* if recurrent charge for this payment failed, try to locate following recurring profile for this payment *}
-                                    {if $recurrent->state === \Crm\PaymentsModule\Repositories\RecurrentPaymentsRepository::STATE_CHARGE_FAILED}
+                                    {if $recurrent->state === \Crm\PaymentsModule\Models\RecurrentPayment\RecurrentPaymentStateEnum::ChargeFailed->value}
                                         {php $recurrent = $resolver->resolveFailedRecurrent($recurrent)}
                                         {php $lastFailedChargeDate = $resolver->getLastFailedChargeDateTime()}
                                     {/if}
 
                                     {switch $recurrent->state}
-                                        {case \Crm\PaymentsModule\Repositories\RecurrentPaymentsRepository::STATE_CHARGED}
+                                        {case \Crm\PaymentsModule\Models\RecurrentPayment\RecurrentPaymentStateEnum::Charged->value}
                                             <span class="label label-success">{_payments.frontend.my.success_recurrent}</span>
-                                        {case \Crm\PaymentsModule\Repositories\RecurrentPaymentsRepository::STATE_ACTIVE}
+                                        {case \Crm\PaymentsModule\Models\RecurrentPayment\RecurrentPaymentStateEnum::Active->value}
                                             {if isset($lastFailedChargeDate)}
                                                 <span class="label label-danger">{_payments.frontend.my.charge_failed.title}</span>
                                                 <div class="text-muted" style="margin: 1em 0">
@@ -93,7 +93,7 @@
                                               </span>
                                             {/if}
                                             {control simpleWidget 'frontend.payments.listing.recurrent', $recurrent}
-                                        {case \Crm\PaymentsModule\Repositories\RecurrentPaymentsRepository::STATE_USER_STOP}
+                                        {case \Crm\PaymentsModule\Models\RecurrentPayment\RecurrentPaymentStateEnum::UserStop->value}
                                             <div n:if="$recurrent->payment_method->external_token && $recurrent->charge_at > new \DateTime()" class="mb-2">
                                                 <a n:href="Reactivate! $recurrent->id" class="btn btn-sm btn-green">
                                                     <i class="fa fa-play"></i> {_payments.frontend.my.restart_recurrent}
@@ -101,11 +101,11 @@
                                             </div>
                                             <span class="label label-info">{_payments.frontend.my.user_stopped}</span>
 
-                                        {case \Crm\PaymentsModule\Repositories\RecurrentPaymentsRepository::STATE_ADMIN_STOP}
+                                        {case \Crm\PaymentsModule\Models\RecurrentPayment\RecurrentPaymentStateEnum::AdminStop->value}
                                             <span class="label label-info">{_payments.frontend.my.user_stopped_requested}</span>
-                                        {case \Crm\PaymentsModule\Repositories\RecurrentPaymentsRepository::STATE_SYSTEM_STOP}
+                                        {case \Crm\PaymentsModule\Models\RecurrentPayment\RecurrentPaymentStateEnum::SystemStop->value}
                                             <span class="label label-danger">{_payments.frontend.my.failed_recurrent}</span>
-                                        {case \Crm\PaymentsModule\Repositories\RecurrentPaymentsRepository::STATE_CHARGE_FAILED}
+                                        {case \Crm\PaymentsModule\Models\RecurrentPayment\RecurrentPaymentStateEnum::ChargeFailed->value}
                                             <span class="label label-danger">{_payments.frontend.my.failed_recurrent}</span><br><br>
                                     {/switch}
                                 {/foreach}

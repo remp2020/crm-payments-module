@@ -11,6 +11,7 @@ use Crm\PaymentsModule\Models\OneStopShop\OneStopShop;
 use Crm\PaymentsModule\Models\PaymentItem\DonationPaymentItem;
 use Crm\PaymentsModule\Models\PaymentItem\PaymentItemContainer;
 use Crm\PaymentsModule\Models\PaymentItem\PaymentItemContainerFactory;
+use Crm\PaymentsModule\Models\RecurrentPayment\RecurrentPaymentStateEnum;
 use Crm\PaymentsModule\Models\RecurrentPaymentsResolver\PaymentData;
 use Crm\PaymentsModule\Repositories\RecurrentPaymentsRepository;
 use Crm\SubscriptionsModule\Models\PaymentItem\SubscriptionTypePaymentItem;
@@ -123,13 +124,13 @@ class RecurrentPaymentsResolver
      */
     public function resolveFailedRecurrent(ActiveRow $recurrentPayment): ActiveRow
     {
-        if ($recurrentPayment->state === RecurrentPaymentsRepository::STATE_CHARGE_FAILED) {
+        if ($recurrentPayment->state === RecurrentPaymentStateEnum::ChargeFailed->value) {
             $this->lastFailedChargeAt = $recurrentPayment->payment->created_at;
 
             $nextRecurrent = $this->recurrentPaymentsRepository->recurrent($recurrentPayment->payment);
             $recurrentPayment = $this->resolveFailedRecurrent($nextRecurrent);
         }
-        if ($recurrentPayment->state === RecurrentPaymentsRepository::STATE_SYSTEM_STOP && $recurrentPayment->payment_id) {
+        if ($recurrentPayment->state === RecurrentPaymentStateEnum::SystemStop->value && $recurrentPayment->payment_id) {
             $nextRecurrent = $this->recurrentPaymentsRepository->recurrent($recurrentPayment->payment);
             if ($nextRecurrent) {
                 // In case of reactivation scenario, there might be following recurrent payment even when there was

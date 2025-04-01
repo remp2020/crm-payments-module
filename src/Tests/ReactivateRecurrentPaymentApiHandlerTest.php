@@ -5,7 +5,7 @@ namespace Crm\PaymentsModule\Tests;
 use Crm\ApiModule\Tests\ApiTestTrait;
 use Crm\PaymentsModule\Api\ReactivateRecurrentPaymentApiHandler;
 use Crm\PaymentsModule\Models\PaymentItem\PaymentItemContainer;
-use Crm\PaymentsModule\Repositories\RecurrentPaymentsRepository;
+use Crm\PaymentsModule\Models\RecurrentPayment\RecurrentPaymentStateEnum;
 use Crm\SubscriptionsModule\Models\PaymentItem\SubscriptionTypePaymentItem;
 use Crm\UsersModule\Models\Auth\UserManager;
 use Crm\UsersModule\Tests\TestUserTokenAuthorization;
@@ -36,9 +36,9 @@ class ReactivateRecurrentPaymentApiHandlerTest extends PaymentsTestCase
         $user = $this->createUser('test@example.com');
         $payment = $this->createPaymentWithUser('0000000001', $user);
         $recurrentPayment = $this->createRecurrentPayment('card', $payment, clone($payment->created_at)->modify('+1 month'));
-        $this->assertEquals(RecurrentPaymentsRepository::STATE_ACTIVE, $recurrentPayment->state);
+        $this->assertEquals(RecurrentPaymentStateEnum::Active->value, $recurrentPayment->state);
         $recurrentPayment = $this->recurrentPaymentsRepository->stoppedByUser($recurrentPayment, $user);
-        $this->assertEquals(RecurrentPaymentsRepository::STATE_USER_STOP, $recurrentPayment->state);
+        $this->assertEquals(RecurrentPaymentStateEnum::UserStop->value, $recurrentPayment->state);
 
         // call API
         $this->handler->setRawPayload(json_encode(['id' => $recurrentPayment->id]));
@@ -50,7 +50,7 @@ class ReactivateRecurrentPaymentApiHandlerTest extends PaymentsTestCase
         $this->assertEquals(Response::S200_OK, $response->getCode());
         $payload = $response->getPayload();
         // status should change to `active`; other fields are same
-        $this->assertEquals(RecurrentPaymentsRepository::STATE_ACTIVE, $payload['state']);
+        $this->assertEquals(RecurrentPaymentStateEnum::Active->value, $payload['state']);
         $this->assertEquals($recurrentPayment->id, $payload['id']);
         $this->assertEquals($recurrentPayment->parent_payment_id, $payload['parent_payment_id']);
         $this->assertEquals($recurrentPayment->charge_at, $payload['charge_at']);
@@ -60,7 +60,7 @@ class ReactivateRecurrentPaymentApiHandlerTest extends PaymentsTestCase
 
         // validate state in DB (to be sure)
         $recurrentPaymentStopped = $this->recurrentPaymentsRepository->find($payload['id']);
-        $this->assertEquals(RecurrentPaymentsRepository::STATE_ACTIVE, $recurrentPaymentStopped->state);
+        $this->assertEquals(RecurrentPaymentStateEnum::Active->value, $recurrentPaymentStopped->state);
     }
 
     public function testMissingPayload()
@@ -69,9 +69,9 @@ class ReactivateRecurrentPaymentApiHandlerTest extends PaymentsTestCase
         $user = $this->createUser('test@example.com');
         $payment = $this->createPaymentWithUser('0000000001', $user);
         $recurrentPayment = $this->createRecurrentPayment('card', $payment, clone($payment->created_at)->modify('+1 month'));
-        $this->assertEquals(RecurrentPaymentsRepository::STATE_ACTIVE, $recurrentPayment->state);
+        $this->assertEquals(RecurrentPaymentStateEnum::Active->value, $recurrentPayment->state);
         $recurrentPayment = $this->recurrentPaymentsRepository->stoppedByUser($recurrentPayment, $user);
-        $this->assertEquals(RecurrentPaymentsRepository::STATE_USER_STOP, $recurrentPayment->state);
+        $this->assertEquals(RecurrentPaymentStateEnum::UserStop->value, $recurrentPayment->state);
 
         // call API
         $this->handler->setAuthorization($this->getTestAuthorization($user));
@@ -83,7 +83,7 @@ class ReactivateRecurrentPaymentApiHandlerTest extends PaymentsTestCase
 
         // validate state in DB (to be sure) - should be unchanged; stopping failed
         $recurrentPaymentReloaded = $this->recurrentPaymentsRepository->find($recurrentPayment->id);
-        $this->assertEquals(RecurrentPaymentsRepository::STATE_USER_STOP, $recurrentPaymentReloaded->state);
+        $this->assertEquals(RecurrentPaymentStateEnum::UserStop->value, $recurrentPaymentReloaded->state);
     }
 
     public function testNotFoundRecurrentPayment()
@@ -114,10 +114,10 @@ class ReactivateRecurrentPaymentApiHandlerTest extends PaymentsTestCase
         // create payment & recurrent payment
         $payment = $this->createPaymentWithUser('0000000001', $user);
         $recurrentPayment = $this->createRecurrentPayment('card', $payment, clone($payment->created_at)->modify('+1 month'));
-        $this->assertEquals(RecurrentPaymentsRepository::STATE_ACTIVE, $recurrentPayment->state);
+        $this->assertEquals(RecurrentPaymentStateEnum::Active->value, $recurrentPayment->state);
         // change state of recurrent payment to already `charged` (skipping process with events; just update DB state)
-        $this->recurrentPaymentsRepository->update($recurrentPayment, ['state' => RecurrentPaymentsRepository::STATE_CHARGED]);
-        $this->assertEquals(RecurrentPaymentsRepository::STATE_CHARGED, $recurrentPayment->state);
+        $this->recurrentPaymentsRepository->update($recurrentPayment, ['state' => RecurrentPaymentStateEnum::Charged->value]);
+        $this->assertEquals(RecurrentPaymentStateEnum::Charged->value, $recurrentPayment->state);
 
         // call API
         $this->handler->setRawPayload(json_encode(['id' => $recurrentPayment->id]));
@@ -132,7 +132,7 @@ class ReactivateRecurrentPaymentApiHandlerTest extends PaymentsTestCase
 
         // validate state in DB (to be sure) - should be unchanged; stopping failed
         $recurrentPaymentReloaded = $this->recurrentPaymentsRepository->find($recurrentPayment->id);
-        $this->assertEquals(RecurrentPaymentsRepository::STATE_CHARGED, $recurrentPaymentReloaded->state);
+        $this->assertEquals(RecurrentPaymentStateEnum::Charged->value, $recurrentPaymentReloaded->state);
     }
 
     public function testIncorrectUserUsed()
@@ -141,17 +141,17 @@ class ReactivateRecurrentPaymentApiHandlerTest extends PaymentsTestCase
         $user1 = $this->createUser('test1@example.com');
         $payment1 = $this->createPaymentWithUser('0000000001', $user1);
         $recurrentPayment1 = $this->createRecurrentPayment('card', $payment1, clone($payment1->created_at)->modify('+1 month'));
-        $this->assertEquals(RecurrentPaymentsRepository::STATE_ACTIVE, $recurrentPayment1->state);
+        $this->assertEquals(RecurrentPaymentStateEnum::Active->value, $recurrentPayment1->state);
         $recurrentPayment1 = $this->recurrentPaymentsRepository->stoppedByUser($recurrentPayment1, $user1);
-        $this->assertEquals(RecurrentPaymentsRepository::STATE_USER_STOP, $recurrentPayment1->state);
+        $this->assertEquals(RecurrentPaymentStateEnum::UserStop->value, $recurrentPayment1->state);
 
         // create second user, payment & recurrent payment
         $user2 = $this->createUser('test2@example.com');
         $payment2 = $this->createPaymentWithUser('0000000001', $user2);
         $recurrentPayment2 = $this->createRecurrentPayment('card', $payment2, clone($payment2->created_at)->modify('+1 month'));
-        $this->assertEquals(RecurrentPaymentsRepository::STATE_ACTIVE, $recurrentPayment2->state);
+        $this->assertEquals(RecurrentPaymentStateEnum::Active->value, $recurrentPayment2->state);
         $recurrentPayment2 = $this->recurrentPaymentsRepository->stoppedByUser($recurrentPayment2, $user2);
-        $this->assertEquals(RecurrentPaymentsRepository::STATE_USER_STOP, $recurrentPayment2->state);
+        $this->assertEquals(RecurrentPaymentStateEnum::UserStop->value, $recurrentPayment2->state);
 
         // call API with mismatched recurrent payment (1) and user (2)
         $this->handler->setRawPayload(json_encode(['id' => $recurrentPayment1->id]));
@@ -166,9 +166,9 @@ class ReactivateRecurrentPaymentApiHandlerTest extends PaymentsTestCase
 
         // validate state in DB (to be sure) - should be unchanged for both recurrent payments; stopping failed
         $recurrentPayment1Reloaded = $this->recurrentPaymentsRepository->find($recurrentPayment1->id);
-        $this->assertEquals(RecurrentPaymentsRepository::STATE_USER_STOP, $recurrentPayment1Reloaded->state);
+        $this->assertEquals(RecurrentPaymentStateEnum::UserStop->value, $recurrentPayment1Reloaded->state);
         $recurrentPayment2Reloaded = $this->recurrentPaymentsRepository->find($recurrentPayment2->id);
-        $this->assertEquals(RecurrentPaymentsRepository::STATE_USER_STOP, $recurrentPayment2Reloaded->state);
+        $this->assertEquals(RecurrentPaymentStateEnum::UserStop->value, $recurrentPayment2Reloaded->state);
     }
 
     public function testChargeInPast()
@@ -178,9 +178,9 @@ class ReactivateRecurrentPaymentApiHandlerTest extends PaymentsTestCase
         $payment = $this->createPaymentWithUser('0000000001', $user);
         // setting charge_at in past
         $recurrentPayment = $this->createRecurrentPayment('card', $payment, clone($payment->created_at)->modify('-1 day'));
-        $this->assertEquals(RecurrentPaymentsRepository::STATE_ACTIVE, $recurrentPayment->state);
+        $this->assertEquals(RecurrentPaymentStateEnum::Active->value, $recurrentPayment->state);
         $recurrentPayment = $this->recurrentPaymentsRepository->stoppedByUser($recurrentPayment, $user);
-        $this->assertEquals(RecurrentPaymentsRepository::STATE_USER_STOP, $recurrentPayment->state);
+        $this->assertEquals(RecurrentPaymentStateEnum::UserStop->value, $recurrentPayment->state);
 
         // call API
         $this->handler->setRawPayload(json_encode(['id' => $recurrentPayment->id]));
@@ -196,7 +196,7 @@ class ReactivateRecurrentPaymentApiHandlerTest extends PaymentsTestCase
 
         // validate state in DB (to be sure)
         $recurrentPaymentReloaded = $this->recurrentPaymentsRepository->find($recurrentPayment->id);
-        $this->assertEquals(RecurrentPaymentsRepository::STATE_USER_STOP, $recurrentPaymentReloaded->state);
+        $this->assertEquals(RecurrentPaymentStateEnum::UserStop->value, $recurrentPaymentReloaded->state);
     }
 
     private function createRecurrentPayment(string $cid, ActiveRow $payment, \DateTime $chargeAt)

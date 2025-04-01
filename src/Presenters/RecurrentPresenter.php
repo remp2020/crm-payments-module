@@ -9,6 +9,7 @@ use Crm\PaymentsModule\Models\Gateways\RecurrentPaymentInterface;
 use Crm\PaymentsModule\Models\Gateways\ReusableCardPaymentInterface;
 use Crm\PaymentsModule\Models\Payment\PaymentStatusEnum;
 use Crm\PaymentsModule\Models\PaymentProcessor;
+use Crm\PaymentsModule\Models\RecurrentPayment\RecurrentPaymentStateEnum;
 use Crm\PaymentsModule\Models\RecurrentPaymentsProcessor;
 use Crm\PaymentsModule\Models\SuccessPageResolver\PaymentCompleteRedirectManager;
 use Crm\PaymentsModule\Models\SuccessPageResolver\PaymentCompleteRedirectResolver;
@@ -57,7 +58,7 @@ class RecurrentPresenter extends FrontendPresenter
             ->userRecurrentPayments($user->id)
             ->where(['payment_gateway.code = ?' => $payment->ref('payment_gateway')->code])
             ->where(['cid IS NOT NULL AND expires_at > ?' => new DateTime()])
-            ->where('state != ?', RecurrentPaymentsRepository::STATE_SYSTEM_STOP)
+            ->where('state != ?', RecurrentPaymentStateEnum::SystemStop->value)
             ->order('id DESC, charge_at DESC');
 
         $cardsByExpiration = [];

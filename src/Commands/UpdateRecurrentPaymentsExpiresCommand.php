@@ -5,6 +5,7 @@ namespace Crm\PaymentsModule\Commands;
 use Crm\ApplicationModule\Commands\DecoratedCommandTrait;
 use Crm\PaymentsModule\Models\GatewayFactory;
 use Crm\PaymentsModule\Models\Gateways\RecurrentPaymentInterface;
+use Crm\PaymentsModule\Models\RecurrentPayment\RecurrentPaymentStateEnum;
 use Crm\PaymentsModule\Repositories\PaymentGatewaysRepository;
 use Crm\PaymentsModule\Repositories\RecurrentPaymentsRepository;
 use Nette\Utils\DateTime;
@@ -73,7 +74,7 @@ class UpdateRecurrentPaymentsExpiresCommand extends Command
         $recurrentPayments = $this->recurrentPaymentsRepository->all()
             ->select('payment_gateway.code, payment_method_id')
             ->where([
-                'state' => RecurrentPaymentsRepository::STATE_ACTIVE,
+                'state' => RecurrentPaymentStateEnum::Active->value,
             ])
             ->group('payment_gateway.code, payment_method.external_token');
 

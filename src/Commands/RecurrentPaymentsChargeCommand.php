@@ -13,6 +13,7 @@ use Crm\PaymentsModule\Models\Gateways\GatewayAbstract;
 use Crm\PaymentsModule\Models\Gateways\RecurrentPaymentInterface;
 use Crm\PaymentsModule\Models\OneStopShop\OneStopShopCountryConflictException;
 use Crm\PaymentsModule\Models\Payment\PaymentStatusEnum;
+use Crm\PaymentsModule\Models\RecurrentPayment\RecurrentPaymentStateEnum;
 use Crm\PaymentsModule\Models\RecurrentPaymentFailStop;
 use Crm\PaymentsModule\Models\RecurrentPaymentFailTry;
 use Crm\PaymentsModule\Models\RecurrentPaymentFastCharge;
@@ -226,7 +227,7 @@ class RecurrentPaymentsChargeCommand extends Command
 
     private function validateRecurrentPayment($recurrentPayment): void
     {
-        $parentRecurrentPayment = $this->recurrentPaymentsRepository->getLastWithState($recurrentPayment, RecurrentPaymentsRepository::STATE_CHARGED);
+        $parentRecurrentPayment = $this->recurrentPaymentsRepository->getLastWithState($recurrentPayment, RecurrentPaymentStateEnum::Charged->value);
         if (!$parentRecurrentPayment) {
             return;
         }
@@ -240,7 +241,7 @@ class RecurrentPaymentsChargeCommand extends Command
 
         if ($diffHours < $this->fastChargeThreshold || $parentRecurrentPayment->charge_at === $recurrentPayment->charge_at) {
             $this->recurrentPaymentsRepository->update($recurrentPayment, [
-                'state' => RecurrentPaymentsRepository::STATE_SYSTEM_STOP,
+                'state' => RecurrentPaymentStateEnum::SystemStop->value,
                 'note' => 'Fast charge',
             ]);
 

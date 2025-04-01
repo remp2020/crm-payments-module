@@ -40,21 +40,6 @@ class RecurrentPaymentsRepository extends Repository
         'updated_at',
     ];
 
-    /** @deprecated Use \Crm\PaymentsModule\Models\RecurrentPayment\RecurrentPaymentStateEnum::UserStop enum instead. */
-    const STATE_USER_STOP = 'user_stop';
-    /** @deprecated Use \Crm\PaymentsModule\Models\RecurrentPayment\RecurrentPaymentStateEnum::AdminStop enum instead. */
-    const STATE_ADMIN_STOP = 'admin_stop';
-    /** @deprecated Use \Crm\PaymentsModule\Models\RecurrentPayment\RecurrentPaymentStateEnum::Active enum instead. */
-    const STATE_ACTIVE = 'active';
-    /** @deprecated Use \Crm\PaymentsModule\Models\RecurrentPayment\RecurrentPaymentStateEnum::Pending enum instead. */
-    const STATE_PENDING = 'pending';
-    /** @deprecated Use \Crm\PaymentsModule\Models\RecurrentPayment\RecurrentPaymentStateEnum::Charged enum instead. */
-    const STATE_CHARGED = 'charged';
-    /** @deprecated Use \Crm\PaymentsModule\Models\RecurrentPayment\RecurrentPaymentStateEnum::ChargeFailed enum instead. */
-    const STATE_CHARGE_FAILED = 'charge_failed';
-    /** @deprecated Use \Crm\PaymentsModule\Models\RecurrentPayment\RecurrentPaymentStateEnum::SystemStop enum instead. */
-    const STATE_SYSTEM_STOP = 'system_stop';
-
     public function __construct(
         Explorer $database,
         AuditLogRepository $auditLogRepository,
@@ -93,7 +78,7 @@ class RecurrentPaymentsRepository extends Repository
             'retries' => $retries,
             'user_id' => $payment->user->id,
             'parent_payment_id' => $payment->id,
-            'state' => self::STATE_ACTIVE,
+            'state' => RecurrentPaymentStateEnum::Active->value,
             'note' => $note,
         ]);
     }
@@ -117,7 +102,7 @@ class RecurrentPaymentsRepository extends Repository
             'retries' => $retries,
             'user_id' => $payment->user->id,
             'parent_payment_id' => $payment->id,
-            'state' => self::STATE_ACTIVE,
+            'state' => RecurrentPaymentStateEnum::Active->value,
             'note' => $note,
         ]);
     }
@@ -214,13 +199,13 @@ class RecurrentPaymentsRepository extends Repository
     final public function setCharged(ActiveRow $recurrentPayment, $payment, $status, $approval)
     {
         $fireEvent = true;
-        if ($recurrentPayment->state === self::STATE_CHARGED) {
+        if ($recurrentPayment->state === RecurrentPaymentStateEnum::Charged->value) {
             $fireEvent = false;
         }
 
         $this->update($recurrentPayment, [
             'payment_id' => $payment->id,
-            'state' => self::STATE_CHARGED,
+            'state' => RecurrentPaymentStateEnum::Charged->value,
             'status' => $status,
             'approval' => $approval,
         ]);
@@ -252,7 +237,7 @@ class RecurrentPaymentsRepository extends Repository
     {
         return $this->getTable()
             ->where([
-                'state' => RecurrentPaymentsRepository::STATE_ACTIVE,
+                'state' => RecurrentPaymentStateEnum::Active->value,
                 'recurrent_payments.user_id' => $userId,
             ])
             ->where('status IS NULL')
@@ -277,7 +262,7 @@ class RecurrentPaymentsRepository extends Repository
             return null;
         }
         $this->update($rp, [
-            'state' => self::STATE_ACTIVE,
+            'state' => RecurrentPaymentStateEnum::Active->value,
             'payment_id' => null,
             'status' => null,
             'approval' => null,
@@ -322,7 +307,7 @@ class RecurrentPaymentsRepository extends Repository
         }
 
         // only recurrent payments stopped by system after using all retries can be reactivated
-        if ($recurrentPayment->state !== RecurrentPaymentsRepository::STATE_SYSTEM_STOP || $recurrentPayment->retries > 0) {
+        if ($recurrentPayment->state !== RecurrentPaymentStateEnum::SystemStop->value || $recurrentPayment->retries > 0) {
             return false;
         }
 
@@ -344,7 +329,7 @@ class RecurrentPaymentsRepository extends Repository
             throw new Exception('Recurrent payment ID ' . $rp->id . ' cannot be stopped by user');
         }
 
-        $this->update($rp, ['state' => self::STATE_USER_STOP]);
+        $this->update($rp, ['state' => RecurrentPaymentStateEnum::UserStop->value]);
         $this->emitter->emit(new RecurrentPaymentStoppedByUserEvent($rp));
         return $rp;
     }
@@ -356,7 +341,7 @@ class RecurrentPaymentsRepository extends Repository
             'state' => 'active'])->fetchAll();
 
         foreach ($rps as $rp) {
-            $this->update($rp, ['state' => self::STATE_USER_STOP]);
+            $this->update($rp, ['state' => RecurrentPaymentStateEnum::UserStop->value]);
             $this->emitter->emit(new RecurrentPaymentStoppedByUserEvent($rp));
         }
 
@@ -373,7 +358,7 @@ class RecurrentPaymentsRepository extends Repository
             throw new Exception('Recurrent payment ID ' . $rp->id . ' cannot be stopped by admin');
         }
 
-        $this->update($rp, ['state' => self::STATE_ADMIN_STOP]);
+        $this->update($rp, ['state' => RecurrentPaymentStateEnum::AdminStop->value]);
         $this->emitter->emit(new RecurrentPaymentStoppedByAdminEvent($rp));
         return $rp;
     }
@@ -384,7 +369,7 @@ class RecurrentPaymentsRepository extends Repository
         if ($rp == null) {
             return null;
         }
-        $this->update($rp, ['state' => self::STATE_SYSTEM_STOP]);
+        $this->update($rp, ['state' => RecurrentPaymentStateEnum::SystemStop->value]);
         return $rp;
     }
 
@@ -404,7 +389,7 @@ class RecurrentPaymentsRepository extends Repository
             $where['status'] = $status;
         }
         if ($problem) {
-            $where['state'] = [self::STATE_SYSTEM_STOP, self::STATE_CHARGE_FAILED];
+            $where['state'] = [RecurrentPaymentStateEnum::SystemStop->value, RecurrentPaymentStateEnum::ChargeFailed->value];
         }
         if ($cid) {
             $where['payment_method.external_token'] = $cid;
@@ -453,10 +438,10 @@ class RecurrentPaymentsRepository extends Repository
         if (!$recurrent) {
             return true;
         }
-        if (in_array($recurrent->state, [self::STATE_SYSTEM_STOP, self::STATE_USER_STOP, self::STATE_ADMIN_STOP], true)) {
+        if (in_array($recurrent->state, [RecurrentPaymentStateEnum::SystemStop->value, RecurrentPaymentStateEnum::UserStop->value, RecurrentPaymentStateEnum::AdminStop->value], true)) {
             return true;
         }
-        if ($recurrent->state == self::STATE_CHARGE_FAILED) {
+        if ($recurrent->state == RecurrentPaymentStateEnum::ChargeFailed->value) {
             // najdeme najnovsi rekurent s tymto cid a zistime ci je stopnuty
             $newRecurrent = $this->getTable()->where([
                     'payment_method.external_token' => $recurrent->payment_method->external_token,
@@ -465,7 +450,7 @@ class RecurrentPaymentsRepository extends Repository
                 ->order('charge_at DESC')
                 ->limit(1)
                 ->fetch();
-            if ($newRecurrent && in_array($newRecurrent->state, [self::STATE_SYSTEM_STOP, self::STATE_USER_STOP, self::STATE_ADMIN_STOP], true)) {
+            if ($newRecurrent && in_array($newRecurrent->state, [RecurrentPaymentStateEnum::SystemStop->value, RecurrentPaymentStateEnum::UserStop->value, RecurrentPaymentStateEnum::AdminStop->value], true)) {
                 return true;
             }
         }
@@ -474,7 +459,7 @@ class RecurrentPaymentsRepository extends Repository
 
     final public function hasUserStopped($userId)
     {
-        return $this->getTable()->where(['user_id' => $userId, 'state' => self::STATE_USER_STOP])->count('*');
+        return $this->getTable()->where(['user_id' => $userId, 'state' => RecurrentPaymentStateEnum::UserStop->value])->count('*');
     }
 
     final public function recurrent(ActiveRow $payment)
@@ -587,13 +572,13 @@ class RecurrentPaymentsRepository extends Repository
     final public function getStates()
     {
         return [
-            self::STATE_USER_STOP,
-            self::STATE_ADMIN_STOP,
-            self::STATE_ACTIVE,
-            self::STATE_PENDING,
-            self::STATE_CHARGED,
-            self::STATE_CHARGE_FAILED,
-            self::STATE_SYSTEM_STOP,
+            RecurrentPaymentStateEnum::UserStop->value,
+            RecurrentPaymentStateEnum::AdminStop->value,
+            RecurrentPaymentStateEnum::Active->value,
+            RecurrentPaymentStateEnum::Pending->value,
+            RecurrentPaymentStateEnum::Charged->value,
+            RecurrentPaymentStateEnum::ChargeFailed->value,
+            RecurrentPaymentStateEnum::SystemStop->value,
         ];
     }
 
@@ -669,7 +654,7 @@ class RecurrentPaymentsRepository extends Repository
         $usableRecurrents = $this->userRecurrentPayments($user->id)
             ->where(['payment_gateway.code = ?' => $paymentGateway->code])
             ->where(['expires_at > ?' => new DateTime()])
-            ->where('state != ?', self::STATE_SYSTEM_STOP)
+            ->where('state != ?', RecurrentPaymentStateEnum::SystemStop->value)
             ->order('id DESC, charge_at DESC');
 
         foreach ($usableRecurrents as $usableRecurrent) {

@@ -4,7 +4,7 @@ namespace Crm\PaymentsModule\Populator;
 
 use Crm\ApplicationModule\Populators\AbstractPopulator;
 use Crm\PaymentsModule\Models\Payment\PaymentStatusEnum;
-use Crm\PaymentsModule\Repositories\RecurrentPaymentsRepository;
+use Crm\PaymentsModule\Models\RecurrentPayment\RecurrentPaymentStateEnum;
 use Symfony\Component\Console\Helper\ProgressBar;
 
 class PaymentsPopulator extends AbstractPopulator
@@ -75,7 +75,7 @@ class PaymentsPopulator extends AbstractPopulator
                     'retries' => $this->faker->randomNumber(3),
                     'user_id' => $user->id,
                     'subscription_type_id' => $data['subscription_type_id'],
-                    'state' => RecurrentPaymentsRepository::STATE_ACTIVE,
+                    'state' => RecurrentPaymentStateEnum::Active->value,
                 ];
                 $recurrentPayments->insert($recurrentPaymentData);
             }
