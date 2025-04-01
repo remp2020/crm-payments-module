@@ -48,13 +48,13 @@
               {/if}
             </td>
             <td>
-              {if $log->state == \Crm\PaymentsModule\Repositories\ParsedMailLogsRepository::STATE_CHANGED_TO_PAID}
+              {if $log->state === \Crm\PaymentsModule\Models\ParsedMailLog\ParsedMailLogStateEnum::ChangedToPaid->value}
                 <span class="label label-primary">{$log->state}</span>
-              {elseif $log->state == \Crm\PaymentsModule\Repositories\ParsedMailLogsRepository::STATE_ALREADY_PAID}
+              {elseif $log->state === \Crm\PaymentsModule\Models\ParsedMailLog\ParsedMailLogStateEnum::AlreadyPaid->value}
                 <span class="label label-primary">{$log->state}</span>
-              {elseif $log->state == \Crm\PaymentsModule\Repositories\ParsedMailLogsRepository::STATE_DIFFERENT_AMOUNT}
+              {elseif $log->state === \Crm\PaymentsModule\Models\ParsedMailLog\ParsedMailLogStateEnum::DifferentAmount->value}
                 <span class="label label-danger">{$log->state}</span>
-              {elseif $log->state == \Crm\PaymentsModule\Repositories\ParsedMailLogsRepository::STATE_WITHOUT_VS}
+              {elseif $log->state === \Crm\PaymentsModule\Models\ParsedMailLog\ParsedMailLogStateEnum::WithoutVs->value}
                  <span class="label label-warning">{$log->state}</span>
               {else}
                 <span class="label label-default">{$log->state}</span>

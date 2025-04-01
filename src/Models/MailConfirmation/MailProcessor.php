@@ -7,6 +7,7 @@ use Crm\PaymentsModule\Events\BeforeBankTransferMailProcessingEvent;
 use Crm\PaymentsModule\Models\Builder\ParsedMailLogsBuilder;
 use Crm\PaymentsModule\Models\Gateways\BankTransfer;
 use Crm\PaymentsModule\Models\Gateways\GatewayAbstract;
+use Crm\PaymentsModule\Models\ParsedMailLog\ParsedMailLogStateEnum;
 use Crm\PaymentsModule\Models\Payment\PaymentStatusEnum;
 use Crm\PaymentsModule\Models\PaymentProcessor;
 use Crm\PaymentsModule\Repositories\ParsedMailLogsRepository;
@@ -85,7 +86,7 @@ class MailProcessor
 
         if ($payment->amount != $this->mailContent->getAmount()) {
             $this->logBuilder
-                ->setState(ParsedMailLogsRepository::STATE_DIFFERENT_AMOUNT)
+                ->setState(ParsedMailLogStateEnum::DifferentAmount->value)
                 ->save();
         }
 
@@ -121,26 +122,26 @@ class MailProcessor
 
         $duplicatedPaymentCheck = $this->parsedMailLogsRepository
             ->findByVariableSymbols([$payment->variable_symbol])
-            ->where('state = ?', ParsedMailLogsRepository::STATE_CHANGED_TO_PAID)
+            ->where('state = ?', ParsedMailLogStateEnum::ChangedToPaid->value)
             ->where('created_at >= ?', $newPaymentThreshold)
             ->count('*');
         if ($duplicatedPaymentCheck > 0) {
             $this->logBuilder
-                ->setState(ParsedMailLogsRepository::STATE_DUPLICATED_PAYMENT)
+                ->setState(ParsedMailLogStateEnum::DuplicatedPayment->value)
                 ->save();
             return false;
         }
 
         if ($payment->status == PaymentStatusEnum::Paid->value) {
             $this->logBuilder
-                ->setState(ParsedMailLogsRepository::STATE_ALREADY_PAID)
+                ->setState(ParsedMailLogStateEnum::AlreadyPaid->value)
                 ->save();
             return false;
         }
 
         if ($payment->status == PaymentStatusEnum::Refund->value) {
             $this->logBuilder
-                ->setState(ParsedMailLogsRepository::STATE_ALREADY_REFUNDED)
+                ->setState(ParsedMailLogStateEnum::AlreadyRefunded->value)
                 ->save();
             return false;
         }
@@ -163,9 +164,9 @@ class MailProcessor
                 }
             }
 
-            $state = ParsedMailLogsRepository::STATE_CHANGED_TO_PAID;
+            $state = ParsedMailLogStateEnum::ChangedToPaid->value;
             if ($createdNewPayment) {
-                $state = ParsedMailLogsRepository::STATE_AUTO_NEW_PAYMENT;
+                $state = ParsedMailLogStateEnum::AutoNewPayment->value;
             }
             $this->logBuilder->setState($state)->save();
         }
@@ -194,7 +195,7 @@ class MailProcessor
 
         if (!$sign) {
             $this->output->writeln("    -> missing sign");
-            $this->logBuilder->setState(ParsedMailLogsRepository::STATE_NO_SIGN);
+            $this->logBuilder->setState(ParsedMailLogStateEnum::NoSign->value);
             $this->logBuilder->save();
             return false;
         }
@@ -212,12 +213,12 @@ class MailProcessor
         $fields['TXN'] = $this->mailContent->getTxn();
 
         if (!$skipCheck && $payment->status == PaymentStatusEnum::Paid->value) {
-            $this->logBuilder->setState(ParsedMailLogsRepository::STATE_ALREADY_PAID)->save();
+            $this->logBuilder->setState(ParsedMailLogStateEnum::AlreadyPaid->value)->save();
             return false;
         }
 
         if (!$skipCheck && $payment->status == PaymentStatusEnum::Refund->value) {
-            $this->logBuilder->setState(ParsedMailLogsRepository::STATE_ALREADY_REFUNDED)->save();
+            $this->logBuilder->setState(ParsedMailLogStateEnum::AlreadyRefunded->value)->save();
             return false;
         }
 
@@ -254,7 +255,7 @@ class MailProcessor
 
             $this->paymentProcessor->complete($payment, function ($payment, GatewayAbstract $gateway) {
                 if ($payment->status === PaymentStatusEnum::Paid->value) {
-                    $this->logBuilder->setState(ParsedMailLogsRepository::STATE_CHANGED_TO_PAID)->save();
+                    $this->logBuilder->setState(ParsedMailLogStateEnum::ChangedToPaid->value)->save();
                 }
             });
         } catch (InvalidRequestException $exception) {
@@ -275,7 +276,7 @@ class MailProcessor
         $vs = $this->mailContent->getVs();
         if (!$vs) {
             // library for parsing mail content would find variable symbol if it is present in any field; this is error
-            $this->logBuilder->setState(ParsedMailLogsRepository::STATE_WITHOUT_VS);
+            $this->logBuilder->setState(ParsedMailLogStateEnum::WithoutVs->value);
             $this->logBuilder->save();
             return null;
         }
@@ -298,7 +299,7 @@ class MailProcessor
         if ($receiverMessage === null) {
             // we found variable symbol above so we shouldn't log STATE_WITHOUT_VS
             // (this is just alternative search because we were unable to find payment for first VS)
-            $this->logBuilder->setState(ParsedMailLogsRepository::STATE_PAYMENT_NOT_FOUND);
+            $this->logBuilder->setState(ParsedMailLogStateEnum::PaymentNotFound->value);
             $this->logBuilder->save();
             return null;
         }
@@ -313,7 +314,7 @@ class MailProcessor
             if ($matched === false || !isset($result[1])) {
                 // we found variable symbol above so we shouldn't log STATE_WITHOUT_VS
                 // (this is just alternative search because we were unable to find payment for first VS)
-                $this->logBuilder->setState(ParsedMailLogsRepository::STATE_PAYMENT_NOT_FOUND);
+                $this->logBuilder->setState(ParsedMailLogStateEnum::PaymentNotFound->value);
                 $this->logBuilder->save();
                 return null;
             }
@@ -331,7 +332,7 @@ class MailProcessor
 
         // we tried two different variable symbols, payment not found
         $this->logBuilder
-            ->setState(ParsedMailLogsRepository::STATE_PAYMENT_NOT_FOUND)
+            ->setState(ParsedMailLogStateEnum::PaymentNotFound->value)
             ->save();
         return null;
     }

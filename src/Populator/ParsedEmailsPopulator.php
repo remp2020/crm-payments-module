@@ -3,7 +3,7 @@
 namespace Crm\PaymentsModule\Populator;
 
 use Crm\ApplicationModule\Populators\AbstractPopulator;
-use Crm\PaymentsModule\Repositories\ParsedMailLogsRepository;
+use Crm\PaymentsModule\Models\ParsedMailLog\ParsedMailLogStateEnum;
 use Symfony\Component\Console\Helper\ProgressBar;
 
 class ParsedEmailsPopulator extends AbstractPopulator
@@ -40,12 +40,12 @@ class ParsedEmailsPopulator extends AbstractPopulator
     private function getState()
     {
         $types = [
-            ParsedMailLogsRepository::STATE_WITHOUT_VS,
-            ParsedMailLogsRepository::STATE_ALREADY_PAID,
-            ParsedMailLogsRepository::STATE_CHANGED_TO_PAID,
-            ParsedMailLogsRepository::STATE_PAYMENT_NOT_FOUND,
-            ParsedMailLogsRepository::STATE_DIFFERENT_AMOUNT,
-            ParsedMailLogsRepository::STATE_AUTO_NEW_PAYMENT,
+            ParsedMailLogStateEnum::WithoutVs->value,
+            ParsedMailLogStateEnum::AlreadyPaid->value,
+            ParsedMailLogStateEnum::ChangedToPaid->value,
+            ParsedMailLogStateEnum::PaymentNotFound->value,
+            ParsedMailLogStateEnum::DifferentAmount->value,
+            ParsedMailLogStateEnum::AutoNewPayment->value,
         ];
 
         return $types[ random_int(0, count($types) - 1) ];

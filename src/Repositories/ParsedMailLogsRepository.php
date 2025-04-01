@@ -12,39 +12,6 @@ use Nette\Database\Table\Selection;
 
 class ParsedMailLogsRepository extends Repository
 {
-    /** @deprecated Use \Crm\PaymentsModule\Models\ParsedMailLog\ParsedMailLogStateEnum::values() enum instead. */
-    public const ALL_STATES = [
-        ParsedMailLogsRepository::STATE_WITHOUT_VS,
-        ParsedMailLogsRepository::STATE_ALREADY_PAID,
-        ParsedMailLogsRepository::STATE_CHANGED_TO_PAID,
-        ParsedMailLogsRepository::STATE_PAYMENT_NOT_FOUND,
-        ParsedMailLogsRepository::STATE_DIFFERENT_AMOUNT,
-        ParsedMailLogsRepository::STATE_AUTO_NEW_PAYMENT,
-        ParsedMailLogsRepository::STATE_DUPLICATED_PAYMENT,
-        ParsedMailLogsRepository::STATE_ALREADY_REFUNDED,
-    ];
-
-    /** @deprecated Use \Crm\PaymentsModule\Models\ParsedMailLog\ParsedMailLogStateEnum::WithoutVs enum instead. */
-    const STATE_WITHOUT_VS = 'without_vs';
-    /** @deprecated Use \Crm\PaymentsModule\Models\ParsedMailLog\ParsedMailLogStateEnum::AlreadyPaid enum instead. */
-    const STATE_ALREADY_PAID = 'already_paid';
-    /** @deprecated Use \Crm\PaymentsModule\Models\ParsedMailLog\ParsedMailLogStateEnum::DuplicatedPayment enum instead. */
-    const STATE_DUPLICATED_PAYMENT = 'duplicated_payment';
-    /** @deprecated Use \Crm\PaymentsModule\Models\ParsedMailLog\ParsedMailLogStateEnum::ChangedToPaid enum instead. */
-    const STATE_CHANGED_TO_PAID = 'changed_to_paid';
-    /** @deprecated Use \Crm\PaymentsModule\Models\ParsedMailLog\ParsedMailLogStateEnum::PaymentNotFound enum instead. */
-    const STATE_PAYMENT_NOT_FOUND = 'payment_not_found';
-    /** @deprecated Use \Crm\PaymentsModule\Models\ParsedMailLog\ParsedMailLogStateEnum::DifferentAmount enum instead. */
-    const STATE_DIFFERENT_AMOUNT = 'different_amount';
-    /** @deprecated Use \Crm\PaymentsModule\Models\ParsedMailLog\ParsedMailLogStateEnum::AutoNewPayment enum instead. */
-    const STATE_AUTO_NEW_PAYMENT = 'auto_new_payment';
-    /** @deprecated Use \Crm\PaymentsModule\Models\ParsedMailLog\ParsedMailLogStateEnum::NoSign enum instead. */
-    const STATE_NO_SIGN = 'no_sign';
-    /** @deprecated Use \Crm\PaymentsModule\Models\ParsedMailLog\ParsedMailLogStateEnum::NotValidSign enum instead. */
-    const STATE_NOT_VALID_SIGN = 'no_valid_sign';
-    /** @deprecated Use \Crm\PaymentsModule\Models\ParsedMailLog\ParsedMailLogStateEnum::AlreadyRefunded enum instead. */
-    const STATE_ALREADY_REFUNDED = 'already_refunded';
-
     protected $tableName = 'parsed_mail_logs';
 
     public function __construct(

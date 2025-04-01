@@ -7,6 +7,7 @@ use Crm\PaymentsModule\Events\BeforeBankTransferMailProcessingEvent;
 use Crm\PaymentsModule\Models\Gateways\BankTransfer;
 use Crm\PaymentsModule\Models\Gateways\CsobOneClick;
 use Crm\PaymentsModule\Models\MailConfirmation\MailProcessor;
+use Crm\PaymentsModule\Models\ParsedMailLog\ParsedMailLogStateEnum;
 use Crm\PaymentsModule\Models\Payment\PaymentStatusEnum;
 use Crm\PaymentsModule\Models\PaymentItem\PaymentItemContainer;
 use Crm\PaymentsModule\Models\PaymentItem\PaymentItemHelper;
@@ -50,7 +51,7 @@ class MailProcessorTest extends PaymentsTestCase
 
         $log = $this->parsedMailLogsRepository->lastLog();
 
-        $this->assertEquals(ParsedMailLogsRepository::STATE_WITHOUT_VS, $log->state);
+        $this->assertEquals(ParsedMailLogStateEnum::WithoutVs->value, $log->state);
     }
 
     public function testMailWithWrongAmount()
@@ -71,7 +72,7 @@ class MailProcessorTest extends PaymentsTestCase
         $this->assertFalse($result);
 
         $log = $this->parsedMailLogsRepository->lastLog();
-        $this->assertEquals(ParsedMailLogsRepository::STATE_DIFFERENT_AMOUNT, $log->state);
+        $this->assertEquals(ParsedMailLogStateEnum::DifferentAmount->value, $log->state);
     }
 
     public function testAlreadyPaidPaymentDoNothing()
@@ -91,7 +92,7 @@ class MailProcessorTest extends PaymentsTestCase
         $this->assertFalse($result);
 
         $log = $this->parsedMailLogsRepository->lastLog();
-        $this->assertEquals(ParsedMailLogsRepository::STATE_ALREADY_PAID, $log->state);
+        $this->assertEquals(ParsedMailLogStateEnum::AlreadyPaid->value, $log->state);
 
         $newPayment = $this->paymentsRepository->find($payment->id);
         $this->assertEquals($newPayment->id, $payment->id);
@@ -117,7 +118,7 @@ class MailProcessorTest extends PaymentsTestCase
         $this->assertFalse($result);
 
         $log = $this->parsedMailLogsRepository->lastLog();
-        $this->assertEquals(ParsedMailLogsRepository::STATE_PAYMENT_NOT_FOUND, $log->state);
+        $this->assertEquals(ParsedMailLogStateEnum::PaymentNotFound->value, $log->state);
     }
 
     public function testVariableSymbolInReceiverMessage()
@@ -139,7 +140,7 @@ class MailProcessorTest extends PaymentsTestCase
         $this->assertTrue($result);
 
         $log = $this->parsedMailLogsRepository->lastLog();
-        $this->assertEquals(ParsedMailLogsRepository::STATE_CHANGED_TO_PAID, $log->state);
+        $this->assertEquals(ParsedMailLogStateEnum::ChangedToPaid->value, $log->state);
 
         $newPayment = $this->paymentsRepository->find($payment->id);
         $this->assertEquals($newPayment->id, $payment->id);
@@ -166,7 +167,7 @@ class MailProcessorTest extends PaymentsTestCase
         $this->assertTrue($result);
 
         $log = $this->parsedMailLogsRepository->lastLog();
-        $this->assertEquals(ParsedMailLogsRepository::STATE_CHANGED_TO_PAID, $log->state);
+        $this->assertEquals(ParsedMailLogStateEnum::ChangedToPaid->value, $log->state);
 
         $newPayment = $this->paymentsRepository->find($payment->id);
         $this->assertEquals($newPayment->id, $payment->id);
@@ -193,7 +194,7 @@ class MailProcessorTest extends PaymentsTestCase
         $this->assertFalse($result);
 
         $log = $this->parsedMailLogsRepository->lastLog();
-        $this->assertEquals(ParsedMailLogsRepository::STATE_PAYMENT_NOT_FOUND, $log->state);
+        $this->assertEquals(ParsedMailLogStateEnum::PaymentNotFound->value, $log->state);
     }
 
     public function testInvalidFormatOfVariableSymbolInReceiverMessage()
@@ -215,7 +216,7 @@ class MailProcessorTest extends PaymentsTestCase
         $this->assertFalse($result);
 
         $log = $this->parsedMailLogsRepository->lastLog();
-        $this->assertEquals(ParsedMailLogsRepository::STATE_PAYMENT_NOT_FOUND, $log->state);
+        $this->assertEquals(ParsedMailLogStateEnum::PaymentNotFound->value, $log->state);
     }
 
     public function testSuccessfullyPaymentChange()
@@ -236,7 +237,7 @@ class MailProcessorTest extends PaymentsTestCase
         $this->assertTrue($result);
 
         $log = $this->parsedMailLogsRepository->lastLog();
-        $this->assertEquals(ParsedMailLogsRepository::STATE_CHANGED_TO_PAID, $log->state);
+        $this->assertEquals(ParsedMailLogStateEnum::ChangedToPaid->value, $log->state);
         $this->assertNull($log->source_account_number);
 
         $newPayment = $this->paymentsRepository->find($payment->id);
@@ -298,7 +299,7 @@ class MailProcessorTest extends PaymentsTestCase
         $this->assertTrue($result);
 
         $log = $this->parsedMailLogsRepository->lastLog();
-        $this->assertEquals(ParsedMailLogsRepository::STATE_CHANGED_TO_PAID, $log->state);
+        $this->assertEquals(ParsedMailLogStateEnum::ChangedToPaid->value, $log->state);
 
         $paidPayments = $this->paymentsRepository->getTable()->where('status = ?', PaymentStatusEnum::Paid->value)->count('*');
         $this->assertEquals(1, $paidPayments); // one one payment is paid
@@ -335,7 +336,7 @@ class MailProcessorTest extends PaymentsTestCase
         $this->assertTrue($result);
 
         $log = $this->parsedMailLogsRepository->lastLog();
-        $this->assertEquals(ParsedMailLogsRepository::STATE_AUTO_NEW_PAYMENT, $log->state);
+        $this->assertEquals(ParsedMailLogStateEnum::AutoNewPayment->value, $log->state);
 
         $newPayment = $this->paymentsRepository->findLastByVS($variableSymbol);
         $this->assertNotEquals($newPayment->id, $payment->id);
@@ -392,7 +393,7 @@ class MailProcessorTest extends PaymentsTestCase
             'delivered_at' => new DateTime('2 days ago'),
             'variable_symbol' => $payment->variable_symbol,
             'amount' => $payment->amount,
-            'state' => ParsedMailLogsRepository::STATE_CHANGED_TO_PAID,
+            'state' => ParsedMailLogStateEnum::ChangedToPaid->value,
         ]);
 
         // user for some reason paid again 2 days later
@@ -405,7 +406,7 @@ class MailProcessorTest extends PaymentsTestCase
         $this->assertFalse($result);
 
         $log = $this->parsedMailLogsRepository->lastLog();
-        $this->assertEquals(ParsedMailLogsRepository::STATE_DUPLICATED_PAYMENT, $log->state);
+        $this->assertEquals(ParsedMailLogStateEnum::DuplicatedPayment->value, $log->state);
     }
 
     public function testAlreadyRefundedPayment()
@@ -429,7 +430,7 @@ class MailProcessorTest extends PaymentsTestCase
         $this->assertFalse($result);
 
         $log = $this->parsedMailLogsRepository->lastLog();
-        $this->assertEquals(ParsedMailLogsRepository::STATE_ALREADY_REFUNDED, $log->state);
+        $this->assertEquals(ParsedMailLogStateEnum::AlreadyRefunded->value, $log->state);
     }
 
     public function testPaymentFromOtherThanBankTransferGateway(): void
