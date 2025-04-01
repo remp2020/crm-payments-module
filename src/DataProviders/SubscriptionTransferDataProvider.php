@@ -3,7 +3,7 @@
 namespace Crm\PaymentsModule\DataProviders;
 
 use Crm\ApplicationModule\Models\DataProvider\DataProviderException;
-use Crm\PaymentsModule\Models\RecurrentPayment\StateEnum;
+use Crm\PaymentsModule\Models\RecurrentPayment\RecurrentPaymentStateEnum;
 use Crm\PaymentsModule\Repositories\PaymentsRepository;
 use Crm\PaymentsModule\Repositories\RecurrentPaymentsRepository;
 use Crm\SubscriptionsModule\DataProviders\SubscriptionTransferDataProviderInterface;
@@ -88,6 +88,6 @@ class SubscriptionTransferDataProvider implements SubscriptionTransferDataProvid
             return false;
         }
 
-        return $recurrentPayment->state === StateEnum::Charged->value;
+        return $recurrentPayment->state === RecurrentPaymentStateEnum::Charged->value;
     }
 }

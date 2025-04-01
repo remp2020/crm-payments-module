@@ -22,7 +22,7 @@ use Crm\PaymentsModule\Models\Gateways\RecurrentAuthorizationInterface;
 use Crm\PaymentsModule\Models\Gateways\RecurrentPaymentInterface;
 use Crm\PaymentsModule\Models\Gateways\ReusableCardPaymentInterface;
 use Crm\PaymentsModule\Models\Payment\PaymentStatusEnum;
-use Crm\PaymentsModule\Models\RecurrentPayment\StateEnum;
+use Crm\PaymentsModule\Models\RecurrentPayment\RecurrentPaymentStateEnum;
 use DateTime;
 use Exception;
 use League\Event\Emitter;
@@ -40,19 +40,19 @@ class RecurrentPaymentsRepository extends Repository
         'updated_at',
     ];
 
-    /** @deprecated Use \Crm\PaymentsModule\Models\RecurrentPayment\StateEnum::UserStop enum instead. */
+    /** @deprecated Use \Crm\PaymentsModule\Models\RecurrentPayment\RecurrentPaymentStateEnum::UserStop enum instead. */
     const STATE_USER_STOP = 'user_stop';
-    /** @deprecated Use \Crm\PaymentsModule\Models\RecurrentPayment\StateEnum::AdminStop enum instead. */
+    /** @deprecated Use \Crm\PaymentsModule\Models\RecurrentPayment\RecurrentPaymentStateEnum::AdminStop enum instead. */
     const STATE_ADMIN_STOP = 'admin_stop';
-    /** @deprecated Use \Crm\PaymentsModule\Models\RecurrentPayment\StateEnum::Active enum instead. */
+    /** @deprecated Use \Crm\PaymentsModule\Models\RecurrentPayment\RecurrentPaymentStateEnum::Active enum instead. */
     const STATE_ACTIVE = 'active';
-    /** @deprecated Use \Crm\PaymentsModule\Models\RecurrentPayment\StateEnum::Pending enum instead. */
+    /** @deprecated Use \Crm\PaymentsModule\Models\RecurrentPayment\RecurrentPaymentStateEnum::Pending enum instead. */
     const STATE_PENDING = 'pending';
-    /** @deprecated Use \Crm\PaymentsModule\Models\RecurrentPayment\StateEnum::Charged enum instead. */
+    /** @deprecated Use \Crm\PaymentsModule\Models\RecurrentPayment\RecurrentPaymentStateEnum::Charged enum instead. */
     const STATE_CHARGED = 'charged';
-    /** @deprecated Use \Crm\PaymentsModule\Models\RecurrentPayment\StateEnum::ChargeFailed enum instead. */
+    /** @deprecated Use \Crm\PaymentsModule\Models\RecurrentPayment\RecurrentPaymentStateEnum::ChargeFailed enum instead. */
     const STATE_CHARGE_FAILED = 'charge_failed';
-    /** @deprecated Use \Crm\PaymentsModule\Models\RecurrentPayment\StateEnum::SystemStop enum instead. */
+    /** @deprecated Use \Crm\PaymentsModule\Models\RecurrentPayment\RecurrentPaymentStateEnum::SystemStop enum instead. */
     const STATE_SYSTEM_STOP = 'system_stop';
 
     public function __construct(
@@ -645,7 +645,7 @@ class RecurrentPaymentsRepository extends Repository
     final public function activeFirstChargeBetween(DateTime $chargeAtFrom, DateTime $chargeAtTo)
     {
         $where = [
-            'state' => StateEnum::Active,
+            'state' => RecurrentPaymentStateEnum::Active,
             'charge_at >=' => $chargeAtFrom,
             'charge_at <=' => $chargeAtTo,
             'parent_payment_id.status' => [PaymentStatusEnum::Paid, PaymentStatusEnum::Prepaid, PaymentStatusEnum::Authorized],

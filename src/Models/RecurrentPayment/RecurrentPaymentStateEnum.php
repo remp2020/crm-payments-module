@@ -4,7 +4,7 @@ namespace Crm\PaymentsModule\Models\RecurrentPayment;
 
 use Crm\ApplicationModule\Helpers\EnumHelper;
 
-enum StateEnum: string
+enum RecurrentPaymentStateEnum: string
 {
     use EnumHelper;
 

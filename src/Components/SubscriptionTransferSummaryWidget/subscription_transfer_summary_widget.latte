@@ -34,17 +34,17 @@
             <tr>
               <td>{_payments.admin.payments_recurrent.recurrent_status}</td>
               <td>
-                {if $recurrentPayment->state == \Crm\PaymentsModule\Models\RecurrentPayment\StateEnum::Active->value&& $recurrentPayment->status == null}
+                {if $recurrentPayment->state == \Crm\PaymentsModule\Models\RecurrentPayment\RecurrentPaymentStateEnum::Active->value&& $recurrentPayment->status == null}
                     <span class="label label-primary">{_"payments.admin.component.user_payments_listing.recurrent_profile.active"}</span>
-                {elseif $recurrentPayment->state == \Crm\PaymentsModule\Models\RecurrentPayment\StateEnum::UserStop->value}
+                {elseif $recurrentPayment->state == \Crm\PaymentsModule\Models\RecurrentPayment\RecurrentPaymentStateEnum::UserStop->value}
                     <span class="label label-info">{_"payments.admin.component.user_payments_listing.recurrent_profile.user_stop"}</span>
-                {elseif $recurrentPayment->state == \Crm\PaymentsModule\Models\RecurrentPayment\StateEnum::AdminStop->value}
+                {elseif $recurrentPayment->state == \Crm\PaymentsModule\Models\RecurrentPayment\RecurrentPaymentStateEnum::AdminStop->value}
                     <span class="label label-info">{_"payments.admin.component.user_payments_listing.recurrent_profile.admin_stop"}</span>
-                {elseif $recurrentPayment->state == \Crm\PaymentsModule\Models\RecurrentPayment\StateEnum::SystemStop->value}
+                {elseif $recurrentPayment->state == \Crm\PaymentsModule\Models\RecurrentPayment\RecurrentPaymentStateEnum::SystemStop->value}
                     <span class="label label-danger">{_"payments.admin.component.user_payments_listing.recurrent_profile.system_stop"}</span>
-                {elseif $recurrentPayment->state == \Crm\PaymentsModule\Models\RecurrentPayment\StateEnum::Charged->value}
+                {elseif $recurrentPayment->state == \Crm\PaymentsModule\Models\RecurrentPayment\RecurrentPaymentStateEnum::Charged->value}
                     <span class="label label-success">{_"payments.admin.component.user_payments_listing.recurrent_profile.charged"}</span>
-                {elseif $recurrentPayment->state == \Crm\PaymentsModule\Models\RecurrentPayment\StateEnum::ChargeFailed->value}
+                {elseif $recurrentPayment->state == \Crm\PaymentsModule\Models\RecurrentPayment\RecurrentPaymentStateEnum::ChargeFailed->value}
                     <span class="label label-warning">{_"payments.admin.component.user_payments_listing.recurrent_profile.charge_failed"}</span>
                 {/if}
               </td>

@@ -3,7 +3,7 @@
 namespace Crm\PaymentsModule\Forms;
 
 use Crm\ApplicationModule\UI\Form;
-use Crm\PaymentsModule\Models\ParsedMailLog\StateEnum;
+use Crm\PaymentsModule\Models\ParsedMailLog\ParsedMailLogStateEnum;
 use Nette\Localization\Translator;
 use Tomaj\Form\Renderer\BootstrapRenderer;
 
@@ -21,7 +21,7 @@ class ParsedMailLogFactory
         $form->setRenderer(new BootstrapRenderer());
 
         // State
-        $form->addSelect('state', 'payments.admin.parsed_mails.state.label', items: StateEnum::getFriendlyList());
+        $form->addSelect('state', 'payments.admin.parsed_mails.state.label', items: ParsedMailLogStateEnum::getFriendlyList());
 
         // Note
         $form->addTextArea('note', 'payments.admin.parsed_mails.note.label')

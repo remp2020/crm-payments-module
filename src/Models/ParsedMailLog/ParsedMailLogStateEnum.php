@@ -5,7 +5,7 @@ namespace Crm\PaymentsModule\Models\ParsedMailLog;
 
 use Crm\ApplicationModule\Helpers\EnumHelper;
 
-enum StateEnum: string
+enum ParsedMailLogStateEnum: string
 {
     use EnumHelper;
 

@@ -6,7 +6,7 @@ use Crm\AdminModule\Presenters\AdminPresenter;
 use Crm\ApplicationModule\Components\PreviousNextPaginator\PreviousNextPaginator;
 use Crm\ApplicationModule\UI\Form;
 use Crm\PaymentsModule\Forms\ParsedMailLogFactory;
-use Crm\PaymentsModule\Models\ParsedMailLog\StateEnum;
+use Crm\PaymentsModule\Models\ParsedMailLog\ParsedMailLogStateEnum;
 use Crm\PaymentsModule\Repositories\ParsedMailLogsRepository;
 use Crm\PaymentsModule\Repositories\PaymentsRepository;
 use Exception;
@@ -91,7 +91,7 @@ class ParsedMailsPresenter extends AdminPresenter
 
         $form->addText('source_account_number', 'payments.admin.parsed_mails.source_account_number');
 
-        $form->addSelect('state', 'payments.admin.parsed_mails.state.label', StateEnum::getFriendlyList())
+        $form->addSelect('state', 'payments.admin.parsed_mails.state.label', ParsedMailLogStateEnum::getFriendlyList())
             ->setPrompt('--');
 
         $form->addSelect(
