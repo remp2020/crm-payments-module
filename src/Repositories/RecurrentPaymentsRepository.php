@@ -83,30 +83,6 @@ class RecurrentPaymentsRepository extends Repository
         ]);
     }
 
-    /**
-     * @deprecated
-     */
-    final public function addV1($cid, $payment, $chargeAt, $customAmount, $retries, string $note = null)
-    {
-        $paymentMethod = $this->paymentMethodsRepository->findOrAdd($payment->user->id, $payment->payment_gateway->id, $cid);
-
-        return $this->insert([
-            'cid' => $paymentMethod->external_token,
-            'created_at' => $this->getNow(),
-            'updated_at' => $this->getNow(),
-            'charge_at' => $chargeAt,
-            'payment_method_id' => $paymentMethod->id,
-            'payment_gateway_id' => $payment->payment_gateway->id,
-            'subscription_type_id' => $payment->subscription_type_id,
-            'custom_amount' => $customAmount,
-            'retries' => $retries,
-            'user_id' => $payment->user->id,
-            'parent_payment_id' => $payment->id,
-            'state' => RecurrentPaymentStateEnum::Active->value,
-            'note' => $note,
-        ]);
-    }
-
     final public function createFromPayment(
         ActiveRow $payment,
         string $recurrentToken,
