@@ -152,6 +152,7 @@ admin:
                 system_stop: "Neúspěšné opakování, zastavena"
                 charged: Automaticky prodloužena
                 charge_failed: "Neúspěšné opakování, naplánovaný další pokus"
+                pending: Opakování právě probíhá
             parsed_mail_logs:
                 title: "Zpracované/potvrzené platby"
                 changed_to_paid: Stav změněn na zaplaceno

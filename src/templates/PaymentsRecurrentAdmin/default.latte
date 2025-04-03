@@ -66,6 +66,8 @@
                       <span class="label label-success">{_"payments.admin.component.user_payments_listing.recurrent_profile.charged"}</span>
                   {elseif $recurrentPayment->state === \Crm\PaymentsModule\Models\RecurrentPayment\RecurrentPaymentStateEnum::ChargeFailed->value}
                       <span class="label label-warning">{_"payments.admin.component.user_payments_listing.recurrent_profile.charge_failed"}</span>
+                  {elseif $recurrentPayment->state === \Crm\PaymentsModule\Models\RecurrentPayment\RecurrentPaymentStateEnum::Pending->value}
+                      <span class="label label-default">{_"payments.admin.component.user_payments_listing.recurrent_profile.pending"}</span>
                   {/if}
               </td>
               <td>
