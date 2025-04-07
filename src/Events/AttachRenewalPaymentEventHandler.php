@@ -41,7 +41,7 @@ class AttachRenewalPaymentEventHandler extends AbstractListener
     public function handle(EventInterface $event)
     {
         if (!($event instanceof AttachRenewalPaymentEvent)) {
-            throw new \Exception('Invalid type of event `' . get_class($event) . '` received, expected: `CreateNewPaymentEvent`');
+            throw new \Exception('Invalid type of event `' . get_class($event) . '` received, expected: `AttachRenewalPaymentEvent`');
         }
 
         $subscriptionId = $event->getSubscriptionId();
@@ -64,7 +64,7 @@ class AttachRenewalPaymentEventHandler extends AbstractListener
             return;
         }
 
-        $this->renewalPayment->setRenewalPayment($subscription, $renewalPayment);
+        $this->renewalPayment->attachRenewalPayment($subscription, $renewalPayment);
 
         // attach new payment to fired event
         $event->setAdditionalJobParameters([

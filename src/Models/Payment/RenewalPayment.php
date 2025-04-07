@@ -2,7 +2,13 @@
 
 namespace Crm\PaymentsModule\Models\Payment;
 
+use Crm\PaymentsModule\Repositories\PaymentMetaRepository;
 use Crm\PaymentsModule\Repositories\PaymentsRepository;
+use Crm\RespektCzModule\Models\Renewal\DiscountLevel;
+use Crm\RespektCzModule\Models\Renewal\DiscountLevelEnum;
+use Crm\RespektCzModule\Models\Renewal\SubscriptionCategory;
+use Crm\RespektCzModule\Models\Renewal\SubscriptionCategoryHandler;
+use Crm\RespektCzModule\Models\Renewal\SubscriptionGroupEnum;
 use Crm\SubscriptionsModule\Repositories\SubscriptionMetaRepository;
 use Nette\Database\Table\ActiveRow;
 
@@ -13,6 +19,9 @@ class RenewalPayment
     public function __construct(
         private readonly PaymentsRepository $paymentsRepository,
         private readonly SubscriptionMetaRepository $subscriptionMetaRepository,
+        private readonly DiscountLevel $discountLevel,
+        private readonly PaymentMetaRepository $paymentMetaRepository,
+        private readonly SubscriptionCategoryHandler $subscriptionCategoryHandler,
     ) {
     }
 
@@ -25,14 +34,28 @@ class RenewalPayment
         return $subscriptionMeta ? $this->paymentsRepository->find($subscriptionMeta->value) : null;
     }
 
-    public function setRenewalPayment(ActiveRow $subscription, ActiveRow $renewalPayment): void
+    /***
+     * Subscription group -> copy from subscription
+     * Discount level -> assign based on renewal payment subscription type
+     */
+    public function attachRenewalPayment(ActiveRow $subscription, ActiveRow $renewalPayment): void
     {
         $this->subscriptionMetaRepository->setMeta($subscription, self::RENEWAL_PAYMENT_META_KEY, $renewalPayment->id);
-    }
 
-    public function setRenewalPaymentId(ActiveRow $subscription, int $renewalPaymentId): void
-    {
-        $this->subscriptionMetaRepository->setMeta($subscription, self::RENEWAL_PAYMENT_META_KEY, $renewalPaymentId);
+        $subscriptionCategory = $this->subscriptionCategoryHandler->getPaymentSubscriptionCategory($renewalPayment);
+        if ($subscriptionCategory) {
+            return;
+        }
+
+        $subscriptionTypeDiscountLevel = $this->discountLevel->getDiscountLevel($renewalPayment->subscription_type);
+        $renewalPaymentCategory = SubscriptionCategory::fromValues(
+            $subscription->respektcz_subscription_group ?? SubscriptionGroupEnum::getDefaultEnum()->value,
+            $subscriptionTypeDiscountLevel?->value ?? DiscountLevelEnum::getDefaultEnum()->value,
+        );
+
+        foreach ($renewalPaymentCategory->prepareMeta() as $key => $value) {
+            $this->paymentMetaRepository->add($renewalPayment, $key, $value);
+        }
     }
 
     public function unsetRenewalPayment(ActiveRow $subscription): void
