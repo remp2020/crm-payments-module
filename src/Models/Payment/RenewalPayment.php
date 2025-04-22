@@ -42,4 +42,9 @@ class RenewalPayment
     {
         $this->subscriptionMetaRepository->getMeta($subscription, self::RENEWAL_PAYMENT_META_KEY)->delete();
     }
+
+    public function getSubscriptionByRenewalPayment(ActiveRow $renewalPayment): ?ActiveRow
+    {
+        return $this->subscriptionMetaRepository->findSubscriptionBy(self::RENEWAL_PAYMENT_META_KEY, $renewalPayment->id);
+    }
 }
