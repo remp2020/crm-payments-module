@@ -600,6 +600,7 @@ frontend:
         no_refunds: Nincs visszatérítés
         buy_offer: Előfizetést vásárolhat, hogy hozzájusson a tartalomhoz.
         next_recurrent_payment: "Engedélyezte az előfizetés automatikus meghosszabbítását. A következő fizetés <strong>%charge_amount%</strong> összegben <strong>%charge_date%</strong> időpontban fog történni."
+        next_recurrent_payment_soon: "Engedélyezte az előfizetés automatikus meghosszabbítását. A következő fizetés <strong>%charge_amount%</strong> összegben <strong>hamarosan</strong> megtörténik."
         charge_failed:
             last_try: Előző kísérlet
             title: Az automatikus meghosszabbítás sikertelen

@@ -1,6 +1,10 @@
 <p class="text-muted well text-center">
     {if $recurrentPayment}
-        {_payments.frontend.my.next_recurrent_payment, ['charge_amount' => ($resolver->resolveChargeAmount($recurrentPayment)|price), 'charge_date' => call_user_func($this->filters->localizedDate, $recurrentPayment->charge_at, true)]|noescape}
+        {if $recurrentPayment->charge_at > new Nette\Utils\DateTime()}
+            {_payments.frontend.my.next_recurrent_payment, ['charge_amount' => ($resolver->resolveChargeAmount($recurrentPayment)|price), 'charge_date' => call_user_func($this->filters->localizedDate, $recurrentPayment->charge_at, true)]|noescape}
+        {else}
+            {_payments.frontend.my.next_recurrent_payment_soon, ['charge_amount' => ($resolver->resolveChargeAmount($recurrentPayment)|price)]|noescape}
+        {/if}
     {else}
         {_payments.frontend.my.no_next_recurrent_payment|noescape}
     {/if}
