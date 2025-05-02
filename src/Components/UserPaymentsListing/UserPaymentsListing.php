@@ -7,11 +7,13 @@ use Crm\ApplicationModule\Models\Widget\BaseLazyWidget;
 use Crm\ApplicationModule\Models\Widget\LazyWidgetManager;
 use Crm\PaymentsModule\Components\ChangePaymentStatus\ChangePaymentStatusFactoryInterface;
 use Crm\PaymentsModule\Models\Payment\PaymentStatusEnum;
+use Crm\PaymentsModule\Models\RecurrentPayment\RecurrentPaymentStateEnum;
 use Crm\PaymentsModule\Models\RecurrentPaymentsResolver;
 use Crm\PaymentsModule\Repositories\ParsedMailLogsRepository;
 use Crm\PaymentsModule\Repositories\PaymentsRepository;
 use Crm\PaymentsModule\Repositories\RecurrentPaymentsRepository;
 use Nette\Application\BadRequestException;
+use Nette\Database\Table\ActiveRow;
 use Nette\Localization\Translator;
 use Nette\Utils\DateTime;
 
@@ -83,6 +85,14 @@ class UserPaymentsListing extends BaseLazyWidget
         };
         $this->template->nextSubscriptionTypeResolver = function ($recurrentPayment) {
             return $this->recurrentPaymentsResolver->resolveSubscriptionType($recurrentPayment);
+        };
+
+        $this->template->resolveChargeAmount = function (ActiveRow $recurrentPayment): ?float {
+            if ($recurrentPayment->state !== RecurrentPaymentStateEnum::Active->value) {
+                return null;
+            }
+
+            return $this->recurrentPaymentsResolver->resolveChargeAmount($recurrentPayment);
         };
 
         $this->template->setFile(__DIR__ . '/' . $this->templateName);

@@ -170,7 +170,12 @@
         <td><code class="clip cid-truncated" data-clipboard-text="{$recurrentPayment->payment_method->external_token}">{$recurrentPayment->payment_method->external_token}</code></td>
         <td class="text-muted">{$recurrentPayment->created_at|userDate}</td>
         <td class="text-muted">{$recurrentPayment->updated_at|userDate}</td>
-        <td>{$recurrentPayment->charge_at|userDate}</td>
+        <td>
+          {$recurrentPayment->charge_at|userDate}
+          {if $chargeAmount = $resolveChargeAmount($recurrentPayment)}
+            <br><small class="text text-muted">{_"payments.admin.component.user_payments_listing.recurrent_profile.renewal_amount"}: {$chargeAmount|price}</small>
+          {/if}
+        </td>
         <td>
           <a href="{plink :Subscriptions:SubscriptionTypesAdmin:Show $recurrentPayment->subscription_type_id}">{$recurrentPayment->subscription_type->name}</a>
 

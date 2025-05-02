@@ -153,6 +153,7 @@ admin:
                 charged: Automatically renewed
                 charge_failed: "Unable to charge, scheduled next attempt"
                 pending: Charge pending
+                renewal_amount: "Renewal amount"
             parsed_mail_logs:
                 title: "Processed/confirmed payments"
                 changed_to_paid: Status changed to paid

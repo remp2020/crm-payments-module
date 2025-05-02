@@ -153,6 +153,7 @@ admin:
                 charged: Automaticky predĺžená
                 charge_failed: "Neúspešné opakovanie, naplánovaný ďalší pokus"
                 pending: Opakovanie práve prebieha
+                renewal_amount: "Suma pri obnove"
             parsed_mail_logs:
                 title: "Spracované/potvrdené platby"
                 changed_to_paid: Stav zmenený na zaplatené
