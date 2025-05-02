@@ -4,6 +4,7 @@ namespace Crm\PaymentsModule\DataProviders;
 
 use Crm\ApplicationModule\Models\DataProvider\DataProviderException;
 use Crm\PaymentsModule\Models\RecurrentPayment\RecurrentPaymentStateEnum;
+use Crm\PaymentsModule\Repositories\PaymentMethodsRepository;
 use Crm\PaymentsModule\Repositories\PaymentsRepository;
 use Crm\PaymentsModule\Repositories\RecurrentPaymentsRepository;
 use Crm\SubscriptionsModule\DataProviders\SubscriptionTransferDataProviderInterface;
@@ -16,6 +17,7 @@ class SubscriptionTransferDataProvider implements SubscriptionTransferDataProvid
     public function __construct(
         private readonly PaymentsRepository $paymentsRepository,
         private readonly RecurrentPaymentsRepository $recurrentPaymentsRepository,
+        private readonly PaymentMethodsRepository $paymentMethodsRepository,
     ) {
     }
 
@@ -66,9 +68,18 @@ class SubscriptionTransferDataProvider implements SubscriptionTransferDataProvid
             return;
         }
 
+        // Create copy of payment method. Multiple recurrents can use the same payment method.
+        $paymentMethod = $this->paymentMethodsRepository->copyPaymentMethodToUser(
+            sourcePaymentMethod: $recurrentPayment->payment_method,
+            user: $userToTransferTo,
+        );
+
         $this->recurrentPaymentsRepository->update(
             $recurrentPayment,
-            ['user_id' => $userToTransferTo->id],
+            [
+                'user_id' => $userToTransferTo->id,
+                'payment_method_id' => $paymentMethod->id
+            ],
         );
     }
 

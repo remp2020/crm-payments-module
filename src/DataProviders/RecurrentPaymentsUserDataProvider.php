@@ -48,6 +48,12 @@ class RecurrentPaymentsUserDataProvider implements UserDataProviderInterface
 
         $allPaymentMethods = $this->paymentMethodsRepository->findAllForUser($userId);
         foreach ($allPaymentMethods as $paymentMethod) {
+            $externalToken = $paymentMethod->external_token;
+            $usersCount = $this->paymentMethodsRepository->getTable()
+                ->where(['external_token' => $paymentMethod->external_token])
+                ->select('DISTINCT user_id')
+                ->count('*');
+
             // anonymize payment method cid-s
             $this->paymentMethodsRepository->update($paymentMethod, [
                 'external_token' => 'GDPR removal ' . $paymentMethod->id,
@@ -61,11 +67,14 @@ class RecurrentPaymentsUserDataProvider implements UserDataProviderInterface
                 'cid' => 'GDPR removal ' . $paymentMethod->id
             ]);
 
-            // fire `external_token` anonymized hermes event
-            $this->hermesEmitter->emit(new HermesMessage('payment-method-anonymized-external-token', [
-                'payment_method_id' => $paymentMethod->id,
-                'external_token' => $paymentMethod->external_token,
-            ]), HermesMessage::PRIORITY_LOW);
+            // payment methods with the same external token can exist on multiple users, e.g. after subscription transfer
+            if ($usersCount === 1) {
+                // fire `external_token` anonymized hermes event
+                $this->hermesEmitter->emit(new HermesMessage('payment-method-anonymized-external-token', [
+                    'payment_method_id' => $paymentMethod->id,
+                    'external_token' => $externalToken,
+                ]), HermesMessage::PRIORITY_LOW);
+            }
         }
     }
 
