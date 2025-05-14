@@ -55,6 +55,10 @@ class SubscriptionTransferDataProvider implements SubscriptionTransferDataProvid
 
     private function transferSubscriptionsPayment(ActiveRow $payment, ActiveRow $userToTransferTo): void
     {
+        $this->paymentsRepository->addMeta($payment, [
+            SubscriptionTransferDataProviderInterface::META_KEY_TRANSFERRED_FROM_USER => $payment->user_id,
+        ]);
+
         $this->paymentsRepository->update(
             $payment,
             ['user_id' => $userToTransferTo->id],
