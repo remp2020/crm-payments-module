@@ -7,13 +7,8 @@ use Crm\PaymentsModule\Models\MailParser\TatraBankaStatementMailParser;
 
 class TatraBankaStatementMailParserTest extends PaymentsTestCase
 {
-    /**
-     * TODO: this causes phpunit test to crash with ErrorException: Allowed memory size when run together with other tests, try to fix
-     */
     public function testTransferPayments()
     {
-        $this->markTestSkipped('Skipped due to external error: Creation of dynamic property OpenPGP_SecretKeyPacket::$input is deprecated in crm/vendor/singpolyma/openpgp-php/lib/openpgp.php:464');
-
         $email = file_get_contents(__DIR__ . '/data/tb_encrypted_mail_body.txt');
 
         $parser = new TatraBankaStatementMailParser(
