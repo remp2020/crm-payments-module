@@ -21,7 +21,7 @@ class SubscribersWithPaymentWidgetFactory
     public function __construct(
         LazyWidgetManager $lazyWidgetManager,
         SegmentsRepository $segmentsRepository,
-        SegmentsValuesRepository $segmentsValuesRepository
+        SegmentsValuesRepository $segmentsValuesRepository,
     ) {
         $this->lazyWidgetManager = $lazyWidgetManager;
         $this->segmentsRepository = $segmentsRepository;
@@ -41,7 +41,7 @@ class SubscribersWithPaymentWidgetFactory
         return (new SubscribersWithPaymentWidget(
             $this->lazyWidgetManager,
             $this->segmentsRepository,
-            $this->segmentsValuesRepository
+            $this->segmentsValuesRepository,
         ))->setSegmentCode($segmentCode);
     }
 }

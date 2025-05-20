@@ -25,7 +25,7 @@ class PaymentCountsCriteria implements CriteriaInterface
             new NumberParam(
                 "subscription_payments",
                 "Subscription payments",
-                "Filters users with specific amount of payments for subscriptions"
+                "Filters users with specific amount of payments for subscriptions",
             ),
         ];
     }

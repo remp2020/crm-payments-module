@@ -56,8 +56,8 @@ class CardPayDirect
             $stack->push(
                 Middleware::log(
                     $this->logger,
-                    new MessageFormatter("REQUEST: {request} RESPONSE: {response}")
-                )
+                    new MessageFormatter("REQUEST: {request} RESPONSE: {response}"),
+                ),
             );
             $this->handlerStack = $stack;
         }
@@ -92,12 +92,12 @@ class CardPayDirect
         } catch (ServerException $serverException) {
             return new TransactionResult(
                 TransactionResult::ERROR,
-                "Server: " . $serverException->getMessage()
+                "Server: " . $serverException->getMessage(),
             );
         } catch (ClientException $clientException) {
             return new TransactionResult(
                 TransactionResult::ERROR,
-                "Client: " . $clientException->getMessage()
+                "Client: " . $clientException->getMessage(),
             );
         }
 
@@ -126,7 +126,7 @@ class CardPayDirect
         return new TransactionResult(
             TransactionResult::SUCCESS,
             null,
-            TransactionResultData::fromPayload($result->getBody())
+            TransactionResultData::fromPayload($result->getBody()),
         );
 
         // Answer:
@@ -155,12 +155,12 @@ class CardPayDirect
         } catch (ServerException $serverException) {
             return new TransactionResult(
                 TransactionResult::ERROR,
-                "Server: " . $serverException->getMessage()
+                "Server: " . $serverException->getMessage(),
             );
         } catch (ClientException $clientException) {
             return new TransactionResult(
                 TransactionResult::ERROR,
-                "Client: " . $clientException->getMessage()
+                "Client: " . $clientException->getMessage(),
             );
         }
 
@@ -189,7 +189,7 @@ class CardPayDirect
         return new TransactionResult(
             TransactionResult::SUCCESS,
             null,
-            TransactionResultData::fromPayload($result->getBody())
+            TransactionResultData::fromPayload($result->getBody()),
         );
     }
 

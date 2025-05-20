@@ -71,7 +71,7 @@ class RecurrentPaymentStateCriteriaTest extends DatabaseTestCase
 
         $values = (object)['selection' => [RecurrentPaymentStateEnum::Active->value]];
         $this->assertTrue(
-            $recurrentPaymentStateCriteria->addConditions($recurrentPaymentSelection, [RecurrentPaymentStateCriteria::KEY => $values], $recurrentPaymentRow)
+            $recurrentPaymentStateCriteria->addConditions($recurrentPaymentSelection, [RecurrentPaymentStateCriteria::KEY => $values], $recurrentPaymentRow),
         );
         $this->assertNotNull($recurrentPaymentSelection->fetch());
     }
@@ -92,8 +92,8 @@ class RecurrentPaymentStateCriteriaTest extends DatabaseTestCase
             $recurrentPaymentStateCriteria->addConditions(
                 $recurrentPaymentSelection,
                 [RecurrentPaymentStateCriteria::KEY => $values],
-                $recurrentPaymentRow
-            )
+                $recurrentPaymentRow,
+            ),
         );
         $this->assertNotNull($recurrentPaymentSelection->fetch());
     }
@@ -107,7 +107,7 @@ class RecurrentPaymentStateCriteriaTest extends DatabaseTestCase
         $values = (object)['selection' => [RecurrentPaymentStateEnum::Charged->value]];
 
         $this->assertTrue(
-            $recurrentPaymentStateCriteria->addConditions($recurrentPaymentSelection, [RecurrentPaymentStateCriteria::KEY => $values], $recurrentPaymentRow)
+            $recurrentPaymentStateCriteria->addConditions($recurrentPaymentSelection, [RecurrentPaymentStateCriteria::KEY => $values], $recurrentPaymentRow),
         );
         $this->assertNull($recurrentPaymentSelection->fetch());
     }
@@ -128,8 +128,8 @@ class RecurrentPaymentStateCriteriaTest extends DatabaseTestCase
             $recurrentPaymentStateCriteria->addConditions(
                 $recurrentPaymentSelection,
                 [RecurrentPaymentStateCriteria::KEY => $values],
-                $recurrentPaymentRow
-            )
+                $recurrentPaymentRow,
+            ),
         );
         $this->assertNull($recurrentPaymentSelection->fetch());
     }
@@ -153,7 +153,7 @@ class RecurrentPaymentStateCriteriaTest extends DatabaseTestCase
             $subscriptionTypeRow,
             true,
             true,
-            $userRow
+            $userRow,
         );
 
         /** @var PaymentGatewaysRepository $paymentGatewaysRepository */
@@ -166,7 +166,7 @@ class RecurrentPaymentStateCriteriaTest extends DatabaseTestCase
             $userRow,
             new PaymentItemContainer(),
             null,
-            1
+            1,
         );
 
         $this->paymentsRepository->addSubscriptionToPayment($subscriptionRow, $paymentRow);

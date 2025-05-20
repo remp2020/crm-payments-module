@@ -67,7 +67,7 @@ class RecurrentPaymentCardExpiredCriteriaTest extends DatabaseTestCase
 
         $criteria = $this->inject(RecurrentPaymentCardExpiredCriteria::class);
         $this->assertTrue(
-            $criteria->addConditions($recurrentPaymentSelection, [], $recurrentPaymentRow)
+            $criteria->addConditions($recurrentPaymentSelection, [], $recurrentPaymentRow),
         );
         $this->assertNull($recurrentPaymentSelection->fetch());
     }
@@ -79,7 +79,7 @@ class RecurrentPaymentCardExpiredCriteriaTest extends DatabaseTestCase
 
         $criteria = $this->inject(RecurrentPaymentCardExpiredCriteria::class);
         $this->assertTrue(
-            $criteria->addConditions($recurrentPaymentSelection, [], $recurrentPaymentRow)
+            $criteria->addConditions($recurrentPaymentSelection, [], $recurrentPaymentRow),
         );
         $this->assertNull($recurrentPaymentSelection->fetch());
     }
@@ -93,7 +93,7 @@ class RecurrentPaymentCardExpiredCriteriaTest extends DatabaseTestCase
 
         $criteria = $this->inject(RecurrentPaymentCardExpiredCriteria::class);
         $this->assertTrue(
-            $criteria->addConditions($recurrentPaymentSelection, [], $recurrentPaymentRow)
+            $criteria->addConditions($recurrentPaymentSelection, [], $recurrentPaymentRow),
         );
         $this->assertNotNull($recurrentPaymentSelection->fetch());
     }
@@ -117,7 +117,7 @@ class RecurrentPaymentCardExpiredCriteriaTest extends DatabaseTestCase
             $subscriptionTypeRow,
             true,
             true,
-            $userRow
+            $userRow,
         );
 
         /** @var PaymentGatewaysRepository $paymentGatewaysRepository */
@@ -130,7 +130,7 @@ class RecurrentPaymentCardExpiredCriteriaTest extends DatabaseTestCase
             $userRow,
             new PaymentItemContainer(),
             null,
-            1
+            1,
         );
 
         $this->paymentsRepository->addSubscriptionToPayment($subscriptionRow, $paymentRow);

@@ -239,7 +239,7 @@ class StopRecurrentPaymentApiHandlerTest extends PaymentsTestCase
             $payment,
             $chargeAt,
             null,
-            1
+            1,
         );
     }
 
@@ -282,7 +282,7 @@ class StopRecurrentPaymentApiHandlerTest extends PaymentsTestCase
             null,
             false,
             null,
-            true // create access token
+            true, // create access token
         );
     }
 

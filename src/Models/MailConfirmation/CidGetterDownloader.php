@@ -44,7 +44,7 @@ class CidGetterDownloader
             if (!$mailContent) {
                 Debugger::log(
                     'Unable to parse TatraBanka email (b-mail - e-commerce) email from: ' . $email->getDate(),
-                    Debugger::ERROR
+                    Debugger::ERROR,
                 );
                 // email not parsed; do not call callback
                 return false;

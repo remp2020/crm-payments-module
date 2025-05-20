@@ -14,8 +14,8 @@ class TatraBankaStatementMailParserTest extends PaymentsTestCase
         $parser = new TatraBankaStatementMailParser(
             new TatraBankaMailDecryptor(
                 __DIR__ . '/data/tb_mail_private_key.asc',
-                'heslo'
-            )
+                'heslo',
+            ),
         );
         $mailContents = $parser->parseMulti($email);
 

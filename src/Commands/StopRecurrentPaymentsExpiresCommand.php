@@ -19,7 +19,7 @@ class StopRecurrentPaymentsExpiresCommand extends Command
 
     public function __construct(
         RecurrentPaymentsRepository $recurrentPaymentsRepository,
-        Emitter $emitter
+        Emitter $emitter,
     ) {
         parent::__construct();
         $this->recurrentPaymentsRepository = $recurrentPaymentsRepository;

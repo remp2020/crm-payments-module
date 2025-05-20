@@ -13,7 +13,7 @@ class PaymentStatusCriteria implements ScenariosCriteriaInterface
     private $paymentsRepository;
 
     public function __construct(
-        PaymentsRepository $paymentsRepository
+        PaymentsRepository $paymentsRepository,
     ) {
         $this->paymentsRepository = $paymentsRepository;
     }

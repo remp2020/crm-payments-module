@@ -133,7 +133,7 @@ class AttachRenewalPaymentEventHandler extends AbstractListener
                 user: $user,
                 paymentItemContainer: $paymentItemContainer,
                 // use previous payment if found
-                previousPayment: $subscription->related('payments')->fetch()
+                previousPayment: $subscription->related('payments')->fetch(),
             );
 
             // we failed, try to resolve naturally, but expect the "default" because this is not an online action

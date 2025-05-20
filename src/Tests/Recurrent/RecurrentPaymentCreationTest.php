@@ -118,7 +118,7 @@ class RecurrentPaymentCreationTest extends PaymentsTestCase
             user: $this->user,
             paymentItemContainer: $paymentItemContainer,
             additionalAmount: 66,
-            additionalType: 'single'
+            additionalType: 'single',
         );
 
         // Make manual payment
@@ -173,7 +173,7 @@ class RecurrentPaymentCreationTest extends PaymentsTestCase
             user: $this->user,
             paymentItemContainer: $paymentItemContainer,
             additionalAmount: 66,
-            additionalType: 'recurrent'
+            additionalType: 'recurrent',
         );
 
         // Make manual payment

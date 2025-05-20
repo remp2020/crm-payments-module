@@ -12,7 +12,7 @@ class BeforeRecurrentPaymentChargeEvent extends AbstractEvent implements Payment
      */
     public function __construct(
         private ActiveRow $payment,
-        private string $token
+        private string $token,
     ) {
     }
 

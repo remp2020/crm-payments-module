@@ -82,7 +82,7 @@ class SubscriptionTransferDataProvider implements SubscriptionTransferDataProvid
             $recurrentPayment,
             [
                 'user_id' => $userToTransferTo->id,
-                'payment_method_id' => $paymentMethod->id
+                'payment_method_id' => $paymentMethod->id,
             ],
         );
     }

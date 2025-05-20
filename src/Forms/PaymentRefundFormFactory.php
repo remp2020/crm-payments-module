@@ -65,7 +65,7 @@ class PaymentRefundFormFactory
             if ($payment->status != PaymentStatusEnum::Refund->value) {
                 $form->addText(
                     self::SUBSCRIPTION_ENDS_AT_KEY,
-                    'payments.admin.payment_refund.form.cancel_subscription_date'
+                    'payments.admin.payment_refund.form.cancel_subscription_date',
                 )
                     ->setRequired('payments.admin.payment_refund.form.required.subscription_ends_at')
                     ->setHtmlAttribute('class', 'flatpickr')
@@ -89,7 +89,7 @@ class PaymentRefundFormFactory
         if ($this->recurrentPaymentCanBeStoppedInRefund($payment) && $payment->status != PaymentStatusEnum::Refund->value) {
             $form->addCheckbox(
                 self::STOP_RECURRENT_CHARGE_KEY,
-                'payments.admin.payment_refund.form.stop_recurrent_charge'
+                'payments.admin.payment_refund.form.stop_recurrent_charge',
             )
                 ->setDisabled()
                 ->setDefaultValue(true);
@@ -105,7 +105,7 @@ class PaymentRefundFormFactory
         /** @var PaymentRefundFormDataProviderInterface[] $providers */
         $providers = $this->dataProviderManager->getProviders(
             PaymentRefundFormDataProviderInterface::PATH,
-            PaymentRefundFormDataProviderInterface::class
+            PaymentRefundFormDataProviderInterface::class,
         );
         foreach ($providers as $provider) {
             $form = $provider->provide(['form' => $form, 'payment' => $payment]);
@@ -136,7 +136,7 @@ class PaymentRefundFormFactory
         /** @var PaymentRefundFormDataProviderInterface[] $providers */
         $providers = $this->dataProviderManager->getProviders(
             PaymentRefundFormDataProviderInterface::PATH,
-            PaymentRefundFormDataProviderInterface::class
+            PaymentRefundFormDataProviderInterface::class,
         );
         foreach ($providers as $provider) {
             [$form, $values] = $provider->formSucceeded($form, $values);

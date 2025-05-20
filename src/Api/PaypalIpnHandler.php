@@ -35,7 +35,7 @@ class PaypalIpnHandler extends ApiHandler implements ApiParamsValidatorInterface
         private PaymentsRepository $paymentsRepository,
         private PaymentProcessor $paymentProcessor,
         private ApplicationConfig $applicationConfig,
-        ScopeFactoryInterface $scopeFactory = null
+        ScopeFactoryInterface $scopeFactory = null,
     ) {
         parent::__construct($scopeFactory);
     }
@@ -47,7 +47,7 @@ class PaypalIpnHandler extends ApiHandler implements ApiParamsValidatorInterface
             new PostInputParam(self::PARAM_INVOICE),
             new PostInputParam(self::PARAM_EMAIL),
             new PostInputParam(self::PARAM_AMOUNT),
-            new RawInputParam(self::PARAM_RAW)
+            new RawInputParam(self::PARAM_RAW),
         ];
     }
 
@@ -116,13 +116,13 @@ class PaypalIpnHandler extends ApiHandler implements ApiParamsValidatorInterface
         $rawPostData = $params[self::PARAM_RAW];
         $req = 'cmd=_notify-validate&' . $rawPostData;
         $client = new Client([
-            'base_uri' => $baseUrl
+            'base_uri' => $baseUrl,
         ]);
         $response = $client->post('/cgi-bin/webscr', [
             'body' => $req,
             'headers' => [
                 'Content-Type' => 'application/x-www-form-urlencoded',
-            ]
+            ],
         ]);
 
         $result = $response->getBody()->getContents();

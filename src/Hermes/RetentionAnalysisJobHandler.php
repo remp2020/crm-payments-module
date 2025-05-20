@@ -20,7 +20,7 @@ class RetentionAnalysisJobHandler implements HandlerInterface
     public function __construct(
         private RetentionAnalysisJobsRepository $retentionAnalysisJobsRepository,
         private RetentionAnalysis $retentionAnalysis,
-        private Translator $translator
+        private Translator $translator,
     ) {
     }
 

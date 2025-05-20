@@ -15,7 +15,7 @@ class RecurrentPaymentCardExpiredEventHandler extends AbstractListener
     public function __construct(
         private readonly RecurrentPaymentsRepository $recurrentPaymentsRepository,
         private readonly Emitter $emitter,
-        private readonly ActiveRowFactory $activeRowFactory
+        private readonly ActiveRowFactory $activeRowFactory,
     ) {
     }
 

@@ -70,7 +70,7 @@ class PaymentMetaRepository extends Repository
     {
         return $this->getTable()->where([
                 'key' => $key,
-                'value' => $value
+                'value' => $value,
             ])->count('*') > 0;
     }
 
@@ -107,7 +107,7 @@ class PaymentMetaRepository extends Repository
     {
         return $this->getTable()->where([
             'key' => $key,
-            'value' => $value
+            'value' => $value,
         ])
             ->order('id DESC')
             ->fetchAll();

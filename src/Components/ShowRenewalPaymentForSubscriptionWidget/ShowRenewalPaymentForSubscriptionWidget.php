@@ -13,7 +13,7 @@ class ShowRenewalPaymentForSubscriptionWidget extends BaseLazyWidget
 
     public function __construct(
         LazyWidgetManager $widgetManager,
-        private readonly RenewalPayment $renewalPayment
+        private readonly RenewalPayment $renewalPayment,
     ) {
         parent::__construct($widgetManager);
     }

@@ -27,7 +27,7 @@ class PaymentsPopulator extends AbstractPopulator
                 'modified_at' => $this->faker->dateTimeBetween('-1 years'),
                 'ip' => $this->faker->ipv4,
                 'user_agent' => $this->faker->userAgent,
-                'referer' => $this->faker->url
+                'referer' => $this->faker->url,
             ];
 
             $subscription = false;

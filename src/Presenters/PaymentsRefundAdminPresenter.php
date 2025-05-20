@@ -12,7 +12,7 @@ use Crm\PaymentsModule\Repositories\PaymentsRepository;
 class PaymentsRefundAdminPresenter extends AdminPresenter
 {
     public function __construct(
-        private readonly PaymentsRepository $paymentsRepository
+        private readonly PaymentsRepository $paymentsRepository,
     ) {
         parent::__construct();
     }
@@ -43,7 +43,7 @@ class PaymentsRefundAdminPresenter extends AdminPresenter
                 $this->flashMessage($message, 'warning');
             } else {
                 $this->flashMessage(
-                    message: $this->translator->translate('payments.admin.payment_refund.form.refund_was_successful')
+                    message: $this->translator->translate('payments.admin.payment_refund.form.refund_was_successful'),
                 );
             }
 

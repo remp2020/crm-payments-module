@@ -14,7 +14,7 @@ class AdminFilterFormData
 
     public function __construct(
         private DataProviderManager $dataProviderManager,
-        private PaymentsRepository $paymentsRepository
+        private PaymentsRepository $paymentsRepository,
     ) {
     }
 
@@ -35,7 +35,7 @@ class AdminFilterFormData
             null,
             $this->getDonation(),
             $this->getRecurrentChargeFilterValue(),
-            $this->getReferer()
+            $this->getReferer(),
         );
 
         if ($this->getId()) {

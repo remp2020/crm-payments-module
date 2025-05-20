@@ -21,7 +21,7 @@ class ParsedMailsFailedNotification extends BaseLazyWidget
 
     public function __construct(
         LazyWidgetManager $lazyWidgetManager,
-        ParsedMailLogsRepository $parsedMailLogsRepository
+        ParsedMailLogsRepository $parsedMailLogsRepository,
     ) {
         parent::__construct($lazyWidgetManager);
         $this->parsedMailLogsRepository = $parsedMailLogsRepository;

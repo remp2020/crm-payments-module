@@ -28,7 +28,7 @@ class SubscriptionFormDataProvider implements SubscriptionFormDataProviderInterf
         Translator $translator,
         PaymentsRepository $paymentsRepository,
         SubscriptionsRepository $subscriptionsRepository,
-        UserDateHelper $userDateHelper
+        UserDateHelper $userDateHelper,
     ) {
         $this->paymentsRepository = $paymentsRepository;
         $this->subscriptionsRepository = $subscriptionsRepository;
@@ -70,7 +70,7 @@ class SubscriptionFormDataProvider implements SubscriptionFormDataProviderInterf
         if ($form->getComponent($elementName) !== null) {
             $description = $this->translator->translate(
                 'payments.form.subscription_form.start_time.after_payment.description',
-                ['payment_paid' => $this->userDateHelper->process($payment->paid_at)]
+                ['payment_paid' => $this->userDateHelper->process($payment->paid_at)],
             );
 
             // load & translate original description
@@ -85,7 +85,7 @@ class SubscriptionFormDataProvider implements SubscriptionFormDataProviderInterf
             $form->getComponent($elementName)
                 ->setOption(
                     'description',
-                    Html::el('span', ['class' => 'help-block'])->setHtml($description)
+                    Html::el('span', ['class' => 'help-block'])->setHtml($description),
                 );
 
             $form->getComponent($elementName)
@@ -96,7 +96,7 @@ class SubscriptionFormDataProvider implements SubscriptionFormDataProviderInterf
                         return $subscriptionStartAt >= $paymentPaidAt;
                     },
                     'payments.form.subscription_form.start_time.after_payment.error',
-                    $payment->paid_at
+                    $payment->paid_at,
                 );
         }
 

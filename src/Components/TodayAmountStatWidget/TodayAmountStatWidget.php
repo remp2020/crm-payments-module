@@ -21,7 +21,7 @@ class TodayAmountStatWidget extends BaseLazyWidget
 
     public function __construct(
         LazyWidgetManager $lazyWidgetManager,
-        PaymentsRepository $paymentsRepository
+        PaymentsRepository $paymentsRepository,
     ) {
         parent::__construct($lazyWidgetManager);
         $this->paymentsRepository = $paymentsRepository;
@@ -36,11 +36,11 @@ class TodayAmountStatWidget extends BaseLazyWidget
     {
         $this->template->todayAmount = $this->paymentsRepository->paidBetween(
             DateTime::from('today 00:00'),
-            new DateTime()
+            new DateTime(),
         )->sum('amount') ?? 0.00;
         $this->template->yesterdayAmount = $this->paymentsRepository->paidBetween(
             DateTime::from('yesterday 00:00'),
-            DateTime::from('today 00:00')
+            DateTime::from('today 00:00'),
         )->sum('amount') ?? 0.00;
         $this->template->setFile(__DIR__ . DIRECTORY_SEPARATOR . $this->templateName);
         $this->template->render();

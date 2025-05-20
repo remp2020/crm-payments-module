@@ -11,7 +11,7 @@ class AttachRenewalPaymentEvent extends AbstractEvent implements ScenarioGeneric
 
     public function __construct(
         private $subscriptionId,
-        private $userId
+        private $userId,
     ) {
     }
 

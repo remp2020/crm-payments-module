@@ -29,7 +29,7 @@ QUERY;
             'id' => $this->getId(),
             'key' => __CLASS__,
             'data' => $result,
-            'label' => $this->translator->translate('payments.admin.report.stopped_on_first_subscription.label')
+            'label' => $this->translator->translate('payments.admin.report.stopped_on_first_subscription.label'),
         ];
     }
 }

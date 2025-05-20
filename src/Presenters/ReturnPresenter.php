@@ -91,7 +91,7 @@ class ReturnPresenter extends FrontendPresenter
             $this->paymentLogsRepository->add(
                 'ERROR',
                 "Payment not found (viamo)",
-                $this->request->getUrl()
+                $this->request->getUrl(),
             );
             $this->resolveRedirect(null, PaymentCompleteRedirectResolver::ERROR);
         }
@@ -101,7 +101,7 @@ class ReturnPresenter extends FrontendPresenter
                 'ERROR',
                 "Return to wrong payment type 'viamo'",
                 $this->request->getUrl(),
-                $payment->id
+                $payment->id,
             );
             $this->resolveRedirect(null, PaymentCompleteRedirectResolver::ERROR);
         }
@@ -127,7 +127,7 @@ class ReturnPresenter extends FrontendPresenter
                 'ERROR',
                 "Return to wrong payment type '{$gatewayCode}'",
                 $this->request->getUrl(),
-                $payment->id
+                $payment->id,
             );
             $this->resolveRedirect($payment, PaymentCompleteRedirectResolver::ERROR);
         }
@@ -153,7 +153,7 @@ class ReturnPresenter extends FrontendPresenter
                     'OK',
                     "Redirecting to success url with vs '{$payment->variable_symbol}'",
                     $presenter->request->getUrl(),
-                    $payment->id
+                    $payment->id,
                 );
 
                 $this->resolveRedirect($payment, PaymentCompleteRedirectResolver::PAID);
@@ -162,7 +162,7 @@ class ReturnPresenter extends FrontendPresenter
                     'OK',
                     "Redirecting to success url with vs '{$payment->variable_symbol}'",
                     $presenter->request->getUrl(),
-                    $payment->id
+                    $payment->id,
                 );
 
                 $this->resolveRedirect($payment, PaymentCompleteRedirectResolver::PAID);
@@ -171,7 +171,7 @@ class ReturnPresenter extends FrontendPresenter
                     'ERROR',
                     'Payment not settled, should be confirmed later',
                     $presenter->request->getUrl(),
-                    $payment->id
+                    $payment->id,
                 );
 
                 $this->resolveRedirect($payment, PaymentCompleteRedirectResolver::NOT_SETTLED);
@@ -180,7 +180,7 @@ class ReturnPresenter extends FrontendPresenter
                     'ERROR',
                     'Complete payment with unpaid payment',
                     $presenter->request->getUrl(),
-                    $payment->id
+                    $payment->id,
                 );
 
                 if ($gateway->isCancelled()) {
@@ -200,7 +200,7 @@ class ReturnPresenter extends FrontendPresenter
             $this->paymentLogsRepository->add(
                 'ERROR',
                 "Missing VS parameter",
-                $this->request->getUrl()
+                $this->request->getUrl(),
             );
             $this->resolveRedirect(null, PaymentCompleteRedirectResolver::ERROR);
         }
@@ -209,7 +209,7 @@ class ReturnPresenter extends FrontendPresenter
             $this->paymentLogsRepository->add(
                 'ERROR',
                 "Cannot load payment with VS '{$this->VS}'",
-                $this->request->getUrl()
+                $this->request->getUrl(),
             );
             $this->resolveRedirect(null, PaymentCompleteRedirectResolver::ERROR);
         }

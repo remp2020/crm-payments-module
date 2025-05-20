@@ -15,7 +15,7 @@ class CanDeleteAddressDataProvider implements CanDeleteAddressDataProviderInterf
 
     public function __construct(
         Translator $translator,
-        LinkGenerator $linkGenerator
+        LinkGenerator $linkGenerator,
     ) {
         $this->translator = $translator;
         $this->linkGenerator = $linkGenerator;
@@ -40,13 +40,13 @@ class CanDeleteAddressDataProvider implements CanDeleteAddressDataProviderInterf
                 'message' => $this->translator->translate(
                     'payments.admin.address.cant_delete',
                     count($payments),
-                    [ 'payments' => implode(', ', $listPayments) ]
-                )
+                    [ 'payments' => implode(', ', $listPayments) ],
+                ),
             ];
         }
 
         return [
-            'canDelete' => true
+            'canDelete' => true,
         ];
     }
 }

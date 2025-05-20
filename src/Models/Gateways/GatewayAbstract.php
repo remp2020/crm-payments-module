@@ -30,7 +30,7 @@ abstract class GatewayAbstract implements PaymentInterface
         LinkGenerator $linkGenerator,
         ApplicationConfig $applicationConfig,
         Response $httpResponse,
-        Translator $translator
+        Translator $translator,
     ) {
         $this->linkGenerator = $linkGenerator;
         $this->applicationConfig = $applicationConfig;
@@ -89,7 +89,7 @@ abstract class GatewayAbstract implements PaymentInterface
             'Payments:Return:gateway',
             array_merge([
                 'gatewayCode' => $payment->payment_gateway->code,
-            ], $params)
+            ], $params),
         );
     }
 

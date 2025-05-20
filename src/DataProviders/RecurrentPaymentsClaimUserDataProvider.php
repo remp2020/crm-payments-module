@@ -11,7 +11,7 @@ class RecurrentPaymentsClaimUserDataProvider implements ClaimUserDataProviderInt
     private $recurrentPaymentsRepository;
 
     public function __construct(
-        RecurrentPaymentsRepository $recurrentPaymentsRepository
+        RecurrentPaymentsRepository $recurrentPaymentsRepository,
     ) {
         $this->recurrentPaymentsRepository = $recurrentPaymentsRepository;
     }

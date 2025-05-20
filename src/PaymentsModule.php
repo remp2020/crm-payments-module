@@ -168,7 +168,7 @@ class PaymentsModule extends CrmModule
         Translator $translator,
         PaymentsRepository $paymentsRepository,
         PaymentsHistogramFactory $paymentsHistogramFactory,
-        AverageMonthPayment $averageMonthPayment
+        AverageMonthPayment $averageMonthPayment,
     ) {
         parent::__construct($container, $translator);
         $this->paymentsRepository = $paymentsRepository;
@@ -191,7 +191,7 @@ class PaymentsModule extends CrmModule
             ':Payments:ParsedMails:',
             'fa fa-clipboard-check',
             600,
-            true
+            true,
         );
 
         $mainMenu->addChild($menuItem);
@@ -216,7 +216,7 @@ class PaymentsModule extends CrmModule
             $this->translator->translate('payments.menu.stats'),
             ':Payments:Dashboard:default',
             'fa fa-money-bill-alt',
-            300
+            300,
         );
         $menuContainer->attachMenuItemToForeignModule('#dashboard', $mainMenu, $menuItem);
     }
@@ -232,126 +232,126 @@ class PaymentsModule extends CrmModule
         $widgetManager->registerWidget(
             'admin.user.detail.bottom',
             UserPaymentsListing::class,
-            200
+            200,
         );
         $widgetManager->registerWidget(
             'admin.user.detail.box',
             TotalUserPayments::class,
-            200
+            200,
         );
         $widgetManager->registerWidget(
             'admin.payments.top',
             ParsedMailsFailedNotification::class,
-            1000
+            1000,
         );
         $widgetManager->registerWidget(
             'dashboard.singlestat.totals',
             TotalAmountStatWidget::class,
-            700
+            700,
         );
         $widgetManager->registerWidget(
             'dashboard.singlestat.actuals.subscribers',
             ActualPaidSubscribersStatWidget::class,
-            500
+            500,
         );
         $widgetManager->registerWidget(
             'dashboard.singlestat.actuals.subscribers',
             ActualFreeSubscribersStatWidget::class,
-            600
+            600,
         );
         $widgetManager->registerWidget(
             'dashboard.singlestat.today',
             TodayAmountStatWidget::class,
-            700
+            700,
         );
         $widgetManager->registerWidget(
             'dashboard.singlestat.month',
             MonthAmountStatWidget::class,
-            700
+            700,
         );
         $widgetManager->registerWidget(
             'dashboard.singlestat.mtd',
             MonthToDateAmountStatWidget::class,
-            700
+            700,
         );
         $widgetManager->registerWidget(
             'subscriptions.endinglist',
             SubscriptionsWithActiveUnchargedRecurrentEndingWithinPeriodWidget::class,
-            700
+            700,
         );
         $widgetManager->registerWidget(
             'subscriptions.endinglist',
             SubscriptionsWithoutExtensionEndingWithinPeriodWidget::class,
-            800
+            800,
         );
         $widgetManager->registerWidget(
             'subscriptions.endinglist',
             PaidSubscriptionsWithoutExtensionEndingWithinPeriodWidget::class,
-            900
+            900,
         );
         $widgetManager->registerWidgetWithInstance(
             'dashboard.singlestat.actuals.system',
             $this->getInstance(SubscribersWithPaymentWidgetFactory::class)->create()->setDateModifier('-1 day'),
-            500
+            500,
         );
         $widgetManager->registerWidgetWithInstance(
             'dashboard.singlestat.actuals.system',
             $this->getInstance(SubscribersWithPaymentWidgetFactory::class)->create()->setDateModifier('-7 days'),
-            600
+            600,
         );
         $widgetManager->registerWidgetWithInstance(
             'dashboard.singlestat.actuals.system',
             $this->getInstance(SubscribersWithPaymentWidgetFactory::class)->create()->setDateModifier('-30 days'),
-            600
+            600,
         );
         $widgetManager->registerWidget(
             'admin.subscription_types.show.bottom_stats',
             SubscriptionTypeReports::class,
-            500
+            500,
         );
         $widgetManager->registerWidget(
             'payments.admin.payment_item_listing',
-            PaymentItemsListWidget::class
+            PaymentItemsListWidget::class,
         );
         $widgetManager->registerWidget(
             'payments.admin.payment_item_listing',
-            DonationPaymentItemsListWidget::class
+            DonationPaymentItemsListWidget::class,
         );
         $widgetManager->registerWidget(
             'payments.admin.payment_item_listing',
-            AuthorizationPaymentItemListWidget::class
+            AuthorizationPaymentItemListWidget::class,
         );
         $widgetManager->registerWidget(
             'payments.admin.payment_source_listing',
-            DeviceUserListingWidget::class
+            DeviceUserListingWidget::class,
         );
         $widgetManager->registerWidget(
             'payments.admin.listing.sum',
-            PaymentDonationLabelWidget::class
+            PaymentDonationLabelWidget::class,
         );
         $widgetManager->registerWidget(
             'payments.frontend.payments_my.top',
-            MyNextRecurrentPayment::class
+            MyNextRecurrentPayment::class,
         );
         $widgetManager->registerWidget(
             'payments.frontend.payments_my.bottom',
-            RefundPaymentsListWidget::class
+            RefundPaymentsListWidget::class,
         );
         $widgetManager->registerWidget(
             'frontend.payment.success.bottom',
-            AddressWidget::class
+            AddressWidget::class,
         );
         $widgetManager->registerWidget(
             'segment.detail.statspanel.row',
-            AvgMonthPaymentWidget::class
+            AvgMonthPaymentWidget::class,
         );
         $widgetManager->registerWidget(
             'segment.detail.statspanel.row',
-            AvgSubscriptionPaymentWidget::class
+            AvgSubscriptionPaymentWidget::class,
         );
         $widgetManager->registerWidget(
             'payments.admin.edit_form.after',
-            ChangePaymentSubscriptionTypeWidget::class
+            ChangePaymentSubscriptionTypeWidget::class,
         );
 
         $widgetManager->registerWidget(
@@ -360,12 +360,12 @@ class PaymentsModule extends CrmModule
         );
         $widgetManager->registerWidget(
             'admin.subscriptions.show.right',
-            SubscriptionDetailWidget::class
+            SubscriptionDetailWidget::class,
         );
 
         $widgetManager->registerWidget(
             'admin.payment.status.dropdown_menu',
-            PaymentStatusDropdownMenuWidget::class
+            PaymentStatusDropdownMenuWidget::class,
         );
 
         $widgetManager->registerWidget(
@@ -380,11 +380,11 @@ class PaymentsModule extends CrmModule
 
         $widgetManager->registerWidget(
             'admin.refund_payment.show.left',
-            RefundPaymentItemsListWidget::class
+            RefundPaymentItemsListWidget::class,
         );
         $widgetManager->registerWidget(
             'admin.refund_payment.show.right',
-            PaymentDetailPanelWidget::class
+            PaymentDetailPanelWidget::class,
         );
         $widgetManager->registerWidget(
             'admin.refund_payment.show.left',
@@ -394,26 +394,26 @@ class PaymentsModule extends CrmModule
         $widgetManager->registerWidget(
             'admin.subscriptions.transfer.summary.content',
             SubscriptionTransferInformationWidget::class,
-            priority: 110
+            priority: 110,
         );
         $widgetManager->registerWidget(
             'admin.subscriptions.transfer.summary.right',
-            PaymentDetailPanelWidget::class
+            PaymentDetailPanelWidget::class,
         );
 
         $widgetManager->registerWidget(
             'admin.subscriptions.transfer.summary.right',
-            SubscriptionTransferSummaryWidget::class
+            SubscriptionTransferSummaryWidget::class,
         );
 
         $widgetManager->registerWidget(
             'subscriptions.admin.user_subscriptions_listing.subscription',
-            ShowRenewalPaymentForSubscriptionWidget::class
+            ShowRenewalPaymentForSubscriptionWidget::class,
         );
 
         $widgetManager->registerWidget(
             'admin.payment.payment_country_change.right',
-            PaymentDetailPanelWidget::class
+            PaymentDetailPanelWidget::class,
         );
         $widgetManager->registerWidget(
             'admin.payments.listing.action.menu',
@@ -451,40 +451,40 @@ class PaymentsModule extends CrmModule
             new ApiRoute(
                 new ApiIdentifier('1', 'payments', 'variable-symbol'),
                 VariableSymbolApiHandler::class,
-                AdminLoggedAuthorization::class
-            )
+                AdminLoggedAuthorization::class,
+            ),
         );
 
         $apiRoutersContainer->attachRouter(
             new ApiRoute(
                 new ApiIdentifier('1', 'users', 'recurrent-payments'),
                 ListRecurrentPaymentsApiHandler::class,
-                UserTokenAuthorization::class
-            )
+                UserTokenAuthorization::class,
+            ),
         );
 
         $apiRoutersContainer->attachRouter(
             new ApiRoute(
                 new ApiIdentifier('1', 'recurrent-payment', 'reactivate'),
                 ReactivateRecurrentPaymentApiHandler::class,
-                UserTokenAuthorization::class
-            )
+                UserTokenAuthorization::class,
+            ),
         );
 
         $apiRoutersContainer->attachRouter(
             new ApiRoute(
                 new ApiIdentifier('1', 'recurrent-payment', 'stop'),
                 StopRecurrentPaymentApiHandler::class,
-                UserTokenAuthorization::class
-            )
+                UserTokenAuthorization::class,
+            ),
         );
 
         $apiRoutersContainer->attachRouter(
             new ApiRoute(
                 new ApiIdentifier('1', 'payments', 'paypal-ipn'),
                 PaypalIpnHandler::class,
-                NoAuthorization::class
-            )
+                NoAuthorization::class,
+            ),
         );
     }
 
@@ -542,11 +542,11 @@ class PaymentsModule extends CrmModule
 
         $scenariosCriteriaStorage->registerConditionModel(
             'payment',
-            $this->getInstance(PaymentScenarioConditionModel::class)
+            $this->getInstance(PaymentScenarioConditionModel::class),
         );
         $scenariosCriteriaStorage->registerConditionModel(
             'recurrent_payment',
-            $this->getInstance(RecurrentPaymentScenarioConditionModel::class)
+            $this->getInstance(RecurrentPaymentScenarioConditionModel::class),
         );
     }
 
@@ -561,45 +561,45 @@ class PaymentsModule extends CrmModule
     {
         $dataProviderManager->registerDataProvider(
             'subscriptions.dataprovider.ending_subscriptions',
-            $this->getInstance(SubscriptionsWithActiveUnchargedRecurrentEndingWithinPeriodDataProvider::class)
+            $this->getInstance(SubscriptionsWithActiveUnchargedRecurrentEndingWithinPeriodDataProvider::class),
         );
         $dataProviderManager->registerDataProvider(
             'subscriptions.dataprovider.ending_subscriptions',
-            $this->getInstance(SubscriptionsWithoutExtensionEndingWithinPeriodDataProvider::class)
+            $this->getInstance(SubscriptionsWithoutExtensionEndingWithinPeriodDataProvider::class),
         );
         $dataProviderManager->registerDataProvider(
             'subscriptions.dataprovider.payment_from_variable_symbol',
-            $this->getInstance(PaymentFromVariableSymbolDataProvider::class)
+            $this->getInstance(PaymentFromVariableSymbolDataProvider::class),
         );
         $dataProviderManager->registerDataProvider(
             'users.dataprovider.address.can_delete',
-            $this->getInstance(CanDeleteAddressDataProvider::class)
+            $this->getInstance(CanDeleteAddressDataProvider::class),
         );
         $dataProviderManager->registerDataProvider(
             'users.dataprovider.claim_unclaimed_user',
-            $this->getInstance(PaymentsClaimUserDataProvider::class)
+            $this->getInstance(PaymentsClaimUserDataProvider::class),
         );
         $dataProviderManager->registerDataProvider(
             'users.dataprovider.claim_unclaimed_user',
-            $this->getInstance(RecurrentPaymentsClaimUserDataProvider::class)
+            $this->getInstance(RecurrentPaymentsClaimUserDataProvider::class),
         );
         $dataProviderManager->registerDataProvider(
             'payments.dataprovider.dashboard',
-            $this->getInstance(PaymentItemTypesFilterDataProvider::class)
+            $this->getInstance(PaymentItemTypesFilterDataProvider::class),
         );
 
         $dataProviderManager->registerDataProvider(
             SubscriptionFormDataProviderInterface::PATH,
-            $this->getInstance(SubscriptionFormDataProvider::class)
+            $this->getInstance(SubscriptionFormDataProvider::class),
         );
 
         $dataProviderManager->registerDataProvider(
             'admin.dataprovider.universal_search',
-            $this->getInstance(UniversalSearchDataProvider::class)
+            $this->getInstance(UniversalSearchDataProvider::class),
         );
         $dataProviderManager->registerDataProvider(
             'sales_funnel.dataprovider.twig_variables',
-            $this->getInstance(SalesFunnelTwigVariablesDataProvider::class)
+            $this->getInstance(SalesFunnelTwigVariablesDataProvider::class),
         );
         $dataProviderManager->registerDataProvider(
             'subscriptions.dataprovider.transfer',
@@ -608,12 +608,12 @@ class PaymentsModule extends CrmModule
 
         $dataProviderManager->registerDataProvider(
             'admin.dataprovider.universal_search',
-            $this->getInstance(PaypalPaymentsUniversalSearchDataProvider::class)
+            $this->getInstance(PaypalPaymentsUniversalSearchDataProvider::class),
         );
 
         $dataProviderManager->registerDataProvider(
             'payments.dataprovider.payments_filter_form',
-            $this->getInstance(PaypalIdAdminFilterFormDataProvider::class)
+            $this->getInstance(PaypalIdAdminFilterFormDataProvider::class),
         );
 
         $dataProviderManager->registerDataProvider(
@@ -632,19 +632,19 @@ class PaymentsModule extends CrmModule
         $emitter->addListener(
             PaymentChangeStatusEvent::class,
             PaymentStatusChangeHandler::class,
-            500
+            500,
         );
         $emitter->addListener(
             SubscriptionPreUpdateEvent::class,
-            SubscriptionPreUpdateHandler::class
+            SubscriptionPreUpdateHandler::class,
         );
         $emitter->addListener(
             RecurrentPaymentCardExpiredEvent::class,
-            RecurrentPaymentCardExpiredEventHandler::class
+            RecurrentPaymentCardExpiredEventHandler::class,
         );
         $emitter->addListener(
             SubscriptionMovedEvent::class,
-            SubscriptionMovedHandler::class
+            SubscriptionMovedHandler::class,
         );
         $emitter->addListener(
             AttachRenewalPaymentEvent::class,
@@ -660,15 +660,15 @@ class PaymentsModule extends CrmModule
     {
         $dispatcher->registerHandler(
             'retention-analysis-job',
-            $this->getInstance(RetentionAnalysisJobHandler::class)
+            $this->getInstance(RetentionAnalysisJobHandler::class),
         );
         $dispatcher->registerHandler(
             'export-payments',
-            $this->getInstance(ExportPaymentsHandler::class)
+            $this->getInstance(ExportPaymentsHandler::class),
         );
         $dispatcher->registerHandler(
             'payment-method-anonymized-external-token',
-            $this->getInstance(AnonymizedExternalTokenHandler::class)
+            $this->getInstance(AnonymizedExternalTokenHandler::class),
         );
     }
 

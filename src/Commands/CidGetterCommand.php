@@ -19,7 +19,7 @@ class CidGetterCommand extends Command
 
     public function __construct(
         CidGetterDownloader $cidMailDownloader,
-        MailProcessor $mailProcessor
+        MailProcessor $mailProcessor,
     ) {
         parent::__construct();
         $this->cidMailDownloader = $cidMailDownloader;
@@ -33,7 +33,7 @@ class CidGetterCommand extends Command
             ->addArgument(
                 'variable_symbol',
                 InputArgument::REQUIRED,
-                'variable symbol of originating payment that should have been confirmed'
+                'variable symbol of originating payment that should have been confirmed',
             );
     }
 

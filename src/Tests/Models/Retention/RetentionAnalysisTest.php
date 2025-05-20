@@ -123,7 +123,7 @@ class RetentionAnalysisTest extends DatabaseTestCase
                         'count' => 0,
                         'users_in_period' => 1,
                         'incomplete' => true,
-                    ]
+                    ],
                 ],
                 '2023-01' => [
                     [
@@ -151,9 +151,9 @@ class RetentionAnalysisTest extends DatabaseTestCase
                         'users_in_period' => 2,
                         'incomplete' => true,
                     ],
-                ]
+                ],
             ],
-            Json::decode($job->results, forceArrays: true)['retention']
+            Json::decode($job->results, forceArrays: true)['retention'],
         );
     }
 
@@ -256,9 +256,9 @@ class RetentionAnalysisTest extends DatabaseTestCase
                         'users_in_period' => 1,
                         'incomplete' => true,
                     ],
-                ]
+                ],
             ],
-            Json::decode($job->results, forceArrays: true)['retention']
+            Json::decode($job->results, forceArrays: true)['retention'],
         );
     }
 
@@ -303,7 +303,7 @@ class RetentionAnalysisTest extends DatabaseTestCase
                 'startTime' => new DateTime('2023-01-01'),
                 'endTime' => new DateTime('2023-02-01'),
                 'paidAt' => new DateTime('2023-01-01'),
-            ]
+            ],
         ];
 
         foreach ($data as $dataRow) {
@@ -312,7 +312,7 @@ class RetentionAnalysisTest extends DatabaseTestCase
                 subscriptionType: $subscriptionType,
                 user: $user,
                 from: $dataRow['startTime'],
-                to: $dataRow['endTime']
+                to: $dataRow['endTime'],
             );
             $payment = $this->addPayment($subscriptionType, $user, $dataRow['paidAt']);
             $this->paymentsRepository->addSubscriptionToPayment($subscription, $payment);
@@ -355,7 +355,7 @@ class RetentionAnalysisTest extends DatabaseTestCase
             $user,
             $type,
             $from,
-            $to
+            $to,
         );
     }
 

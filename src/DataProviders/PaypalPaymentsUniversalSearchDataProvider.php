@@ -16,7 +16,7 @@ class PaypalPaymentsUniversalSearchDataProvider implements UniversalSearchDataPr
         private readonly PaymentsRepository $paymentsRepository,
         private readonly LinkGenerator $linkGenerator,
         private readonly Translator $translator,
-        private readonly UserDateHelper $userDateHelper
+        private readonly UserDateHelper $userDateHelper,
     ) {
     }
 
@@ -31,7 +31,7 @@ class PaypalPaymentsUniversalSearchDataProvider implements UniversalSearchDataPr
                 ->where([
                     ':payment_meta.key' => 'transaction_id',
                     ':payment_meta.value' => $term,
-                    'payment_gateway.code' => [Paypal::GATEWAY_CODE, PaypalReference::GATEWAY_CODE]
+                    'payment_gateway.code' => [Paypal::GATEWAY_CODE, PaypalReference::GATEWAY_CODE],
                 ])
                 ->fetch();
 

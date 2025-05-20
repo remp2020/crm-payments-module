@@ -46,7 +46,7 @@ class DashboardPresenter extends AdminPresenter
     private array $defaultPaymentItemTypesFilter = [];
 
     public function __construct(
-        DataProviderManager $dataProviderManager
+        DataProviderManager $dataProviderManager,
     ) {
         parent::__construct();
         $this->dataProviderManager = $dataProviderManager;
@@ -91,7 +91,7 @@ class DashboardPresenter extends AdminPresenter
             'recurrentCharge' => $this->recurrentCharge,
             'dateFrom' => $this->dateFrom,
             'dateTo' => $this->dateTo,
-            'paymentItemTypes' => $this->paymentItemTypes
+            'paymentItemTypes' => $this->paymentItemTypes,
         ];
     }
 
@@ -117,14 +117,14 @@ class DashboardPresenter extends AdminPresenter
                 ->addMultiSelect(
                     'payment_item_types',
                     'payments.admin.dashboard.payment_item_types.label',
-                    $this->availablePaymentItemTypesFilter
+                    $this->availablePaymentItemTypesFilter,
                 )
                 ->getControlPrototype()->addAttributes(['class' => 'select2'])->setAttribute('style', 'min-width:200px');
         }
 
         $form[DateFilterFormFactory::OPTIONAL]->setDefaults([
             'recurrent_charge' => $this->recurrentCharge,
-            'payment_item_types' => Json::decode($this->paymentItemTypes)
+            'payment_item_types' => Json::decode($this->paymentItemTypes),
         ]);
 
         $form->onSuccess[] = function ($form, $values) {
@@ -245,7 +245,7 @@ class DashboardPresenter extends AdminPresenter
                 ->setSeries('users.source')
                 ->setValueField('count(DISTINCT payments.id)')
                 ->setStart(DateTime::from($this->dateFrom))
-                ->setEnd(DateTime::from($this->dateTo))
+                ->setEnd(DateTime::from($this->dateTo)),
         );
 
         $control = $factory->create();

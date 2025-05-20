@@ -20,7 +20,7 @@ class ChangePaymentSubscriptionTypeWidget extends BaseLazyWidget
 
     public function __construct(
         LazyWidgetManager $lazyWidgetManager,
-        Translator $translator
+        Translator $translator,
     ) {
         parent::__construct($lazyWidgetManager);
         $this->translator = $translator;
@@ -48,15 +48,15 @@ class ChangePaymentSubscriptionTypeWidget extends BaseLazyWidget
         $this->template->link = $this->getPresenter()->link(
             ':Subscriptions:SubscriptionTypesAdmin:changeSubscriptionType',
             [
-                'id' => $payment->id
-            ]
+                'id' => $payment->id,
+            ],
         );
         $this->template->setFile(__DIR__ . '/' . $this->templateName);
         $this->template->render();
     }
 
     public function createComponentChangePaymentSubscriptionTypeForm(
-        ChangePaymentSubscriptionTypeFormFactory $changeSubscriptionTypeFormFactory
+        ChangePaymentSubscriptionTypeFormFactory $changeSubscriptionTypeFormFactory,
     ): Form {
         if (isset($this->payment)) {
             $changeSubscriptionTypeFormFactory->setPayment($this->payment);
@@ -64,7 +64,7 @@ class ChangePaymentSubscriptionTypeWidget extends BaseLazyWidget
         $form = $changeSubscriptionTypeFormFactory->create();
         $changeSubscriptionTypeFormFactory->onSave = function () {
             $this->getPresenter()->flashMessage(
-                $this->translator->translate('payments.admin.component.change_payment_subscription_type_widget.success')
+                $this->translator->translate('payments.admin.component.change_payment_subscription_type_widget.success'),
             );
             $this->getPresenter()->redirect('this');
         };

@@ -32,7 +32,7 @@ class SubscribersWithPaymentWidget extends BaseLazyWidget
     public function __construct(
         LazyWidgetManager $lazyWidgetManager,
         SegmentsRepository $segmentsRepository,
-        SegmentsValuesRepository $segmentsValuesRepository
+        SegmentsValuesRepository $segmentsValuesRepository,
     ) {
         parent::__construct($lazyWidgetManager);
 

@@ -19,7 +19,7 @@ class AvgSubscriptionPaymentWidget extends BaseLazyWidget implements SegmentWidg
     public function __construct(
         LazyWidgetManager $lazyWidgetManager,
         CacheRepository $cacheRepository,
-        UserStatsRepository $userStatsRepository
+        UserStatsRepository $userStatsRepository,
     ) {
         parent::__construct($lazyWidgetManager);
         $this->cacheRepository = $cacheRepository;

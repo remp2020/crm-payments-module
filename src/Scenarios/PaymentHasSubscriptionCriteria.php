@@ -24,7 +24,7 @@ class PaymentHasSubscriptionCriteria implements ScenariosCriteriaInterface
         return [
             new BooleanParam(
                 self::KEY,
-                $this->translator->translate('payments.admin.scenarios.payment_has_subscription.label')
+                $this->translator->translate('payments.admin.scenarios.payment_has_subscription.label'),
             ),
         ];
     }

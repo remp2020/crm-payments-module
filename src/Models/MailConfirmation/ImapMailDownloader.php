@@ -14,7 +14,7 @@ class ImapMailDownloader implements MailDownloaderInterface
             $options['imapPort'],
             $options['username'],
             $options['password'],
-            $options['processedFolder']
+            $options['processedFolder'],
         );
 
         $downloader->fetch($options['criteria'], function (\Tomaj\ImapMailDownloader\Email $email) use ($callback) {

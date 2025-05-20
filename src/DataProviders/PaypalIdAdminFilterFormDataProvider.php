@@ -34,7 +34,7 @@ class PaypalIdAdminFilterFormDataProvider implements AdminFilterFormDataProvider
             ->where([
                 ':payment_meta.key' => 'transaction_id',
                 ':payment_meta.value' => $externalId,
-                'payment_gateway.code' => [Paypal::GATEWAY_CODE, PaypalReference::GATEWAY_CODE]
+                'payment_gateway.code' => [Paypal::GATEWAY_CODE, PaypalReference::GATEWAY_CODE],
             ])
             ->fetchPairs('id', 'id');
 

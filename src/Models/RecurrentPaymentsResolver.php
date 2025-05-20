@@ -164,7 +164,7 @@ class RecurrentPaymentsResolver
         $providers = $this->dataProviderManager->getProviders(
             RecurrentPaymentPaymentItemContainerDataProviderInterface::PATH,
             //'payments.dataprovider.recurrent_payment_payment_item_container',
-            RecurrentPaymentPaymentItemContainerDataProviderInterface::class
+            RecurrentPaymentPaymentItemContainerDataProviderInterface::class,
         );
         foreach ($providers as $s => $provider) {
             $resolvedContainer = $provider->createPaymentItemContainer($recurrentPayment, $subscriptionType);
@@ -190,7 +190,7 @@ class RecurrentPaymentsResolver
             ) {
                 $paymentItemContainer = $this->paymentItemContainerFactory->createFromPayment(
                     $parentPayment,
-                    [SubscriptionTypePaymentItem::TYPE]
+                    [SubscriptionTypePaymentItem::TYPE],
                 );
 
                 // In case of subscription type VAT change, parent payment would copy incorrect VAT rates
@@ -222,7 +222,7 @@ class RecurrentPaymentsResolver
         // let modules add own items to PaymentItemContainer
         $this->emitter->emit(new RecurrentPaymentItemContainerReadyEvent(
             $paymentItemContainer,
-            $recurrentPayment
+            $recurrentPayment,
         ));
 
         return $paymentItemContainer;
@@ -238,8 +238,8 @@ class RecurrentPaymentsResolver
             new DonationPaymentItem(
                 $this->translator->translate('payments.admin.donation'),
                 $additionalAmount,
-                (int) $donationPaymentVat
-            )
+                (int) $donationPaymentVat,
+            ),
         );
     }
 
@@ -299,7 +299,7 @@ class RecurrentPaymentsResolver
             $recurrentPayment,
             $subscriptionType,
             $additionalAmount,
-            $additionalType
+            $additionalType,
         );
 
         // One Stop Shop
@@ -345,7 +345,7 @@ class RecurrentPaymentsResolver
             $additionalType,
             $address,
             $paymentCountry,
-            $paymentCountryResolutionReason
+            $paymentCountryResolutionReason,
         );
     }
 

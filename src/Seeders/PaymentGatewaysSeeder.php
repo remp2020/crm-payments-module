@@ -32,7 +32,7 @@ class PaymentGatewaysSeeder implements ISeeder
                 'Paypal',
                 Paypal::GATEWAY_CODE,
                 10,
-                true
+                true,
             );
             $output->writeln('  <comment>* payment gateway <info>paypal</info> created</comment>');
         } else {
@@ -45,7 +45,7 @@ class PaymentGatewaysSeeder implements ISeeder
                 PaypalReference::GATEWAY_CODE,
                 15,
                 true,
-                true
+                true,
             );
             $output->writeln('  <comment>* payment gateway <info>paypal</info> created</comment>');
         } else {
@@ -58,7 +58,7 @@ class PaymentGatewaysSeeder implements ISeeder
                 'CardPay',
                 Cardpay::GATEWAY_CODE,
                 20,
-                true
+                true,
             );
             $output->writeln('  <comment>* payment gateway <info>cardpay</info> created</comment>');
         } else {
@@ -71,7 +71,7 @@ class PaymentGatewaysSeeder implements ISeeder
                 Comfortpay::GATEWAY_CODE,
                 21,
                 true,
-                true
+                true,
             );
             $output->writeln('  <comment>* payment gateway <info>comfortpay</info> created</comment>');
         } else {
@@ -83,7 +83,7 @@ class PaymentGatewaysSeeder implements ISeeder
                 'TatraPay',
                 Tatrapay::GATEWAY_CODE,
                 30,
-                true
+                true,
             );
             $output->writeln('  <comment>* payment gateway <info>tatrapay</info> created</comment>');
         } else {
@@ -95,7 +95,7 @@ class PaymentGatewaysSeeder implements ISeeder
                 'Bankový prevod',
                 BankTransfer::GATEWAY_CODE,
                 40,
-                true
+                true,
             );
             $output->writeln('  <comment>* payment gateway <info>bank_transfer</info> created</comment>');
         } else {
@@ -107,7 +107,7 @@ class PaymentGatewaysSeeder implements ISeeder
                 'ČSOB',
                 Csob::GATEWAY_CODE,
                 22,
-                true
+                true,
             );
             $output->writeln('  <comment>* payment gateway <info>csob</info> created</comment>');
         } else {
@@ -120,7 +120,7 @@ class PaymentGatewaysSeeder implements ISeeder
                 CsobOneClick::GATEWAY_CODE,
                 23,
                 true,
-                true
+                true,
             );
             $output->writeln('  <comment>* payment gateway <info>csob_one_click</info> created</comment>');
         } else {
@@ -131,7 +131,7 @@ class PaymentGatewaysSeeder implements ISeeder
                 'Free',
                 Free::GATEWAY_CODE,
                 10,
-                true
+                true,
             );
             $output->writeln('  <comment>* payment gateway <info>Free</info> created</comment>');
         } else {
@@ -143,7 +143,7 @@ class PaymentGatewaysSeeder implements ISeeder
                 'CardPay Authorization',
                 CardPayAuthorization::GATEWAY_CODE,
                 25,
-                false
+                false,
             );
             $output->writeln('  <comment>* payment gateway <info>CardPay Authorization</info> created</comment>');
         } else {

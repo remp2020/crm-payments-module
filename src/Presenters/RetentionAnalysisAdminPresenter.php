@@ -22,7 +22,7 @@ class RetentionAnalysisAdminPresenter extends AdminPresenter
         private RetentionAnalysisJobsRepository $retentionAnalysisJobsRepository,
         private RetentionAnalysis $retentionAnalysis,
         private RetentionAnalysisFilterFormFactory $retentionAnalysisFilterFormFactory,
-        private Emitter $hermesEmitter
+        private Emitter $hermesEmitter,
     ) {
         parent::__construct();
     }
@@ -41,7 +41,7 @@ class RetentionAnalysisAdminPresenter extends AdminPresenter
 
         $jobs = $jobs->limit(
             $paginator->getLength(),
-            $paginator->getOffset()
+            $paginator->getOffset(),
         )->fetchAll();
         $pnp->setActualItemCount(count($jobs));
 
@@ -109,7 +109,7 @@ class RetentionAnalysisAdminPresenter extends AdminPresenter
         ]);
 
         $this->hermesEmitter->emit(new HermesMessage('retention-analysis-job', [
-            'id' => $job->id
+            'id' => $job->id,
         ]), HermesMessage::PRIORITY_LOW);
 
         $this->flashMessage($this->translator->translate('payments.admin.retention_analysis.job_was_rerun'));
@@ -281,7 +281,7 @@ class RetentionAnalysisAdminPresenter extends AdminPresenter
                         'retention_count' => $retentionCount,
                         'users_count' => $period['users_in_period'],
                         'color' => 'churn-color-' . floor($ratio * 10) * 10,
-                        'percentage' =>  number_format($ratio * 100, 1, '.', '') . '%' . ($period['incomplete'] ?? false ? '*' : '')
+                        'percentage' =>  number_format($ratio * 100, 1, '.', '') . '%' . ($period['incomplete'] ?? false ? '*' : ''),
                     ];
                 }
                 $tableRows[] = $tableRow;
@@ -357,7 +357,7 @@ class RetentionAnalysisAdminPresenter extends AdminPresenter
         unset($params['action'], $params['submitted']);
         $job = $this->retentionAnalysisJobsRepository->add($values['name'], Json::encode($params));
         $this->hermesEmitter->emit(new HermesMessage('retention-analysis-job', [
-            'id' => $job->id
+            'id' => $job->id,
         ]), HermesMessage::PRIORITY_LOW);
 
         $this->flashMessage($this->translator->translate('payments.admin.retention_analysis.analysis_was_scheduled'));

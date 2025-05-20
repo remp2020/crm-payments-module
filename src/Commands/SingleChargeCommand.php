@@ -39,28 +39,28 @@ class SingleChargeCommand extends Command
                 'cid',
                 null,
                 InputOption::VALUE_REQUIRED,
-                'CID to charge'
+                'CID to charge',
             )
             ->addOption(
                 'amount',
                 null,
                 InputOption::VALUE_REQUIRED,
-                'Amount that the user will be charged'
+                'Amount that the user will be charged',
             )->addOption(
                 'description',
                 null,
                 InputOption::VALUE_REQUIRED,
-                'User-readable description what charge includes / why it was charged'
+                'User-readable description what charge includes / why it was charged',
             )->addOption(
                 'subscription_type_code',
                 null,
                 InputOption::VALUE_REQUIRED,
-                'Code of subscription type to be used in payment'
+                'Code of subscription type to be used in payment',
             )->addOption(
                 'payment_country_code',
                 null,
                 InputOption::VALUE_REQUIRED,
-                'ISO code of payment country for One Stop Shop country resolution. Use if you want to specify payment country manually'
+                'ISO code of payment country for One Stop Shop country resolution. Use if you want to specify payment country manually',
             );
     }
 

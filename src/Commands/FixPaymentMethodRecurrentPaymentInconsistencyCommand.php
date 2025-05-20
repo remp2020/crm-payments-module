@@ -39,7 +39,7 @@ class FixPaymentMethodRecurrentPaymentInconsistencyCommand extends Command
             // use CID because original payment method can already be anonymized
             $paymentMethod = $this->paymentMethodsRepository->findByExternalToken(
                 $recurrentPayment->user_id,
-                $recurrentPayment->cid
+                $recurrentPayment->cid,
             );
 
             if (!$paymentMethod) {
@@ -57,7 +57,7 @@ class FixPaymentMethodRecurrentPaymentInconsistencyCommand extends Command
             $this->recurrentPaymentsRepository->update(
                 $recurrentPayment,
                 [
-                    'payment_method_id' => $paymentMethod->id
+                    'payment_method_id' => $paymentMethod->id,
                 ],
             );
         }

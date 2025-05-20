@@ -27,7 +27,7 @@ final class AuthorizationPaymentItem implements PaymentItemInterface
         return new AuthorizationPaymentItem(
             $paymentItem->name,
             $paymentItem->amount,
-            self::loadMeta($paymentItem)
+            self::loadMeta($paymentItem),
         );
     }
 

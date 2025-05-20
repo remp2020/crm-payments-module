@@ -31,7 +31,7 @@ class PaymentItemsRepository extends Repository
         private readonly DataProviderManager $dataProviderManager,
         private readonly Explorer $dbContext,
         AuditLogRepository $auditLogRepository,
-        Storage $cacheStorage = null
+        Storage $cacheStorage = null,
     ) {
         parent::__construct($this->dbContext, $cacheStorage);
         $this->auditLogRepository = $auditLogRepository;

@@ -21,7 +21,7 @@ class TestPaymentGatewaysSeeder implements ISeeder
             $this->paymentGatewaysRepository->add(
                 name: TestRecurrentGateway::GATEWAY_CODE,
                 code: TestRecurrentGateway::GATEWAY_CODE,
-                isRecurrent: true
+                isRecurrent: true,
             );
             $output->writeln('  <comment>* payment gateway <info>' . TestRecurrentGateway::GATEWAY_CODE . '</info> created</comment>');
         } else {
@@ -32,7 +32,7 @@ class TestPaymentGatewaysSeeder implements ISeeder
             $this->paymentGatewaysRepository->add(
                 name: TestSingleGateway::GATEWAY_CODE,
                 code: TestSingleGateway::GATEWAY_CODE,
-                isRecurrent: false
+                isRecurrent: false,
             );
             $output->writeln('  <comment>* payment gateway <info>' . TestSingleGateway::GATEWAY_CODE . '</info> created</comment>');
         } else {

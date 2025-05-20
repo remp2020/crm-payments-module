@@ -44,7 +44,7 @@ class AssignRenewalPaymentToSubscriptionFormFactory
         /** @var AssignRenewalPaymentToSubscriptionFormDataProviderInterface[] $providers */
         $providers = $this->dataProviderManager->getProviders(
             'payments.dataprovider.assign_renewal_payment',
-            AssignRenewalPaymentToSubscriptionFormDataProviderInterface::class
+            AssignRenewalPaymentToSubscriptionFormDataProviderInterface::class,
         );
         foreach ($providers as $sorting => $provider) {
             $form = $provider->provide(['form' => $form, 'mainGroup' => $mainGroup, 'subscription' => $subscription]);
@@ -83,7 +83,7 @@ class AssignRenewalPaymentToSubscriptionFormFactory
         if ($renewalPayment->status !== PaymentStatusEnum::Form->value || $renewalPayment->user_id !== $subscription->user_id) {
             $form->addError($this->translator->translate(
                 'payments.admin.component.assign_renewal_payment_subscription_form.error',
-                ['payment_id' => $renewalPayment, 'subscription_id' => $data['subscription_id']]
+                ['payment_id' => $renewalPayment, 'subscription_id' => $data['subscription_id']],
             ));
         }
     }
@@ -95,7 +95,7 @@ class AssignRenewalPaymentToSubscriptionFormFactory
         /** @var AssignRenewalPaymentToSubscriptionFormDataProviderInterface[] $providers */
         $providers = $this->dataProviderManager->getProviders(
             'payments.dataprovider.assign_renewal_payment',
-            AssignRenewalPaymentToSubscriptionFormDataProviderInterface::class
+            AssignRenewalPaymentToSubscriptionFormDataProviderInterface::class,
         );
         foreach ($providers as $sorting => $provider) {
             $form = $provider->formSucceeded($form, $values);
@@ -122,7 +122,7 @@ class AssignRenewalPaymentToSubscriptionFormFactory
         $paymentOptions = $this->paymentsRepository->getTable()
             ->whereOr([
                 'status = ? AND user_id = ?' => [PaymentStatusEnum::Form->value, $subscription->user_id],
-                'id' => $assignedRenewalPayment?->id
+                'id' => $assignedRenewalPayment?->id,
             ])
             ->order('created_at DESC');
 
@@ -137,7 +137,7 @@ class AssignRenewalPaymentToSubscriptionFormFactory
         $form->addSelect(
             'renewal_payment_id',
             'payments.admin.component.assign_renewal_payment_subscription_form.renewal_payment',
-            $this->preparePaymentOptions($paymentOptions)
+            $this->preparePaymentOptions($paymentOptions),
         )
             ->setDisabled($disableOptions)
             ->setDefaultValue($assignedRenewalPayment?->id)
@@ -146,7 +146,7 @@ class AssignRenewalPaymentToSubscriptionFormFactory
             ->getControlPrototype()
             ->addAttributes([
                 'class' => 'select2',
-                'id' => 'renewal_payment_id'
+                'id' => 'renewal_payment_id',
             ]);
 
         $form->addSubmit('submit', 'payments.admin.component.assign_renewal_payment_subscription_form.submit')

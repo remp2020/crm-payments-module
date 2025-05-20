@@ -34,7 +34,7 @@ class AttachRenewalPaymentEventHandlerTest extends PaymentsTestCase
         $this->lazyEventEmitter = $this->inject(LazyEventEmitter::class);
         $this->lazyEventEmitter->addListener(
             AttachRenewalPaymentEvent::class,
-            $this->inject(AttachRenewalPaymentEventHandler::class)
+            $this->inject(AttachRenewalPaymentEventHandler::class),
         );
 
         $this->subscriptionType('web_1', 10.0, ['web'], true);
@@ -106,7 +106,7 @@ class AttachRenewalPaymentEventHandlerTest extends PaymentsTestCase
                 $this->subscriptionTypes[$baseSubscription['subscriptionType']],
                 [
                     'next_subscription_type_id' => $this->subscriptionTypes[$baseSubscription['nextSubscriptionType']]->id,
-                ]
+                ],
             );
         }
 
@@ -130,7 +130,7 @@ class AttachRenewalPaymentEventHandlerTest extends PaymentsTestCase
                 $user,
                 new PaymentItemContainer(),
                 null,
-                1
+                1,
             );
 
             $this->paymentsRepository->addSubscriptionToPayment($subscription, $paymentRow);

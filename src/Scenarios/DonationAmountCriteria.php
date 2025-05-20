@@ -20,7 +20,7 @@ class DonationAmountCriteria implements ScenariosCriteriaInterface
 
     public function __construct(
         ApplicationConfig $applicationConfig,
-        Translator $translator
+        Translator $translator,
     ) {
         $this->applicationConfig = $applicationConfig;
         $this->translator = $translator;
@@ -33,7 +33,7 @@ class DonationAmountCriteria implements ScenariosCriteriaInterface
                 self::KEY,
                 $this->translator->translate('payments.admin.scenarios.donation_amount.label'),
                 $this->applicationConfig->get('currency'),
-                ['>', '=']
+                ['>', '='],
             ),
         ];
     }
@@ -46,7 +46,7 @@ class DonationAmountCriteria implements ScenariosCriteriaInterface
         $selection->where(
             ":payment_items.type = ? AND :payment_items.amount {$operator} ?",
             DonationPaymentItem::TYPE,
-            $amount
+            $amount,
         );
         return true;
     }

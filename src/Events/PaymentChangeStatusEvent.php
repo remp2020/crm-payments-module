@@ -10,7 +10,7 @@ class PaymentChangeStatusEvent extends AbstractEvent implements PaymentEventInte
 {
     public function __construct(
         private ActiveRow $payment,
-        private bool $sendEmail = false
+        private bool $sendEmail = false,
     ) {
     }
 

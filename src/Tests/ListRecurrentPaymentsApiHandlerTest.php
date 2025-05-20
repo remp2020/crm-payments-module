@@ -159,7 +159,7 @@ class ListRecurrentPaymentsApiHandlerTest extends PaymentsTestCase
             $payment,
             $chargeAt,
             null,
-            1
+            1,
         );
     }
 

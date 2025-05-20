@@ -20,7 +20,7 @@ class ConfigsSeeder implements ISeeder
         private ConfigCategoriesRepository $configCategoriesRepository,
         private ConfigsRepository $configsRepository,
         private ConfigBuilder $configBuilder,
-        private Connection $database
+        private Connection $database,
     ) {
     }
 
@@ -43,7 +43,7 @@ class ConfigsSeeder implements ISeeder
             'payments.config.recurrent_charge_before.name',
             'payments.config.recurrent_charge_before.description',
             '',
-            300
+            300,
         );
 
         $this->addConfig(
@@ -54,7 +54,7 @@ class ConfigsSeeder implements ISeeder
             'payments.config.donation_vat_rate.name',
             null,
             null,
-            800
+            800,
         );
 
         $this->addConfig(
@@ -65,7 +65,7 @@ class ConfigsSeeder implements ISeeder
             'payments.config.enable_one_stop_shop.name',
             'payments.config.enable_one_stop_shop.description',
             false,
-            90
+            90,
         );
 
         $sorting = 1000;
@@ -80,7 +80,7 @@ class ConfigsSeeder implements ISeeder
             'payments.config.tatrapay_mid.name',
             null,
             'aoj',
-            $sorting++
+            $sorting++,
         );
 
         $this->addConfig(
@@ -91,7 +91,7 @@ class ConfigsSeeder implements ISeeder
             'payments.config.tatrapay_sharedsecret.name',
             null,
             '',
-            $sorting++
+            $sorting++,
         );
 
         $this->addConfig(
@@ -102,7 +102,7 @@ class ConfigsSeeder implements ISeeder
             'payments.config.tatrapay_mode.name',
             null,
             'live',
-            $sorting++
+            $sorting++,
         );
 
         // CARDPAY
@@ -115,7 +115,7 @@ class ConfigsSeeder implements ISeeder
             'payments.config.cardpay_mid.name',
             null,
             '1joa',
-            $sorting++
+            $sorting++,
         );
 
         $this->addConfig(
@@ -126,7 +126,7 @@ class ConfigsSeeder implements ISeeder
             'payments.config.cardpay_sharedsecret.name',
             null,
             '',
-            $sorting++
+            $sorting++,
         );
 
         $this->addConfig(
@@ -137,7 +137,7 @@ class ConfigsSeeder implements ISeeder
             'payments.config.cardpay_mode.name',
             null,
             'live',
-            $sorting++
+            $sorting++,
         );
 
         // COMFORTPAY
@@ -150,7 +150,7 @@ class ConfigsSeeder implements ISeeder
             'payments.config.comfortpay_mid.name',
             null,
             '5120',
-            $sorting++
+            $sorting++,
         );
 
         $this->addConfig(
@@ -161,7 +161,7 @@ class ConfigsSeeder implements ISeeder
             'payments.config.comfortpay_ws.name',
             null,
             '668862',
-            $sorting++
+            $sorting++,
         );
 
         $this->addConfig(
@@ -172,7 +172,7 @@ class ConfigsSeeder implements ISeeder
             'payments.config.comfortpay_terminalid.name',
             null,
             '',
-            $sorting++
+            $sorting++,
         );
 
         $this->addConfig(
@@ -183,7 +183,7 @@ class ConfigsSeeder implements ISeeder
             'payments.config.comfortpay_sharedsecret.name',
             null,
             '',
-            $sorting++
+            $sorting++,
         );
 
         $this->addConfig(
@@ -194,7 +194,7 @@ class ConfigsSeeder implements ISeeder
             'payments.config.comfortpay_local_cert_path.name',
             'payments.config.comfortpay_local_passphrase_path.description',
             '',
-            $sorting++
+            $sorting++,
         );
 
         $this->addConfig(
@@ -205,7 +205,7 @@ class ConfigsSeeder implements ISeeder
             'payments.config.comfortpay_local_passphrase_path.name',
             'payments.config.comfortpay_local_passphrase_path.description',
             '',
-            $sorting++
+            $sorting++,
         );
 
         $this->addConfig(
@@ -216,7 +216,7 @@ class ConfigsSeeder implements ISeeder
             'payments.config.comfortpay_tem.name',
             'payments.config.comfortpay_tem.description',
             'admin@example.com',
-            $sorting++
+            $sorting++,
         );
 
         $this->addConfig(
@@ -227,7 +227,7 @@ class ConfigsSeeder implements ISeeder
             'payments.config.comfortpay_rem.name',
             'payments.config.comfortpay_rem.description',
             'admin@example.com',
-            $sorting++
+            $sorting++,
         );
 
         $this->addConfig(
@@ -238,7 +238,7 @@ class ConfigsSeeder implements ISeeder
             'payments.config.comfortpay_mode.name',
             null,
             'live',
-            $sorting++
+            $sorting++,
         );
 
         // PAYPAL
@@ -251,7 +251,7 @@ class ConfigsSeeder implements ISeeder
             'payments.config.paypal_mode.name',
             null,
             'live',
-            $sorting++
+            $sorting++,
         );
 
         $this->addConfig(
@@ -262,7 +262,7 @@ class ConfigsSeeder implements ISeeder
             'payments.config.paypal_username.name',
             null,
             '',
-            $sorting++
+            $sorting++,
         );
 
         $this->addConfig(
@@ -273,7 +273,7 @@ class ConfigsSeeder implements ISeeder
             'payments.config.paypal_password.name',
             null,
             '',
-            $sorting++
+            $sorting++,
         );
 
         $this->addConfig(
@@ -284,7 +284,7 @@ class ConfigsSeeder implements ISeeder
             'payments.config.paypal_signature.name',
             null,
             '',
-            $sorting++
+            $sorting++,
         );
 
         $this->addConfig(
@@ -295,7 +295,7 @@ class ConfigsSeeder implements ISeeder
             'payments.config.paypal_merchant.name',
             null,
             '',
-            $sorting++
+            $sorting++,
         );
 
         $this->addConfig(
@@ -306,7 +306,7 @@ class ConfigsSeeder implements ISeeder
             'payments.config.paypal_ipn_baseurl.name',
             null,
             'https://ipnpb.sandbox.paypal.com',
-            $sorting++
+            $sorting++,
         );
 
         $this->addConfig(
@@ -317,7 +317,7 @@ class ConfigsSeeder implements ISeeder
             'payments.config.paypal_ipn_email.name',
             'payments.config.paypal_ipn_email.description',
             null,
-            $sorting++
+            $sorting++,
         );
 
         $this->addConfig(
@@ -328,7 +328,7 @@ class ConfigsSeeder implements ISeeder
             'payments.config.csob_merchant_id.name',
             'payments.config.csob_merchant_id.description',
             '',
-            $sorting++
+            $sorting++,
         );
 
         $this->addConfig(
@@ -339,7 +339,7 @@ class ConfigsSeeder implements ISeeder
             'payments.config.csob_shop_name.name',
             'payments.config.csob_shop_name.description',
             '',
-            $sorting++
+            $sorting++,
         );
 
         $this->addConfig(
@@ -350,7 +350,7 @@ class ConfigsSeeder implements ISeeder
             'payments.config.csob_bank_public_key_file_path.name',
             'payments.config.csob_bank_public_key_file_path.description',
             '',
-            $sorting++
+            $sorting++,
         );
 
         $this->addConfig(
@@ -361,7 +361,7 @@ class ConfigsSeeder implements ISeeder
             'payments.config.csob_private_key_file_path.name',
             'payments.config.csob_private_key_file_path.description',
             '',
-            $sorting++
+            $sorting++,
         );
 
         $this->addConfig(
@@ -372,7 +372,7 @@ class ConfigsSeeder implements ISeeder
             'payments.config.csob_mode.name',
             'payments.config.csob_mode.description',
             '',
-            $sorting++
+            $sorting++,
         );
 
         // recurrent payments
@@ -385,7 +385,7 @@ class ConfigsSeeder implements ISeeder
             'payments.config.recurrent_payment_gateway_fail_delay.name',
             'payments.config.recurrent_payment_gateway_fail_delay.description',
             'PT1H',
-            $sorting++
+            $sorting++,
         );
 
         $this->addConfig(
@@ -396,7 +396,7 @@ class ConfigsSeeder implements ISeeder
             'payments.config.recurrent_payment_charges.name',
             'payments.config.recurrent_payment_charges.description',
             'PT15M, PT6H, PT6H, PT6H, PT6H',
-            $sorting++
+            $sorting++,
         );
 
         $confirmationCategory = $this->configCategoriesRepository->loadByName('payments.config.category_confirmation');
@@ -422,7 +422,7 @@ class ConfigsSeeder implements ISeeder
             'payments.config.tb_confirmation_host.name',
             'payments.config.tb_confirmation_host.description',
             $host,
-            201
+            201,
         );
 
         $this->addConfig(
@@ -433,7 +433,7 @@ class ConfigsSeeder implements ISeeder
             'payments.config.tb_confirmation_port.name',
             'payments.config.tb_confirmation_port.description',
             $port,
-            202
+            202,
         );
 
         $this->addConfig(
@@ -444,7 +444,7 @@ class ConfigsSeeder implements ISeeder
             'payments.config.tb_confirmation_username.name',
             'payments.config.tb_confirmation_username.description',
             $username,
-            203
+            203,
         );
 
         $this->addConfig(
@@ -455,7 +455,7 @@ class ConfigsSeeder implements ISeeder
             'payments.config.tb_confirmation_password.name',
             'payments.config.tb_confirmation_password.description',
             $password,
-            204
+            204,
         );
 
         $this->addConfig(
@@ -466,7 +466,7 @@ class ConfigsSeeder implements ISeeder
             'payments.config.tb_confirmation_processed_folder.name',
             'payments.config.tb_confirmation_processed_folder.description',
             $processedFolder,
-            205
+            205,
         );
 
         $this->addConfig(
@@ -477,7 +477,7 @@ class ConfigsSeeder implements ISeeder
             'payments.config.csob_confirmation_host.name',
             'payments.config.csob_confirmation_host.description',
             $host,
-            301
+            301,
         );
 
         $this->addConfig(
@@ -488,7 +488,7 @@ class ConfigsSeeder implements ISeeder
             'payments.config.csob_confirmation_port.name',
             'payments.config.csob_confirmation_port.description',
             $port,
-            302
+            302,
         );
 
         $this->addConfig(
@@ -499,7 +499,7 @@ class ConfigsSeeder implements ISeeder
             'payments.config.csob_confirmation_username.name',
             'payments.config.csob_confirmation_username.description',
             $username,
-            303
+            303,
         );
 
         $this->addConfig(
@@ -510,7 +510,7 @@ class ConfigsSeeder implements ISeeder
             'payments.config.csob_confirmation_password.name',
             'payments.config.csob_confirmation_password.description',
             $password,
-            304
+            304,
         );
 
         $this->addConfig(
@@ -521,7 +521,7 @@ class ConfigsSeeder implements ISeeder
             'payments.config.csob_confirmation_processed_folder.name',
             'payments.config.csob_confirmation_processed_folder.description',
             $processedFolder,
-            305
+            305,
         );
 
         $this->addConfig(
@@ -532,7 +532,7 @@ class ConfigsSeeder implements ISeeder
             'payments.config.sk_csob_confirmation_host.name',
             'payments.config.sk_csob_confirmation_host.description',
             $host,
-            401
+            401,
         );
 
         $this->addConfig(
@@ -543,7 +543,7 @@ class ConfigsSeeder implements ISeeder
             'payments.config.sk_csob_confirmation_port.name',
             'payments.config.sk_csob_confirmation_port.description',
             $port,
-            402
+            402,
         );
 
         $this->addConfig(
@@ -554,7 +554,7 @@ class ConfigsSeeder implements ISeeder
             'payments.config.sk_csob_confirmation_username.name',
             'payments.config.sk_csob_confirmation_username.description',
             $username,
-            403
+            403,
         );
 
         $this->addConfig(
@@ -565,7 +565,7 @@ class ConfigsSeeder implements ISeeder
             'payments.config.sk_csob_confirmation_password.name',
             'payments.config.sk_csob_confirmation_password.description',
             $password,
-            404
+            404,
         );
 
         $this->addConfig(
@@ -576,7 +576,7 @@ class ConfigsSeeder implements ISeeder
             'payments.config.sk_csob_confirmation_processed_folder.name',
             'payments.config.sk_csob_confirmation_processed_folder.description',
             $processedFolder,
-            405
+            405,
         );
 
         $this->addConfig(
@@ -587,7 +587,7 @@ class ConfigsSeeder implements ISeeder
             'payments.config.tbs_confirmation_host.name',
             'payments.config.tbs_confirmation_host.description',
             $host,
-            501
+            501,
         );
 
         $this->addConfig(
@@ -598,7 +598,7 @@ class ConfigsSeeder implements ISeeder
             'payments.config.tbs_confirmation_port.name',
             'payments.config.tbs_confirmation_port.description',
             $port,
-            502
+            502,
         );
 
         $this->addConfig(
@@ -609,7 +609,7 @@ class ConfigsSeeder implements ISeeder
             'payments.config.tbs_confirmation_username.name',
             'payments.config.tbs_confirmation_username.description',
             $username,
-            503
+            503,
         );
 
         $this->addConfig(
@@ -620,7 +620,7 @@ class ConfigsSeeder implements ISeeder
             'payments.config.tbs_confirmation_password.name',
             'payments.config.tbs_confirmation_password.description',
             $password,
-            504
+            504,
         );
 
         $this->addConfig(
@@ -631,7 +631,7 @@ class ConfigsSeeder implements ISeeder
             'payments.config.tbs_confirmation_processed_folder.name',
             'payments.config.tbs_confirmation_processed_folder.description',
             $processedFolder,
-            505
+            505,
         );
 
         $this->addConfig(
@@ -642,7 +642,7 @@ class ConfigsSeeder implements ISeeder
             'payments.config.tatrabanka_pgp_private_key_path.name',
             'payments.config.tatrabanka_pgp_private_key_path.description',
             null,
-            506
+            506,
         );
 
         $this->addConfig(
@@ -653,7 +653,7 @@ class ConfigsSeeder implements ISeeder
             'payments.config.tatrabanka_pgp_private_key_passphrase.name',
             'payments.config.tatrabanka_pgp_private_key_passphrase.description',
             null,
-            507
+            507,
         );
 
         // moving configs to different category if they already existed

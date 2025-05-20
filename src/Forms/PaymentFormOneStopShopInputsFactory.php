@@ -42,7 +42,7 @@ final class PaymentFormOneStopShopInputsFactory
             'payments.form.payment.payment_country_id.description',
             [
                 'country_name' => $this->countriesRepository->defaultCountry()->name,
-            ]
+            ],
         );
         $paymentCountryInput = $form->addSelect(
             'payment_country_id',
@@ -60,7 +60,7 @@ final class PaymentFormOneStopShopInputsFactory
         if ($payment) {
             $form->addCheckbox('oss_force_vat_change', 'payments.form.payment.oss_force_vat_change.label')
                 ->setOption('description', $this->translator->translate(
-                    'payments.form.payment.oss_force_vat_change.description'
+                    'payments.form.payment.oss_force_vat_change.description',
                 ))
                 ->setOption('id', 'oss-force-vat-change');
             $paymentCountryInput->addCondition(Form::NotEqual, $payment->payment_country_id)
@@ -71,16 +71,16 @@ final class PaymentFormOneStopShopInputsFactory
             if ($countryResolution) {
                 $prefilledReasonDescription = match ($countryResolution->reason) {
                     CountryResolutionTypeEnum::InvoiceAddress => $this->translator->translate(
-                        'payments.form.payment.payment_country_id.prefilled_reason_invoice_address'
+                        'payments.form.payment.payment_country_id.prefilled_reason_invoice_address',
                     ),
                     CountryResolutionTypeEnum::DefaultCountry => $this->translator->translate(
-                        'payments.form.payment.payment_country_id.prefilled_reason_default_country'
+                        'payments.form.payment.payment_country_id.prefilled_reason_default_country',
                     ),
                     default => $this->translator->translate(
                         'payments.form.payment.payment_country_id.prefilled_reason_other',
                         [
                             'reason' => $countryResolution->getReasonValue(),
-                        ]
+                        ],
                     ),
                 };
 
@@ -130,7 +130,7 @@ final class PaymentFormOneStopShopInputsFactory
                     selectedCountryCode: $selectedCountry?->iso_code,
                     paymentAddress: $address,
                     paymentItemContainer: $paymentItemContainer,
-                    ipAddress: false // do not use IP address for resolution
+                    ipAddress: false, // do not use IP address for resolution
                 );
 
                 // if admin explicitly selects a country, correct reason to AdminSelected
@@ -139,7 +139,7 @@ final class PaymentFormOneStopShopInputsFactory
                 }
             } catch (OneStopShopCountryConflictException $exception) {
                 $form->addError($this->translator->translate(
-                    'payments.form.payment.one_stop_shop.conflict'
+                    'payments.form.payment.one_stop_shop.conflict',
                 ));
                 return null;
             }
@@ -193,7 +193,7 @@ final class PaymentFormOneStopShopInputsFactory
                         'invalid_vat' => $item->vat() . '%',
                         'iterator' => $i + 1,
                         'country' => $country->name,
-                    ]
+                    ],
                 ));
             }
         }

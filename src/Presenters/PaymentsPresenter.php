@@ -20,7 +20,7 @@ class PaymentsPresenter extends FrontendPresenter
     public function __construct(
         PaymentsRepository $paymentsRepository,
         RecurrentPaymentsRepository $recurrentPaymentsRepository,
-        RecurrentPaymentsResolver $recurrentPaymentsResolver
+        RecurrentPaymentsResolver $recurrentPaymentsResolver,
     ) {
         parent::__construct();
 

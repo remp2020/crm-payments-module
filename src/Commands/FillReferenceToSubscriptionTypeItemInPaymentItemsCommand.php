@@ -14,7 +14,7 @@ class FillReferenceToSubscriptionTypeItemInPaymentItemsCommand extends Command
 {
     public function __construct(
         private PaymentItemsRepository $paymentItemsRepository,
-        private SubscriptionTypeItemsRepository $subscriptionTypeItemsRepository
+        private SubscriptionTypeItemsRepository $subscriptionTypeItemsRepository,
     ) {
         parent::__construct();
     }
@@ -49,7 +49,7 @@ class FillReferenceToSubscriptionTypeItemInPaymentItemsCommand extends Command
 
                 if ($subscriptionTypeItem) {
                     $this->paymentItemsRepository->update($paymentItem, [
-                        'subscription_type_item_id' => $subscriptionTypeItem->id
+                        'subscription_type_item_id' => $subscriptionTypeItem->id,
                     ], true);
                 }
             }

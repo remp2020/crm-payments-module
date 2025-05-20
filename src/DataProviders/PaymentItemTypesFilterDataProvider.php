@@ -13,7 +13,7 @@ class PaymentItemTypesFilterDataProvider implements PaymentItemTypesFilterDataPr
     private $translator;
 
     public function __construct(
-        Translator $translator
+        Translator $translator,
     ) {
         $this->translator = $translator;
     }

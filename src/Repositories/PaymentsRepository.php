@@ -151,7 +151,7 @@ class PaymentsRepository extends Repository
 
         $this->emitter->emit(new NewPaymentEvent($payment));
         $this->hermesEmitter->emit(new HermesMessage('new-payment', [
-            'payment_id' => $payment->id
+            'payment_id' => $payment->id,
         ]), HermesMessage::PRIORITY_HIGH);
         return $payment;
     }
@@ -331,7 +331,7 @@ class PaymentsRepository extends Repository
 
             $data = [
                 'status' => $status,
-                'modified_at' => new DateTime()
+                'modified_at' => new DateTime(),
             ];
             if (in_array($status, [PaymentStatusEnum::Paid->value, PaymentStatusEnum::Prepaid->value, PaymentStatusEnum::Authorized->value], true) && !$payment->paid_at) {
                 $data['paid_at'] = new DateTime();
@@ -395,7 +395,7 @@ class PaymentsRepository extends Repository
     {
         return $this->getTable()->where(
             'variable_symbol',
-            $this->variableSymbolVariants($variableSymbol)
+            $this->variableSymbolVariants($variableSymbol),
         );
     }
 
@@ -497,7 +497,7 @@ class PaymentsRepository extends Repository
                 'payments_paid_sum',
                 $callable,
                 \Nette\Utils\DateTime::from(CacheRepository::REFRESH_TIME_5_MINUTES),
-                $forceCacheUpdate
+                $forceCacheUpdate,
             );
         }
 
@@ -534,7 +534,7 @@ class PaymentsRepository extends Repository
                 'payments_count',
                 $callable,
                 \Nette\Utils\DateTime::from(CacheRepository::REFRESH_TIME_5_MINUTES),
-                $forceCacheUpdate
+                $forceCacheUpdate,
             );
         }
         return $callable();
@@ -570,7 +570,7 @@ class PaymentsRepository extends Repository
         $callable = function () {
             return $this->subscriptionsWithActiveUnchargedRecurrentEndingBetween(
                 \Nette\Utils\DateTime::from('today 00:00'),
-                \Nette\Utils\DateTime::from('+14 days 23:59:59')
+                \Nette\Utils\DateTime::from('+14 days 23:59:59'),
             )->count('*');
         };
 
@@ -578,7 +578,7 @@ class PaymentsRepository extends Repository
             'subscriptions_with_active_uncharged_recurrent_ending_next_two_weeks_count',
             $callable,
             \Nette\Utils\DateTime::from(CacheRepository::REFRESH_TIME_5_MINUTES),
-            $forceCacheUpdate
+            $forceCacheUpdate,
         );
     }
 
@@ -587,7 +587,7 @@ class PaymentsRepository extends Repository
         $callable = function () {
             return $this->subscriptionsWithActiveUnchargedRecurrentEndingBetween(
                 \Nette\Utils\DateTime::from('today 00:00'),
-                \Nette\Utils\DateTime::from('+31 days 23:59:59')
+                \Nette\Utils\DateTime::from('+31 days 23:59:59'),
             )->count('*');
         };
 
@@ -595,7 +595,7 @@ class PaymentsRepository extends Repository
             'subscriptions_with_active_uncharged_recurrent_ending_next_month_count',
             $callable,
             \Nette\Utils\DateTime::from(CacheRepository::REFRESH_TIME_5_MINUTES),
-            $forceCacheUpdate
+            $forceCacheUpdate,
         );
     }
 
@@ -635,14 +635,14 @@ class PaymentsRepository extends Repository
             return $this->subscriptionsWithoutExtensionEndingBetweenCount(
                 \Nette\Utils\DateTime::from('today 00:00'),
                 \Nette\Utils\DateTime::from('+14 days 23:59:59'),
-                $onlyPaid
+                $onlyPaid,
             );
         };
         return $this->cacheRepository->loadAndUpdate(
             $cacheKey,
             $callable,
             \Nette\Utils\DateTime::from(CacheRepository::REFRESH_TIME_5_MINUTES),
-            $forceCacheUpdate
+            $forceCacheUpdate,
         );
     }
 
@@ -664,14 +664,14 @@ class PaymentsRepository extends Repository
             return $this->subscriptionsWithoutExtensionEndingBetweenCount(
                 \Nette\Utils\DateTime::from('today 00:00'),
                 \Nette\Utils\DateTime::from('+31 days 23:59:59'),
-                $onlyPaid
+                $onlyPaid,
             );
         };
         return $this->cacheRepository->loadAndUpdate(
             $cacheKey,
             $callable,
             \Nette\Utils\DateTime::from(CacheRepository::REFRESH_TIME_5_MINUTES),
-            $forceCacheUpdate
+            $forceCacheUpdate,
         );
     }
 

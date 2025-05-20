@@ -113,7 +113,7 @@ class PaymentStatusChangeHandler extends AbstractListener
             $sendEmail,
             $callbackBeforeNewSubscriptionEvent = function ($newSubscription) use ($payment) {
                 $this->paymentsRepository->update($payment, ['subscription_id' => $newSubscription]);
-            }
+            },
         );
 
         return $subscription;
@@ -127,7 +127,7 @@ class PaymentStatusChangeHandler extends AbstractListener
         }
 
         $this->recurrentPaymentsRepository->update($recurrent, [
-            'state' => RecurrentPaymentStateEnum::SystemStop->value
+            'state' => RecurrentPaymentStateEnum::SystemStop->value,
         ]);
     }
 

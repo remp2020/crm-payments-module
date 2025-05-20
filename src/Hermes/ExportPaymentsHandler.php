@@ -20,7 +20,7 @@ class ExportPaymentsHandler implements HandlerInterface
 
     public function __construct(
         ApplicationMountManager $adminMountManager,
-        AdminFilterFormData $adminFilterFormData
+        AdminFilterFormData $adminFilterFormData,
     ) {
         $this->adminFilterFormData = $adminFilterFormData;
         $this->adminMountManager = $adminMountManager;
@@ -54,7 +54,7 @@ class ExportPaymentsHandler implements HandlerInterface
             'subscription_id',
             'subscription_type',
             'email',
-            'referer'
+            'referer',
         ]);
 
         $lastId = 0;
@@ -81,7 +81,7 @@ class ExportPaymentsHandler implements HandlerInterface
                     $payment->subscription_id,
                     $payment->subscription_type->code ?? null,
                     $payment->user->email ?? null,
-                    $payment->referer
+                    $payment->referer,
                 ]);
                 $lastId = $payment->id;
             }

@@ -54,7 +54,7 @@ class PaymentsRecurrentAdminPresenter extends AdminPresenter
             $this->problem,
             $this->subscription_type,
             $this->status,
-            $this->cid
+            $this->cid,
         );
 
         $pnp = new PreviousNextPaginator();
@@ -64,7 +64,7 @@ class PaymentsRecurrentAdminPresenter extends AdminPresenter
 
         $recurrentPayments = $recurrentPayments->limit(
             $paginator->getLength(),
-            $paginator->getOffset()
+            $paginator->getOffset(),
         )->fetchAll();
         $pnp->setActualItemCount(count($recurrentPayments));
 
@@ -88,7 +88,7 @@ class PaymentsRecurrentAdminPresenter extends AdminPresenter
         $form->addselect(
             'subscription_type',
             'payments.admin.payments_recurrent.admin_filter_form.subscription_type.label',
-            $this->subscriptionTypesSelectItemsBuilder->buildSimple($subscriptionTypes)
+            $this->subscriptionTypesSelectItemsBuilder->buildSimple($subscriptionTypes),
         )->setPrompt('--');
 
         $form->addCheckbox('problem', 'payments.admin.payments_recurrent.admin_filter_form.problem.label');
@@ -128,7 +128,7 @@ class PaymentsRecurrentAdminPresenter extends AdminPresenter
         return $this->generateSmallBarGraphComponent(
             RecurrentPaymentStateEnum::Active->value,
             'Active',
-            $factory
+            $factory,
         );
     }
 
@@ -199,7 +199,7 @@ class PaymentsRecurrentAdminPresenter extends AdminPresenter
 
         $this->flashMessage($this->translator->translate(
             'payments.admin.payments_recurrent.reactivate_failed_payment.success',
-            ['next_charge_datetime' => $this->userDateHelper->process($recurrentPaymentReactivated->charge_at)]
+            ['next_charge_datetime' => $this->userDateHelper->process($recurrentPaymentReactivated->charge_at)],
         ));
         $this->redirect(':Users:UsersAdmin:Show', $recurrentPaymentReactivated->user_id);
     }

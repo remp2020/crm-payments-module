@@ -51,7 +51,7 @@ class PaymentsHistogramFactory
             $cacheKey,
             $callable,
             DateTime::from(CacheRepository::REFRESH_TIME_5_MINUTES),
-            $forceCacheUpdate
+            $forceCacheUpdate,
         ), Json::FORCE_ARRAY);
     }
 }

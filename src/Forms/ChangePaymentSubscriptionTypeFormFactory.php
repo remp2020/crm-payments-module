@@ -48,7 +48,7 @@ class ChangePaymentSubscriptionTypeFormFactory
         $form->addSelect(
             'subscription_type_id',
             'payments.admin.component.change_payment_subscription_type_widget.subscription_type',
-            $this->subscriptionTypesSelectItemsBuilder->buildWithDescription($subscriptionTypeOptions)
+            $this->subscriptionTypesSelectItemsBuilder->buildWithDescription($subscriptionTypeOptions),
         )->setRequired()->setHtmlAttribute('class', 'form-control')
             ->getControlPrototype()
             ->addAttributes(['class' => 'select2']);
@@ -58,7 +58,7 @@ class ChangePaymentSubscriptionTypeFormFactory
         if (isset($this->payment)) {
             $form->setDefaults([
                 'payment_id' => $this->payment->id,
-                'subscription_type_id' => $this->payment->subscription_type_id
+                'subscription_type_id' => $this->payment->subscription_type_id,
             ]);
         }
 

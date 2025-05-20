@@ -81,7 +81,7 @@ class PaymentHasSubscriptionCriteriaTest extends PaymentsTestCase
             null,
             null,
             null,
-            false
+            false,
         );
 
         if ($withSubscription) {
@@ -90,7 +90,7 @@ class PaymentHasSubscriptionCriteriaTest extends PaymentsTestCase
                 $subscriptionTypeRow,
                 true,
                 true,
-                $user
+                $user,
             );
             $this->paymentsRepository->addSubscriptionToPayment($subscriptionRow, $paymentRow);
         }

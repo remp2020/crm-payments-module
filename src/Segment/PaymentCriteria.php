@@ -25,7 +25,7 @@ class PaymentCriteria implements CriteriaInterface
     public function __construct(
         PaymentsRepository $paymentsRepository,
         PaymentItemsRepository $paymentItemsRepository,
-        SubscriptionTypesRepository $subscriptionTypesRepository
+        SubscriptionTypesRepository $subscriptionTypesRepository,
     ) {
         $this->paymentsRepository = $paymentsRepository;
         $this->paymentItemsRepository = $paymentItemsRepository;
@@ -48,12 +48,12 @@ class PaymentCriteria implements CriteriaInterface
             new BooleanParam(
                 "additional_amount",
                 "Donation",
-                "Filters users with payments with / without donation"
+                "Filters users with payments with / without donation",
             ),
             new DateTimeParam(
                 "created",
                 "Created",
-                "Filters users with payments created within selected period"
+                "Filters users with payments created within selected period",
             ),
             new StringArrayParam(
                 "status",
@@ -62,7 +62,7 @@ class PaymentCriteria implements CriteriaInterface
                 false,
                 [PaymentStatusEnum::Paid->value],
                 null,
-                array_keys($this->paymentsRepository->getStatusPairs())
+                array_keys($this->paymentsRepository->getStatusPairs()),
             ),
             new StringArrayParam(
                 "item_types",
@@ -71,7 +71,7 @@ class PaymentCriteria implements CriteriaInterface
                 false,
                 [],
                 null,
-                array_keys($this->paymentItemsRepository->getTypes())
+                array_keys($this->paymentItemsRepository->getTypes()),
             ),
             new NumberArrayParam(
                 "subscription_type",
@@ -80,7 +80,7 @@ class PaymentCriteria implements CriteriaInterface
                 false,
                 null,
                 null,
-                $this->subscriptionTypesRepository->getAllActive()->fetchPairs('id', 'name')
+                $this->subscriptionTypesRepository->getAllActive()->fetchPairs('id', 'name'),
             ),
         ];
     }

@@ -59,7 +59,7 @@ class MethodsPresenter extends FrontendPresenter
         }
 
         $paymentItemContainer = (new PaymentItemContainer())->addItem(
-            new AuthorizationPaymentItem('authorization', $gateway->getAuthorizationAmount())
+            new AuthorizationPaymentItem('authorization', $gateway->getAuthorizationAmount()),
         );
         $paymentItemContainer->setZeroPriceAllowed();
 
@@ -80,7 +80,7 @@ class MethodsPresenter extends FrontendPresenter
 
         if ($recurrentPaymentId !== null) {
             $this->paymentsRepository->addMeta($payment, [
-                'recurrent_payment_id_to_update_cid' => $recurrentPaymentId
+                'recurrent_payment_id_to_update_cid' => $recurrentPaymentId,
             ]);
         }
 

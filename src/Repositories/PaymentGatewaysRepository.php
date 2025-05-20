@@ -19,7 +19,7 @@ class PaymentGatewaysRepository extends Repository
     public function __construct(
         Explorer $database,
         GatewayFactory $gatewayFactory,
-        Storage $cacheStorage = null
+        Storage $cacheStorage = null,
     ) {
         parent::__construct($database, $cacheStorage);
         $this->gatewayFactory = $gatewayFactory;
@@ -64,7 +64,7 @@ class PaymentGatewaysRepository extends Repository
         $code,
         $sorting = 10,
         $visible = true,
-        $isRecurrent = false
+        $isRecurrent = false,
     ) {
         return $this->insert([
             'name' => $name,

@@ -27,7 +27,7 @@ class BeforeCreateRenewalPaymentEvent extends AbstractEvent
         private ActiveRow $paymentGateway,
         private ActiveRow $user,
         private PaymentItemContainer $paymentItemContainer,
-        private array $newPaymentMetaData
+        private array $newPaymentMetaData,
     ) {
     }
 

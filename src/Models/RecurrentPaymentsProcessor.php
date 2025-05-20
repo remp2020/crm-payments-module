@@ -35,7 +35,7 @@ class RecurrentPaymentsProcessor
         $resultCode,
         $resultMessage,
         $customChargeAmount = null,
-        \DateTime $chargeAt = null
+        \DateTime $chargeAt = null,
     ) {
         $this->paymentsRepository->updateStatus($recurrentPayment->payment, $paymentStatus, true);
         $payment = $this->paymentsRepository->find($recurrentPayment->payment->id); // refresh to get fresh object
@@ -44,7 +44,7 @@ class RecurrentPaymentsProcessor
             $payment,
             $recurrentPayment->payment_method->external_token,
             $chargeAt,
-            $customChargeAmount
+            $customChargeAmount,
         );
 
         $this->recurrentPaymentsRepository->setCharged($recurrentPayment, $payment, $resultCode, $resultMessage);
@@ -61,14 +61,14 @@ class RecurrentPaymentsProcessor
         ActiveRow $recurrentPayment,
         $resultCode,
         ?string $resultMessage,
-        ?float $customChargeAmount = null
+        ?float $customChargeAmount = null,
     ) {
         // stop recurrent if there are no more retries available
         if ($recurrentPayment->retries === 0) {
             $this->processStoppedRecurrent(
                 $recurrentPayment,
                 $resultCode,
-                $resultMessage
+                $resultMessage,
             );
             return;
         }
@@ -163,7 +163,7 @@ class RecurrentPaymentsProcessor
                 $payment,
                 PaymentStatusEnum::Fail->value,
                 false,
-                $payment->note . '; failed: ' . $gateway->getResultCode()
+                $payment->note . '; failed: ' . $gateway->getResultCode(),
             );
         }
 
@@ -171,7 +171,7 @@ class RecurrentPaymentsProcessor
             $gateway->isSuccessful() ? 'OK' : 'ERROR',
             json_encode($gateway->getResponseData()),
             'recurring-payment-manual-charge',
-            $payment->id
+            $payment->id,
         );
 
         if (!$gateway->isSuccessful()) {

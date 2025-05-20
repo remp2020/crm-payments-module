@@ -130,7 +130,7 @@ class PaymentFormFactory
             $variableSymbol->setOption(
                 'description',
                 Html::el('a', ['href' => '/api/v1/payments/variable-symbol', 'class' => 'variable_symbol_generate'])
-                    ->setHtml($this->translator->translate('payments.form.payment.variable_symbol.generate'))
+                    ->setHtml($this->translator->translate('payments.form.payment.variable_symbol.generate')),
             )->addRule(function (TextInput $control) {
                 $paymentRow = $this->paymentsRepository->findLastByVS($control->getValue());
                 if ($paymentRow) {
@@ -147,7 +147,7 @@ class PaymentFormFactory
             ->setOption(
                 'description',
                 Html::el('span', ['class' => 'help-block'])
-                    ->setHtml($this->translator->translate('payments.form.payment.amount.description'))
+                    ->setHtml($this->translator->translate('payments.form.payment.amount.description')),
             );
 
         $this->paymentFormOneStopShopInputsFactory->addInputs($form, $user, $payment);
@@ -167,7 +167,7 @@ class PaymentFormFactory
         $subscriptionType = $form->addSelect(
             'subscription_type_id',
             'payments.form.payment.subscription_type_id.label',
-            $this->subscriptionTypesSelectItemsBuilder->buildWithDescription($subscriptionTypeOptions)
+            $this->subscriptionTypesSelectItemsBuilder->buildWithDescription($subscriptionTypeOptions),
         )->setPrompt("payments.form.payment.subscription_type_id.prompt");
         $subscriptionType->getControlPrototype()->addAttributes(['class' => 'select2']);
 
@@ -477,8 +477,8 @@ class PaymentFormFactory
                     new DonationPaymentItem(
                         $this->translator->translate('payments.admin.donation'),
                         $additionalAmount,
-                        (int) $donationPaymentVat
-                    )
+                        (int) $donationPaymentVat,
+                    ),
                 );
             }
 
@@ -520,7 +520,7 @@ class PaymentFormFactory
         ?ActiveRow $subscriptionType,
         ?ActiveRow $payment,
         $values,
-        bool $customPaymentItems
+        bool $customPaymentItems,
     ): array {
         $paymentItemContainer = new PaymentItemContainer();
 
@@ -542,7 +542,7 @@ class PaymentFormFactory
                         'payments.form.payment.payment_items.name.required',
                         [
                             'iterator' => $iterator,
-                        ]
+                        ],
                     ));
                 }
                 if (strlen($item->vat) === 0) {
@@ -550,7 +550,7 @@ class PaymentFormFactory
                         'payments.form.payment.payment_items.vat.required',
                         [
                             'iterator' => $iterator,
-                        ]
+                        ],
                     ));
                 }
                 if ($form->hasErrors()) {

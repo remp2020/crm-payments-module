@@ -149,7 +149,7 @@ class CsobOneClick extends GatewayAbstract implements RecurrentPaymentInterface,
         if (!$result && $payId && !in_array((int) $data['status'], [
             Gateway::STATUS_CANCELLED,
             Gateway::STATUS_DENIED,
-            Gateway::STATUS_REVERSED
+            Gateway::STATUS_REVERSED,
         ], true)) {
             return null;
         }
@@ -328,7 +328,7 @@ class CsobOneClick extends GatewayAbstract implements RecurrentPaymentInterface,
         return Strings::trim(Strings::substring(
             "{$user->first_name} {$user->last_name}",
             0,
-            45
+            45,
         ));
     }
 

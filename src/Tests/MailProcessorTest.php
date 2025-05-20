@@ -418,7 +418,7 @@ class MailProcessorTest extends PaymentsTestCase
         $this->paymentsRepository->update($payment, array(
             'amount' => $amount,
             'status' => PaymentStatusEnum::Refund->value,
-            'created_at' => new DateTime('23 days ago')
+            'created_at' => new DateTime('23 days ago'),
         ));
 
         $mailContent = new MailContent();

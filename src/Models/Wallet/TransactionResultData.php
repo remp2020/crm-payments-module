@@ -27,7 +27,7 @@ class TransactionResultData
         ?int $transactionId,
         ?string $authorizationCode,
         ?string $responseCode,
-        ?string $tdsRedirectionFormHtml = null
+        ?string $tdsRedirectionFormHtml = null,
     ) {
         $this->processingId = $processingId;
         $this->status = $status;
@@ -55,7 +55,7 @@ class TransactionResultData
             $data['transactionId'] ?? null,
             $data['transactionData']['authorizationCode'] ?? null,
             $data['transactionData']['responseCode'] ?? null,
-            $data['tdsRedirectionFormHtml'] ?? null
+            $data['tdsRedirectionFormHtml'] ?? null,
         );
     }
 

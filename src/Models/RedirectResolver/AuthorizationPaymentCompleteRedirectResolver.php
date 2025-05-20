@@ -45,7 +45,7 @@ class AuthorizationPaymentCompleteRedirectResolver implements PaymentCompleteRed
             ':Payments:Methods:complete',
             [
                 'paymentId' => $payment->id,
-            ]
+            ],
         ];
     }
 }

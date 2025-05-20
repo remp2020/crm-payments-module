@@ -26,7 +26,7 @@ class PaidSubscriptionsWithoutExtensionEndingWithinPeriodWidget extends BaseLazy
     public function __construct(
         LazyWidgetManager $lazyWidgetManager,
         PaymentsRepository $paymentsRepository,
-        Translator $translator
+        Translator $translator,
     ) {
         parent::__construct($lazyWidgetManager);
         $this->paymentsRepository = $paymentsRepository;
@@ -71,13 +71,13 @@ class PaidSubscriptionsWithoutExtensionEndingWithinPeriodWidget extends BaseLazy
                 'from' => DateTime::from('today 00:00'),
                 'to' => DateTime::from('+14 days 23:59:59'),
                 'label' => $this->translator->translate('dashboard.time.fourteen_days'),
-                'callable' => fn () => $this->paymentsRepository->subscriptionsWithoutExtensionEndingNextTwoWeeksCount(false, true)
+                'callable' => fn () => $this->paymentsRepository->subscriptionsWithoutExtensionEndingNextTwoWeeksCount(false, true),
             ],
             'subscriptionsNotRenewedInOneMonth' => [
                 'from' =>  DateTime::from('today 00:00'),
                 'to' => DateTime::from('+31 days 23:59:59'),
                 'label' => $this->translator->translate('dashboard.time.thirtyone_days'),
-                'callable' => fn () => $this->paymentsRepository->subscriptionsWithoutExtensionEndingNextMonthCount(false, true)
+                'callable' => fn () => $this->paymentsRepository->subscriptionsWithoutExtensionEndingNextMonthCount(false, true),
             ],
         ];
 
@@ -89,7 +89,7 @@ class PaidSubscriptionsWithoutExtensionEndingWithinPeriodWidget extends BaseLazy
                     ->subscriptionsWithoutExtensionEndingBetweenCount(
                         $dateRange['from'],
                         $dateRange['to'],
-                        true
+                        true,
                     );
             }
         }

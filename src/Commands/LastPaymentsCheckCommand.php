@@ -56,7 +56,7 @@ class LastPaymentsCheckCommand extends Command
         PaymentGatewaysRepository $paymentGatewaysRepository,
         PaymentsRepository $paymentsRepository,
         Emitter $emitter,
-        ActiveRowFactory $activeRowFactory
+        ActiveRowFactory $activeRowFactory,
     ) {
         parent::__construct();
         $this->paymentGatewaysRepository = $paymentGatewaysRepository;
@@ -72,27 +72,27 @@ class LastPaymentsCheckCommand extends Command
                 'notify',
                 null,
                 InputOption::VALUE_REQUIRED | InputOption::VALUE_IS_ARRAY,
-                "E-mail addresses of people to notify about the issue."
+                "E-mail addresses of people to notify about the issue.",
             )
             ->addOption(
                 'day-start',
                 null,
                 InputOption::VALUE_OPTIONAL,
                 "Select start of day (manual payments are not checked through night)",
-                "today 08:00"
+                "today 08:00",
             )
             ->addOption(
                 'day-end',
                 null,
                 InputOption::VALUE_OPTIONAL,
                 "Select end of day (manual payments are not checked through night)",
-                "today 23:00"
+                "today 23:00",
             )
             ->addOption(
                 'exclude',
                 null,
                 InputOption::VALUE_OPTIONAL | InputOption::VALUE_IS_ARRAY,
-                "Codes of gateways to exclude from checking"
+                "Codes of gateways to exclude from checking",
             )
             ->addOption(
                 'override',
@@ -101,7 +101,7 @@ class LastPaymentsCheckCommand extends Command
                 <<<EOH
 Overrides options for one gateway. Format:
 `--override={GATEWAY-CODE},{COUNT-TO-CHECK},{HOURS-TO-CHECK}`.
-EOH
+EOH,
             )
             ->setHelp(<<<EOH
 This command checks all payment gateways (except excluded by <comment>`--exclude`</comment> option) for errors.
@@ -116,8 +116,7 @@ Format: <comment>`--override={GATEWAY-CODE},{COUNT-TO-CHECK},{HOURS-TO-CHECK}`</
   - <info>{GATEWAY-CODE}</info>   - eg.: bank_transfer, paypal, paypal_reference, ...
   - <info>{COUNT-TO-CHECK}</info> - sends notification if last <info>{COUNT-TO-CHECK}</info> payments are not valid.
   - <info>{HOURS-TO-CHECK}</info> - sends notification if no valid payments are present in <info>{HOURS-TO-CHECK}</info> hours.
-EOH
-        )
+EOH,)
             ->addUsage('--notify=email@example.com')
             ->addUsage('--notify=email@example.com --exclude=bank_transfer')
             ->addUsage('--notify=email@example.com --override=paypal,10,2')

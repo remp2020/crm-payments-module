@@ -36,7 +36,7 @@ class PaymentCountryChangeAdminPresenter extends AdminPresenter
         if (!$payment) {
             throw new BadRequestException(sprintf(
                 'Payment with id %d not found',
-                $id
+                $id,
             ), httpCode: IResponse::S404_NotFound);
         }
 

@@ -48,7 +48,7 @@ class ListRecurrentPaymentsApiHandler extends ApiHandler
                 $response = new JsonApiResponse(Response::S400_BAD_REQUEST, [
                     'status' => 'error',
                     'code' => 'invalid_date',
-                    'message' => 'Invalid format provided for charge_at parameter, ISO 8601 expected: ' . $params['chargeable_from']
+                    'message' => 'Invalid format provided for charge_at parameter, ISO 8601 expected: ' . $params['chargeable_from'],
                 ]);
                 return $response;
             }

@@ -19,7 +19,7 @@ class PaymentGatewayFormFactory
 
     public function __construct(
         PaymentGatewaysRepository $paymentGatewaysRepository,
-        Translator $translator
+        Translator $translator,
     ) {
         $this->paymentGatewaysRepository = $paymentGatewaysRepository;
         $this->translator = $translator;

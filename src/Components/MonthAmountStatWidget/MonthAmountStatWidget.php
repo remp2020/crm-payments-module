@@ -21,7 +21,7 @@ class MonthAmountStatWidget extends BaseLazyWidget
 
     public function __construct(
         LazyWidgetManager $lazyWidgetManager,
-        PaymentsRepository $paymentsRepository
+        PaymentsRepository $paymentsRepository,
     ) {
         parent::__construct($lazyWidgetManager);
         $this->paymentsRepository = $paymentsRepository;
@@ -36,11 +36,11 @@ class MonthAmountStatWidget extends BaseLazyWidget
     {
         $this->template->thisMonthAmount = $this->paymentsRepository->paidBetween(
             DateTime::from(date('Y-m')),
-            new DateTime()
+            new DateTime(),
         )->sum('amount') ?? 0.00;
         $this->template->lastMonthAmount = $this->paymentsRepository->paidBetween(
             DateTime::from('first day of -1 month 00:00'),
-            DateTime::from(date('Y-m'))
+            DateTime::from(date('Y-m')),
         )->sum('amount') ?? 0.00;
         $this->template->setFile(__DIR__ . DIRECTORY_SEPARATOR . $this->templateName);
         $this->template->render();

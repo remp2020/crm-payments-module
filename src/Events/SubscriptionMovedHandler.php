@@ -18,7 +18,7 @@ class SubscriptionMovedHandler extends AbstractListener
 
     public function __construct(
         PaymentsRepository $paymentsRepository,
-        RecurrentPaymentsRepository $recurrentPaymentsRepository
+        RecurrentPaymentsRepository $recurrentPaymentsRepository,
     ) {
         $this->paymentsRepository = $paymentsRepository;
         $this->recurrentPaymentsRepository = $recurrentPaymentsRepository;

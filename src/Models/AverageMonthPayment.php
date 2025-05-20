@@ -30,7 +30,7 @@ class AverageMonthPayment
             $cacheKey,
             $callable,
             DateTime::from(CacheRepository::REFRESH_TIME_1_HOUR),
-            $forceCacheUpdate
+            $forceCacheUpdate,
         );
     }
 }

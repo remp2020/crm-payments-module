@@ -101,7 +101,7 @@ class PaymentCountryChangeFormFactory
         /** @var ChangePaymentCountryDataProviderInterface[] $providers */
         $providers = $this->dataProviderManager->getProviders(
             'payments.dataprovider.change_payment_country',
-            ChangePaymentCountryDataProviderInterface::class
+            ChangePaymentCountryDataProviderInterface::class,
         );
 
         $this->paymentsRepository->getTransaction()->wrap(function () use ($providers, $countryResolution) {

@@ -46,7 +46,7 @@ class RecurrentPaymentsChargeCommand extends Command
         private ApplicationConfig $applicationConfig,
         private RecurrentPaymentsResolver $recurrentPaymentsResolver,
         private RecurrentPaymentsProcessor $recurrentPaymentsProcessor,
-        private Translator $translator
+        private Translator $translator,
     ) {
         parent::__construct();
     }
@@ -59,7 +59,7 @@ class RecurrentPaymentsChargeCommand extends Command
                 'recurrent_payment_ids',
                 null,
                 InputOption::VALUE_REQUIRED,
-                "IDs of records from 'recurrent_payments' table. Expects list of values separated by comma."
+                "IDs of records from 'recurrent_payments' table. Expects list of values separated by comma.",
             );
     }
 
@@ -157,7 +157,7 @@ class RecurrentPaymentsChargeCommand extends Command
                     $payment->status,
                     $gateway->getResultCode(),
                     $gateway->getResultMessage(),
-                    $customChargeAmount
+                    $customChargeAmount,
                 );
             } else {
                 $result = $gateway->charge($payment, $recurrentPayment->payment_method->external_token);
@@ -175,7 +175,7 @@ class RecurrentPaymentsChargeCommand extends Command
                             $gateway->getResultCode(),
                             $gateway->getResultMessage(),
                             $customChargeAmount,
-                            $chargeAt
+                            $chargeAt,
                         );
                         break;
                     case RecurrentPaymentInterface::CHARGE_PENDING:
@@ -190,13 +190,13 @@ class RecurrentPaymentsChargeCommand extends Command
                 $recurrentPayment,
                 $gateway->getResultCode(),
                 $gateway->getResultMessage(),
-                $customChargeAmount
+                $customChargeAmount,
             );
         } catch (RecurrentPaymentFailStop $exception) {
             $this->recurrentPaymentsProcessor->processStoppedRecurrent(
                 $recurrentPayment,
                 $gateway->getResultCode(),
-                $gateway->getResultMessage()
+                $gateway->getResultMessage(),
             );
         } catch (GatewayFail $exception) {
             $gatewayFailEvent = new RecurrentPaymentChargeGatewayFailEvent($recurrentPayment, $exception);
@@ -207,7 +207,7 @@ class RecurrentPaymentsChargeCommand extends Command
                     $recurrentPayment,
                     $exception->getCode(),
                     $exception->getMessage(),
-                    $customChargeAmount
+                    $customChargeAmount,
                 );
             }
         }
@@ -216,7 +216,7 @@ class RecurrentPaymentsChargeCommand extends Command
             $gateway->isSuccessful() ? 'OK' : 'ERROR',
             Json::encode($gateway->getResponseData()),
             'recurring-payment-automatic-charge',
-            $payment->id
+            $payment->id,
         );
 
         $now = new DateTime();

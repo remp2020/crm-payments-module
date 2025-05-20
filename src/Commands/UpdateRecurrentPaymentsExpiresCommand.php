@@ -21,7 +21,7 @@ class UpdateRecurrentPaymentsExpiresCommand extends Command
     public function __construct(
         private readonly RecurrentPaymentsRepository $recurrentPaymentsRepository,
         private readonly GatewayFactory $gatewayFactory,
-        private readonly PaymentGatewaysRepository $paymentGatewaysRepository
+        private readonly PaymentGatewaysRepository $paymentGatewaysRepository,
     ) {
         parent::__construct();
     }
@@ -34,31 +34,31 @@ class UpdateRecurrentPaymentsExpiresCommand extends Command
                 'limit',
                 null,
                 InputOption::VALUE_REQUIRED,
-                'Number of recurrent payments to process'
+                'Number of recurrent payments to process',
             )
             ->addOption(
                 'gateway',
                 null,
                 InputOption::VALUE_REQUIRED,
-                'Payment gateway code to check use. If not specified, all recurring gateways are checked.'
+                'Payment gateway code to check use. If not specified, all recurring gateways are checked.',
             )
             ->addOption(
                 'all',
                 null,
                 InputOption::VALUE_NONE,
-                'Update all recurrent payments not only without expires_at.'
+                'Update all recurrent payments not only without expires_at.',
             )
             ->addOption(
                 'recurrent_payment_ids',
                 null,
                 InputOption::VALUE_REQUIRED,
-                "IDs of records from 'recurrent_payments' table. Expects list of values separated by comma."
+                "IDs of records from 'recurrent_payments' table. Expects list of values separated by comma.",
             )
             ->addOption(
                 'charge_before',
                 null,
                 InputOption::VALUE_REQUIRED,
-                'Update only recurrent payments that are in future and before date in this option.'
+                'Update only recurrent payments that are in future and before date in this option.',
             );
     }
 
@@ -146,7 +146,7 @@ class UpdateRecurrentPaymentsExpiresCommand extends Command
                                 $previousExpiration = $filteredRecurrentPayment->expires_at;
                             }
                             $this->recurrentPaymentsRepository->update($filteredRecurrentPayment, [
-                                'expires_at' => $expire
+                                'expires_at' => $expire,
                             ]);
                             $updated = true;
                         }
@@ -157,7 +157,7 @@ class UpdateRecurrentPaymentsExpiresCommand extends Command
                                 $paymentGateway->name,
                                 $externalToken,
                                 $expire->format('Y-m-d'),
-                                $previousExpiration ? "(previously {$previousExpiration->format('Y-m-d')})" : ''
+                                $previousExpiration ? "(previously {$previousExpiration->format('Y-m-d')})" : '',
                             ));
                         } else {
                             $output->writeln(sprintf(

@@ -73,7 +73,7 @@ class PaymentsRepositoryTest extends PaymentsTestCase
             $paymentItemArray['created_at'],
             $newPaymentItemArray['created_at'],
             $paymentItemArray['updated_at'],
-            $newPaymentItemArray['updated_at']
+            $newPaymentItemArray['updated_at'],
         );
 
         $this->assertEquals($payment->amount, $newPayment->amount);
@@ -97,14 +97,14 @@ class PaymentsRepositoryTest extends PaymentsTestCase
             7.6,
             10,
             1,
-            ['subscription_type_item_key' => 'subscription_type_item_value']
+            ['subscription_type_item_key' => 'subscription_type_item_value'],
         ));
 
         $payment = $this->paymentsRepository->add(
             $subscriptionType,
             $this->getPaymentGateway(),
             $this->getUser(),
-            $paymentItemContainer
+            $paymentItemContainer,
         );
 
         $newPayment = $this->paymentsRepository->copyPayment($payment);
@@ -128,7 +128,7 @@ class PaymentsRepositoryTest extends PaymentsTestCase
             $paymentItemDonationArray['created_at'],
             $newPaymentItemDonationArray['created_at'],
             $paymentItemDonationArray['updated_at'],
-            $newPaymentItemDonationArray['updated_at']
+            $newPaymentItemDonationArray['updated_at'],
         );
 
         $this->assertEquals($paymentItemDonationArray, $newPaymentItemDonationArray);
@@ -152,7 +152,7 @@ class PaymentsRepositoryTest extends PaymentsTestCase
             $paymentItemSubscriptionTypeArray['created_at'],
             $newPaymentItemSubscriptionTypeArray['created_at'],
             $paymentItemSubscriptionTypeArray['updated_at'],
-            $newPaymentItemSubscriptionTypeArray['updated_at']
+            $newPaymentItemSubscriptionTypeArray['updated_at'],
         );
 
         $this->assertEquals($paymentItemSubscriptionTypeArray, $newPaymentItemSubscriptionTypeArray);
@@ -232,7 +232,7 @@ class PaymentsRepositoryTest extends PaymentsTestCase
             $subscriptionType,
             'third item',
             $secondPaymentSubscriptionTypeItem->amount,
-            $secondPaymentSubscriptionTypeItem->vat - 10
+            $secondPaymentSubscriptionTypeItem->vat - 10,
         );
 
         // total price without amount is not equal so payment items will be created with actual items of subscription type
@@ -256,7 +256,7 @@ class PaymentsRepositoryTest extends PaymentsTestCase
             $subscriptionType,
             'third item',
             $thirdPaymentSubscriptionTypeItem->amount + 1,
-            $thirdPaymentSubscriptionTypeItem->vat
+            $thirdPaymentSubscriptionTypeItem->vat,
         );
 
         $this->subscriptionTypesRepository->update($subscriptionType, [
@@ -310,7 +310,7 @@ class PaymentsRepositoryTest extends PaymentsTestCase
         // divide one of subscription type items between two
         $this->subscriptionTypeItemsRepository->update($firstSubscriptionTypeItem, [
             'name' => 'divided item 1',
-            'amount' => round($firstSubscriptionTypeItemAmount / 2, 2)
+            'amount' => round($firstSubscriptionTypeItemAmount / 2, 2),
         ]);
         $this->subscriptionTypeItemsRepository->add($subscriptionType, 'divided item 2', round($firstSubscriptionTypeItemAmount / 2, 2), $firstSubscriptionTypeItem->vat);
 

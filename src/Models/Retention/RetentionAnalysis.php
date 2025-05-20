@@ -36,7 +36,7 @@ class RetentionAnalysis
         private SubscriptionsRepository $subscriptionsRepository,
         private RetentionAnalysisJobsRepository $retentionAnalysisJobsRepository,
         private DataProviderManager $dataProviderManager,
-        private SegmentFactoryInterface $segmentFactory
+        private SegmentFactoryInterface $segmentFactory,
     ) {
     }
 
@@ -117,7 +117,7 @@ SQL;
         }
         if ($dirtyFlag) {
             $this->retentionAnalysisJobsRepository->update($job, [
-                'params' => Json::encode($jobParams)
+                'params' => Json::encode($jobParams),
             ]);
         }
 

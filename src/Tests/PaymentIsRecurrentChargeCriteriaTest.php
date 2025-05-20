@@ -103,7 +103,7 @@ class PaymentIsRecurrentChargeCriteriaTest extends DatabaseTestCase
             null,
             null,
             null,
-            $isRecurrentCharge
+            $isRecurrentCharge,
         );
 
         $paymentSelection = $paymentsRepository->getTable()

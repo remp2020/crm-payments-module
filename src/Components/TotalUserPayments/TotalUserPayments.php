@@ -26,7 +26,7 @@ class TotalUserPayments extends BaseLazyWidget
         LazyWidgetManager $lazyWidgetManager,
         PaymentsRepository $paymentsRepository,
         AverageMonthPayment $averageMonthPayment,
-        UserStatsRepository $userStatsRepository
+        UserStatsRepository $userStatsRepository,
     ) {
         parent::__construct($lazyWidgetManager);
         $this->paymentsRepository = $paymentsRepository;

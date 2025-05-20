@@ -11,7 +11,7 @@ class PaymentsUserDataProvider implements UserDataProviderInterface
     private $paymentsRepository;
 
     public function __construct(
-        PaymentsRepository $paymentsRepository
+        PaymentsRepository $paymentsRepository,
     ) {
         $this->paymentsRepository = $paymentsRepository;
     }

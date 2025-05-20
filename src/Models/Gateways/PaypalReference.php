@@ -32,7 +32,7 @@ class PaypalReference extends GatewayAbstract implements RecurrentPaymentInterfa
         ApplicationConfig $applicationConfig,
         Response $httpResponse,
         PaymentMetaRepository $paymentMetaRepository,
-        Translator $translator
+        Translator $translator,
     ) {
         parent::__construct($linkGenerator, $applicationConfig, $httpResponse, $translator);
         $this->paymentMetaRepository = $paymentMetaRepository;
@@ -89,7 +89,7 @@ class PaypalReference extends GatewayAbstract implements RecurrentPaymentInterfa
         $paymentResponse = $this->gateway->completePurchase([
             'amount' => $payment->amount,
             'currency' => $this->applicationConfig->get('currency'),
-            'transactionId' => $payment->variable_symbol
+            'transactionId' => $payment->variable_symbol,
         ])->send();
 
         if ($paymentResponse->isSuccessful()) {

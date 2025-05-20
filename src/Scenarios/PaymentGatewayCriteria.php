@@ -15,7 +15,7 @@ class PaymentGatewayCriteria implements ScenariosCriteriaInterface
     private $paymentGatewaysRepository;
 
     public function __construct(
-        PaymentGatewaysRepository $paymentGatewaysRepository
+        PaymentGatewaysRepository $paymentGatewaysRepository,
     ) {
         $this->paymentGatewaysRepository = $paymentGatewaysRepository;
     }

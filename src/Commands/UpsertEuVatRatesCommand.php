@@ -155,7 +155,7 @@ class UpsertEuVatRatesCommand extends Command
         ?float $standardRate,
         ?float $ePeriodicalRate,
         ?float $eBookRate,
-        array $reducedRates = []
+        array $reducedRates = [],
     ): void {
         $this->printVatLine(
             vatName: 'standard',

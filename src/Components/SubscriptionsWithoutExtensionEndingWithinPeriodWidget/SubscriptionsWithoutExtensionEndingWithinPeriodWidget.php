@@ -26,7 +26,7 @@ class SubscriptionsWithoutExtensionEndingWithinPeriodWidget extends BaseLazyWidg
     public function __construct(
         LazyWidgetManager $lazyWidgetManager,
         PaymentsRepository $paymentsRepository,
-        Translator $translator
+        Translator $translator,
     ) {
         parent::__construct($lazyWidgetManager);
         $this->paymentsRepository = $paymentsRepository;

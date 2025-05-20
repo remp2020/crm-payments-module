@@ -227,7 +227,7 @@ class MailProcessor
                 $payment,
                 PaymentStatusEnum::Fail->value,
                 false,
-                "non-OK RES mail param: {$this->mailContent->getRes()}"
+                "non-OK RES mail param: {$this->mailContent->getRes()}",
             );
             $this->output->writeln("    -> Payment has non-OK result, setting failed");
             return true;

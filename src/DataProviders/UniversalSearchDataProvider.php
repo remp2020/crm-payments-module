@@ -19,7 +19,7 @@ class UniversalSearchDataProvider implements UniversalSearchDataProviderInterfac
         PaymentsRepository $paymentsRepository,
         LinkGenerator $linkGenerator,
         Translator $translator,
-        UserDateHelper $userDateHelper
+        UserDateHelper $userDateHelper,
     ) {
         $this->paymentsRepository = $paymentsRepository;
         $this->linkGenerator = $linkGenerator;
@@ -44,7 +44,7 @@ class UniversalSearchDataProvider implements UniversalSearchDataProviderInterfac
             $result[$groupName][] = [
                 'id' => 'payment_' . $payment->id,
                 'text' => $text,
-                'url' => $this->linkGenerator->link('Users:UsersAdmin:show', ['id' => $payment->user_id])
+                'url' => $this->linkGenerator->link('Users:UsersAdmin:show', ['id' => $payment->user_id]),
             ];
         }
 

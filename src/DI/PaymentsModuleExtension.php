@@ -16,7 +16,7 @@ final class PaymentsModuleExtension extends CompilerExtension implements Transla
     {
         // load services from config and register them to Nette\DI Container
         $this->compiler->loadDefinitionsFromConfig(
-            $this->loadFromFile(__DIR__.'/../config/config.neon')['services']
+            $this->loadFromFile(__DIR__.'/../config/config.neon')['services'],
         );
     }
 
@@ -24,7 +24,7 @@ final class PaymentsModuleExtension extends CompilerExtension implements Transla
     {
         return Expect::structure([
             'gateway_test_host' => Expect::string()->dynamic(),
-            'fastcharge_threshold' => Expect::int()->default(24)
+            'fastcharge_threshold' => Expect::int()->default(24),
         ]);
     }
 

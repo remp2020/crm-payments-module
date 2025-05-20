@@ -15,7 +15,7 @@ class RecurrentPaymentStatusCriteria implements ScenariosCriteriaInterface
     private $recurrentPaymentsRepository;
 
     public function __construct(
-        RecurrentPaymentsRepository $paymentsRepository
+        RecurrentPaymentsRepository $paymentsRepository,
     ) {
         $this->recurrentPaymentsRepository = $paymentsRepository;
     }

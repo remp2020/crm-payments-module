@@ -13,7 +13,7 @@ class Free extends GatewayAbstract
     public function begin($payment)
     {
         $url = $this->generateReturnUrl($payment, [
-            'vs' => $payment->variable_symbol
+            'vs' => $payment->variable_symbol,
         ]);
         $this->httpResponse->redirect($url);
         exit();

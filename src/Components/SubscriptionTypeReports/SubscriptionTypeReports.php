@@ -31,7 +31,7 @@ class SubscriptionTypeReports extends BaseLazyWidget
     public function __construct(
         LazyWidgetManager $lazyWidgetManager,
         Translator $translator,
-        SubscriptionTypesRepository $subscriptionTypesRepository
+        SubscriptionTypesRepository $subscriptionTypesRepository,
     ) {
         parent::__construct($lazyWidgetManager);
         $this->subscriptionTypesRepository = $subscriptionTypesRepository;
@@ -48,7 +48,7 @@ class SubscriptionTypeReports extends BaseLazyWidget
         $reportTable = new ReportTable(
             ['subscription_type_id' => $subscriptionTypeId],
             $this->subscriptionTypesRepository->getDatabase(),
-            new ReportGroup('users.source')
+            new ReportGroup('users.source'),
         );
         $reportTable
             ->addReport(new TotalPaidSubscriptionsReport('', $this->translator))

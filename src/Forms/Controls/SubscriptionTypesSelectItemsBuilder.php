@@ -24,7 +24,7 @@ class SubscriptionTypesSelectItemsBuilder
     {
         return $this->build(
             $subscriptionTypes,
-            static fn (ActiveRow $subscriptionType) => $subscriptionType->name
+            static fn (ActiveRow $subscriptionType) => $subscriptionType->name,
         );
     }
 
@@ -40,7 +40,7 @@ class SubscriptionTypesSelectItemsBuilder
                 "%s / %s <small>(%s)</small>",
                 $subscriptionType->name,
                 $price,
-                $subscriptionType->code
+                $subscriptionType->code,
             );
         };
 

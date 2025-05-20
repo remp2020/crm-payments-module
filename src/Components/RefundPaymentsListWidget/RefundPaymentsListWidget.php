@@ -14,7 +14,7 @@ class RefundPaymentsListWidget extends BaseLazyWidget
 
     public function __construct(
         LazyWidgetManager $lazyWidgetManager,
-        PaymentsRepository $paymentsRepository
+        PaymentsRepository $paymentsRepository,
     ) {
         parent::__construct($lazyWidgetManager);
 

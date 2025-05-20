@@ -393,7 +393,7 @@ class RecurrentPaymentsResolverTest extends PaymentsTestCase
             $payment,
             (new \DateTime())->modify('+1 months'),
             null,
-            4
+            4,
         );
     }
 }

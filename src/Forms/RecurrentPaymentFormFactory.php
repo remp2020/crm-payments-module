@@ -18,7 +18,7 @@ class RecurrentPaymentFormFactory
         private readonly RecurrentPaymentsRepository $recurrentPaymentsRepository,
         private readonly SubscriptionTypesRepository $subscriptionTypesRepository,
         private readonly Translator $translator,
-        private readonly SubscriptionTypesSelectItemsBuilder $subscriptionTypesSelectItemsBuilder
+        private readonly SubscriptionTypesSelectItemsBuilder $subscriptionTypesSelectItemsBuilder,
     ) {
     }
 
@@ -48,14 +48,14 @@ class RecurrentPaymentFormFactory
         $nextSubscriptionType = $form->addSelect(
             'next_subscription_type_id',
             'payments.admin.component.recurrent_payment_form.next_subscription_type_id.label',
-            $this->subscriptionTypesSelectItemsBuilder->buildWithDescription($subscriptionTypes)
+            $this->subscriptionTypesSelectItemsBuilder->buildWithDescription($subscriptionTypes),
         )->setPrompt('--')
             ->setOption('description', $this->translator->translate('payments.admin.component.recurrent_payment_form.next_subscription_type_id.description', ['actual' => $recurrent->subscription_type->name]));
         $nextSubscriptionType->getControlPrototype()->addAttributes(['class' => 'select2']);
 
         $form->addText(
             'custom_amount',
-            'payments.admin.component.recurrent_payment_form.custom_amount.label'
+            'payments.admin.component.recurrent_payment_form.custom_amount.label',
         )
             ->setHtmlType('number')
             ->setHtmlAttribute('readonly', 'readonly')

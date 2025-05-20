@@ -11,7 +11,7 @@ final class PaymentItemContainerFactory
     public function createFromPayment(
         ActiveRow $payment,
         ?array $includedPaymentItemTypes = [],
-        ?array $excludedPaymentItemTypes = []
+        ?array $excludedPaymentItemTypes = [],
     ): PaymentItemContainer {
         return $this->create($payment, new PaymentItemContainer(), $includedPaymentItemTypes, $excludedPaymentItemTypes);
     }

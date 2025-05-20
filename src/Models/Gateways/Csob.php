@@ -30,7 +30,7 @@ class Csob extends GatewayAbstract
         ApplicationConfig $applicationConfig,
         Response $httpResponse,
         Translator $translator,
-        PaymentMetaRepository $paymentMetaRepository
+        PaymentMetaRepository $paymentMetaRepository,
     ) {
         parent::__construct($linkGenerator, $applicationConfig, $httpResponse, $translator);
         $this->logger = $logger;
@@ -151,7 +151,7 @@ class Csob extends GatewayAbstract
         return Strings::trim(Strings::substring(
             "{$user->first_name} {$user->last_name}",
             0,
-            45
+            45,
         ));
     }
 }

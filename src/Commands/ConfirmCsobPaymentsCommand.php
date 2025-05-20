@@ -35,7 +35,7 @@ class ConfirmCsobPaymentsCommand extends Command
             ->joinWhere(
                 ':payment_meta',
                 "payments.id = :payment_meta.payment_id AND :payment_meta.key = ?",
-                'pay_id'
+                'pay_id',
             )
             ->where([
                 'payment_gateway.code' => [Csob::GATEWAY_CODE, CsobOneClick::GATEWAY_CODE],

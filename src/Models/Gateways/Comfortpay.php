@@ -110,7 +110,7 @@ class Comfortpay extends GatewayAbstract implements RecurrentPaymentInterface, C
         $this->gateway->setCertPass($this->applicationConfig->get('comfortpay_local_passphrase_path'));
 
         $this->response = $this->gateway->checkCard(
-            ['cardId' => $token]
+            ['cardId' => $token],
         )->send();
 
         return $this->response->isSuccessful();
@@ -128,7 +128,7 @@ class Comfortpay extends GatewayAbstract implements RecurrentPaymentInterface, C
         // chunk requests to 1000 cards, max allowed limit allowed by Comfortpay
         foreach (array_chunk($tokens, 1000) as $chunk) {
             $this->response = $this->gateway->listOfExpirePerId(
-                ['cardIds' => $chunk]
+                ['cardIds' => $chunk],
             )->send();
 
             if (!$this->response->isSuccessful()) {
@@ -262,7 +262,7 @@ class Comfortpay extends GatewayAbstract implements RecurrentPaymentInterface, C
         $this->gateway->setCertPass($this->applicationConfig->get('comfortpay_local_passphrase_path'));
 
         $this->response = $this->gateway->unRegisterCard(
-            ['cardId' => $token]
+            ['cardId' => $token],
         )->send();
 
         return $this->response->isSuccessful();

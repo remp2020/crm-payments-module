@@ -14,7 +14,7 @@ class BeforeRecurrentPaymentExpiresEvent extends AbstractEvent implements Paymen
      */
     public function __construct(
         private ActiveRow $payment,
-        private string $token
+        private string $token,
     ) {
     }
 

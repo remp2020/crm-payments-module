@@ -69,14 +69,14 @@ class RecurrentPaymentSubscriptionTypeContentAccessCriteriaTest extends Database
         $recurrentPaymentSelection = $this->recurrentPaymentsRepository->getTable()->where(['id' => $recurrentPaymentRow->id]);
         $values = (object)['selection' => ['print']];
         $this->assertFalse(
-            $criteria->addConditions($recurrentPaymentSelection, [RecurrentPaymentSubscriptionTypeContentAccessCriteria::KEY => $values], $recurrentPaymentRow)
+            $criteria->addConditions($recurrentPaymentSelection, [RecurrentPaymentSubscriptionTypeContentAccessCriteria::KEY => $values], $recurrentPaymentRow),
         );
 
         // second test matching
         $recurrentPaymentSelection = $this->recurrentPaymentsRepository->getTable()->where(['id' => $recurrentPaymentRow->id]);
         $values = (object)['selection' => ['web']];
         $this->assertTrue(
-            $criteria->addConditions($recurrentPaymentSelection, [RecurrentPaymentSubscriptionTypeContentAccessCriteria::KEY => $values], $recurrentPaymentRow)
+            $criteria->addConditions($recurrentPaymentSelection, [RecurrentPaymentSubscriptionTypeContentAccessCriteria::KEY => $values], $recurrentPaymentRow),
         );
         $this->assertNotNull($recurrentPaymentSelection->fetch());
 
@@ -84,7 +84,7 @@ class RecurrentPaymentSubscriptionTypeContentAccessCriteriaTest extends Database
         $recurrentPaymentSelection = $this->recurrentPaymentsRepository->getTable()->where(['id' => $recurrentPaymentRow->id]);
         $values = (object)['selection' => ['web', 'print']];
         $this->assertTrue(
-            $criteria->addConditions($recurrentPaymentSelection, [RecurrentPaymentSubscriptionTypeContentAccessCriteria::KEY => $values], $recurrentPaymentRow)
+            $criteria->addConditions($recurrentPaymentSelection, [RecurrentPaymentSubscriptionTypeContentAccessCriteria::KEY => $values], $recurrentPaymentRow),
         );
         $this->assertNotNull($recurrentPaymentSelection->fetch());
     }
@@ -109,7 +109,7 @@ class RecurrentPaymentSubscriptionTypeContentAccessCriteriaTest extends Database
             $subscriptionTypeRow,
             true,
             true,
-            $userRow
+            $userRow,
         );
 
         /** @var PaymentGatewaysRepository $paymentGatewaysRepository */
@@ -122,7 +122,7 @@ class RecurrentPaymentSubscriptionTypeContentAccessCriteriaTest extends Database
             $userRow,
             new PaymentItemContainer(),
             null,
-            1
+            1,
         );
 
         $this->paymentsRepository->addSubscriptionToPayment($subscriptionRow, $paymentRow);

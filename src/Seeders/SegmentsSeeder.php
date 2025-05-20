@@ -19,7 +19,7 @@ class SegmentsSeeder implements ISeeder
 
     public function __construct(
         SegmentsRepository $segmentsRepository,
-        SegmentGroupsRepository $segmentGroupsRepository
+        SegmentGroupsRepository $segmentGroupsRepository,
     ) {
         $this->segmentsRepository = $segmentsRepository;
         $this->segmentGroupsRepository = $segmentGroupsRepository;
@@ -56,7 +56,7 @@ SQL
             ,
             null,
             $tableName,
-            $fields
+            $fields,
         );
 
         // check if segment existed before this seed (compare formatted datetimes because DB entry doesn't have milliseconds)
@@ -101,7 +101,7 @@ SQL
             ,
             null,
             $tableName,
-            $fields
+            $fields,
         );
 
         // check if segment existed before this seed (compare formatted datetimes because DB entry doesn't have milliseconds)

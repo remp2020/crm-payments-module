@@ -37,13 +37,13 @@ class RenewalPaymentForSubscriptionWidget extends BaseLazyWidget
     }
 
     protected function createComponentAssignRenewalPaymentToSubscriptionForm(
-        AssignRenewalPaymentToSubscriptionFormFactory $assignRenewalPaymentToSubscriptionFormFactory
+        AssignRenewalPaymentToSubscriptionFormFactory $assignRenewalPaymentToSubscriptionFormFactory,
     ): Multiplier {
         return new Multiplier(function ($subscriptionId) use ($assignRenewalPaymentToSubscriptionFormFactory) {
             $form = $assignRenewalPaymentToSubscriptionFormFactory->create($subscriptionId);
             $assignRenewalPaymentToSubscriptionFormFactory->onSave = function () {
                 $this->getPresenter()->flashMessage(
-                    $this->translator->translate('payments.admin.component.renewal_payment_for_subscription_widget.success')
+                    $this->translator->translate('payments.admin.component.renewal_payment_for_subscription_widget.success'),
                 );
                 $this->getPresenter()->redirect('this');
             };

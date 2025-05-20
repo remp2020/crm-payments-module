@@ -91,7 +91,7 @@ class UpsertEuVatRatesCommandTest extends DatabaseTestCase
             ->with(
                 memberStates: true,
                 limit: 100,
-                countryIsoCode: $onlySlovakia ? 'sk' : null
+                countryIsoCode: $onlySlovakia ? 'sk' : null,
             )
             ->willReturn(new Response(
                 200,
@@ -103,7 +103,7 @@ class UpsertEuVatRatesCommandTest extends DatabaseTestCase
         $this->command = new UpsertEuVatRatesCommand(
             $this->getRepository(CountriesRepository::class),
             $this->getRepository(VatRatesRepository::class),
-            $clientMock
+            $clientMock,
         );
 
         // ********************************************************************
@@ -133,7 +133,7 @@ class UpsertEuVatRatesCommandTest extends DatabaseTestCase
             ->with(
                 memberStates: true,
                 limit: 100,
-                countryIsoCode: null
+                countryIsoCode: null,
             )
             ->willReturn(new Response(
                 500,
@@ -144,7 +144,7 @@ class UpsertEuVatRatesCommandTest extends DatabaseTestCase
         $this->command = new UpsertEuVatRatesCommand(
             $this->getRepository(CountriesRepository::class),
             $this->getRepository(VatRatesRepository::class),
-            $clientMock
+            $clientMock,
         );
 
         // ********************************************************************
@@ -175,7 +175,7 @@ class UpsertEuVatRatesCommandTest extends DatabaseTestCase
             ->with(
                 memberStates: true,
                 limit: 100,
-                countryIsoCode: 'sk'
+                countryIsoCode: 'sk',
             )
             ->willReturn(new Response(
                 200,
@@ -187,7 +187,7 @@ class UpsertEuVatRatesCommandTest extends DatabaseTestCase
         $this->command = new UpsertEuVatRatesCommand(
             $this->getRepository(CountriesRepository::class),
             $this->getRepository(VatRatesRepository::class),
-            $clientMock
+            $clientMock,
         );
 
         // remove SK country from table

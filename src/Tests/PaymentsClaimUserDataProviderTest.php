@@ -45,7 +45,7 @@ class PaymentsClaimUserDataProviderTest extends DatabaseTestCase
             PaymentsRepository::class,
             PaymentGatewaysRepository::class,
             UsersRepository::class,
-            UserMetaRepository::class
+            UserMetaRepository::class,
         ];
     }
 
@@ -53,7 +53,7 @@ class PaymentsClaimUserDataProviderTest extends DatabaseTestCase
     {
         return [
             PaymentGatewaysSeeder::class,
-            UsersSeeder::class
+            UsersSeeder::class,
         ];
     }
 

@@ -55,7 +55,7 @@ class PaymentGatewayCriteriaTest extends DatabaseTestCase
         $this->assertTrue($this->paymentGatewayCriteria->addConditions(
             $q,
             [PaymentGatewayCriteria::KEY => (object)['selection' => [BankTransfer::GATEWAY_CODE]]],
-            $paymentRow
+            $paymentRow,
         ));
         $this->assertNull($q->fetch());
 
@@ -64,7 +64,7 @@ class PaymentGatewayCriteriaTest extends DatabaseTestCase
         $this->assertTrue($this->paymentGatewayCriteria->addConditions(
             $q,
             [PaymentGatewayCriteria::KEY => (object)['selection' => [BankTransfer::GATEWAY_CODE]]],
-            $paymentRow
+            $paymentRow,
         ));
         $this->assertNotNull($q->fetch());
     }
@@ -85,7 +85,7 @@ class PaymentGatewayCriteriaTest extends DatabaseTestCase
             $userRow,
             new PaymentItemContainer(),
             null,
-            1
+            1,
         );
 
         $paymentRow = $this->paymentsRepository->updateStatus($paymentRow, PaymentStatusEnum::Paid->value);

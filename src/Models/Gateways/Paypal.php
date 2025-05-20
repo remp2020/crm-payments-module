@@ -25,7 +25,7 @@ class Paypal extends GatewayAbstract
         ApplicationConfig $applicationConfig,
         Response $httpResponse,
         PaymentMetaRepository $paymentMetaRepository,
-        Translator $translator
+        Translator $translator,
     ) {
         parent::__construct($linkGenerator, $applicationConfig, $httpResponse, $translator);
         $this->paymentMetaRepository = $paymentMetaRepository;
@@ -81,7 +81,7 @@ class Paypal extends GatewayAbstract
         $this->response = $this->gateway->completePurchase([
             'amount' => $payment->amount,
             'currency' => $this->applicationConfig->get('currency'),
-            'transactionId' => $payment->variable_symbol
+            'transactionId' => $payment->variable_symbol,
         ])->send();
 
         if ($this->response->isSuccessful()) {

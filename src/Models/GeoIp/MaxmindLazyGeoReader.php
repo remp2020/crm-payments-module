@@ -13,7 +13,7 @@ final class MaxmindLazyGeoReader implements GeoIpInterface
     private ?Reader $reader = null;
 
     public function __construct(
-        private ?string $maxmindDatabasePath = null
+        private ?string $maxmindDatabasePath = null,
     ) {
     }
 

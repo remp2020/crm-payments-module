@@ -10,7 +10,7 @@ class TatraBankaMailDecryptor
 
     public function __construct(
         string $privateKeyPath,
-        string $passphrase
+        string $passphrase,
     ) {
         $this->privateKeyPath = $privateKeyPath;
         $this->passphrase = $passphrase;

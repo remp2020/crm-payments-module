@@ -71,7 +71,7 @@ class CsobMailConfirmationCommand extends Command
 
             Debugger::log(
                 'Unable to parse CSOB statement (CEB Info: Zaúčtování platby) email from: ' . $email->getDate(),
-                Debugger::ERROR
+                Debugger::ERROR,
             );
         });
 

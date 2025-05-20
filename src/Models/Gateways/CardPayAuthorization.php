@@ -27,7 +27,7 @@ class CardPayAuthorization extends GatewayAbstract implements AuthorizationInter
         ApplicationConfig $applicationConfig,
         Response $httpResponse,
         Translator $translator,
-        PaymentMetaRepository $paymentMetaRepository
+        PaymentMetaRepository $paymentMetaRepository,
     ) {
         parent::__construct($linkGenerator, $applicationConfig, $httpResponse, $translator);
 

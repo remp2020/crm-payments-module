@@ -57,7 +57,7 @@ class TatraBankaMailConfirmationCommand extends Command
             if (!$mailContent) {
                 Debugger::log(
                     'Unable to parse TatraBanka email (b-mail - Kredit na ucte) email from: ' . $email->getDate(),
-                    Debugger::ERROR
+                    Debugger::ERROR,
                 );
                 // email not parsed; do not process mail
                 return;
@@ -79,7 +79,7 @@ class TatraBankaMailConfirmationCommand extends Command
             if (!$mailContent) {
                 Debugger::log(
                     'Unable to parse TatraBanka email (b-mail - e-commerce) email from: ' . $email->getDate(),
-                    Debugger::ERROR
+                    Debugger::ERROR,
                 );
                 // email not parsed; do not process mail
                 return;

@@ -27,7 +27,7 @@ class DuplicateRecurrentPayments extends BaseLazyWidget
     public function __construct(
         LazyWidgetManager $lazyWidgetManager,
         RecurrentPaymentsRepository $recurrentPaymentsRepository,
-        Translator $translator
+        Translator $translator,
     ) {
         parent::__construct($lazyWidgetManager);
         $this->recurrentPaymentsRepository = $recurrentPaymentsRepository;

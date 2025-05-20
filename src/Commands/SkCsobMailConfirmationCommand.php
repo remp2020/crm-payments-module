@@ -68,7 +68,7 @@ class SkCsobMailConfirmationCommand extends Command
 
             Debugger::log(
                 'Unable to parse CSOB statement (ČSOB Info 24 - Avízo) email from: ' . $email->getDate(),
-                Debugger::ERROR
+                Debugger::ERROR,
             );
         });
 

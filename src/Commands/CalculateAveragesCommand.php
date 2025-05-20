@@ -45,7 +45,7 @@ class CalculateAveragesCommand extends Command
         private readonly SubscriptionTypesRepository $subscriptionTypesRepository,
         private readonly UserStatsRepository $userStatsRepository,
         private readonly UsersRepository $usersRepository,
-        private readonly UserMetaRepository $userMetaRepository
+        private readonly UserMetaRepository $userMetaRepository,
     ) {
         parent::__construct();
     }
@@ -271,7 +271,7 @@ class CalculateAveragesCommand extends Command
                 'user.deleted_at IS NULL',
                 'payments.status IN (?)' => self::PAYMENT_STATUSES,
                 'payments.paid_at > ?' => $paymentPaidAt,
-                ':payment_items.id IS NOT NULL'
+                ':payment_items.id IS NOT NULL',
             ])
             ->group('payments.user_id');
 
@@ -313,7 +313,7 @@ class CalculateAveragesCommand extends Command
                 'user.deleted_at IS NULL',
                 'payments.status IN (?)' => self::PAYMENT_STATUSES,
                 'payments.paid_at > ?' => $paymentPaidAt,
-                ':payment_items.id IS NOT NULL'
+                ':payment_items.id IS NOT NULL',
             ])
             ->group('payments.user_id');
 
@@ -349,7 +349,7 @@ class CalculateAveragesCommand extends Command
                 'user.deleted_at IS NULL',
                 'payments.status IN (?)' => self::PAYMENT_STATUSES,
                 'payments.paid_at > ?' => $paymentPaidAt,
-                'subscription_type.id IS NOT NULL'
+                'subscription_type.id IS NOT NULL',
             ])
             ->group('payments.user_id');
 

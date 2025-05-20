@@ -64,7 +64,7 @@ class RecurrentPaymentsUserDataProvider implements UserDataProviderInterface
                 'user_id' => $userId,
                 'payment_method_id' => $paymentMethod->id,
             ])->update([
-                'cid' => 'GDPR removal ' . $paymentMethod->id
+                'cid' => 'GDPR removal ' . $paymentMethod->id,
             ]);
 
             // payment methods with the same external token can exist on multiple users, e.g. after subscription transfer

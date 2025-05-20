@@ -87,12 +87,12 @@ class RecurrentPaymentsRepository extends Repository
         ActiveRow $payment,
         string $recurrentToken,
         ?\DateTime $chargeAt = null,
-        ?float $customChargeAmount = null
+        ?float $customChargeAmount = null,
     ): ?ActiveRow {
         if (!in_array($payment->status, [PaymentStatusEnum::Paid->value, PaymentStatusEnum::Prepaid->value, PaymentStatusEnum::Authorized->value], true)) {
             Debugger::log(
                 "Could not create recurrent payment from payment [{$payment->id}], invalid payment status: [{$payment->status}]",
-                Debugger::ERROR
+                Debugger::ERROR,
             );
             return null;
         }
@@ -388,7 +388,7 @@ class RecurrentPaymentsRepository extends Repository
         /** @var BaseSubscriptionDataProviderInterface[] $providers */
         $providers = $this->dataProviderManager->getProviders(
             'payments.dataprovider.base_subscription',
-            BaseSubscriptionDataProviderInterface::class
+            BaseSubscriptionDataProviderInterface::class,
         );
         foreach ($providers as $provider) {
             $replacedSubscription = $provider->getPeriodBaseSubscription($subscription);
@@ -487,7 +487,7 @@ class RecurrentPaymentsRepository extends Repository
         if ($endTime <= $this->getNow()) {
             throw new Exception(
                 "Calculated next charge of recurrent payment would be in the past." .
-                " Check payment [{$payment->id}] and subscription [{$subscription?->id}]."
+                " Check payment [{$payment->id}] and subscription [{$subscription?->id}].",
             );
         }
 
@@ -510,7 +510,7 @@ class RecurrentPaymentsRepository extends Repository
                 // payments would be shifted by `chargeBefore` value, every time we charge
                 throw new Exception(
                     "Trying to set chargeBefore for payment charge without subscription." .
-                    " Check payment [{$payment->id}]."
+                    " Check payment [{$payment->id}].",
                 );
             }
 
@@ -524,19 +524,19 @@ class RecurrentPaymentsRepository extends Repository
             if ($newEndTime < $subscription->start_time) {
                 throw new Exception(
                     "Calculated next charge of recurrent payment would be before subscription's start time." .
-                    " Check payment [{$payment->id}] and subscription [{$subscription->id}]."
+                    " Check payment [{$payment->id}] and subscription [{$subscription->id}].",
                 );
             }
             if ($newEndTime < $payment->paid_at) {
                 throw new Exception(
                     "Calculated next charge of recurrent payment would be before payment's paid_at time." .
-                    " Check payment [{$payment->id}]."
+                    " Check payment [{$payment->id}].",
                 );
             }
             if ($newEndTime <= $this->getNow()) {
                 throw new Exception(
                     "Calculated next charge of recurrent payment would be in the past." .
-                    " Check payment [{$payment->id}] and subscription [{$subscription->id}]."
+                    " Check payment [{$payment->id}] and subscription [{$subscription->id}].",
                 );
             }
             $endTime = $newEndTime;
@@ -563,7 +563,7 @@ class RecurrentPaymentsRepository extends Repository
         if ($this->paymentGatewayMetaRepository->hasValue(
             $recurrentPayment->payment_gateway,
             Gateway::META_USER_UNSTOPPABLE,
-            '1'
+            '1',
         )) {
             return false;
         }
@@ -575,7 +575,7 @@ class RecurrentPaymentsRepository extends Repository
         if ($this->paymentGatewayMetaRepository->hasValue(
             $recurrentPayment->payment_gateway,
             Gateway::META_UNSTOPPABLE,
-            '1'
+            '1',
         )) {
             return false;
         }
@@ -653,7 +653,7 @@ class RecurrentPaymentsRepository extends Repository
                 'recurrent_payments_count',
                 $callable,
                 \Nette\Utils\DateTime::from(CacheRepository::REFRESH_TIME_5_MINUTES),
-                $forceCacheUpdate
+                $forceCacheUpdate,
             );
         }
         return $callable();

@@ -24,7 +24,7 @@ class MyNextRecurrentPayment extends BaseLazyWidget
     public function __construct(
         RecurrentPaymentsRepository $recurrentPaymentsRepository,
         RecurrentPaymentsResolver $recurrentPaymentsResolver,
-        LazyWidgetManager $lazyWidgetManager
+        LazyWidgetManager $lazyWidgetManager,
     ) {
         parent::__construct($lazyWidgetManager);
         $this->recurrentPaymentsRepository = $recurrentPaymentsRepository;

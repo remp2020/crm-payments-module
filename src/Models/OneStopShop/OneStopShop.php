@@ -92,13 +92,13 @@ final class OneStopShop
             'formParams',
             'ipAddress',
             'previousPayment',
-            'payment'
+            'payment',
         );
 
         /** @var OneStopShopCountryResolutionDataProviderInterface[] $providers */
         $providers = $this->dataProviderManager->getProviders(
             OneStopShopCountryResolutionDataProviderInterface::PATH,
-            OneStopShopCountryResolutionDataProviderInterface::class
+            OneStopShopCountryResolutionDataProviderInterface::class,
         );
         foreach ($providers as $provider) {
             $countryResolution = $provider->provide($dataProviderParams);
@@ -199,7 +199,7 @@ final class OneStopShop
 
     public function adjustPaymentItemContainerVatRates(
         PaymentItemContainer $paymentItemContainer,
-        ?ActiveRow $paymentCountry
+        ?ActiveRow $paymentCountry,
     ): void {
         if (!$this->isEnabled()) {
             return;
@@ -281,7 +281,7 @@ final class OneStopShop
         /** @var OneStopShopVatRateDataProviderInterface[] $providers */
         $providers = $this->dataProviderManager->getProviders(
             OneStopShopVatRateDataProviderInterface::PATH,
-            OneStopShopVatRateDataProviderInterface::class
+            OneStopShopVatRateDataProviderInterface::class,
         );
         foreach ($providers as $provider) {
             $vatRate = $provider->provide($dataProviderParams);

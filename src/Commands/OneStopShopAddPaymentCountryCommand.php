@@ -45,13 +45,13 @@ class OneStopShopAddPaymentCountryCommand extends Command
                 'payment_ids',
                 null,
                 InputOption::VALUE_REQUIRED,
-                "IDs of records from 'payments' table. Expects list of values separated by comma."
+                "IDs of records from 'payments' table. Expects list of values separated by comma.",
             )
             ->addOption(
                 'from',
                 null,
                 InputOption::VALUE_REQUIRED,
-                "Include only payments created after the provided date."
+                "Include only payments created after the provided date.",
             )
             ->addOption(
                 'statuses',
@@ -139,7 +139,7 @@ class OneStopShopAddPaymentCountryCommand extends Command
 
                     $this->paymentsRepository->update($payment, [
                         'payment_country_id' => $country->id,
-                        'payment_country_resolution_reason' => $countryResolutionReason
+                        'payment_country_resolution_reason' => $countryResolutionReason,
                     ]);
 
                     $this->line(" * Payment <info>[{$payment->id}]</info> resolved to <info>[" . $country->iso_code . "]</info> (reason <info>[" . $countryResolutionReason . "]</info>)");
@@ -187,7 +187,7 @@ class OneStopShopAddPaymentCountryCommand extends Command
 
         $this->paymentsRepository->update($nextPayment, [
             'payment_country_id' => $country->id,
-            'payment_country_resolution_reason' => $countryResolutionReason
+            'payment_country_resolution_reason' => $countryResolutionReason,
         ]);
         $this->line("   * subsequent payment <info>[{$nextPayment->id}]</info> resolved to <info>[" . $country->iso_code . "]</info>");
 

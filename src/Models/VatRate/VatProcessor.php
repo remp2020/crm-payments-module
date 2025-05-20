@@ -32,14 +32,14 @@ final class VatProcessor
     public function applyVatAdjustments(
         PaymentItemContainer $paymentItemContainer,
         ActiveRow $user,
-        ?ActiveRow $paymentCountry
+        ?ActiveRow $paymentCountry,
     ): void {
         $vatMode = VatMode::B2C; // default mode
 
         /** @var VatModeDataProviderInterface[] $providers */
         $providers = $this->dataProviderManager->getProviders(
             VatModeDataProviderInterface::PATH,
-            VatModeDataProviderInterface::class
+            VatModeDataProviderInterface::class,
         );
         foreach ($providers as $provider) {
             $vatMode = $provider->getVatMode($user);
@@ -122,7 +122,7 @@ final class VatProcessor
         /** @var PaymentItemVatDataProviderInterface[] $providers */
         $providers = $this->dataProviderManager->getProviders(
             PaymentItemVatDataProviderInterface::PATH,
-            PaymentItemVatDataProviderInterface::class
+            PaymentItemVatDataProviderInterface::class,
         );
         foreach ($providers as $provider) {
             $vat = $provider->getVat($item);

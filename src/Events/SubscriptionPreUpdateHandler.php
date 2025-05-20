@@ -17,7 +17,7 @@ class SubscriptionPreUpdateHandler extends AbstractListener
 
     public function __construct(
         PaymentsRepository $paymentsRepository,
-        Translator $translator
+        Translator $translator,
     ) {
         $this->paymentsRepository = $paymentsRepository;
         $this->translator = $translator;

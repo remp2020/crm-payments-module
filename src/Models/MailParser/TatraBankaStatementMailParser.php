@@ -10,7 +10,7 @@ class TatraBankaStatementMailParser implements ParserInterface
     private $decryptor;
 
     public function __construct(
-        TatraBankaMailDecryptor $decryptor
+        TatraBankaMailDecryptor $decryptor,
     ) {
         $this->decryptor = $decryptor;
     }

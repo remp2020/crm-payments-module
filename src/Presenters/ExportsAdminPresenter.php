@@ -63,7 +63,7 @@ class ExportsAdminPresenter extends AdminPresenter
         $form->addSelect(
             'file_system',
             'payments.admin.component.exports_admin_form.file_system.label',
-            array_combine($buckets, $buckets)
+            array_combine($buckets, $buckets),
         )
             ->setPrompt('--')
             ->getControlPrototype()->addAttributes(['class' => 'select2']);
@@ -81,7 +81,7 @@ class ExportsAdminPresenter extends AdminPresenter
 
         $form->onSuccess[] = [$this, 'adminFilterSubmitted'];
         $form->setDefaults([
-            'file_system' => $this->file_system
+            'file_system' => $this->file_system,
         ]);
 
         return $form;

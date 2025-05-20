@@ -26,7 +26,7 @@ class PaymentProcessor
         private RecurrentPaymentsRepository $recurrentPaymentsRepository,
         private PaymentLogsRepository $paymentLogsRepository,
         protected Request $request,
-        private Emitter $emitter
+        private Emitter $emitter,
     ) {
     }
 
@@ -46,7 +46,7 @@ class PaymentProcessor
             $gateway->isSuccessful() ? 'OK' : 'ERROR',
             Json::encode($gateway->getResponseData()),
             $this->request->getUrl(),
-            $payment->id
+            $payment->id,
         );
 
         return $gateway->process($allowRedirect);
@@ -78,7 +78,7 @@ class PaymentProcessor
                 'OK',
                 Json::encode([]),
                 $this->request->getUrl(),
-                $payment->id
+                $payment->id,
             );
             $callback($payment, $gateway, PaymentStatusEnum::Prepaid->value);
             return;
@@ -111,7 +111,7 @@ class PaymentProcessor
             $gateway->isSuccessful() ? 'OK' : 'ERROR',
             Json::encode($gateway->getResponseData()),
             $this->request->getUrl(),
-            $payment->id
+            $payment->id,
         );
 
         $payment = $this->paymentsRepository->find($payment->id); // reload payment
@@ -127,7 +127,7 @@ class PaymentProcessor
             if ($gateway->hasRecurrentToken()) {
                 $this->recurrentPaymentsRepository->createFromPayment(
                     $payment,
-                    $gateway->getRecurrentToken()
+                    $gateway->getRecurrentToken(),
                 );
             } else {
                 Debugger::log("Could not create recurrent payment from payment [{$payment->id}], missing recurrent token.", ILogger::ERROR);

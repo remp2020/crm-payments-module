@@ -88,7 +88,7 @@ class PaymentGatewaysAdminPresenter extends AdminPresenter
         $paymentStatusCompleted = "'" . implode("', '", [
             PaymentStatusEnum::Paid->value,
             PaymentStatusEnum::Imported->value,
-            PaymentStatusEnum::Prepaid->value
+            PaymentStatusEnum::Prepaid->value,
             ]) . "'";
         $graphDataItem1 = new GraphDataItem();
         $graphDataItem1->setCriteria((new Criteria())

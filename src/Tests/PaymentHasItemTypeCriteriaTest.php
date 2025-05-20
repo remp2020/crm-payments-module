@@ -94,14 +94,14 @@ class PaymentHasItemTypeCriteriaTest extends DatabaseTestCase
                 $this->subscriptionType()->id,
                 'subscription_type',
                 10,
-                10
+                10,
             );
         }
         if ($type === DonationPaymentItem::TYPE) {
             return new DonationPaymentItem(
                 'donation',
                 10,
-                0
+                0,
             );
         }
 
@@ -161,7 +161,7 @@ class PaymentHasItemTypeCriteriaTest extends DatabaseTestCase
             null,
             null,
             null,
-            false
+            false,
         );
 
         $paymentSelection = $paymentsRepository->getTable()

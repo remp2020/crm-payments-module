@@ -117,7 +117,7 @@ class DonationAmountCriteriaTest extends DatabaseTestCase
             null,
             null,
             null,
-            false
+            false,
         );
 
         $paymentSelection = $paymentsRepository->getTable()

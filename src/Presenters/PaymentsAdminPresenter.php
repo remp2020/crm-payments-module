@@ -102,7 +102,7 @@ class PaymentsAdminPresenter extends AdminPresenter
         $paymentGateway = $form->addSelect(
             'payment_gateway',
             'payments.admin.component.admin_filter_form.payment_gateway.label',
-            $paymentGateways
+            $paymentGateways,
         )->setPrompt('--');
         $paymentGateway->getControlPrototype()->addAttributes(['class' => 'select2']);
 
@@ -110,7 +110,7 @@ class PaymentsAdminPresenter extends AdminPresenter
         $status = $form->addSelect(
             'status',
             'payments.admin.component.admin_filter_form.status.label',
-            $statuses
+            $statuses,
         )->setPrompt('--');
         $status->getControlPrototype()->addAttributes(['class' => 'select2']);
 
@@ -121,7 +121,7 @@ class PaymentsAdminPresenter extends AdminPresenter
                 'all' => $this->translator->translate('payments.admin.component.admin_filter_form.recurrent_charge.all'),
                 'recurrent' => $this->translator->translate('payments.admin.component.admin_filter_form.recurrent_charge.recurrent'),
                 'manual' => $this->translator->translate('payments.admin.component.admin_filter_form.recurrent_charge.manual'),
-            ]
+            ],
         );
         $recurrentCharge->getControlPrototype()->addAttributes(['class' => 'select2']);
 
@@ -162,7 +162,7 @@ class PaymentsAdminPresenter extends AdminPresenter
         $donation = $form->addSelect(
             'donation',
             'payments.admin.component.admin_filter_form.donation.label',
-            $donations
+            $donations,
         )->setPrompt('--');
         $donation->getControlPrototype()->addAttributes(['class' => 'select2']);
 
@@ -238,7 +238,7 @@ class PaymentsAdminPresenter extends AdminPresenter
     {
         $this->hermesEmitter->emit(new HermesMessage('export-payments', [
             'form_data' => $this->formData,
-            'user_id' => $this->user->getId()
+            'user_id' => $this->user->getId(),
         ]), HermesMessage::PRIORITY_LOW);
 
         $this->flashMessage($this->translator->translate('payments.admin.payments.export.exported'));

@@ -18,7 +18,7 @@ class AvgMonthPaymentWidget extends BaseLazyWidget implements SegmentWidgetInter
     public function __construct(
         LazyWidgetManager $lazyWidgetManager,
         UserStatsRepository $userStatsRepository,
-        CacheRepository $cacheRepository
+        CacheRepository $cacheRepository,
     ) {
         parent::__construct($lazyWidgetManager);
         $this->cacheRepository = $cacheRepository;

@@ -57,14 +57,14 @@ class TatraBankaStatementMailConfirmationCommand extends Command
                 new TatraBankaMailDecryptor(
                     $pgpPrivateKeyPath,
                     $pgpPassphrase,
-                )
+                ),
             );
             $mailContents = $parser->parseMulti($email->getBody());
 
             if (!$mailContents) {
                 Debugger::log(
                     'Unable to parse TatraBanka statement (vypis_obchodnik) email from: ' . $email->getDate(),
-                    Debugger::ERROR
+                    Debugger::ERROR,
                 );
                 // email not parsed; do not call callback
                 return;

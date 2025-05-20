@@ -34,7 +34,7 @@ class RenewalPayment
 
         $this->emitter->emit(new SubscriptionRenewalPaymentAttachedEvent(
             renewalPayment: $renewalPayment,
-            subscription: $subscription
+            subscription: $subscription,
         ));
     }
 
