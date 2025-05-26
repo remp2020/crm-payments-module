@@ -16,6 +16,7 @@ use Nette\Application\BadRequestException;
 use Nette\Database\Table\ActiveRow;
 use Nette\Localization\Translator;
 use Nette\Utils\DateTime;
+use Tracy\Debugger;
 
 /**
  * Listing widget used in user detail shoing users payments.
@@ -92,7 +93,13 @@ class UserPaymentsListing extends BaseLazyWidget
                 return null;
             }
 
-            return $this->recurrentPaymentsResolver->resolveChargeAmount($recurrentPayment);
+            try {
+                $result = $this->recurrentPaymentsResolver->resolveChargeAmount($recurrentPayment);
+            } catch (\Exception $exception) {
+                Debugger::log($exception, Debugger::EXCEPTION);
+                return null;
+            }
+            return $result;
         };
 
         $this->template->setFile(__DIR__ . '/' . $this->templateName);
