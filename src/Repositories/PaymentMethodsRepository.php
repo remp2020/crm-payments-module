@@ -9,6 +9,7 @@ use League\Event\Emitter;
 use Nette\Caching\Storage;
 use Nette\Database\Explorer;
 use Nette\Database\Table\ActiveRow;
+use Nette\Database\Table\Selection;
 
 class PaymentMethodsRepository extends Repository
 {
@@ -22,6 +23,11 @@ class PaymentMethodsRepository extends Repository
         Storage $cacheStorage = null,
     ) {
         parent::__construct($database, $cacheStorage);
+    }
+
+    final public function all(): Selection
+    {
+        return $this->getTable();
     }
 
     final public function add(int $userId, int $paymentGatewayId, string $externalToken): ActiveRow|bool

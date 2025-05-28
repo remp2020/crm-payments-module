@@ -143,6 +143,10 @@ class RecurrentPaymentsRepository extends Repository
         );
 
         $this->emitter->emit(new RecurrentPaymentCreatedEvent($recurrentPayment));
+        $this->hermesEmitter->emit(new HermesMessage('recurrent-payment-created', [
+            'recurrent_payment_id' => $recurrentPayment->id,
+        ]), HermesMessage::PRIORITY_HIGH);
+
         return $recurrentPayment;
     }
 
@@ -355,7 +359,7 @@ class RecurrentPaymentsRepository extends Repository
             ->where('charge_at < ?', $date);
     }
 
-    final public function all($problem = null, $subscriptionType = null, $status = null, string $cid = null)
+    final public function all($problem = null, $subscriptionType = null, $status = null, string $cid = null): Selection
     {
         $where = [];
         if ($subscriptionType) {

@@ -202,7 +202,58 @@ class FooModule extends Crm\ApplicationModule\CrmModule
         // ...
     }
 }
-```  
+```
+
+### Storing additional payment card information
+
+You can store additional payment card information using `FetchCardInformationCommand`. For this to work,
+you need to implement `FetchCardInformationCommandProviderInterface` for your specific payment gateway.
+By default, we do not provide any `FetchCardInformationCommandProviderInterface` implementations.
+
+example configuration:
+
+```neon
+services:
+	fetchCardInformationCommand:
+	    setup:
+	        - registerProvider(Crm\YourPaymentModule\Commands\FetchCardInformationCommandProvider())
+```
+
+example `FetchCardInformationCommandProviderInterface` implementation:
+
+```php
+class FetchCardInformationCommandProvider implements FetchCardInformationCommandProviderInterface
+{
+    public function fetch(InputInterface $input, OutputInterface $output): void
+    {
+        // fetch payment methods for specific payment gateway
+        // ...
+    
+        // add `from` and `user_id` options filter (input options are defined in `FetchCardInformationCommand`
+        if ($from = $input->getOption('from')) {
+            $paymentMethods->where('created_at > ?', new DateTime($from));
+        }
+        if ($userId = $input->getOption('user_id')) {
+            $paymentMethods->where('user_id = ?', intval($userId));
+        }
+    
+        // loop over payment methods fetch card information and store it using `PaymentCardsRepository`
+        // ...
+            try {
+                $this->paymentCardsRepository->upsert(
+                  $paymentMethod,
+                  $expiration,
+                  $maskedCardNumber,
+                  $description,
+                );
+            } catch (\Exception $exception) {
+                Debugger::log($exception, Debugger::EXCEPTION);
+                continue;
+            }
+        // ...
+    }
+}
+```
 
 ### Implementing new gateway
 

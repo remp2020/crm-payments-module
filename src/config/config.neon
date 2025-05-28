@@ -20,6 +20,7 @@ services:
 	paymentItemMetaRepository: Crm\PaymentsModule\Repositories\PaymentItemMetaRepository
 	retentionAnalysisJobsRepository: Crm\PaymentsModule\Repositories\RetentionAnalysisJobsRepository
 	vatRatesRepository: Crm\PaymentsModule\Repositories\VatRatesRepository
+	paymentCardsRepository: Crm\PaymentsModule\Repositories\PaymentCardsRepository
 
 	- Crm\PaymentsModule\Forms\Controls\SubscriptionTypesSelectItemsBuilder
 	- Crm\PaymentsModule\Forms\PaymentFormFactory
@@ -92,6 +93,7 @@ services:
 	- Crm\PaymentsModule\Commands\UpsertEuVatRatesCommand
 	- Crm\PaymentsModule\Commands\ChangeVatCommand
 	- Crm\PaymentsModule\Commands\FixPaymentMethodRecurrentPaymentInconsistencyCommand
+	fetchCardInformationCommand: Crm\PaymentsModule\Commands\FetchCardInformationCommand
 	- Crm\PaymentsModule\Api\VariableSymbolApiHandler
 	- Crm\PaymentsModule\Api\ListRecurrentPaymentsApiHandler
 	- Crm\PaymentsModule\Api\ReactivateRecurrentPaymentApiHandler
