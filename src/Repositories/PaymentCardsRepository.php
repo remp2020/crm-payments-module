@@ -13,7 +13,7 @@ class PaymentCardsRepository extends Repository
 
     /**
      * @param ActiveRow $paymentMethod
-     * @param DateTime $expiration card expiration date
+     * @param DateTime|null $expiration card expiration date
      * @param string|null $maskedCardNumber
      * @param string|null $description card description if provided by payment provider
      * @return int|bool|ActiveRow
@@ -21,7 +21,7 @@ class PaymentCardsRepository extends Repository
      */
     final public function upsert(
         ActiveRow $paymentMethod,
-        DateTime $expiration,
+        DateTime $expiration = null,
         string $maskedCardNumber = null,
         string $description = null,
     ): int|ActiveRow|bool {
