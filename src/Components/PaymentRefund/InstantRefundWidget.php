@@ -9,28 +9,27 @@ use Crm\PaymentsModule\DataProviders\PaymentRefundFormDataProviderInterface;
 use Crm\PaymentsModule\Forms\PaymentRefundFormFactory;
 use Crm\PaymentsModule\Models\GatewayFactory;
 use Crm\PaymentsModule\Models\Gateways\RefundStatusEnum;
+use Crm\PaymentsModule\Models\Gateways\RefundTypeEnum;
 use Crm\PaymentsModule\Models\Gateways\RefundableInterface;
 use Crm\PaymentsModule\Models\Payment\PaymentStatusEnum;
 use Crm\PaymentsModule\Models\RefundPaymentProcessor;
-use Crm\PaymentsModule\Repositories\PaymentMetaRepository;
 use Crm\PaymentsModule\Repositories\PaymentsRepository;
 use Nette\Database\Table\ActiveRow;
 use Nette\Utils\ArrayHash;
+use RuntimeException;
 
 class InstantRefundWidget extends BaseLazyWidget implements PaymentRefundFormDataProviderInterface
 {
-    private $templateName = 'instant_refund_widget.latte';
+    private string $templateName = 'instant_refund_widget.latte';
 
     public function __construct(
         LazyWidgetManager $widgetManager,
         private readonly GatewayFactory $gatewayFactory,
         private readonly PaymentsRepository $paymentsRepository,
         private readonly RefundPaymentProcessor $refundPaymentProcessor,
-        private readonly PaymentMetaRepository $paymentMetaRepository,
     ) {
         parent::__construct($widgetManager);
     }
-
 
     public function provide(array $params): Form
     {
@@ -48,13 +47,64 @@ class InstantRefundWidget extends BaseLazyWidget implements PaymentRefundFormDat
             return $form;
         }
 
-        $form->addCheckbox('instant_refund', 'payments.admin.payment_refund.instant_refund_widget.instant_refund.label');
-        $form->setDefaults(['instant_refund' => true]);
+        $instantRefund = $form->addCheckbox(
+            'instant_refund',
+            'payments.admin.payment_refund.instant_refund_widget.instant_refund.label',
+        )->setDefaultValue(true);
+
+        $instantRefund->addCondition($form::Equal, true)
+            ->toggle('refund-options');
+
+        $refundTypeOptions = [
+            RefundTypeEnum::Full->value => 'payments.admin.payment_refund.instant_refund_widget.refund_type.full',
+            RefundTypeEnum::Partial->value => 'payments.admin.payment_refund.instant_refund_widget.refund_type.partial',
+        ];
+
+        $refundType = $form->addRadioList(
+            'refund_type',
+            'payments.admin.payment_refund.instant_refund_widget.refund_type.label',
+            $refundTypeOptions,
+        )->setDefaultValue(RefundTypeEnum::Full->value);
+
+        $refundAmount = $form->addFloat(
+            'refund_amount',
+            'payments.admin.payment_refund.instant_refund_widget.refund_amount.label',
+        )
+            ->setDefaultValue($payment->amount)
+            ->setHtmlAttribute('min', '0.01')
+            ->setHtmlAttribute('max', $payment->amount)
+            ->setHtmlAttribute('step', '0.01')
+            ->setHtmlAttribute('readonly')
+            ->setHtmlAttribute('class', 'form-control disabled');
+
+        $refundAmount
+            ->addConditionOn($instantRefund, $form::Equal, true)
+            ->addRule(
+                $form::Filled,
+                'payments.admin.payment_refund.instant_refund_widget.refund_amount.invalid',
+            )
+            ->addRule(
+                $form::Pattern,
+                'payments.admin.payment_refund.instant_refund_widget.refund_amount.invalid',
+                '^\d+(\.\d{1,2})?$',
+            )
+            ->addConditionOn($refundType, $form::Equal, RefundTypeEnum::Partial->value)
+            ->addRule(
+                $form::Range,
+                'payments.admin.payment_refund.instant_refund_widget.refund_amount.range',
+                [0.01, $payment->amount],
+            )
+            ->elseCondition()
+            ->addRule(
+                $form::Equal,
+                'payments.admin.payment_refund.instant_refund_widget.refund_amount.must_equal_full',
+                $payment->amount,
+            );
 
         return $form;
     }
 
-    public function render(array $params)
+    public function render(array $params): void
     {
         /** @var Form $form */
         $form = $params['form'];
@@ -77,19 +127,50 @@ class InstantRefundWidget extends BaseLazyWidget implements PaymentRefundFormDat
         $paymentId = $values[PaymentRefundFormFactory::PAYMENT_ID_KEY];
         $payment = $this->paymentsRepository->find($paymentId);
         if (!$payment) {
-            throw new \RuntimeException("Unable to refund payment, payment '{$paymentId}' doesn't exists.");
+            throw new RuntimeException("Unable to refund payment, payment '{$paymentId}' doesn't exist.");
         }
 
         $gateway = $this->gatewayFactory->getGateway($payment->payment_gateway->code);
         if (!$gateway instanceof RefundableInterface) {
-            throw new \RuntimeException("Unable to refund payment, gateway '{$payment->payment_gateway->code}' doesn't support refunds.");
+            throw new RuntimeException(
+                "Unable to refund payment, gateway '{$payment->payment_gateway->code}' doesn't support refunds.",
+            );
         }
 
-        $result = $gateway->refund($payment, $payment->amount);
+        $refundAmount = $this->resolveRefundAmount($payment, $values);
+
+        $result = $gateway->refund($payment, $refundAmount);
+
         if ($result === RefundStatusEnum::Failure) {
             $form->addError('payments.admin.payment_refund.instant_refund_widget.refund_error');
+            return [$form, $values];
         }
-        $this->refundPaymentProcessor->processRefundedPayment($payment, $payment->amount);
+
+        $this->refundPaymentProcessor->processRefundedPayment($payment, $refundAmount);
+
         return [$form, $values];
+    }
+
+    private function resolveRefundAmount(ActiveRow $payment, ArrayHash $values): float
+    {
+        $refundAmount = match ($values->refund_type) {
+            RefundTypeEnum::Full->value => $payment->amount,
+            RefundTypeEnum::Partial->value => $values->refund_amount,
+            default => null,
+        };
+
+        if ($refundAmount === null) {
+            throw new RuntimeException(
+                "Refund type is missing or invalid for payment '{$payment->id}', refund aborted.",
+            );
+        }
+
+        if ($refundAmount <= 0 || $refundAmount > $payment->amount) {
+            throw new RuntimeException(
+                "Calculated refund amount is out of valid range for payment '{$payment->id}', refund aborted.",
+            );
+        }
+
+        return $refundAmount;
     }
 }

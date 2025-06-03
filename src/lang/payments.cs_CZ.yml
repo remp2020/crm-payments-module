@@ -485,10 +485,21 @@ admin:
             language: Jazyk
 
         instant_refund_widget:
+            header: Vrácení peněz
             instant_refund:
                 label: Okamžité vrácení peněz
-            description: Vrácení platby automaticky odešle peníze zpět zákazníkovi. Platba se provede přes platební bránu, přes kterou byla realizována i původní platba.
-            refund_error: Okamžité vrácení peněz selhalo. Prověřte stav platby přímo na platební bráně, případně odešlete peníze manuálně.
+            description: Vrácení platby automaticky odešle peníze zpět zákazníkovi. Platba bude provedena přes platební bránu, přes kterou byla realizována i původní platba.
+            refund_error: Okamžité vrácení peněz selhalo. Ověřte stav platby přímo na platební bráně, případně odešlete peníze manuálně.
+            refund_type:
+                label: Typ vrácení
+                full: Plné vrácení
+                partial: Částečné vrácení
+            refund_amount:
+                label: Částka k vrácení
+                help: Pro částečné vrácení zadejte částku, kterou chcete vrátit zákazníkovi.
+                range: Částka musí být v rozmezí od 0.01 do výše původní platby.
+                invalid: Neplatná částka k vrácení.
+                must_equal_full: Pro plné vrácení musí částka odpovídat původní platbě.
 
     payments:
         payment_info: Informace o platbě

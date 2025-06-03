@@ -485,10 +485,21 @@ admin:
             language: Language
 
         instant_refund_widget:
+            header: Refund
             instant_refund:
                 label: Instant Refund
             description: A refund automatically sends the money back to the customer. The payment will be made through the same payment gateway that the original payment was made through.
             refund_error: Instant refund failed. Check the payment status directly on the payment gateway, or send the money manually.
+            refund_type:
+                label: Refund Type
+                full: Full Refund
+                partial: Partial Refund
+            refund_amount:
+                label: Refund Amount
+                help: For partial refunds, enter the amount you want to return to the customer.
+                range: Amount must be between 0.01 and the original payment amount.
+                invalid: Invalid refund amount.
+                must_equal_full: For full refunds, the amount must equal the original payment amount.
 
     payments:
         payment_info: Payment information

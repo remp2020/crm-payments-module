@@ -1,8 +1,95 @@
-<div class="alert alert-default">
-    {form $form}
-        <div class="checkbox">
-            {input instant_refund}{label instant_refund /}
-            <i class="fa fa-info-circle" data-toggle="tooltip" title="{_"payments.admin.payment_refund.instant_refund_widget.description"}"></i>
-        </div>
-    {/form}
+<div class="panel panel-default">
+    <div class="panel-heading">{_"payments.admin.payment_refund.instant_refund_widget.header"}</div>
+    <div class="panel-body">
+        {form $form}
+            <div class="checkbox">
+                {input instant_refund}{label instant_refund /}
+                <i class="fa fa-info-circle" data-toggle="tooltip"
+                   title="{_"payments.admin.payment_refund.instant_refund_widget.description"}"></i>
+            </div>
+
+            <div id="refund-options">
+                <div class="form-group">
+                    <label>{_"payments.admin.payment_refund.instant_refund_widget.refund_type.label"}</label>
+
+                    <div class="radio">
+                        <label>
+                            {input refund_type:full} {_"payments.admin.payment_refund.instant_refund_widget.refund_type.full"}
+                        </label>
+                    </div>
+
+                    <div class="radio">
+                        <label>
+                            {input refund_type:partial} {_"payments.admin.payment_refund.instant_refund_widget.refund_type.partial"}
+                        </label>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    {label refund_amount /}
+                    {input refund_amount}
+                    <small class="help-block">{_"payments.admin.payment_refund.instant_refund_widget.refund_amount.help"|noescape}</small>
+                </div>
+            </div>
+        {/form}
+    </div>
 </div>
+
+<script>
+    document.addEventListener('DOMContentLoaded', () => {
+        const refundInput = document.getElementById({$form['refund_amount']->htmlId});
+        const refundTypeRadios = document.querySelectorAll('input[name="refund_type"]');
+        const instantRefund = document.getElementById({$form['instant_refund']->htmlId});
+        const maxAmount = parseFloat(refundInput.max) || Infinity;
+        const fullAmount = refundInput.value;
+        let partialAmount = '';
+
+        const enforceMax = () => {
+            const value = parseFloat(refundInput.value);
+            if (!isNaN(value) && value > maxAmount) {
+                refundInput.value = maxAmount;
+            }
+        };
+
+        const normalize = () => {
+            let value = refundInput.value.trim();
+            value = parseFloat(value) || 0.01;
+            refundInput.value = Math.min(Math.max(value, 0.01), maxAmount).toFixed(2);
+        };
+
+        const isPartialSelected = () =>
+            document.querySelector('input[name="refund_type"]:checked')?.value === 'partial';
+
+        const setPartialMode = (isPartial) => {
+            refundInput.readOnly = !isPartial;
+            refundInput.classList.toggle('disabled', !isPartial);
+
+            if (isPartial) {
+                if (refundInput.value === fullAmount) {
+                    refundInput.value = partialAmount || '';
+                }
+                setTimeout(() => refundInput.select(), 0);
+            } else {
+                partialAmount = refundInput.value;
+                refundInput.value = fullAmount;
+            }
+        };
+
+        const toggleMode = () => setPartialMode(isPartialSelected());
+
+        refundTypeRadios.forEach(radio =>
+            radio.addEventListener('change', toggleMode)
+        );
+
+        refundInput.addEventListener('input', enforceMax);
+        refundInput.addEventListener('blur', normalize);
+
+        instantRefund.addEventListener('change', () => {
+            if (instantRefund.checked && isPartialSelected()) {
+                setTimeout(() => refundInput.select(), 0);
+            }
+        });
+
+        toggleMode();
+    });
+</script>
