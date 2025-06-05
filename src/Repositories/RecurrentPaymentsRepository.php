@@ -462,6 +462,29 @@ class RecurrentPaymentsRepository extends Repository
         ])->order('charge_at DESC')->fetch();
     }
 
+    final public function getNewestLinkedRecurrent(ActiveRow $recurrentPayment): ActiveRow
+    {
+        if (!$recurrentPayment->payment_id) {
+            return $recurrentPayment;
+        }
+
+        $newestKnownRecurrentPayment = $recurrentPayment;
+        while (true) {
+            if ($newestKnownRecurrentPayment->payment_id === null) {
+                break;
+            }
+
+            $childRecurrentPayment = $this->recurrent($newestKnownRecurrentPayment->payment);
+            if (!$childRecurrentPayment) {
+                break;
+            }
+
+            $newestKnownRecurrentPayment = $childRecurrentPayment;
+        }
+
+        return $newestKnownRecurrentPayment;
+    }
+
     final public function getDuplicate()
     {
         return $this->getTable()

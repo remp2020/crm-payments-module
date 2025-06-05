@@ -159,29 +159,24 @@ class PaymentRefundFormFactory
     protected function recurrentPaymentCanBeStoppedInRefund(ActiveRow $payment): bool
     {
         $recurrentPayment = $this->recurrentPaymentsRepository->recurrent($payment);
-
         if (!$recurrentPayment) {
             return false;
         }
 
-        $lastRecurrentPayment = $this->recurrentPaymentsRepository->getLastWithState(
-            $recurrentPayment,
-            RecurrentPaymentStateEnum::Active->value,
-        );
+        $newestLinkedRecurrent = $this->recurrentPaymentsRepository->getNewestLinkedRecurrent($recurrentPayment);
 
-        return $lastRecurrentPayment
-            && $this->recurrentPaymentsRepository->canBeStopped($lastRecurrentPayment);
+        return $this->recurrentPaymentsRepository->canBeStopped($newestLinkedRecurrent)
+            && $newestLinkedRecurrent->state === RecurrentPaymentStateEnum::Active->value;
     }
 
     protected function stopRecurrentChargeInRefundedPayment(ActiveRow $payment): void
     {
         $recurrentPayment = $this->recurrentPaymentsRepository->recurrent($payment);
-        $lastRecurrentPayment = $this->recurrentPaymentsRepository->getLastWithState(
-            $recurrentPayment,
-            RecurrentPaymentStateEnum::Active->value,
-        );
+        $newestLinkedRecurrent = $this->recurrentPaymentsRepository->getNewestLinkedRecurrent($recurrentPayment);
 
-        $this->recurrentPaymentsRepository->stoppedByAdmin($lastRecurrentPayment);
+        if ($newestLinkedRecurrent->state === RecurrentPaymentStateEnum::Active->value) {
+            $this->recurrentPaymentsRepository->stoppedByAdmin($newestLinkedRecurrent);
+        }
     }
 
     protected function shortenSubscription(ActiveRow $subscription, DateTime $newEndTime): void
