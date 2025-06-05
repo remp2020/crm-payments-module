@@ -4,6 +4,7 @@ namespace Crm\PaymentsModule\DataProviders;
 
 use Crm\ApplicationModule\Hermes\HermesMessage;
 use Crm\ApplicationModule\Models\User\UserDataProviderInterface;
+use Crm\PaymentsModule\Repositories\PaymentCardsRepository;
 use Crm\PaymentsModule\Repositories\PaymentMethodsRepository;
 use Crm\PaymentsModule\Repositories\RecurrentPaymentsRepository;
 use Tomaj\Hermes\Emitter;
@@ -13,6 +14,7 @@ class RecurrentPaymentsUserDataProvider implements UserDataProviderInterface
     public function __construct(
         private readonly RecurrentPaymentsRepository $recurrentPaymentsRepository,
         private readonly PaymentMethodsRepository $paymentMethodsRepository,
+        private readonly PaymentCardsRepository $paymentCardsRepository,
         private readonly Emitter $hermesEmitter,
     ) {
     }
@@ -66,6 +68,16 @@ class RecurrentPaymentsUserDataProvider implements UserDataProviderInterface
             ])->update([
                 'cid' => 'GDPR removal ' . $paymentMethod->id,
             ]);
+
+            // anonymize all additional payment card info
+            $paymentCardInfo = $this->paymentCardsRepository->getByPaymentMethod($paymentMethod);
+            if ($paymentCardInfo) {
+                $this->paymentCardsRepository->update($paymentCardInfo, [
+                    'masked_card_number' => 'GDPR removal ' . $paymentCardInfo->id,
+                    'expiration' => null,
+                    'description' => 'GDPR removal ' . $paymentCardInfo->id,
+                ]);
+            }
 
             // payment methods with the same external token can exist on multiple users, e.g. after subscription transfer
             if ($usersCount === 1) {

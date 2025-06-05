@@ -57,4 +57,11 @@ class PaymentCardsRepository extends Repository
             'updated_at' => new \DateTime(),
         ]);
     }
+
+    final public function getByPaymentMethod(ActiveRow $paymentMethod): ?ActiveRow
+    {
+        return $this->getTable()
+            ->where('payment_method_id', $paymentMethod->id)
+            ->fetch();
+    }
 }
