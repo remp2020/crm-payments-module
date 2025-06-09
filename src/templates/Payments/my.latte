@@ -28,7 +28,9 @@
 </div>
 
 <div class="row">
-    {control simpleWidget 'payments.frontend.payments_my.top'}
+    <div class="col-md-12">
+        {control simpleWidget 'payments.frontend.payments_my.top'}
+    </div>
 
     <div id="payment-list" class="col-md-12">
         {if $payments->count('*') > 0}
