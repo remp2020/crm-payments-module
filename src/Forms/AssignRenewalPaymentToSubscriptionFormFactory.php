@@ -17,6 +17,7 @@ use Tomaj\Form\Renderer\BootstrapRenderer;
 
 class AssignRenewalPaymentToSubscriptionFormFactory
 {
+    private const PAYMENT_MODE = 'payment';
     public $onSave;
 
     public function __construct(
@@ -35,11 +36,22 @@ class AssignRenewalPaymentToSubscriptionFormFactory
         $form = new Form();
         $form->addProtection();
         $form->setTranslator($this->translator);
-        $form->setRenderer(new BootstrapRenderer());
+        $form->setRenderer(new BootstrapRenderer(novalidate: false));
 
         $subscription = $this->subscriptionsRepository->find($subscriptionId);
+        $form->addHidden('subscription_id')->setRequired();
 
-        $mainGroup = $form->addGroup();
+        $form->addGroup();
+        $form->addSelect(
+            'mode',
+            'payments.admin.component.assign_renewal_payment_subscription_form.mode.label',
+            [
+                self::PAYMENT_MODE => 'payments.admin.component.assign_renewal_payment_subscription_form.mode.options.payment',
+            ],
+        )
+            ->addCondition($form::Equal, self::PAYMENT_MODE)
+            ->toggle('#renewal_payment_id')
+            ->endCondition();
 
         /** @var AssignRenewalPaymentToSubscriptionFormDataProviderInterface[] $providers */
         $providers = $this->dataProviderManager->getProviders(
@@ -47,14 +59,10 @@ class AssignRenewalPaymentToSubscriptionFormFactory
             AssignRenewalPaymentToSubscriptionFormDataProviderInterface::class,
         );
         foreach ($providers as $sorting => $provider) {
-            $form = $provider->provide(['form' => $form, 'mainGroup' => $mainGroup, 'subscription' => $subscription]);
+            $form = $provider->provide(['form' => $form, 'subscription' => $subscription]);
         }
 
         $form = $this->addRenewalPaymentComponents($form, $subscription);
-
-        $form->setCurrentGroup($mainGroup);
-
-        $form->addHidden('subscription_id')->setRequired();
 
         $form->setDefaults([
             'subscription_id' => $subscription->id,
@@ -62,6 +70,60 @@ class AssignRenewalPaymentToSubscriptionFormFactory
 
         $form->onValidate[] = [$this, 'onValidate'];
         $form->onSuccess[] = [$this, 'formSucceeded'];
+        return $form;
+    }
+
+    private function addRenewalPaymentComponents(Form $form, $subscription)
+    {
+        $form->addGroup()->setOption('container', Html::el('span id="renewal_payment_id"'));
+        $assignedRenewalPayment = $this->renewalPayment->getRenewalPayment($subscription);
+        $paymentOptions = $this->paymentsRepository->getTable()
+            ->whereOr([
+                'status = ? AND user_id = ?' => [PaymentStatusEnum::Form->value, $subscription->user_id],
+                'id' => $assignedRenewalPayment?->id,
+            ])
+            ->order('created_at DESC');
+
+        $disableOptions = $this->subscriptionMetaRepository->getTable()
+            ->where([
+                'key' => RenewalPayment::RENEWAL_PAYMENT_META_KEY,
+                'value' => (clone $paymentOptions)->select('id'),
+                'subscription_id != ?' => $subscription->id,
+            ])
+            ->fetchPairs(null, 'value');
+
+        $renewalPaymentSelect = $form->addSelect(
+            'renewal_payment_id',
+            'payments.admin.component.assign_renewal_payment_subscription_form.renewal_payment.label',
+            $this->preparePaymentOptions($paymentOptions),
+        );
+        $renewalPaymentSelect
+            ->setDisabled($disableOptions)
+            ->setDefaultValue($assignedRenewalPayment?->id)
+            ->setPrompt('--')
+            ->setHtmlAttribute('class', 'form-control')
+            ->getControlPrototype()
+            ->addAttributes([
+                'class' => 'select2',
+                'id' => 'renewal_payment_id',
+            ]);
+        $renewalPaymentSelect
+            ->addConditionOn($form['mode'], Form::Equal, self::PAYMENT_MODE)
+            ->setRequired('payments.admin.component.assign_renewal_payment_subscription_form.renewal_payment.required')
+            ->endCondition();
+
+        $form->addGroup();
+        $form->addSubmit('submit', 'payments.admin.component.assign_renewal_payment_subscription_form.submit')
+            ->getControlPrototype()
+            ->setName('button')
+            ->setAttribute('class', 'btn btn-primary');
+
+        $form->addSubmit('reset', 'payments.admin.component.assign_renewal_payment_subscription_form.reset')
+            ->setValidationScope([$form['subscription_id']])
+            ->getControlPrototype()
+            ->setName('button')
+            ->setAttribute('class', 'btn btn-default');
+
         return $form;
     }
 
@@ -101,60 +163,16 @@ class AssignRenewalPaymentToSubscriptionFormFactory
             $form = $provider->formSucceeded($form, $values);
         }
 
-        $renewalPaymentId = $values['renewal_payment_id'];
-        if ($renewalPaymentId) {
-            $renewalPayment = $this->paymentsRepository->find($renewalPaymentId);
-            $this->renewalPayment->attachRenewalPayment($subscription, $renewalPayment);
-        } else {
+        if (!isset($values['mode']) || $values['mode'] !== self::PAYMENT_MODE) {
             $this->renewalPayment->unsetRenewalPayment($subscription);
+        } else {
+            $renewalPayment = $this->paymentsRepository->find($values['renewal_payment_id']);
+            $this->renewalPayment->attachRenewalPayment($subscription, $renewalPayment);
         }
 
         if ($this->onSave) {
             $this->onSave->__invoke();
         }
-    }
-
-    private function addRenewalPaymentComponents(Form $form, $subscription)
-    {
-        $form->addGroup()->setOption('container', Html::el('span id="renewal_payment_id"'));
-
-        $assignedRenewalPayment = $this->renewalPayment->getRenewalPayment($subscription);
-        $paymentOptions = $this->paymentsRepository->getTable()
-            ->whereOr([
-                'status = ? AND user_id = ?' => [PaymentStatusEnum::Form->value, $subscription->user_id],
-                'id' => $assignedRenewalPayment?->id,
-            ])
-            ->order('created_at DESC');
-
-        $disableOptions = $this->subscriptionMetaRepository->getTable()
-            ->where([
-                'key' => RenewalPayment::RENEWAL_PAYMENT_META_KEY,
-                'value' => (clone $paymentOptions)->select('id'),
-                'subscription_id != ?' => $subscription->id,
-            ])
-            ->fetchPairs(null, 'value');
-
-        $form->addSelect(
-            'renewal_payment_id',
-            'payments.admin.component.assign_renewal_payment_subscription_form.renewal_payment',
-            $this->preparePaymentOptions($paymentOptions),
-        )
-            ->setDisabled($disableOptions)
-            ->setDefaultValue($assignedRenewalPayment?->id)
-            ->setPrompt('--')
-            ->setHtmlAttribute('class', 'form-control')
-            ->getControlPrototype()
-            ->addAttributes([
-                'class' => 'select2',
-                'id' => 'renewal_payment_id',
-            ]);
-
-        $form->addSubmit('submit', 'payments.admin.component.assign_renewal_payment_subscription_form.submit')
-            ->getControlPrototype()
-            ->setName('button')
-            ->setAttribute('class', 'btn btn-primary');
-
-        return $form;
     }
 
     private function preparePaymentOptions($paymentOptions): array

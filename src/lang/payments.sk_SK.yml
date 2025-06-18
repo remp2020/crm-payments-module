@@ -261,8 +261,15 @@ admin:
 
         assign_renewal_payment_subscription_form:
             error: Platbu ID %payment_id% nie je možné nastaviť pre obnovu predplatného ID %subscription_id%
-            renewal_payment: Platba pre obnovu
-            submit: Nastav platbu pre obnovu
+            renewal_payment:
+                label: Platba pre obnovu
+                required: Vyberte platbu pre obnovu
+            mode:
+                label: Mód
+                options:
+                    payment: Platba
+            submit: Uložiť
+            reset: Resetovať obnovu
 
         show_renewal_payment_for_subscription_widget:
             title: Platba ID %renewal_payment_id% nastavená pre obnovu predplatného.

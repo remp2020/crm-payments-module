@@ -261,8 +261,15 @@ admin:
 
         assign_renewal_payment_subscription_form:
             error: Renewal payment ID %payment_id% cannot be set for subscription ID %subscription_id%
-            renewal_payment: Renewal payment
-            submit: Set renewal payment
+            renewal_payment:
+                label: Renewal payment
+                required: Select renewal payment
+            mode:
+                label: Mode
+                options:
+                    payment: Payment
+            submit: Save
+            reset: Reset renewal
 
         show_renewal_payment_for_subscription_widget:
             title: Payment ID %renewal_payment_id% set for subscription renewal.
