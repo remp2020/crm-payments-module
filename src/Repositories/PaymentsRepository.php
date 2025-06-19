@@ -311,6 +311,9 @@ class PaymentsRepository extends Repository
             $this->oneStopShop->adjustPaymentVatRates($row, $newPaymentCountry);
         }
 
+        if (isset($data['amount'])) {
+            $data['amount'] = floatval($data['amount']);
+        }
         $data['modified_at'] = new DateTime();
         return parent::update($row, $data);
     }

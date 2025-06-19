@@ -11,6 +11,7 @@ use Crm\ApiModule\Models\Router\ApiRoute;
 use Crm\ApplicationModule\Application\CommandsContainerInterface;
 use Crm\ApplicationModule\Application\Managers\CallbackManagerInterface;
 use Crm\ApplicationModule\Application\Managers\SeederManager;
+use Crm\ApplicationModule\Components\AuditLogHistoryWidget\AuditLogHistoryWidget;
 use Crm\ApplicationModule\CrmModule;
 use Crm\ApplicationModule\Models\Criteria\CriteriaStorage;
 use Crm\ApplicationModule\Models\Criteria\ScenariosCriteriaStorage;
@@ -86,6 +87,7 @@ use Crm\PaymentsModule\Components\TotalUserPayments\TotalUserPayments;
 use Crm\PaymentsModule\Components\UserPaymentsListing\UserPaymentsListing;
 use Crm\PaymentsModule\DataProviders\CanDeleteAddressDataProvider;
 use Crm\PaymentsModule\DataProviders\ChangePaymentCountryDataProvider;
+use Crm\PaymentsModule\DataProviders\PaymentAuditLogHistoryDataProvider;
 use Crm\PaymentsModule\DataProviders\PaymentFromVariableSymbolDataProvider;
 use Crm\PaymentsModule\DataProviders\PaymentItemTypesFilterDataProvider;
 use Crm\PaymentsModule\DataProviders\PaymentRefundFormDataProviderInterface;
@@ -420,6 +422,11 @@ class PaymentsModule extends CrmModule
             'admin.payments.listing.action.menu',
             ChangePaymentCountryButtonWidget::class,
         );
+
+        $widgetManager->registerWidget(
+            'admin.payments.show.left',
+            AuditLogHistoryWidget::class,
+        );
     }
 
     public function registerCommands(CommandsContainerInterface $commandsContainer)
@@ -626,6 +633,11 @@ class PaymentsModule extends CrmModule
         $dataProviderManager->registerDataProvider(
             PaymentRefundFormDataProviderInterface::PATH,
             $this->getInstance(InstantRefundWidget::class),
+        );
+
+        $dataProviderManager->registerDataProvider(
+            'admin.dataprovider.audit_log_history_widget',
+            $this->getInstance(PaymentAuditLogHistoryDataProvider::class),
         );
     }
 

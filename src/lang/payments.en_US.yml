@@ -998,3 +998,15 @@ config:
 data_provider:
     universal_search:
         payment_group: Payments
+
+    payment_audit_log_history:
+        status_change:
+            paid: "Payment was <strong>paid</strong>"
+            fail: "Payment <strong>failed</strong>"
+            refund: "Payment was <strong>refunded</strong>"
+        amount_change: "Payment amount was changed from <strong>%from%</strong> to <strong>%to%</strong>"
+        note_change: "Payment note was changed: <strong>\"%note%\"</strong>"
+        country_change: "Payment country was changed from <strong>\"%from%\"</strong> to <strong>\"%to%\"</strong>"
+        address_change: "Address assigned to payment was changed"
+        variable_symbol_change: "Variable symbol was changed from <strong>\"%from%\"</strong> to <strong>\"%to%\"</strong>"
+        columns_changed: "Modified fields: <strong>%columns%</strong>"

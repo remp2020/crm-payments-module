@@ -687,3 +687,15 @@ config:
 data_provider:
     universal_search:
         payment_group: Fizetések
+
+    payment_audit_log_history:
+        status_change:
+            paid: "A fizetés <strong>befizetve</strong>"
+            fail: "A fizetés <strong>sikertelen</strong>"
+            refund: "A fizetés <strong>visszatérítve</strong>"
+        amount_change: "A fizetés összege módosult <strong>%from%</strong>-ról <strong>%to%</strong>-ra"
+        note_change: "Fizetési megjegyzés módosítva: <strong>\"%note%\"</strong>"
+        country_change: "A fizetés országa módosult <strong>\"%from%\"</strong>-ról <strong>\"%to%\"</strong>-ra"
+        address_change: "A fizetéshez rendelt cím módosítva"
+        variable_symbol_change: "Egyedi azonosító módosítva <strong>\"%from%\"</strong>-ról <strong>\"%to%\"</strong>-ra"
+        columns_changed: "Módosított mezők: <strong>%columns%</strong>"

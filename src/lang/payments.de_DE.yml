@@ -817,3 +817,15 @@ config:
 data_provider:
     universal_search:
         payment_group: Zahlungen
+
+    payment_audit_log_history:
+        status_change:
+            paid: "Die Zahlung wurde <strong>bezahlt</strong>"
+            fail: "Die Zahlung ist <strong>fehlgeschlagen</strong>"
+            refund: "Die Zahlung wurde <strong>erstattet</strong>"
+        amount_change: "Der Zahlungsbetrag wurde von <strong>%from%</strong> auf <strong>%to%</strong> geändert"
+        note_change: "Zahlungsvermerk wurde geändert: <strong>\"%note%\"</strong>"
+        country_change: "Das Zahlungsland wurde von <strong>\"%from%\"</strong> zu <strong>\"%to%\"</strong> geändert"
+        address_change: "Die der Zahlung zugewiesene Adresse wurde geändert"
+        variable_symbol_change: "Das variable Symbol wurde von <strong>\"%from%\"</strong> zu <strong>\"%to%\"</strong> geändert"
+        columns_changed: "Geänderte Felder: <strong>%columns%</strong>"

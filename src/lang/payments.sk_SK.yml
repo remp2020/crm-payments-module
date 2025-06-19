@@ -998,3 +998,14 @@ config:
 data_provider:
     universal_search:
         payment_group: Platby
+    payment_audit_log_history:
+        status_change:
+            paid: "Platba bola <strong>zaplatená</strong>"
+            fail: "Platba <strong>zlyhala</strong>"
+            refund: "Platba bola <strong>refundovaná</strong>"
+        amount_change: "Suma platby bola zmenená z <strong>%from%</strong> na <strong>%to%</strong>"
+        note_change: "Poznámka k platbe bola zmenená: <strong>\"%note%\"</strong>"
+        country_change: "Krajina platby bola zmenená z <strong>\"%from%\"</strong> na <strong>\"%to%\"</strong>"
+        address_change: "Adresa priradená k platbe bola zmenená"
+        variable_symbol_change: "Variabilný symbol bol zmenený z <strong>\"%from%\"</strong> na <strong>\"%to%\"</strong>"
+        columns_changed: "Upravené polia: <strong>%columns%</strong>"

@@ -3,11 +3,23 @@
 namespace Crm\PaymentsModule\Repositories;
 
 use Crm\ApplicationModule\Models\Database\Repository;
+use Crm\ApplicationModule\Models\NowTrait;
+use Crm\ApplicationModule\Repositories\AuditLogRepository;
+use Nette\Database\Explorer;
 use Nette\Database\Table\ActiveRow;
 use Nette\Database\Table\Selection;
 
 class PaymentMetaRepository extends Repository
 {
+    use NowTrait;
+    public function __construct(
+        Explorer $database,
+        AuditLogRepository $auditLogRepository,
+    ) {
+        parent::__construct($database);
+        $this->auditLogRepository = $auditLogRepository;
+    }
+
     protected $tableName = 'payment_meta';
 
     /**
@@ -19,12 +31,14 @@ class PaymentMetaRepository extends Repository
      */
     final public function add(ActiveRow $payment, $key, $value, $override = true)
     {
+        $now = $this->getNow();
         if ($override && $this->exists($payment, $key)) {
             $this->getTable()->where([
                 'payment_id' => $payment->id,
                 'key' => $key,
             ])->update([
                 'value' => $value,
+                'updated_at' => $now,
             ]);
             return $this->values($payment, $key)->fetch();
         }
@@ -32,6 +46,8 @@ class PaymentMetaRepository extends Repository
             'payment_id' => $payment->id,
             'key' => $key,
             'value' => $value,
+            'created_at' => $now,
+            'updated_at' => $now,
         ]);
     }
 
