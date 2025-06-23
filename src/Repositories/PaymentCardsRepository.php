@@ -15,7 +15,8 @@ class PaymentCardsRepository extends Repository
      * @param ActiveRow $paymentMethod
      * @param DateTime|null $expiration card expiration date
      * @param string|null $maskedCardNumber
-     * @param string|null $description card description if provided by payment provider
+     * @param string|null $description card description if provided by the payment provider
+     * @param string|null $cardHolderName
      * @return int|bool|ActiveRow
      * @throws \Exception
      */
@@ -24,20 +25,23 @@ class PaymentCardsRepository extends Repository
         DateTime $expiration = null,
         string $maskedCardNumber = null,
         string $description = null,
+        string $cardHolderName = null,
     ): int|ActiveRow|bool {
-        $newData = [
+        $newData = array_filter([
             'expiration' => $expiration,
             'masked_card_number' => $maskedCardNumber,
             'description' => $description,
-        ];
+            'card_holder_name' => $cardHolderName,
+        ]);
 
         $card = $this->getTable()->where('payment_method_id', $paymentMethod->id)->fetch();
         if ($card) {
-            $cardData = [
+            $cardData = array_filter([
                 'expiration' => $card->expiration,
                 'masked_card_number' => $card->masked_card_number,
                 'description' => $card->description,
-            ];
+                'card_holder_name' => $card->card_holder_name,
+            ]);
             if ($newData == $cardData) {
                 return $card;
             }

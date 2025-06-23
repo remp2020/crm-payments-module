@@ -9,6 +9,7 @@ use Crm\PaymentsModule\Models\GatewayFactory;
 use Crm\PaymentsModule\Models\PaymentItem\PaymentItemContainer;
 use Crm\PaymentsModule\Models\VariableSymbolInterface;
 use Crm\PaymentsModule\Repositories\ParsedMailLogsRepository;
+use Crm\PaymentsModule\Repositories\PaymentCardsRepository;
 use Crm\PaymentsModule\Repositories\PaymentGatewayMetaRepository;
 use Crm\PaymentsModule\Repositories\PaymentGatewaysRepository;
 use Crm\PaymentsModule\Repositories\PaymentItemMetaRepository;
@@ -42,6 +43,7 @@ class PaymentsTestCase extends DatabaseTestCase
     protected RecurrentPaymentsRepository $recurrentPaymentsRepository;
     protected PaymentGatewaysRepository $paymentGatewaysRepository;
     protected AccessTokensRepository $accessTokensRepository;
+    protected PaymentCardsRepository $paymentCardsRepository;
 
     public function requiredSeeders(): array
     {
@@ -67,6 +69,7 @@ class PaymentsTestCase extends DatabaseTestCase
             PaymentGatewaysRepository::class,
             PaymentGatewayMetaRepository::class,
             PaymentMethodsRepository::class,
+            PaymentCardsRepository::class,
             RecurrentPaymentsRepository::class,
             SubscriptionTypesRepository::class,
             SubscriptionTypesMetaRepository::class,
@@ -90,6 +93,7 @@ class PaymentsTestCase extends DatabaseTestCase
         $this->paymentGatewaysRepository = $this->getRepository(PaymentGatewaysRepository::class);
         $this->paymentMethodsRepository = $this->getRepository(PaymentMethodsRepository::class);
         $this->recurrentPaymentsRepository = $this->getRepository(RecurrentPaymentsRepository::class);
+        $this->paymentCardsRepository = $this->getRepository(PaymentCardsRepository::class);
 
         $gatewayFactory = $this->inject(GatewayFactory::class);
         $gatewayFactory->registerGateway(self::TEST_GATEWAY_CODE);
