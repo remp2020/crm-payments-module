@@ -99,8 +99,6 @@ class MailProcessor
         $this->emitter->emit($bankTransferPaymentApprovalEvent);
 
         if (!$bankTransferPaymentApprovalEvent->isApproved()) {
-            $this->logBuilder->setState(ParsedMailLogStateEnum::DifferentAmount->value)
-                ->save();
             return false;
         }
 
