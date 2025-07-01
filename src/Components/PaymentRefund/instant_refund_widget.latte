@@ -1,7 +1,7 @@
 <div class="panel panel-default">
     <div class="panel-heading">{_"payments.admin.payment_refund.instant_refund_widget.header"}</div>
     <div class="panel-body">
-        {form $form}
+        {formContainer $form}
             <div class="checkbox">
                 {input instant_refund}{label instant_refund /}
                 <i class="fa fa-info-circle" data-toggle="tooltip"
@@ -31,7 +31,7 @@
                     <small class="help-block">{_"payments.admin.payment_refund.instant_refund_widget.refund_amount.help"|noescape}</small>
                 </div>
             </div>
-        {/form}
+        {/formContainer}
     </div>
 </div>
 

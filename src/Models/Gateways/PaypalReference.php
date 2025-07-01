@@ -19,8 +19,10 @@ use Omnipay\PayPalReference\ExpressGateway;
 use Tracy\Debugger;
 use Tracy\ILogger;
 
-class PaypalReference extends GatewayAbstract implements RecurrentPaymentInterface
+class PaypalReference extends GatewayAbstract implements RecurrentPaymentInterface, RefundableInterface
 {
+    use PaypalRefundTrait;
+
     public const GATEWAY_CODE = 'paypal_reference';
 
     protected ExpressGateway $gateway;

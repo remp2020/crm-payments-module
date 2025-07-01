@@ -12,8 +12,10 @@ use Omnipay\PayPal\ExpressGateway;
 use Omnipay\PayPal\PayPalItem;
 use Omnipay\PayPal\PayPalItemBag;
 
-class Paypal extends GatewayAbstract
+class Paypal extends GatewayAbstract implements RefundableInterface
 {
+    use PaypalRefundTrait;
+
     public const GATEWAY_CODE = 'paypal';
 
     protected ExpressGateway $gateway;
