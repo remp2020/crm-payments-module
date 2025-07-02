@@ -11,6 +11,7 @@ use Nette\Database\Table\ActiveRow;
 class RenewalPayment
 {
     public const RENEWAL_PAYMENT_META_KEY = 'renewal_payment_id';
+    public const RENEWAL_PAYMENT_SET_BY_ADMIN_META_KEY = 'renewal_payment_set_by_admin';
 
     public function __construct(
         private readonly PaymentsRepository $paymentsRepository,
@@ -28,9 +29,10 @@ class RenewalPayment
         return $subscriptionMeta ? $this->paymentsRepository->find($subscriptionMeta->value) : null;
     }
 
-    public function attachRenewalPayment(ActiveRow $subscription, ActiveRow $renewalPayment): void
+    public function attachRenewalPayment(ActiveRow $subscription, ActiveRow $renewalPayment, bool $byAdmin = false): void
     {
         $this->subscriptionMetaRepository->setMeta($subscription, self::RENEWAL_PAYMENT_META_KEY, $renewalPayment->id);
+        $this->subscriptionMetaRepository->setMeta($subscription, self::RENEWAL_PAYMENT_SET_BY_ADMIN_META_KEY, $byAdmin);
 
         $this->emitter->emit(new SubscriptionRenewalPaymentAttachedEvent(
             renewalPayment: $renewalPayment,

@@ -167,7 +167,7 @@ class AssignRenewalPaymentToSubscriptionFormFactory
             $this->renewalPayment->unsetRenewalPayment($subscription);
         } else {
             $renewalPayment = $this->paymentsRepository->find($values['renewal_payment_id']);
-            $this->renewalPayment->attachRenewalPayment($subscription, $renewalPayment);
+            $this->renewalPayment->attachRenewalPayment($subscription, $renewalPayment, true);
         }
 
         if ($this->onSave) {
