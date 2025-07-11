@@ -4,6 +4,7 @@ namespace Crm\PaymentsModule\Components\UserPaymentsListing;
 
 use Crm\ApplicationModule\Components\Widgets\SimpleWidget\SimpleWidgetFactoryInterface;
 use Crm\ApplicationModule\Models\Widget\BaseLazyWidget;
+use Crm\ApplicationModule\Models\Widget\DetailWidgetInterface;
 use Crm\ApplicationModule\Models\Widget\LazyWidgetManager;
 use Crm\PaymentsModule\Components\ChangePaymentStatus\ChangePaymentStatusFactoryInterface;
 use Crm\PaymentsModule\Models\Payment\PaymentStatusEnum;
@@ -27,7 +28,7 @@ use Tracy\Debugger;
  *
  * @package Crm\PaymentsModule\Components
  */
-class UserPaymentsListing extends BaseLazyWidget
+class UserPaymentsListing extends BaseLazyWidget implements DetailWidgetInterface
 {
     private $templateName = 'user_payments_listing.latte';
 
@@ -42,7 +43,7 @@ class UserPaymentsListing extends BaseLazyWidget
         parent::__construct($lazyWidgetManager);
     }
 
-    public function header($id = '')
+    public function header($id = ''): string
     {
         $header = $this->translator->translate('payments.admin.component.user_payments_listing.header');
         if ($id) {

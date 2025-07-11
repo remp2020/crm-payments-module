@@ -34,7 +34,7 @@ class ChangePaymentStatus extends BaseLazyWidget
         $this->translator = $translator;
     }
 
-    public function header($id = '')
+    public function header()
     {
         $header = 'payment modal';
         return $header;

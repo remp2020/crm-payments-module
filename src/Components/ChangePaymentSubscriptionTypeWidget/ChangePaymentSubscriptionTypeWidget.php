@@ -26,7 +26,7 @@ class ChangePaymentSubscriptionTypeWidget extends BaseLazyWidget
         $this->translator = $translator;
     }
 
-    public function header(): string
+    public function header()
     {
         return 'Change subscription type';
     }
