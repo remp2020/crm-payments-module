@@ -84,8 +84,8 @@ class PaymentAuditLogHistoryDataProvider implements AuditLogHistoryDataProviderI
                 $auditLogHistoryDataProviderItem->addMessage(
                     'payments.data_provider.payment_audit_log_history.amount_change',
                     [
-                        'from' => $this->priceHelper->getFormattedPrice($changes['from']['amount']),
-                        'to' => $this->priceHelper->getFormattedPrice($changes['to']['amount']),
+                        'from' => $this->priceHelper->getFormattedPrice((float) $changes['from']['amount']),
+                        'to' => $this->priceHelper->getFormattedPrice((float) $changes['to']['amount']),
                     ],
                 );
             }
