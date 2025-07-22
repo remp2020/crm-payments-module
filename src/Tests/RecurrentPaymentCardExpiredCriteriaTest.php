@@ -20,6 +20,7 @@ use Crm\SubscriptionsModule\Seeders\SubscriptionTypeNamesSeeder;
 use Crm\UsersModule\Models\Auth\UserManager;
 use Crm\UsersModule\Repositories\UsersRepository;
 use Nette\Utils\DateTime;
+use PHPUnit\Framework\Attributes\DataProvider;
 
 class RecurrentPaymentCardExpiredCriteriaTest extends DatabaseTestCase
 {
@@ -58,44 +59,65 @@ class RecurrentPaymentCardExpiredCriteriaTest extends DatabaseTestCase
         ];
     }
 
-    public function testNegativeResult(): void
+    public static function dataProviderForTestCardExpiredCriteria(): array
     {
-        $chargeAt = new DateTime();
-        $expiresAt = (clone $chargeAt)->add(new \DateInterval('P1M')); // 1 month
-
-        [$recurrentPaymentSelection, $recurrentPaymentRow] = $this->prepareData($chargeAt, $expiresAt);
-
-        $criteria = $this->inject(RecurrentPaymentCardExpiredCriteria::class);
-        $this->assertTrue(
-            $criteria->addConditions($recurrentPaymentSelection, [], $recurrentPaymentRow),
-        );
-        $this->assertNull($recurrentPaymentSelection->fetch());
+        return [
+            'futureExpiresAt_-_trueCriterion' => [
+                'charge_at' => new DateTime('2023-01-01'),
+                'expires_at' => new DateTime('2023-01-31'),
+                'criterion_bool' => true,
+                'expected_result' => false,
+            ],
+            'futureExpiresAt_-_falseCriterion' => [
+                'charge_at' => new DateTime('2023-01-01'),
+                'expires_at' => new DateTime('2023-01-31'),
+                'criterion_bool' => false,
+                'expected_result' => true,
+            ],
+            'pastExpiresAt_-_trueCriterion' => [
+                'charge_at' => new DateTime('2023-01-31'),
+                'expires_at' => new DateTime('2023-01-01'),
+                'criterion_bool' => true,
+                'expected_result' => true,
+            ],
+            'pastExpiresAt_-_falseCriterion' => [
+                'charge_at' => new DateTime('2023-01-31'),
+                'expires_at' => new DateTime('2023-01-01'),
+                'criterion_bool' => false,
+                'expected_result' => false,
+            ],
+            'nullExpiresAt_-_trueCriterion' => [
+                'charge_at' => new DateTime('2023-01-31'),
+                'expires_at' => null,
+                'criterion_bool' => true,
+                'expected_result' => false,
+            ],
+            'nullExpiresAt_-_falseCriterion' => [
+                'charge_at' => new DateTime('2023-01-31'),
+                'expires_at' => null,
+                'criterion_bool' => false,
+                'expected_result' => true,
+            ],
+        ];
     }
 
-    public function testNegativeResultWithEmptyExpiresAt(): void
+    #[DataProvider('dataProviderForTestCardExpiredCriteria')]
+    public function testCardExpiredCriteria($charge_at, $expires_at, $criterion_bool, $expected_result)
     {
-        $chargeAt = new DateTime();
-        [$recurrentPaymentSelection, $recurrentPaymentRow] = $this->prepareData($chargeAt, null);
+        [$recurrentPaymentSelection, $recurrentPaymentRow] = $this->prepareData($charge_at, $expires_at);
 
         $criteria = $this->inject(RecurrentPaymentCardExpiredCriteria::class);
+        $values = (object)['selection' => $criterion_bool];
+
         $this->assertTrue(
-            $criteria->addConditions($recurrentPaymentSelection, [], $recurrentPaymentRow),
+            $criteria->addConditions($recurrentPaymentSelection, [RecurrentPaymentCardExpiredCriteria::KEY => $values], $recurrentPaymentRow),
         );
-        $this->assertNull($recurrentPaymentSelection->fetch());
-    }
 
-    public function testPositiveResult(): void
-    {
-        $chargeAt = new DateTime();
-        $expiresAt = (clone $chargeAt)->sub(new \DateInterval('P1M')); // 1 month
-
-        [$recurrentPaymentSelection, $recurrentPaymentRow] = $this->prepareData($chargeAt, $expiresAt);
-
-        $criteria = $this->inject(RecurrentPaymentCardExpiredCriteria::class);
-        $this->assertTrue(
-            $criteria->addConditions($recurrentPaymentSelection, [], $recurrentPaymentRow),
-        );
-        $this->assertNotNull($recurrentPaymentSelection->fetch());
+        if ($expected_result) {
+            $this->assertNotNull($recurrentPaymentSelection->fetch());
+        } else {
+            $this->assertNull($recurrentPaymentSelection->fetch());
+        }
     }
 
     private function prepareData(DateTime $chargeAt, ?DateTime $expiresAt): array
