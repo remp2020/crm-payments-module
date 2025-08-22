@@ -6,11 +6,11 @@ use Crm\ApplicationModule\Models\Config\ApplicationConfig;
 use Crm\PaymentsModule\Models\MailConfirmation\EmailInterface;
 use Crm\PaymentsModule\Models\MailConfirmation\MailDownloaderInterface;
 use Crm\PaymentsModule\Models\MailConfirmation\MailProcessor;
-use Crm\PaymentsModule\Models\MailParser\TatraBankaMailDecryptor;
-use Crm\PaymentsModule\Models\MailParser\TatraBankaStatementMailParser;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
+use Tomaj\BankMailsParser\Parser\TatraBanka\TatraBankaMailDecryptor;
+use Tomaj\BankMailsParser\Parser\TatraBanka\TatraBankaStatementMailParser;
 use Tomaj\ImapMailDownloader\MailCriteria;
 use Tracy\Debugger;
 
