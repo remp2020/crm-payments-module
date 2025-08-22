@@ -7,6 +7,7 @@ use Crm\ApplicationModule\Models\DataProvider\DataProviderException;
 use Crm\ApplicationModule\Models\DataProvider\DataProviderManager;
 use Crm\ApplicationModule\UI\Form;
 use Crm\PaymentsModule\DataProviders\PaymentFormDataProviderInterface;
+use Crm\PaymentsModule\DataProviders\PaymentFormGeneralSettingsDataProviderInterface;
 use Crm\PaymentsModule\Forms\Controls\SubscriptionTypesSelectItemsBuilder;
 use Crm\PaymentsModule\Models\Payment\PaymentStatusEnum;
 use Crm\PaymentsModule\Models\PaymentItem\DonationPaymentItem;
@@ -296,6 +297,15 @@ class PaymentFormFactory
             $form->addSelect('address_id', "payments.form.payment.address_id.label", $addresses)->setPrompt('--');
         }
 
+        /** @var PaymentFormGeneralSettingsDataProviderInterface[] $providers */
+        $providers = $this->dataProviderManager->getProviders(
+            'payments.dataprovider.payment_form.general_settings',
+            PaymentFormGeneralSettingsDataProviderInterface::class,
+        );
+        foreach ($providers as $sorting => $provider) {
+            $form = $provider->provide(['form' => $form, 'payment' => $payment]);
+        }
+
         $form->addHidden('user_id', $user->id);
 
         $form->addSubmit('send', 'payments.form.payment.send')
@@ -423,6 +433,15 @@ class PaymentFormFactory
                 $values['subscription_end_at'] = $subscriptionEndAt;
             }
 
+            /** @var PaymentFormGeneralSettingsDataProviderInterface[] $providers */
+            $providers = $this->dataProviderManager->getProviders(
+                'payments.dataprovider.payment_form.general_settings',
+                PaymentFormGeneralSettingsDataProviderInterface::class,
+            );
+            foreach ($providers as $sorting => $provider) {
+                $provider->formSucceeded($form, $values, $payment);
+            }
+
             // Unset array values or update fails.
             // Can be utilized by data providers which can store components within containers
             // which results in $values['container_name']['component_name'].
@@ -506,6 +525,15 @@ class PaymentFormFactory
             $this->paymentsRepository->update($payment, $updateArray);
 
             $this->paymentsRepository->updateStatus($payment, $values['status'], $sendNotification);
+
+            /** @var PaymentFormGeneralSettingsDataProviderInterface[] $providers */
+            $providers = $this->dataProviderManager->getProviders(
+                'payments.dataprovider.payment_form.general_settings',
+                PaymentFormGeneralSettingsDataProviderInterface::class,
+            );
+            foreach ($providers as $sorting => $provider) {
+                $provider->formSucceeded($form, $values, $payment);
+            }
 
             $this->onCallback = function () use ($form, $payment) {
                 /** @var SubmitButton $saveAndCloseButton */
