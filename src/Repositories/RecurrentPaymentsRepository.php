@@ -8,6 +8,8 @@ use Crm\ApplicationModule\Models\DataProvider\DataProviderManager;
 use Crm\ApplicationModule\Models\Database\Repository;
 use Crm\ApplicationModule\Models\Database\Selection;
 use Crm\ApplicationModule\Models\NowTrait;
+use Crm\ApplicationModule\Models\Redis\RedisClientFactory;
+use Crm\ApplicationModule\Models\Redis\RedisClientTrait;
 use Crm\ApplicationModule\Repositories\AuditLogRepository;
 use Crm\ApplicationModule\Repositories\CacheRepository;
 use Crm\PaymentsModule\DataProviders\BaseSubscriptionDataProviderInterface;
@@ -26,6 +28,7 @@ use Crm\PaymentsModule\Models\RecurrentPayment\RecurrentPaymentStateEnum;
 use DateTime;
 use Exception;
 use League\Event\Emitter;
+use Malkusch\Lock\Mutex\RedisMutex;
 use Nette\Database\Explorer;
 use Nette\Database\Table\ActiveRow;
 use Tracy\Debugger;
@@ -33,6 +36,7 @@ use Tracy\Debugger;
 class RecurrentPaymentsRepository extends Repository
 {
     use NowTrait;
+    use RedisClientTrait;
 
     protected $tableName = 'recurrent_payments';
 
@@ -43,6 +47,7 @@ class RecurrentPaymentsRepository extends Repository
     public function __construct(
         Explorer $database,
         AuditLogRepository $auditLogRepository,
+        RedisClientFactory $redisClientFactory,
         private readonly PaymentGatewayMetaRepository $paymentGatewayMetaRepository,
         private readonly Emitter $emitter,
         private readonly ApplicationConfig $applicationConfig,
@@ -55,6 +60,7 @@ class RecurrentPaymentsRepository extends Repository
     ) {
         parent::__construct($database);
         $this->auditLogRepository = $auditLogRepository;
+        $this->redisClientFactory = $redisClientFactory;
     }
 
     final public function add(
@@ -97,50 +103,59 @@ class RecurrentPaymentsRepository extends Repository
             return null;
         }
 
-        $paymentGateway = $payment->payment_gateway;
-        if ($payment->status === PaymentStatusEnum::Authorized->value) {
-            $gateway = $this->gatewayFactory->getGateway($payment->payment_gateway->code);
-            if ($gateway instanceof RecurrentAuthorizationInterface) {
-                $paymentGateway = $this->paymentGatewaysRepository->findByCode($gateway->getAuthorizedRecurrentPaymentGatewayCode());
+        $mutex = new RedisMutex($this->redis(), 'recurrent_payments_repository_create_from_payment_' . $payment->id, 10);
+        $recurrentPayment = $mutex->synchronized(function () use ($payment, $recurrentToken, $chargeAt, $customChargeAmount) {
+            $paymentGateway = $payment->payment_gateway;
+            if ($payment->status === PaymentStatusEnum::Authorized->value) {
+                $gateway = $this->gatewayFactory->getGateway($payment->payment_gateway->code);
+                if ($gateway instanceof RecurrentAuthorizationInterface) {
+                    $paymentGateway = $this->paymentGatewaysRepository->findByCode($gateway->getAuthorizedRecurrentPaymentGatewayCode());
+                }
             }
-        }
 
-        // check if recurrent payment already exists and return existing instance
-        $recurrentPayment = $this->recurrent($payment);
-        if ($recurrentPayment) {
+            // check if recurrent payment already exists and return existing instance
+            $recurrentPayment = $this->recurrent($payment);
+            if ($recurrentPayment) {
+                return $recurrentPayment;
+            }
+
+            $retriesConfig = $this->applicationConfig->get('recurrent_payment_charges');
+            if ($retriesConfig) {
+                $retries = count(explode(',', $retriesConfig));
+            } else {
+                $retries = 1;
+            }
+
+            if (!$chargeAt) {
+                try {
+                    $chargeAt = $this->calculateChargeAt($payment);
+                } catch (\Exception $e) {
+                    Debugger::log($e, Debugger::ERROR);
+                    return null;
+                }
+            }
+
+            $paymentMethod = $this->paymentMethodsRepository->findOrAdd(
+                $payment->user->id,
+                $payment->payment_gateway->id,
+                $recurrentToken,
+            );
+
+            $recurrentPayment = $this->add(
+                paymentMethod: $paymentMethod,
+                payment: $payment,
+                chargeAt: $chargeAt,
+                customAmount: $customChargeAmount,
+                retries: --$retries,
+                paymentGateway: $paymentGateway,
+            );
+
             return $recurrentPayment;
+        });
+
+        if (!$recurrentPayment) {
+            return null;
         }
-
-        $retriesConfig = $this->applicationConfig->get('recurrent_payment_charges');
-        if ($retriesConfig) {
-            $retries = count(explode(',', $retriesConfig));
-        } else {
-            $retries = 1;
-        }
-
-        if (!$chargeAt) {
-            try {
-                $chargeAt = $this->calculateChargeAt($payment);
-            } catch (\Exception $e) {
-                Debugger::log($e, Debugger::ERROR);
-                return null;
-            }
-        }
-
-        $paymentMethod = $this->paymentMethodsRepository->findOrAdd(
-            $payment->user->id,
-            $payment->payment_gateway->id,
-            $recurrentToken,
-        );
-
-        $recurrentPayment = $this->add(
-            paymentMethod: $paymentMethod,
-            payment: $payment,
-            chargeAt: $chargeAt,
-            customAmount: $customChargeAmount,
-            retries: --$retries,
-            paymentGateway: $paymentGateway,
-        );
 
         $this->emitter->emit(new RecurrentPaymentCreatedEvent($recurrentPayment));
         $this->hermesEmitter->emit(new HermesMessage('recurrent-payment-created', [

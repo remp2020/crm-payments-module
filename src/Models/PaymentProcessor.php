@@ -93,9 +93,11 @@ class PaymentProcessor
             }
 
             if (!$preventPaymentStatusUpdate) {
-                $this->paymentsRepository->updateStatus($payment, $status, true);
+                $isUpdated = $this->paymentsRepository->updateStatus($payment, $status, true);
                 $payment = $this->paymentsRepository->find($payment->id);
-                $this->createRecurrentPayment($payment, $gateway);
+                if ($isUpdated) {
+                    $this->createRecurrentPayment($payment, $gateway);
+                }
             }
         } elseif ($result === false) {
             $status = PaymentStatusEnum::Fail->value;
