@@ -3,6 +3,7 @@
 namespace Crm\PaymentsModule\Presenters;
 
 use Crm\ApplicationModule\Presenters\FrontendPresenter;
+use Crm\PaymentsModule\Events\RecurrentPaymentRetentionFrontendRequestEvent;
 use Crm\PaymentsModule\Models\Payment\PaymentStatusEnum;
 use Crm\PaymentsModule\Models\RecurrentPaymentsResolver;
 use Crm\PaymentsModule\Repositories\PaymentsRepository;
@@ -83,6 +84,8 @@ class PaymentsPresenter extends FrontendPresenter
             $this->flashMessage($this->translator->translate('payments.frontend.recurrent_stop.invalid'), 'error');
             $this->redirect('my');
         }
+
+        $this->emitter->emit(new RecurrentPaymentRetentionFrontendRequestEvent($recurrentPayment));
 
         $this->template->resolver = $this->recurrentPaymentsResolver;
         $this->template->recurrentPayment = $recurrentPayment;
