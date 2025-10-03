@@ -399,6 +399,17 @@ class ConfigsSeeder implements ISeeder
             $sorting++,
         );
 
+        $this->addConfig(
+            $output,
+            $category,
+            'recurrent_payment_reactivation_threshold',
+            ApplicationConfig::TYPE_STRING,
+            'payments.config.recurrent_payment_reactivation_threshold.name',
+            'payments.config.recurrent_payment_reactivation_threshold.description',
+            14,
+            $sorting++,
+        );
+
         $confirmationCategory = $this->configCategoriesRepository->loadByName('payments.config.category_confirmation');
         if (!$confirmationCategory) {
             $confirmationCategory = $this->configCategoriesRepository->add('payments.config.category_confirmation', 'fa fa-check-double', 1600);

@@ -307,10 +307,14 @@ class RecurrentPaymentsRepository extends Repository
         }
 
         // do not allow reactivation of old recurrent profiles
-        if ($recurrentPayment->charge_at < (new DateTime())->modify('-14 days')) {
-            return false;
+        $reactivationPaymentThreshold = new DateTime('-14 days');
+
+        $reactivationPaymentThresholdConfig = $this->applicationConfig->get('recurrent_payment_reactivation_threshold');
+        if ($reactivationPaymentThresholdConfig) {
+            $reactivationPaymentThreshold = new DateTime("-{$reactivationPaymentThresholdConfig} days");
         }
-        return true;
+
+        return $recurrentPayment->charge_at >= $reactivationPaymentThreshold;
     }
 
     final public function stoppedByUser($id, $userId)

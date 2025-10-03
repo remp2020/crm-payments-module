@@ -662,6 +662,7 @@ config:
     gopay_go_id: {}
     recurrent_charge_before: {}
     recurrent_payment_charges: {}
+    recurrent_payment_reactivation_threshold: {}
     gopay_recurrence_date_to: {}
     gopay_mode: {}
     tatrabanka_pgp_private_key_passphrase: {}
