@@ -43,6 +43,7 @@ class BankTransferPresenter extends FrontendPresenter implements PaymentAwareInt
         $this->template->bankNumber = $this->applicationConfig->get('supplier_bank_account_number');
         $this->template->bankIban = $this->applicationConfig->get('supplier_iban');
         $this->template->bankSwift = $this->applicationConfig->get('supplier_swift');
+        $this->template->bankAccountName = $this->applicationConfig->get('supplier_name');
 
         $this->template->payment = $payment;
         $this->template->note = 'VS' . $payment->variable_symbol;

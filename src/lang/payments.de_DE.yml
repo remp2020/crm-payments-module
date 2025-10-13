@@ -583,6 +583,7 @@ frontend:
         title: Angaben für Dauerauftrag oder Überweisung
         amount: Summe
         account_number: Kontonummer
+        account_name: Name des Empfängers
         recipient_message: Verwendungszweck
         delay_info: Es kann 2 bis 3 Werktage dauern, bis der Betrag gutgeschrieben wird. Das Abonnement wird erst nach Gutschrift der Zahlung auf unserem Konto aktiviert.
         variable_symbol: Transaktions-ID

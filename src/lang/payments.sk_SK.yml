@@ -808,6 +808,7 @@ frontend:
         title: Tu si skopírujte údaje pre trvalý príkaz alebo platbu prevodom
         amount: Suma
         account_number: Číslo účtu
+        account_name: Názov príjemcu
         variable_symbol: Variabilný symbol
         recipient_message: Správa pre prijímateľa
         delay_info: "Pripísanie platby na účet môže trvať 1 až 2 pracovné dni. Nákup Vám bude potvrdený až po pripísaní platby na náš účet."

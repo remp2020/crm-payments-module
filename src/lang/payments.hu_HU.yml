@@ -619,6 +619,7 @@ frontend:
         title: "Állandó átutalási megbízáshoz vagy átutalással történő fizetéshez szükséges adatok"
         amount: "Összeg"
         account_number: "Bankszámlaszám"
+        account_name: "Címzett neve"
         variable_symbol: "Az átutalás egyedi azonosítója (variabilný symbol)"
         recipient_message: "Üzenet a címzettnek"
         delay_info: "Az összeg jóváírása egy vagy két munkanapig tarthat. Az előfizetés az összeg jóváírása után aktiválódik."

@@ -12,10 +12,13 @@
 	<div class="col-md-8">
 		<blockquote>
 			<p class="lead">
-				{_payments.frontend.banktransfer.account_number}: {$bankNumber}
 				{if !empty($bankIban)}
-					(IBAN: {$bankIban}{if $bankSwift} SWIFT: {$bankSwift}{/if})
+					IBAN: {$bankIban}<br>
+					{if !empty($bankSwift)}SWIFT: {$bankSwift}<br>{/if}
 				{/if}
+				{_payments.frontend.banktransfer.account_number}: {$bankNumber}
+				<br>
+				{_payments.frontend.banktransfer.account_name}: {$bankAccountName}
 				<br><br>
 				{_payments.frontend.banktransfer.amount}: <strong>{$payment->amount|price}</strong><br>
 				{_payments.frontend.banktransfer.variable_symbol}: <strong>{$payment->variable_symbol}</strong><br>
