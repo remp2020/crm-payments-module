@@ -256,7 +256,7 @@ class RecurrentPaymentsResolver
         // and sum of items would be greater than charged amount
         $ratios = [];
         foreach ($items as $item) {
-            $ratios[$item->vat()] = floor($item->unitPrice() / $subscriptionType->price * 100) / 100;
+            $ratios[(int) $item->vat()*100] = floor($item->unitPrice() / $subscriptionType->price * 100) / 100;
         }
         // any rounding weirdness (sum of ratios not being 1) should go in favor of higher vat (first item)
         $ratios[array_keys($ratios)[0]] += 1 - array_sum($ratios);
@@ -264,7 +264,7 @@ class RecurrentPaymentsResolver
         // update prices based on found ratios
         $sum = 0;
         foreach ($items as $item) {
-            $itemPrice = floor($customChargeAmount * $ratios[$item->vat()] * 100) / 100;
+            $itemPrice = floor($customChargeAmount * $ratios[(int) $item->vat()*100] * 100) / 100;
             $item->forcePrice($itemPrice);
             $sum += $itemPrice;
         }
