@@ -61,7 +61,7 @@ class RecurrentPaymentsResolver
         }
 
         // next subscription OR trial periods NOT set; return current subscription type
-        if ($subscriptionType->next_subscription_type_id === null || $subscriptionType->trial_periods === 0) {
+        if ($subscriptionType->next_subscription_type_id === null || $subscriptionType->trial_periods === null) {
             return $subscriptionType;
         }
 
