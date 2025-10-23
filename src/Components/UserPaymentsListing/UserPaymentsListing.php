@@ -2,10 +2,14 @@
 
 namespace Crm\PaymentsModule\Components\UserPaymentsListing;
 
+use Crm\ApplicationModule\Components\AjaxDataPaginator\PaginatedComponent;
+use Crm\ApplicationModule\Components\AjaxDataPaginator\PaginatesDataTrait;
+use Crm\ApplicationModule\Components\Widgets\SimpleWidget\SimpleWidget;
 use Crm\ApplicationModule\Components\Widgets\SimpleWidget\SimpleWidgetFactoryInterface;
 use Crm\ApplicationModule\Models\Widget\BaseLazyWidget;
 use Crm\ApplicationModule\Models\Widget\DetailWidgetInterface;
 use Crm\ApplicationModule\Models\Widget\LazyWidgetManager;
+use Crm\PaymentsModule\Components\ChangePaymentStatus\ChangePaymentStatus;
 use Crm\PaymentsModule\Components\ChangePaymentStatus\ChangePaymentStatusFactoryInterface;
 use Crm\PaymentsModule\Models\Payment\PaymentStatusEnum;
 use Crm\PaymentsModule\Models\RecurrentPayment\RecurrentPaymentStateEnum;
@@ -13,6 +17,7 @@ use Crm\PaymentsModule\Models\RecurrentPaymentsResolver;
 use Crm\PaymentsModule\Repositories\ParsedMailLogsRepository;
 use Crm\PaymentsModule\Repositories\PaymentsRepository;
 use Crm\PaymentsModule\Repositories\RecurrentPaymentsRepository;
+use Exception;
 use Nette\Application\BadRequestException;
 use Nette\Database\Table\ActiveRow;
 use Nette\Localization\Translator;
@@ -20,25 +25,30 @@ use Nette\Utils\DateTime;
 use Tracy\Debugger;
 
 /**
- * Listing widget used in user detail shoing users payments.
+ * Listing widget used in user detail showing users payments.
  *
  * This widget fetches all user payments. Renders bootstrap table with resulting dataset
- * and adds change payment status widget and abilit to add any number of simple widgets.
+ * and adds change payment status widget and ability to add any number of simple widgets.
  * Also handles stopping recurrent payment.
  *
  * @package Crm\PaymentsModule\Components
  */
-class UserPaymentsListing extends BaseLazyWidget implements DetailWidgetInterface
+class UserPaymentsListing extends BaseLazyWidget implements DetailWidgetInterface, PaginatedComponent
 {
-    private $templateName = 'user_payments_listing.latte';
+    use PaginatesDataTrait;
+
+    private string $templateName = 'user_payments_listing.latte';
+
+    /** @var ?int Total payment count for current user */
+    private ?int $totalCount = null;
 
     public function __construct(
         LazyWidgetManager $lazyWidgetManager,
-        private Translator $translator,
-        private PaymentsRepository $paymentsRepository,
-        private RecurrentPaymentsRepository $recurrentPaymentsRepository,
-        private ParsedMailLogsRepository $parsedMailLogsRepository,
-        private RecurrentPaymentsResolver $recurrentPaymentsResolver,
+        private readonly Translator $translator,
+        private readonly PaymentsRepository $paymentsRepository,
+        private readonly RecurrentPaymentsRepository $recurrentPaymentsRepository,
+        private readonly ParsedMailLogsRepository $parsedMailLogsRepository,
+        private readonly RecurrentPaymentsResolver $recurrentPaymentsResolver,
     ) {
         parent::__construct($lazyWidgetManager);
     }
@@ -59,29 +69,52 @@ class UserPaymentsListing extends BaseLazyWidget implements DetailWidgetInterfac
         return $header;
     }
 
-    public function identifier()
+    public function identifier(): string
     {
         return 'userpayments';
     }
 
-    public function render($id)
+    public function render($id): void
     {
         $this->template->userId = $id;
+        $this->entityId = $id;
 
-        $payments = $this->paymentsRepository->userPayments($id);
+        $totalPayments = $this->totalCount($id);
+
+        $paymentsTablePaginator = $this->getAjaxPaginator(
+            snippetName: 'paymentsTable',
+            itemCount: $totalPayments,
+        );
+
+        $payments = $this->paymentsRepository
+            ->userPayments($id)
+            ->limit($paymentsTablePaginator->getLimit(), $paymentsTablePaginator->getOffset());
+            
         $variableSymbols = [];
         foreach ($payments as $payment) {
             $variableSymbols[] = $payment->variable_symbol;
         }
         $this->template->payments = $payments;
         $this->template->paymentStatuses = $this->paymentsRepository->getStatusPairs();
-        $this->template->totalPayments = $this->totalCount($id);
+        $this->template->totalPayments = $totalPayments;
         $this->template->parsedEmails = $this->parsedMailLogsRepository->findByVariableSymbols($variableSymbols);
 
-        $recurrentPayments = $this->recurrentPaymentsRepository->userRecurrentPayments($id)
-            ->order('id DESC, charge_at DESC');
+        $totalRecurrentPayments = $this->recurrentPaymentsRepository
+            ->userRecurrentPayments($id)
+            ->count('*');
+
+        $recurrentTablePaginator = $this->getAjaxPaginator(
+            snippetName: 'recurrentTable',
+            itemCount: $totalRecurrentPayments,
+        );
+
+        $recurrentPayments = $this->recurrentPaymentsRepository
+            ->userRecurrentPayments($id)
+            ->order('id DESC, charge_at DESC')
+            ->limit($recurrentTablePaginator->getLimit(), $recurrentTablePaginator->getOffset());
+            
         $this->template->recurrentPayments = $recurrentPayments;
-        $this->template->totalRecurrentPayments = $recurrentPayments->count('*');
+        $this->template->totalRecurrentPayments = $totalRecurrentPayments;
         $this->template->canBeStopped = function ($recurrentPayment) {
             return $this->recurrentPaymentsRepository->canBeStopped($recurrentPayment);
         };
@@ -96,18 +129,21 @@ class UserPaymentsListing extends BaseLazyWidget implements DetailWidgetInterfac
 
             try {
                 $result = $this->recurrentPaymentsResolver->resolveChargeAmount($recurrentPayment);
-            } catch (\Exception $exception) {
+            } catch (Exception $exception) {
                 Debugger::log($exception, Debugger::EXCEPTION);
                 return null;
             }
             return $result;
         };
 
+        $this->template->paymentsTablePaginator = $paymentsTablePaginator;
+        $this->template->recurrentTablePaginator = $recurrentTablePaginator;
+
         $this->template->setFile(__DIR__ . '/' . $this->templateName);
         $this->template->render();
     }
 
-    public function handleStopRecurrentPayment($recurrentPaymentId)
+    public function handleStopRecurrentPayment($recurrentPaymentId): void
     {
         $recurrent = $this->recurrentPaymentsRepository->stoppedByAdmin($recurrentPaymentId);
 
@@ -118,25 +154,21 @@ class UserPaymentsListing extends BaseLazyWidget implements DetailWidgetInterfac
         $this->presenter->redirect(':Users:UsersAdmin:Show', $user->id);
     }
 
-    private $totalCount = null;
-
-    private function totalCount($id)
+    private function totalCount(int $userId): int
     {
-        if ($this->totalCount == null) {
-            $this->totalCount = $this->paymentsRepository->userPayments($id)->count('*');
-        }
-        return $this->totalCount;
+        return $this->totalCount ??= $this->paymentsRepository
+            ->userPayments($userId)
+            ->count();
     }
 
-    protected function createComponentChangePaymentStatus(ChangePaymentStatusFactoryInterface $factory)
-    {
-        $control = $factory->create();
-        return $control;
+    protected function createComponentChangePaymentStatus(
+        ChangePaymentStatusFactoryInterface $factory,
+    ): ChangePaymentStatus {
+        return $factory->create();
     }
 
-    protected function createComponentSimpleWidget(SimpleWidgetFactoryInterface $factory)
+    protected function createComponentSimpleWidget(SimpleWidgetFactoryInterface $factory): SimpleWidget
     {
-        $control = $factory->create();
-        return $control;
+        return $factory->create();
     }
 }
