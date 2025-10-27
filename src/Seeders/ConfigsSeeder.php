@@ -68,6 +68,17 @@ class ConfigsSeeder implements ISeeder
             90,
         );
 
+        $this->addConfig(
+            $output,
+            $category,
+            'allow_pause_subscriptions',
+            ApplicationConfig::TYPE_BOOLEAN,
+            'payments.config.allow_pause_subscriptions.name',
+            'payments.config.allow_pause_subscriptions.description',
+            false,
+            91,
+        );
+
         $sorting = 1000;
 
         // TATRAPAY

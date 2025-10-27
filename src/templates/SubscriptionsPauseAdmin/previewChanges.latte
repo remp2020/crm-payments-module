@@ -1,0 +1,302 @@
+{block #title}[#{$subscription->id}] {_payments.admin.subscriptions_pause.header_preview}{/block}
+
+{block #content}
+<div class="row">
+    <div class="col-md-12">
+        <a n:href=":Users:UsersAdmin:Show $subscription->user->id">
+            <i class="fa fa-angle-left"></i> {_payments.admin.subscriptions_pause.back_to_user}
+        </a>
+
+        <div class="page-header">
+            <h1>
+                <small>[#{$subscription->id}]</small>
+                {_payments.admin.subscriptions_pause.header_preview}
+            </h1>
+        </div>
+    </div>
+</div>
+
+<h3><strong>{_payments.admin.subscriptions_pause.preview.pause_until}</strong> {$resumeAt|date: 'd.m.Y H:i'}</h3>
+
+<div class="row">
+    <div class="col-xs-12 col-lg-8">
+        <div class="subcut">
+            <div class="subcut_labels">
+                <div class="subcut_label">
+                    PRED
+                </div>
+                <div class="subcut_label">
+                    PO
+                </div>		
+            </div>
+            {var $pxPerDay = min(10, round(800 / $daysRange))}
+            <div class="subcut_timelines">
+                <div class="subcut_timeline">
+                    {foreach $currentSubscriptions as $currentSubscription}
+                        {var $start = $currentSubscription->start_time->getTimestamp()}
+                        {var $end = $currentSubscription->end_time->getTimestamp()}
+                        {var $days = max(0, ceil(($end - $start) / 86400))}
+                        {var $isFuture = $currentSubscription->start_time > new DateTime()}
+                        <div class="subcut_subscription {if $isFuture}future-subscription{/if}" style="flex-basis: {$days*$pxPerDay}px;">
+                            <div class="subcut_date subcut_date_start" title="{$currentSubscription->start_time|localizedDate}">{$currentSubscription->start_time|localizedDate,false,false|replace:" ",""}</div>
+                            <div class="subcut_date subcut_date_end" title="{$currentSubscription->end_time|localizedDate}">{$currentSubscription->end_time|localizedDate,false,false|replace:" ",""}</div>
+                        </div>
+                    {/foreach}
+                </div>
+                <div class="subcut_timeline">
+                    {var $start = $previewChangesResult['active_subscription_changes']['stopped_subscription']['row']->start_time->getTimestamp()}
+                    {var $end = $pauseAt->getTimestamp()}
+                    {var $days = max(0, ceil(($end - $start) / 86400))}
+                    <div class="subcut_subscription" style="flex-basis: {$days*$pxPerDay}px;">
+                        <div class="subcut_date subcut_date_start" title="{$previewChangesResult['active_subscription_changes']['stopped_subscription']['row']->start_time|localizedDate}">{$previewChangesResult['active_subscription_changes']['stopped_subscription']['row']->start_time|localizedDate,false,false|replace:" ",""}</div>
+                        <div class="subcut_date subcut_date_end" title="{$pauseAt|localizedDate}">{$pauseAt|localizedDate,false,false|replace:" ",""}</div>
+                    </div>
+                    {var $start = $pauseAt->getTimestamp()}
+                    {var $end = $previewChangesResult['active_subscription_changes']['new_subscription']['start_time']->getTimestamp()}
+                    {var $days = max(0, ceil(($end - $start) / 86400))}
+                    <div class="subcut_subscription" style="flex-basis: {$days*$pxPerDay}px;"></div>
+
+                    {var $start = $previewChangesResult['active_subscription_changes']['new_subscription']['start_time']->getTimestamp()}
+                    {var $end = $previewChangesResult['active_subscription_changes']['new_subscription']['end_time']->getTimestamp()}
+                    {var $days = max(0, ceil(($end - $start) / 86400))}
+
+                    <div class="subcut_subscription" style="flex-basis: {$days*$pxPerDay}px;">
+                        <div class="subcut_date subcut_date_start" title="{$previewChangesResult['active_subscription_changes']['new_subscription']['start_time']|localizedDate}">{$previewChangesResult['active_subscription_changes']['new_subscription']['start_time']|localizedDate,false,false|replace:" ",""}</div>
+                        <div class="subcut_date subcut_date_end" title="{$previewChangesResult['active_subscription_changes']['new_subscription']['end_time']|localizedDate}">{$previewChangesResult['active_subscription_changes']['new_subscription']['end_time']|localizedDate,false,false|replace:" ",""}</div>
+                    </div>
+
+                    {foreach $previewChangesResult['future_subscription_changes'] as $futureSubscription}
+                        {var $start = $futureSubscription['new_start_time']->getTimestamp()}
+                        {var $end = $futureSubscription['new_end_time']->getTimestamp()}
+                        {var $days = max(0, ceil(($end - $start) / 86400))}
+                        <div class="subcut_subscription" style="flex-basis: {$days*$pxPerDay}px;">
+                            <div class="subcut_date subcut_date_start" title="{$futureSubscription['new_start_time']|localizedDate}">{$futureSubscription['new_start_time']|localizedDate,false,false|replace:" ",""}</div>
+                            <div class="subcut_date subcut_date_end" title="{$futureSubscription['new_end_time']|localizedDate}">{$futureSubscription['new_end_time']|localizedDate,false,false|replace:" ",""}</div>
+                        </div>
+                    {/foreach}
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-xs-12 col-lg-3">
+        {if !empty($previewChangesResult['future_subscription_changes'])}
+            <div class="panel panel-default">
+                <div class="panel-heading">{_payments.admin.subscriptions_pause.preview.moved_subscriptions}</div>
+                <div class="panel-body">
+                    {foreach $previewChangesResult['future_subscription_changes'] as $futureSubscription}
+                    <div class="row" style="margin-bottom: 1rem;">
+                        <div class="col-md-12 col-md-5">
+                            <strong>
+                                {$futureSubscription['row']->subscription_type->name}
+                                <small class="text-muted">(<a target="_blank" n:href=":Subscriptions:SubscriptionsAdmin:show $futureSubscription['row']->id">#{$futureSubscription['row']->id}</a>)</small>
+                            </strong>
+                        </div>
+                        <div class="col-sm-12 col-md-7">
+                            <i class="fa-regular fa-calendar-xmark"></i> <span style="white-space: nowrap">{$futureSubscription['row']->start_time|userDate}</span> - <span style="white-space: nowrap">{$futureSubscription['row']->end_time|userDate}</span>
+                            <br>
+                            <i class="fa-regular fa-calendar-check"></i> <span style="white-space: nowrap">{$futureSubscription['new_start_time']|userDate}</span> - <span style="white-space: nowrap">{$futureSubscription['new_end_time']|userDate}</span>
+                        </div>
+                    </div>
+                    {/foreach}
+                </div>
+            </div>
+        {/if}
+
+        {if !empty($previewChangesResult['recurrent_payments_changes'])}
+            <div class="panel panel-default">
+                <div class="panel-heading">{_payments.admin.subscriptions_pause.preview.moved_recurrent_payments}</div>
+                <div class="panel-body">
+                    <table class="table table-responsive table-clear table-left-label">
+                        <tbody>
+                        {foreach $previewChangesResult['recurrent_payments_changes'] as $recurrentPayment}
+                            <tr>
+                                <td><a target="_blank" n:href=":Payments:PaymentsRecurrentAdmin:Edit $recurrentPayment['row']->id">
+                                        <span style="font-size: 14px">{$recurrentPayment['row']->payment_gateway->name}</span><br>
+                                        <small class="text-muted">#{$recurrentPayment['id']}</small>
+                                    </a></td>
+                                <td>
+                                    <span style="font-size: 14px">
+                                        <i class="fa-regular fa-calendar-xmark"></i> {$recurrentPayment['row']->charge_at|userDate}<br>
+                                        <i class="fa-regular fa-calendar-check"></i> {$recurrentPayment['new_charge_at']|userDate}
+                                    </span>
+                                </td>
+                            </tr>
+                            {if !$iterator->isLast()}
+                                <tr>
+                                    <td style="border-top: 2px solid #ddd;"></td>
+                                </tr>
+                            {/if}
+                        {/foreach}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        {/if}
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-md-12">
+        {control subscriptionPauseForm}
+    </div>
+</div>
+
+<style>
+    .progress {
+        height: 40px;
+    }
+
+    .subcut {
+        display: flex;
+        margin-bottom: 32px;
+        border: 1px solid #cccccc;
+        border-radius: 3px;
+        box-sizing: content-box;
+    }
+
+    .subcut * {
+        box-sizing: content-box;
+    }
+
+    .subcut_labels {
+        flex: 0 0 64px;
+        display: flex;
+        flex-direction: column;
+        border-right: 1px solid #cccccc;
+        background-color: #f5f5f5;
+        font-weight: bold;
+    }
+
+    .subcut_label {
+        display: flex;
+        align-items: center;
+        flex: 1;
+        padding: 8px;
+    }
+
+    .subcut_timelines {
+        flex: 1;
+        display: flex;
+        flex-direction: column;
+        overflow-x: auto;
+    }
+
+    .subcut_timeline {
+        display: flex;
+        flex: 1;
+        padding: 8px;
+        align-items: stretch;
+    }
+
+    .subcut_subscription {
+        flex-grow: 0;
+        flex-shrink: 0;
+        position: relative;
+        border-radius: 6px;
+        transition: transform 0.2s ease;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        min-width: 50px;
+    }
+
+    .subcut_subscription:not(:empty) {
+        height: 72px;
+    }
+
+    .subcut_subscription:hover {
+        transform: translateY(-2px);
+    }
+
+    .subcut_subscription+.subcut_subscription {
+        margin-left: 2px;
+    }
+
+    /* Current subscriptions - darker grey */
+    .subcut_timeline:first-child .subcut_subscription:not(:empty) {
+        background: #d9d9d9;
+        border: 2px solid #b0b0b0;
+    }
+
+    .subcut_timeline:first-child .subcut_subscription:not(:empty):hover {
+        background: #c8c8c8;
+    }
+
+    /* Future subscriptions in first timeline - lighter grey */
+    .subcut_timeline:first-child .subcut_subscription.future-subscription {
+        background: #f5f5f5;
+        border: 2px solid #e0e0e0;
+    }
+
+    .subcut_timeline:first-child .subcut_subscription.future-subscription:hover {
+        background: #e8e8e8;
+    }
+
+    /* Future subscriptions - very light grey */
+    .subcut_timeline:last-child .subcut_subscription:not(:empty) {
+        background: #f5f5f5;
+        border: 2px solid #e0e0e0;
+    }
+
+    .subcut_timeline:last-child .subcut_subscription:not(:empty):hover {
+        background: #e8e8e8;
+    }
+
+    /* Active subscription changes (stopped and new) - darker grey */
+    .subcut_timeline:last-child .subcut_subscription:nth-child(1),
+    .subcut_timeline:last-child .subcut_subscription:nth-child(3) {
+        background: #d9d9d9;
+        border: 2px solid #b0b0b0;
+    }
+
+    .subcut_timeline:last-child .subcut_subscription:nth-child(1):hover,
+    .subcut_timeline:last-child .subcut_subscription:nth-child(3):hover {
+        background: #c8c8c8;
+    }
+
+    /* Pause period - striped pattern */
+    .subcut_timeline:last-child .subcut_subscription:empty {
+        background: repeating-linear-gradient(
+            45deg,
+            #fff3cd,
+            #fff3cd 10px,
+            #ffeaa7 10px,
+            #ffeaa7 20px
+        );
+        border: 2px dashed #f0ad4e;
+        opacity: 0.7;
+        align-self: stretch;
+    }
+
+    .subcut_timeline:last-child .subcut_subscription:empty::after {
+        content: "\f04c";
+        font-family: "Font Awesome 6 Free";
+        font-weight: 900;
+        font-size: 24px;
+        color: #f0ad4e;
+        opacity: 0.5;
+    }
+
+    .subcut_date {
+        position: absolute;
+        top: 50%;
+        z-index: 1;
+        font-size: 11px;
+        font-weight: 600;
+        color: #ffffff;
+        background-color: rgba(0, 0, 0, 0.45);
+        padding: 2px 6px;
+        border-radius: 3px;
+    }
+
+    .subcut_date_start {
+        left: 13px;
+        transform: translateX(-50%) translateY(-50%) rotate(-90deg);
+    }
+
+    .subcut_date_end {
+        right: 13px;
+        transform: translateX(50%) translateY(-50%) rotate(-90deg);
+    }
+</style>

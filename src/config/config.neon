@@ -21,6 +21,7 @@ services:
 	retentionAnalysisJobsRepository: Crm\PaymentsModule\Repositories\RetentionAnalysisJobsRepository
 	vatRatesRepository: Crm\PaymentsModule\Repositories\VatRatesRepository
 	paymentCardsRepository: Crm\PaymentsModule\Repositories\PaymentCardsRepository
+	subscriptionPausesRepository: Crm\PaymentsModule\Repositories\SubscriptionPausesRepository
 
 	- Crm\PaymentsModule\Forms\Controls\SubscriptionTypesSelectItemsBuilder
 	- Crm\PaymentsModule\Forms\PaymentFormFactory
@@ -35,6 +36,8 @@ services:
 	- Crm\PaymentsModule\Forms\ParsedMailLogFactory
 	- Crm\PaymentsModule\Forms\AssignRenewalPaymentToSubscriptionFormFactory
 	- Crm\PaymentsModule\Forms\PaymentCountryChangeFormFactory
+	- Crm\PaymentsModule\Forms\SubscriptionPausePreviewFormFactory
+	- Crm\PaymentsModule\Forms\SubscriptionPauseFormFactory
 	- Crm\PaymentsModule\Models\PaymentProcessor
 	- Crm\PaymentsModule\Models\RecurrentPaymentsProcessor
 	- Crm\PaymentsModule\Models\RefundPaymentProcessor
@@ -177,6 +180,8 @@ services:
 
 	- Crm\PaymentsModule\Models\Retention\RetentionAnalysis
 
+	- Crm\PaymentsModule\Models\Subscription\SubscriptionPauser
+
 	# widgets
 	- Crm\PaymentsModule\Components\AvgMonthPaymentWidget\AvgMonthPaymentWidget
 	- Crm\PaymentsModule\Components\AvgSubscriptionPaymentWidget\AvgSubscriptionPaymentWidget
@@ -194,6 +199,7 @@ services:
 	- Crm\PaymentsModule\Components\MyNextRecurrentPayment\MyNextRecurrentPayment
 	- Crm\PaymentsModule\Components\RefundPaymentsListWidget\RefundPaymentsListWidget
 	- Crm\PaymentsModule\Components\ReactivateFailedRecurrentPaymentWidget\ReactivateFailedRecurrentPaymentWidget
+	- Crm\PaymentsModule\Components\PauseSubscriptionWidget\PauseSubscriptionWidget
 	- Crm\PaymentsModule\DataProviders\PaymentFromVariableSymbolDataProvider
 	- Crm\PaymentsModule\DataProviders\SubscriptionsWithActiveUnchargedRecurrentEndingWithinPeriodDataProvider
 	- Crm\PaymentsModule\DataProviders\SubscriptionsWithoutExtensionEndingWithinPeriodDataProvider

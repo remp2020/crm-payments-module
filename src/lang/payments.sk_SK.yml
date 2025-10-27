@@ -278,6 +278,11 @@ admin:
             section_header: Platba
             change_button: Zmeniť krajinu platby
 
+        pause_subscription_widget:
+            button_label: Pozastaviť predplatné
+            no_subscription: 'Predplatné s ID %id% sa nenašlo.'
+            success: 'Predplatné s ID %id% bolo pozastavené.'
+
     donation: Dar k predplatnému
 
     arpu:
@@ -650,6 +655,24 @@ admin:
             previous_payment: Predchádzajúca platba
             default_country: Predvolená krajina
 
+    subscriptions_pause:
+        header: Pozastaviť predplatné
+        header_preview: Pozastaviť predplatné (náhľad zmien)
+        back_to_user: späť na používateľa
+        form:
+            pause_subscription_button: Potvrdiť pozastavenie
+            pause_subscription_button_preview: Náhľad zmien
+            pause_complete_message: Predplatné bolo úspešne pozastavené
+            pause_subscription_error: Predplatné sa nedá pozastaviť.
+            resume_at:
+                label: Pozastaviť do
+                placeholder: "napríklad 21st Aug 2025 00:00:00"
+                required: "Dátum obnovy (Pozastaviť do) je povinný"
+        preview:
+            pause_until: "Pozastavenie predplatného do:"
+            moved_subscriptions: "Ďalšie predplatné, ktoré budú posunuté:"
+            moved_recurrent_payments: "Zmena času automatickej obnovy"
+
 form:
     controls:
         subscription_types:
@@ -998,6 +1021,9 @@ config:
     tbs_confirmation_processed_folder:
         name: TatraBanka výpis zložka
         description: "IMAP zložka do ktoreho sa presunie email po spracovani (napr. INBOX/processed) (<a href='https://github.com/remp2020/crm-payments-module#confirmation-e-mails' target='_blank'>info</a>)"
+    allow_pause_subscriptions:
+        name: Povoliť pozastavenie predplatného
+        description: "Povoliť pozastavenie bežiaceho predplatného."
 
 data_provider:
     universal_search:

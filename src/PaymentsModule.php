@@ -63,6 +63,7 @@ use Crm\PaymentsModule\Components\MonthToDateAmountStatWidget\MonthToDateAmountS
 use Crm\PaymentsModule\Components\MyNextRecurrentPayment\MyNextRecurrentPayment;
 use Crm\PaymentsModule\Components\PaidSubscriptionsWithoutExtensionEndingWithinPeriodWidget\PaidSubscriptionsWithoutExtensionEndingWithinPeriodWidget;
 use Crm\PaymentsModule\Components\ParsedMailsFailedNotification\ParsedMailsFailedNotification;
+use Crm\PaymentsModule\Components\PauseSubscriptionWidget\PauseSubscriptionWidget;
 use Crm\PaymentsModule\Components\PaymentDetailPanelWidget\PaymentDetailPanelWidget;
 use Crm\PaymentsModule\Components\PaymentDonationLabelWidget\PaymentDonationLabelWidget;
 use Crm\PaymentsModule\Components\PaymentItemsListWidget\PaymentItemsListWidget;
@@ -426,6 +427,12 @@ class PaymentsModule extends CrmModule
         $widgetManager->registerWidget(
             'admin.payments.show.left',
             AuditLogHistoryWidget::class,
+        );
+
+        $widgetManager->registerWidget(
+            'subscriptions.admin.user_subscriptions_listing.action.menu',
+            PauseSubscriptionWidget::class,
+            11,
         );
     }
 
