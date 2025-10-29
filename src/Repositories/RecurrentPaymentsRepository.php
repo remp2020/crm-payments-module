@@ -24,7 +24,9 @@ use Crm\PaymentsModule\Models\Gateways\RecurrentAuthorizationInterface;
 use Crm\PaymentsModule\Models\Gateways\RecurrentPaymentInterface;
 use Crm\PaymentsModule\Models\Gateways\ReusableCardPaymentInterface;
 use Crm\PaymentsModule\Models\Payment\PaymentStatusEnum;
+use Crm\PaymentsModule\Models\RecurrentPayment\ChainData;
 use Crm\PaymentsModule\Models\RecurrentPayment\RecurrentPaymentStateEnum;
+use DateInterval;
 use DateTime;
 use Exception;
 use League\Event\Emitter;
@@ -66,11 +68,13 @@ class RecurrentPaymentsRepository extends Repository
     final public function add(
         ActiveRow $paymentMethod,
         ActiveRow $payment,
-        \DateTime $chargeAt,
+        DateTime $chargeAt,
         ?float $customAmount,
         int $retries,
         ActiveRow $paymentGateway = null,
         string $note = null,
+        ?string $chainId = null,
+        int $cycle = 1,
     ) {
         return $this->insert([
             'cid' => $paymentMethod->external_token,
@@ -86,13 +90,15 @@ class RecurrentPaymentsRepository extends Repository
             'parent_payment_id' => $payment->id,
             'state' => RecurrentPaymentStateEnum::Active->value,
             'note' => $note,
+            'chain_id' => $chainId,
+            'cycle' => $cycle,
         ]);
     }
 
     final public function createFromPayment(
         ActiveRow $payment,
         string $recurrentToken,
-        ?\DateTime $chargeAt = null,
+        ?DateTime $chargeAt = null,
         ?float $customChargeAmount = null,
     ): ?ActiveRow {
         if (!in_array($payment->status, [PaymentStatusEnum::Paid->value, PaymentStatusEnum::Prepaid->value, PaymentStatusEnum::Authorized->value], true)) {
@@ -129,7 +135,7 @@ class RecurrentPaymentsRepository extends Repository
             if (!$chargeAt) {
                 try {
                     $chargeAt = $this->calculateChargeAt($payment);
-                } catch (\Exception $e) {
+                } catch (Exception $e) {
                     Debugger::log($e, Debugger::ERROR);
                     return null;
                 }
@@ -141,16 +147,20 @@ class RecurrentPaymentsRepository extends Repository
                 $recurrentToken,
             );
 
-            $recurrentPayment = $this->add(
+            $parentRecurrent = $this->findByPayment($payment);
+
+            $chainData = ChainData::fromParentPayment($parentRecurrent);
+
+            return $this->add(
                 paymentMethod: $paymentMethod,
                 payment: $payment,
                 chargeAt: $chargeAt,
                 customAmount: $customChargeAmount,
                 retries: --$retries,
                 paymentGateway: $paymentGateway,
+                chainId: $chainData->chainId,
+                cycle: $chainData->cycle,
             );
-
-            return $recurrentPayment;
         });
 
         if (!$recurrentPayment) {
@@ -525,7 +535,7 @@ class RecurrentPaymentsRepository extends Repository
         $subscription = $payment->subscription;
 
         if (!$subscription) {
-            $endTime = (clone $payment->paid_at)->add(new \DateInterval("P{$payment->subscription_type->length}D"));
+            $endTime = (clone $payment->paid_at)->add(new DateInterval("P{$payment->subscription_type->length}D"));
         } else {
             $endTime = clone $subscription->end_time;
         }
@@ -562,9 +572,9 @@ class RecurrentPaymentsRepository extends Repository
 
             if ($chargeBefore < 0) {
                 $chargeBefore = abs($chargeBefore);
-                $newEndTime = (clone $endTime)->add(new \DateInterval("PT{$chargeBefore}H"));
+                $newEndTime = (clone $endTime)->add(new DateInterval("PT{$chargeBefore}H"));
             } else {
-                $newEndTime = (clone $endTime)->sub(new \DateInterval("PT{$chargeBefore}H"));
+                $newEndTime = (clone $endTime)->sub(new DateInterval("PT{$chargeBefore}H"));
             }
 
             if ($newEndTime < $subscription->start_time) {

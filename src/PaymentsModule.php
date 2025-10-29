@@ -34,6 +34,7 @@ use Crm\PaymentsModule\Commands\CidGetterCommand;
 use Crm\PaymentsModule\Commands\ConfirmCsobPaymentsCommand;
 use Crm\PaymentsModule\Commands\CsobMailConfirmationCommand;
 use Crm\PaymentsModule\Commands\FetchCardInformationCommand;
+use Crm\PaymentsModule\Commands\FillRecurrentChainTrackingCommand;
 use Crm\PaymentsModule\Commands\FillReferenceToSubscriptionTypeItemInPaymentItemsCommand;
 use Crm\PaymentsModule\Commands\FixPaymentMethodRecurrentPaymentInconsistencyCommand;
 use Crm\PaymentsModule\Commands\LastPaymentsCheckCommand;
@@ -459,6 +460,7 @@ class PaymentsModule extends CrmModule
         $commandsContainer->registerCommand($this->getInstance(ChangeVatCommand::class));
         $commandsContainer->registerCommand($this->getInstance(FixPaymentMethodRecurrentPaymentInconsistencyCommand::class));
         $commandsContainer->registerCommand($this->getInstance(FetchCardInformationCommand::class));
+        $commandsContainer->registerCommand($this->getInstance(FillRecurrentChainTrackingCommand::class));
     }
 
     public function registerApiCalls(ApiRoutersContainerInterface $apiRoutersContainer)

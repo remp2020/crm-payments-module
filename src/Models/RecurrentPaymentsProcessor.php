@@ -13,6 +13,8 @@ use Crm\PaymentsModule\Models\RecurrentPayment\RecurrentPaymentStateEnum;
 use Crm\PaymentsModule\Repositories\PaymentLogsRepository;
 use Crm\PaymentsModule\Repositories\PaymentsRepository;
 use Crm\PaymentsModule\Repositories\RecurrentPaymentsRepository;
+use DateInterval;
+use Exception;
 use League\Event\Emitter;
 use Nette\Database\Table\ActiveRow;
 use Nette\Utils\DateTime;
@@ -78,9 +80,9 @@ class RecurrentPaymentsProcessor
 
         $charges = explode(', ', $this->applicationConfig->get('recurrent_payment_charges'));
         $charges = array_reverse((array)$charges);
-        $next = new \DateInterval(end($charges));
+        $next = new DateInterval(end($charges));
         if (isset($charges[$recurrentPayment->retries])) {
-            $next = new \DateInterval($charges[$recurrentPayment->retries]);
+            $next = new DateInterval($charges[$recurrentPayment->retries]);
         }
         $nextCharge = new DateTime();
         $nextCharge->add($next);
@@ -91,6 +93,8 @@ class RecurrentPaymentsProcessor
             $nextCharge,
             $customChargeAmount,
             $recurrentPayment->retries - 1,
+            chainId: $recurrentPayment->chain_id,
+            cycle: $recurrentPayment->cycle,
         );
 
         if (isset($resultMessage) && strlen($resultMessage) > 250) {
@@ -123,7 +127,7 @@ class RecurrentPaymentsProcessor
 
     public function processRecurrentChargeError($recurrentPayment, $resultCode, $resultMessage, $customChargeAmount = null)
     {
-        $next = new \DateInterval($this->applicationConfig->get('recurrent_payment_gateway_fail_delay'));
+        $next = new DateInterval($this->applicationConfig->get('recurrent_payment_gateway_fail_delay'));
         $nextCharge = new DateTime();
         $nextCharge->add($next);
 
@@ -136,6 +140,8 @@ class RecurrentPaymentsProcessor
             $nextCharge,
             $customChargeAmount,
             $recurrentPayment->retries,
+            chainId: $recurrentPayment->chain_id,
+            cycle: $recurrentPayment->cycle,
         );
 
         $this->recurrentPaymentsRepository->update($recurrentPayment, [
@@ -150,7 +156,7 @@ class RecurrentPaymentsProcessor
     public function chargeRecurrentUsingCid(ActiveRow $payment, string $cid, RecurrentPaymentInterface $gateway): bool
     {
         if (!$gateway instanceof GatewayAbstract) {
-            throw new \Exception('To user chargeRecurrentUsingCid you must provide implementation of GatewayAbstract: ' . get_class($gateway));
+            throw new Exception('To user chargeRecurrentUsingCid you must provide implementation of GatewayAbstract: ' . get_class($gateway));
         }
 
         $this->emitter->emit(new BeforeRecurrentPaymentChargeEvent($payment, $cid)); // ability to modify payment
@@ -158,7 +164,7 @@ class RecurrentPaymentsProcessor
 
         try {
             $gateway->charge($payment, $cid);
-        } catch (\Exception $e) {
+        } catch (Exception $e) {
             $this->paymentsRepository->updateStatus(
                 $payment,
                 PaymentStatusEnum::Fail->value,
