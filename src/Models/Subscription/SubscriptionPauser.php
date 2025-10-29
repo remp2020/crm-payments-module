@@ -6,6 +6,7 @@ namespace Crm\PaymentsModule\Models\Subscription;
 use Crm\ApplicationModule\Database\DatabaseTransaction;
 use Crm\PaymentsModule\Repositories\RecurrentPaymentsRepository;
 use Crm\PaymentsModule\Repositories\SubscriptionPausesRepository;
+use Crm\SubscriptionsModule\Models\Subscription\SubscriptionEndsSuppressionManager;
 use Crm\SubscriptionsModule\Repositories\SubscriptionsRepository;
 use DateTime;
 use Nette\Database\Table\ActiveRow;
@@ -27,6 +28,7 @@ class SubscriptionPauser
         private readonly SubscriptionsRepository $subscriptionsRepository,
         private readonly RecurrentPaymentsRepository $recurrentPaymentsRepository,
         private readonly SubscriptionPausesRepository $subscriptionPausesRepository,
+        private readonly SubscriptionEndsSuppressionManager $subscriptionEndsSuppressionManager,
         private readonly DatabaseTransaction $databaseTransaction,
     ) {
     }
@@ -190,6 +192,7 @@ class SubscriptionPauser
 
         // Stop the original subscription
         if (!$this->dryRun) {
+            $this->subscriptionEndsSuppressionManager->suppressNotifications($subscription);
             $this->subscriptionsRepository->update($subscription, [
                 'end_time' => $this->pauseAt,
                 'note' => "[pause] Subscription stopped original end_time " . $subscription->end_time->format(DATE_RFC3339),
