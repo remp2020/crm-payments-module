@@ -53,24 +53,13 @@ class ChainTrackingTest extends PaymentsTestCase
 
     public function testNewChainGeneration(): void
     {
-        $subscriptionType = $this->createSubscriptionType();
-        $paymentItemContainer = (new PaymentItemContainer())
-            ->addItems(SubscriptionTypePaymentItem::fromSubscriptionType($subscriptionType));
+        $payment = $this->createPaymentForSubscription();
 
-        $payment = $this->paymentsRepository->add(
-            subscriptionType: $subscriptionType,
-            paymentGateway: $this->paymentGatewaysRepository->findByCode(TestRecurrentGateway::GATEWAY_CODE),
-            user: $this->user,
-            paymentItemContainer: $paymentItemContainer,
-        );
-
-        // Complete the payment to trigger recurrent payment creation
         $this->paymentsProcessor->complete($payment, fn () => null);
         $payment = $this->paymentsRepository->find($payment->id);
 
         $recurrentPayment = $this->recurrentPaymentsRepository->recurrent($payment);
 
-        // Verify new chain was created
         $this->assertNotEmpty($recurrentPayment->chain_id);
         $this->assertEquals(12, strlen($recurrentPayment->chain_id));
         $this->assertEquals(1, $recurrentPayment->cycle);
@@ -78,28 +67,16 @@ class ChainTrackingTest extends PaymentsTestCase
 
     public function testCycleIncrementOnSuccessfulCharge(): void
     {
-        $subscriptionType = $this->createSubscriptionType();
-        $paymentItemContainer = (new PaymentItemContainer())
-            ->addItems(SubscriptionTypePaymentItem::fromSubscriptionType($subscriptionType));
-
-        // Create initial payment and recurrent
-        $payment1 = $this->paymentsRepository->add(
-            subscriptionType: $subscriptionType,
-            paymentGateway: $this->paymentGatewaysRepository->findByCode(TestRecurrentGateway::GATEWAY_CODE),
-            user: $this->user,
-            paymentItemContainer: $paymentItemContainer,
-        );
+        $payment1 = $this->createPaymentForSubscription();
 
         $this->paymentsProcessor->complete($payment1, fn () => null);
         $payment1 = $this->paymentsRepository->find($payment1->id);
         $recurrentPayment1 = $this->recurrentPaymentsRepository->recurrent($payment1);
 
-        // Charge the recurrent payment to create next one
         $recurrentPayment1 = $this->chargeNow($recurrentPayment1);
         $payment2 = $recurrentPayment1->payment;
         $recurrentPayment2 = $this->recurrentPaymentsRepository->recurrent($payment2);
 
-        // Verify chain continuity and cycle increment
         $this->assertEquals($recurrentPayment1->chain_id, $recurrentPayment2->chain_id);
         $this->assertEquals($recurrentPayment1->cycle + 1, $recurrentPayment2->cycle);
         $this->assertEquals(2, $recurrentPayment2->cycle);
@@ -108,23 +85,9 @@ class ChainTrackingTest extends PaymentsTestCase
     public function testCycleMaintainedOnFailedRetry(): void
     {
         $subscriptionType = $this->createSubscriptionType();
+        $paymentMethod = $this->createTestPaymentMethod();
+        $payment = $this->createPaymentForSubscription($subscriptionType);
 
-        // Create a payment method for manual recurrent payment creation
-        $paymentMethod = $this->paymentMethodsRepository->findOrAdd(
-            $this->user->id,
-            $this->paymentGatewaysRepository->findByCode(TestRecurrentGateway::GATEWAY_CODE)->id,
-            'test_token',
-        );
-
-        $payment = $this->paymentsRepository->add(
-            subscriptionType: $subscriptionType,
-            paymentGateway: $this->paymentGatewaysRepository->findByCode(TestRecurrentGateway::GATEWAY_CODE),
-            user: $this->user,
-            paymentItemContainer: (new PaymentItemContainer())
-                ->addItems(SubscriptionTypePaymentItem::fromSubscriptionType($subscriptionType)),
-        );
-
-        // Create initial recurrent payment with known chain (scheduled first)
         $initialRecurrent = $this->recurrentPaymentsRepository->add(
             $paymentMethod,
             $payment,
@@ -135,7 +98,6 @@ class ChainTrackingTest extends PaymentsTestCase
             cycle: 3,
         );
 
-        // Simulate failed retry scheduled after initial (same chain_id and cycle maintained)
         $this->recurrentPaymentsRepository->add(
             $paymentMethod,
             $payment,
@@ -151,7 +113,6 @@ class ChainTrackingTest extends PaymentsTestCase
             ->where('retries', 1)
             ->fetch();
 
-        // Verify retry maintains same chain_id and cycle
         $this->assertEquals('test_chain', $retryRecurrent->chain_id);
         $this->assertEquals(3, $retryRecurrent->cycle);
     }
@@ -159,16 +120,7 @@ class ChainTrackingTest extends PaymentsTestCase
     public function testMultipleRetriesThenSuccess(): void
     {
         $subscriptionType = $this->createSubscriptionType();
-        $paymentItemContainer = (new PaymentItemContainer())
-            ->addItems(SubscriptionTypePaymentItem::fromSubscriptionType($subscriptionType));
-
-        // Create initial payment and recurrent
-        $payment1 = $this->paymentsRepository->add(
-            subscriptionType: $subscriptionType,
-            paymentGateway: $this->paymentGatewaysRepository->findByCode(TestRecurrentGateway::GATEWAY_CODE),
-            user: $this->user,
-            paymentItemContainer: $paymentItemContainer,
-        );
+        $payment1 = $this->createPaymentForSubscription($subscriptionType);
 
         $this->paymentsProcessor->complete($payment1, fn () => null);
         $payment1 = $this->paymentsRepository->find($payment1->id);
@@ -176,8 +128,6 @@ class ChainTrackingTest extends PaymentsTestCase
 
         $originalChainId = $recurrentPayment1->chain_id;
         $originalCycle = $recurrentPayment1->cycle;
-
-        // Simulate 2 failed retries (cycle should stay the same)
         $paymentMethod = $recurrentPayment1->payment_method;
 
         $retry1 = $this->recurrentPaymentsRepository->add(
@@ -200,40 +150,23 @@ class ChainTrackingTest extends PaymentsTestCase
             cycle: $originalCycle,
         );
 
-        // Verify retries maintain same cycle
         $this->assertEquals($originalChainId, $retry1->chain_id);
         $this->assertEquals($originalCycle, $retry1->cycle);
         $this->assertEquals($originalChainId, $retry2->chain_id);
         $this->assertEquals($originalCycle, $retry2->cycle);
 
-        // Now simulate successful charge (should increment cycle)
         $this->recurrentPaymentsRepository->setCharged($retry2, $payment1, 'OK', 'Success');
         $retry2 = $this->recurrentPaymentsRepository->find($retry2->id);
 
-        // Create next payment in chain
-        $payment2 = $this->paymentsRepository->add(
-            subscriptionType: $subscriptionType,
-            paymentGateway: $this->paymentGatewaysRepository->findByCode(TestRecurrentGateway::GATEWAY_CODE),
-            user: $this->user,
-            paymentItemContainer: $paymentItemContainer,
-        );
-
-        // Update retry2's payment_id to link to the new payment BEFORE completing
+        $payment2 = $this->createPaymentForSubscription($subscriptionType);
         $this->recurrentPaymentsRepository->update($retry2, ['payment_id' => $payment2->id]);
-
-        // Update payment status directly (without processor to avoid auto-creating recurrent payment)
-        $this->paymentsRepository->update($payment2, [
-            'status' => PaymentStatusEnum::Paid->value,
-            'paid_at' => new DateTime(),
-        ]);
-        $payment2 = $this->paymentsRepository->find($payment2->id);
+        $payment2 = $this->markPaymentAsPaid($payment2);
 
         $recurrentPayment2 = $this->recurrentPaymentsRepository->createFromPayment(
             $payment2,
             'test_token',
         );
 
-        // Verify cycle incremented after success
         $this->assertEquals($originalChainId, $recurrentPayment2->chain_id);
         $this->assertEquals($originalCycle + 1, $recurrentPayment2->cycle);
     }
@@ -241,16 +174,7 @@ class ChainTrackingTest extends PaymentsTestCase
     public function testChainContinuityAcrossMultipleRenewals(): void
     {
         $subscriptionType = $this->createSubscriptionType();
-        $paymentItemContainer = (new PaymentItemContainer())
-            ->addItems(SubscriptionTypePaymentItem::fromSubscriptionType($subscriptionType));
-
-        // Create initial payment and recurrent
-        $payment = $this->paymentsRepository->add(
-            subscriptionType: $subscriptionType,
-            paymentGateway: $this->paymentGatewaysRepository->findByCode(TestRecurrentGateway::GATEWAY_CODE),
-            user: $this->user,
-            paymentItemContainer: $paymentItemContainer,
-        );
+        $payment = $this->createPaymentForSubscription($subscriptionType);
 
         $this->paymentsProcessor->complete($payment, fn () => null);
         $payment = $this->paymentsRepository->find($payment->id);
@@ -259,7 +183,6 @@ class ChainTrackingTest extends PaymentsTestCase
         $originalChainId = $recurrentPayment->chain_id;
         $chain = [$recurrentPayment];
 
-        // Create 5 successful renewals
         for ($i = 0; $i < 5; $i++) {
             $recurrentPayment = $this->chargeNow($recurrentPayment);
             $payment = $recurrentPayment->payment;
@@ -268,7 +191,6 @@ class ChainTrackingTest extends PaymentsTestCase
             $recurrentPayment = $nextRecurrent;
         }
 
-        // Verify all payments in chain have same chain_id and incrementing cycles
         for ($i = 0; $i < count($chain); $i++) {
             $this->assertEquals($originalChainId, $chain[$i]->chain_id);
             $this->assertEquals($i + 1, $chain[$i]->cycle);
@@ -278,21 +200,9 @@ class ChainTrackingTest extends PaymentsTestCase
     public function testParentStateIncrementsCycle(): void
     {
         $subscriptionType = $this->createSubscriptionType();
-        $paymentMethod = $this->paymentMethodsRepository->findOrAdd(
-            $this->user->id,
-            $this->paymentGatewaysRepository->findByCode(TestRecurrentGateway::GATEWAY_CODE)->id,
-            'test_token',
-        );
+        $paymentMethod = $this->createTestPaymentMethod();
+        $payment = $this->createPaymentForSubscription($subscriptionType);
 
-        $payment = $this->paymentsRepository->add(
-            subscriptionType: $subscriptionType,
-            paymentGateway: $this->paymentGatewaysRepository->findByCode(TestRecurrentGateway::GATEWAY_CODE),
-            user: $this->user,
-            paymentItemContainer: (new PaymentItemContainer())
-                ->addItems(SubscriptionTypePaymentItem::fromSubscriptionType($subscriptionType)),
-        );
-
-        // Test states that should increment cycle
         $incrementingStates = [
             RecurrentPaymentStateEnum::Charged->value,
             RecurrentPaymentStateEnum::Active->value,
@@ -310,37 +220,15 @@ class ChainTrackingTest extends PaymentsTestCase
                 cycle: 2,
             );
 
-            // Update to test state
             $this->recurrentPaymentsRepository->update($parentRecurrent, ['state' => $state]);
             $parentRecurrent = $this->recurrentPaymentsRepository->find($parentRecurrent->id);
 
-            // Test ChainData directly
-            $chainData = ChainData::fromParentPayment($parentRecurrent);
-            $this->assertEquals('test_chain', $chainData->chainId);
-            $this->assertEquals(3, $chainData->cycle, "ChainData should increment cycle for state {$state}");
-
-            // Create payment with this parent
-            $childPayment = $this->paymentsRepository->add(
-                subscriptionType: $subscriptionType,
-                paymentGateway: $this->paymentGatewaysRepository->findByCode(TestRecurrentGateway::GATEWAY_CODE),
-                user: $this->user,
-                paymentItemContainer: (new PaymentItemContainer())
-                    ->addItems(SubscriptionTypePaymentItem::fromSubscriptionType($subscriptionType)),
-            );
-
-            // Link the parent recurrent to this new payment
+            $childPayment = $this->createPaymentForSubscription($subscriptionType);
             $this->recurrentPaymentsRepository->update($parentRecurrent, ['payment_id' => $childPayment->id]);
-
-            // Update payment status to paid
-            $this->paymentsRepository->update($childPayment, [
-                'status' => PaymentStatusEnum::Paid->value,
-                'paid_at' => new DateTime(),
-            ]);
-            $childPayment = $this->paymentsRepository->find($childPayment->id);
+            $childPayment = $this->markPaymentAsPaid($childPayment);
 
             $childRecurrent = $this->recurrentPaymentsRepository->createFromPayment($childPayment, 'test_token');
 
-            // Should increment cycle
             $this->assertEquals('test_chain', $childRecurrent->chain_id);
             $this->assertEquals(3, $childRecurrent->cycle, "State {$state} should increment cycle");
         }
@@ -349,22 +237,11 @@ class ChainTrackingTest extends PaymentsTestCase
     public function testParentStateDoesNotIncrementCycle(): void
     {
         $subscriptionType = $this->createSubscriptionType();
-        $paymentMethod = $this->paymentMethodsRepository->findOrAdd(
-            $this->user->id,
-            $this->paymentGatewaysRepository->findByCode(TestRecurrentGateway::GATEWAY_CODE)->id,
-            'test_token',
-        );
+        $paymentMethod = $this->createTestPaymentMethod();
+        $payment = $this->createPaymentForSubscription($subscriptionType);
 
-        $payment = $this->paymentsRepository->add(
-            subscriptionType: $subscriptionType,
-            paymentGateway: $this->paymentGatewaysRepository->findByCode(TestRecurrentGateway::GATEWAY_CODE),
-            user: $this->user,
-            paymentItemContainer: (new PaymentItemContainer())
-                ->addItems(SubscriptionTypePaymentItem::fromSubscriptionType($subscriptionType)),
-        );
-
-        // Test states that should NOT increment cycle
         $nonIncrementingStates = [
+            RecurrentPaymentStateEnum::AdminStop->value,
             RecurrentPaymentStateEnum::ChargeFailed->value,
             RecurrentPaymentStateEnum::SystemStop->value,
             RecurrentPaymentStateEnum::UserStop->value,
@@ -381,37 +258,15 @@ class ChainTrackingTest extends PaymentsTestCase
                 cycle: 2,
             );
 
-            // Update to test state
             $this->recurrentPaymentsRepository->update($parentRecurrent, ['state' => $state]);
             $parentRecurrent = $this->recurrentPaymentsRepository->find($parentRecurrent->id);
 
-            // Test ChainData directly
-            $chainData = ChainData::fromParentPayment($parentRecurrent);
-            $this->assertEquals('test_chain', $chainData->chainId);
-            $this->assertEquals(2, $chainData->cycle, "ChainData should NOT increment cycle for state {$state}");
-
-            // Create payment with this parent
-            $childPayment = $this->paymentsRepository->add(
-                subscriptionType: $subscriptionType,
-                paymentGateway: $this->paymentGatewaysRepository->findByCode(TestRecurrentGateway::GATEWAY_CODE),
-                user: $this->user,
-                paymentItemContainer: (new PaymentItemContainer())
-                    ->addItems(SubscriptionTypePaymentItem::fromSubscriptionType($subscriptionType)),
-            );
-
-            // Link the parent recurrent to this new payment
+            $childPayment = $this->createPaymentForSubscription($subscriptionType);
             $this->recurrentPaymentsRepository->update($parentRecurrent, ['payment_id' => $childPayment->id]);
-
-            // Update payment status to paid
-            $this->paymentsRepository->update($childPayment, [
-                'status' => PaymentStatusEnum::Paid->value,
-                'paid_at' => new DateTime(),
-            ]);
-            $childPayment = $this->paymentsRepository->find($childPayment->id);
+            $childPayment = $this->markPaymentAsPaid($childPayment);
 
             $childRecurrent = $this->recurrentPaymentsRepository->createFromPayment($childPayment, 'test_token');
 
-            // Should NOT increment cycle
             $this->assertEquals('test_chain', $childRecurrent->chain_id);
             $this->assertEquals(2, $childRecurrent->cycle, "State {$state} should NOT increment cycle");
         }
@@ -420,41 +275,103 @@ class ChainTrackingTest extends PaymentsTestCase
     public function testOrphanedPaymentCreatesNewChain(): void
     {
         $subscriptionType = $this->createSubscriptionType();
-        $paymentItemContainer = (new PaymentItemContainer())
-            ->addItems(SubscriptionTypePaymentItem::fromSubscriptionType($subscriptionType));
-
-        // Create a payment without parent recurrent (orphaned scenario)
-        $orphanPayment = $this->paymentsRepository->add(
-            subscriptionType: $subscriptionType,
-            paymentGateway: $this->paymentGatewaysRepository->findByCode(TestRecurrentGateway::GATEWAY_CODE),
-            user: $this->user,
-            paymentItemContainer: $paymentItemContainer,
-        );
+        $orphanPayment = $this->createPaymentForSubscription($subscriptionType);
 
         $this->paymentsProcessor->complete($orphanPayment, fn () => null);
         $orphanPayment = $this->paymentsRepository->find($orphanPayment->id);
 
         $recurrentPayment = $this->recurrentPaymentsRepository->recurrent($orphanPayment);
 
-        // Should create new chain since parent recurrent doesn't exist
         $this->assertNotEmpty($recurrentPayment->chain_id);
         $this->assertEquals(12, strlen($recurrentPayment->chain_id));
         $this->assertEquals(1, $recurrentPayment->cycle);
     }
 
-    private function chargeNow($recurrentPayment): ActiveRow
+    public function testLegacyRecurrentWithoutChainId(): void
     {
-        // Update recurrent to charge at NOW
+        $subscriptionType = $this->createSubscriptionType();
+        $paymentMethod = $this->createTestPaymentMethod();
+        $legacyPayment = $this->createPaymentForSubscription($subscriptionType);
+
+        $legacyRecurrent = $this->recurrentPaymentsRepository->add(
+            $paymentMethod,
+            $legacyPayment,
+            new DateTime('+1 day'),
+            null,
+            1,
+        );
+
+        $this->assertNull($legacyRecurrent->chain_id);
+        $this->assertNull($legacyRecurrent->cycle);
+
+        $chainData = ChainData::fromParentPayment($legacyRecurrent);
+
+        // "both or neither" rule: ChainData returns null for both fields when parent has no chain tracking
+        $this->assertNull($chainData->chainId, 'ChainData should return null chainId for legacy parent');
+        $this->assertNull($chainData->cycle, 'ChainData should return null cycle for legacy parent');
+
+        $newPayment = $this->createPaymentForSubscription($subscriptionType);
+        $this->recurrentPaymentsRepository->update($legacyRecurrent, ['payment_id' => $newPayment->id]);
+        $newPayment = $this->markPaymentAsPaid($newPayment);
+
+        $newRecurrent = $this->recurrentPaymentsRepository->createFromPayment($newPayment, 'test_token_2');
+
+        // Forward compatibility: Children inherit NULL tracking to prevent inconsistent data until backfill
+        $this->assertNull($newRecurrent->chain_id, 'Child of legacy parent should have null chain_id');
+        $this->assertNull($newRecurrent->cycle, 'Child of legacy parent should have null cycle');
+    }
+
+    public function testReactivateSystemStoppedPreservesChain(): void
+    {
+        $subscriptionType = $this->createSubscriptionType();
+        $payment1 = $this->createPaymentForSubscription($subscriptionType);
+
+        $this->paymentsProcessor->complete($payment1, fn () => null);
+        $payment1 = $this->paymentsRepository->find($payment1->id);
+
+        $recurrentPayment = $this->recurrentPaymentsRepository->recurrent($payment1);
+        $originalChainId = $recurrentPayment->chain_id;
+        $originalCycle = $recurrentPayment->cycle;
+
+        $this->assertNotNull($originalChainId);
+        $this->assertEquals(1, $originalCycle);
+
+        $chargedRecurrent = $this->chargeNow($recurrentPayment);
+        $payment2 = $chargedRecurrent->payment;
+        $this->assertNotNull($payment2, 'Charged recurrent should have payment_id');
+
+        // Reactivation prerequisite: retries must be 0
+        $this->recurrentPaymentsRepository->update($chargedRecurrent, [
+            'state' => RecurrentPaymentStateEnum::SystemStop->value,
+            'retries' => 0,
+        ]);
+        $chargedRecurrent = $this->recurrentPaymentsRepository->find($chargedRecurrent->id);
+
+        $reactivatedRecurrent = $this->recurrentPaymentsRepository->reactivateSystemStopped($chargedRecurrent);
+
+        $this->assertNotNull($reactivatedRecurrent);
+        $this->assertEquals($originalChainId, $reactivatedRecurrent->chain_id, 'Reactivation should preserve chain_id');
+        $this->assertEquals($originalCycle, $reactivatedRecurrent->cycle, 'Reactivation should preserve cycle');
+        $this->assertEquals(
+            RecurrentPaymentStateEnum::Active->value,
+            $reactivatedRecurrent->state,
+            'Reactivated recurrent should be Active',
+        );
+    }
+
+    private function chargeNow(ActiveRow $recurrentPayment): ActiveRow
+    {
+        // Execution order critical: charge_at must be NOW before command runs
         $this->recurrentPaymentsRepository->update($recurrentPayment, ['charge_at' => new DateTime]);
 
-        // Run charge command
+        // Use command directly (not processor) to test real recurrent payment flow
         $returnCode = $this->recurrentPaymentsChargeCommand->run(new StringInput(''), new NullOutput());
         $this->assertEquals(Command::SUCCESS, $returnCode);
 
-        return $this->recurrentPaymentsRepository->find($recurrentPayment->id); // reload
+        return $this->recurrentPaymentsRepository->find($recurrentPayment->id);
     }
 
-    private function createSubscriptionType()
+    private function createSubscriptionType(): ActiveRow
     {
         /** @var SubscriptionTypeBuilder $subscriptionTypeBuilder */
         $subscriptionTypeBuilder = $this->inject(SubscriptionTypeBuilder::class);
@@ -466,5 +383,37 @@ class ChainTrackingTest extends PaymentsTestCase
             ->setPrice(100)
             ->setLength(30)
             ->save();
+    }
+
+    private function createPaymentForSubscription(?ActiveRow $subscriptionType = null): ActiveRow
+    {
+        $subscriptionType ??= $this->createSubscriptionType();
+        $paymentItemContainer = (new PaymentItemContainer())
+            ->addItems(SubscriptionTypePaymentItem::fromSubscriptionType($subscriptionType));
+
+        return $this->paymentsRepository->add(
+            subscriptionType: $subscriptionType,
+            paymentGateway: $this->paymentGatewaysRepository->findByCode(TestRecurrentGateway::GATEWAY_CODE),
+            user: $this->user,
+            paymentItemContainer: $paymentItemContainer,
+        );
+    }
+
+    private function createTestPaymentMethod(string $token = 'test_token'): ActiveRow
+    {
+        return $this->paymentMethodsRepository->findOrAdd(
+            $this->user->id,
+            $this->paymentGatewaysRepository->findByCode(TestRecurrentGateway::GATEWAY_CODE)->id,
+            $token,
+        );
+    }
+
+    private function markPaymentAsPaid(ActiveRow $payment): ActiveRow
+    {
+        $this->paymentsRepository->update($payment, [
+            'status' => PaymentStatusEnum::Paid->value,
+            'paid_at' => new DateTime(),
+        ]);
+        return $this->paymentsRepository->find($payment->id);
     }
 }

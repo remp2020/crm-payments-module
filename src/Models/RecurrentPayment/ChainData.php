@@ -6,12 +6,13 @@ namespace Crm\PaymentsModule\Models\RecurrentPayment;
 use Nette\Database\Table\ActiveRow;
 use Nette\Utils\Random;
 use Tracy\Debugger;
+use Tracy\ILogger;
 
 final readonly class ChainData
 {
     public function __construct(
         public ?string $chainId,
-        public int $cycle,
+        public ?int $cycle,
     ) {
     }
 
@@ -28,20 +29,20 @@ final readonly class ChainData
             Debugger::log(
                 "Recurrent payment parent [{$parentRecurrentPayment->id}] has no chain_id. " .
                 "Run command [payments:fill_recurrent_chain_tracking] to backfill chain tracking data.",
-                Debugger::WARNING,
+                ILogger::WARNING,
             );
 
             return new self(
                 chainId: null,
-                cycle: 1,
+                cycle: null,
             );
         }
 
         $shouldIncrementCycle = in_array(
             $parentRecurrentPayment->state,
             [
-                RecurrentPaymentStateEnum::Charged->value,
                 RecurrentPaymentStateEnum::Active->value,
+                RecurrentPaymentStateEnum::Charged->value,
                 RecurrentPaymentStateEnum::Pending->value,
             ],
             true,

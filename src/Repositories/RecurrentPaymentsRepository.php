@@ -74,7 +74,7 @@ class RecurrentPaymentsRepository extends Repository
         ActiveRow $paymentGateway = null,
         string $note = null,
         ?string $chainId = null,
-        int $cycle = 1,
+        ?int $cycle = null,
     ) {
         return $this->insert([
             'cid' => $paymentMethod->external_token,
@@ -300,6 +300,8 @@ class RecurrentPaymentsRepository extends Repository
             customAmount: $recurrentPayment->custom_amount,
             retries: $retries - 1,
             note: "Recurrent payment created by reactivation of system stopped recurrent payment [{$recurrentPayment->id}].",
+            chainId: $recurrentPayment->chain_id,
+            cycle: $recurrentPayment->cycle,
         );
         return ($newRecurrentPayment instanceof ActiveRow) ? $newRecurrentPayment : null;
     }
