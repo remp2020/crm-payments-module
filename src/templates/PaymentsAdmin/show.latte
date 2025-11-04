@@ -214,6 +214,8 @@
     </ul>
     {/if}
 
+    {control simpleWidget 'admin.payments.show.right.top', $payment}
+
     {if $payment->related('payment_meta')->count('*') > 0}
     <h3 class="page-header">{_payments.admin.payments.show.payment_meta.header}</h3>
     <ul class="list-group">
