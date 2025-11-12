@@ -330,7 +330,7 @@ class PaymentFormFactory
         return $form;
     }
 
-    public function formSucceeded(Form $form, $values)
+    public function formSucceeded(Form $form, ArrayHash $values)
     {
         $values = clone($values);
 
