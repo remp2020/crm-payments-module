@@ -92,10 +92,10 @@ class RetentionAnalysisFilterFormFactory
 
         $subscriptionTypes = $this->subscriptionTypesRepository->all()->fetchAll();
         $form->addMultiSelect(
-                'subscription_type',
-                'payments.admin.retention_analysis.fields.subscription_type',
-                $this->subscriptionTypesSelectItemsBuilder->buildWithDescription($subscriptionTypes),
-            )
+            'subscription_type',
+            'payments.admin.retention_analysis.fields.subscription_type',
+            $this->subscriptionTypesSelectItemsBuilder->buildWithDescription($subscriptionTypes),
+        )
             ->setDisabled($disabled)
             ->getControlPrototype()->addAttributes(['class' => 'select2']);
 
