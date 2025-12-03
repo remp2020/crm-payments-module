@@ -149,7 +149,7 @@ class PaymentsAdminPresenter extends AdminPresenter
         $subscriptionType = $form->addSelect(
             'subscription_type',
             'payments.admin.component.admin_filter_form.subscription_type.label',
-            $this->subscriptionTypesSelectItemsBuilder->buildSimple($subscriptionTypes),
+            $this->subscriptionTypesSelectItemsBuilder->buildWithDescription($subscriptionTypes),
         )->setPrompt('--');
         $subscriptionType->getControlPrototype()->addAttributes(['class' => 'select2']);
 

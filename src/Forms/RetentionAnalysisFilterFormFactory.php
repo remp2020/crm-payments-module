@@ -5,6 +5,7 @@ namespace Crm\PaymentsModule\Forms;
 use Crm\ApplicationModule\Models\DataProvider\DataProviderManager;
 use Crm\ApplicationModule\UI\Form;
 use Crm\PaymentsModule\DataProviders\RetentionAnalysisDataProviderInterface;
+use Crm\PaymentsModule\Forms\Controls\SubscriptionTypesSelectItemsBuilder;
 use Crm\PaymentsModule\Models\Retention\RetentionAnalysis;
 use Crm\PaymentsModule\Repositories\PaymentsRepository;
 use Crm\SegmentModule\Repositories\SegmentsRepository;
@@ -17,13 +18,14 @@ use Tomaj\Form\Renderer\BootstrapRenderer;
 class RetentionAnalysisFilterFormFactory
 {
     public function __construct(
-        private PaymentsRepository $paymentsRepository,
-        private DataProviderManager $dataProviderManager,
-        private SegmentsRepository $segmentsRepository,
-        private UsersRepository $usersRepository,
-        private Translator $translator,
-        private SubscriptionTypesRepository $subscriptionTypesRepository,
-        private SubscriptionTypeTagsRepository $subscriptionTypeTagsRepository,
+        private readonly PaymentsRepository $paymentsRepository,
+        private readonly DataProviderManager $dataProviderManager,
+        private readonly SegmentsRepository $segmentsRepository,
+        private readonly UsersRepository $usersRepository,
+        private readonly Translator $translator,
+        private readonly SubscriptionTypesRepository $subscriptionTypesRepository,
+        private readonly SubscriptionTypeTagsRepository $subscriptionTypeTagsRepository,
+        private readonly SubscriptionTypesSelectItemsBuilder $subscriptionTypesSelectItemsBuilder,
     ) {
     }
 
@@ -88,11 +90,12 @@ class RetentionAnalysisFilterFormFactory
             ->setDisabled($disabled)
             ->getControlPrototype()->addAttributes(['class' => 'select2']);
 
-        $subscriptionTypes = [];
-        foreach ($this->subscriptionTypesRepository->all() as $row) {
-            $subscriptionTypes[$row->id] = "$row->code <small>({$row->id})</small>";
-        }
-        $form->addMultiSelect('subscription_type', 'payments.admin.retention_analysis.fields.subscription_type', $subscriptionTypes)
+        $subscriptionTypes = $this->subscriptionTypesRepository->all()->fetchAll();
+        $form->addMultiSelect(
+                'subscription_type',
+                'payments.admin.retention_analysis.fields.subscription_type',
+                $this->subscriptionTypesSelectItemsBuilder->buildWithDescription($subscriptionTypes),
+            )
             ->setDisabled($disabled)
             ->getControlPrototype()->addAttributes(['class' => 'select2']);
 
