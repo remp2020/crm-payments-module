@@ -921,7 +921,7 @@ config:
         description: "Počet hodín pred skončením predplatného kedy má nastať automatické obnovenie (napr. 48). Prázdna hodnota naplánuje realizáciu ďalšej platby pri ukončení predplatného."
     recurrent_payment_reactivation_threshold:
         name: Počet dní na reaktiváciu neúspešných rekurentných platieb
-        description: "Number of days since the last failed attempt."
+        description: "Počet dní po poslednom neúspešnom pokuse."
     gopay_go_id:
         name: GoPay Go ID
     gopay_client_id:

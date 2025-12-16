@@ -921,7 +921,7 @@ config:
         description: "How many hours before the end of subscription the recurrent charge should be trigerred (e.g. 48). Empty value will schedule next recurrent charge to the time of end of subscription."
     recurrent_payment_reactivation_threshold:
         name: Number of days to reactivate failed recurring payments
-        description: ""
+        description: "Number of days since the last failed attempt."
     gopay_go_id:
         name: GoPay Go ID
     gopay_client_id:
