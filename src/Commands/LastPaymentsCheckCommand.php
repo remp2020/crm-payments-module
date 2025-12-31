@@ -124,7 +124,7 @@ EOH,)
             ->setDescription('Check last payments if there is some errors');
     }
 
-    protected function execute(InputInterface $input, OutputInterface $output)
+    protected function execute(InputInterface $input, OutputInterface $output): int
     {
         $this->input = $input;
         $this->output = $output;

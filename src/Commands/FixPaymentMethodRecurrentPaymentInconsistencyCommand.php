@@ -23,7 +23,7 @@ class FixPaymentMethodRecurrentPaymentInconsistencyCommand extends Command
             ->setDescription('Create payment method and assign to recurrent payment to match user.');
     }
 
-    protected function execute(InputInterface $input, OutputInterface $output)
+    protected function execute(InputInterface $input, OutputInterface $output): int
     {
         $output->writeln('');
         $output->writeln('<info>***** FIX RECURRENTS AND PAYMENT METHODS INCONSISTENCY *****</info>');

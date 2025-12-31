@@ -28,7 +28,7 @@ class ConfirmCsobPaymentsCommand extends Command
             ->addOption('from', 'f', InputOption::VALUE_OPTIONAL, 'datetime string to specify date range for payments', '-24 hours');
     }
 
-    protected function execute(InputInterface $input, OutputInterface $output)
+    protected function execute(InputInterface $input, OutputInterface $output): int
     {
         $from = new \DateTime($input->getOption('from'));
         $unconfirmedPayments = $this->paymentsRepository->unconfirmedPayments($from)

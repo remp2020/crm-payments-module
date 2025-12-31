@@ -26,7 +26,7 @@ class MigratePaymentMethodsCommand extends Command
             ->setDescription('Migrate payment methods');
     }
 
-    protected function execute(InputInterface $input, OutputInterface $output)
+    protected function execute(InputInterface $input, OutputInterface $output): int
     {
         $batchSize = 1000;
         $recurrentPaymentCount = (int) $this->database->query("SELECT COUNT(*) as count FROM recurrent_payments WHERE payment_method_id IS NULL")->fetchField();

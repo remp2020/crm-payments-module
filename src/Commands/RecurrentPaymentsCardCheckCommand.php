@@ -28,7 +28,7 @@ class RecurrentPaymentsCardCheckCommand extends Command
             ->setDescription('Check cards that would be charged next month');
     }
 
-    public function execute(InputInterface $input, OutputInterface $output)
+    public function execute(InputInterface $input, OutputInterface $output): int
     {
         $start = microtime(true);
 

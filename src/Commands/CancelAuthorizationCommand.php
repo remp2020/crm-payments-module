@@ -16,7 +16,7 @@ class CancelAuthorizationCommand extends Command
             ->setDescription('Cancel authorization payments');
     }
 
-    public function execute(InputInterface $input, OutputInterface $output)
+    public function execute(InputInterface $input, OutputInterface $output): int
     {
         $output->writeln("**** <info>Command is deprecated - authorization payments are automatically canceled by bank.</info> ****");
         Debugger::log('Command is deprecated - authorization payments are automatically canceled by bank.');

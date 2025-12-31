@@ -34,7 +34,7 @@ class CsobMailConfirmationCommand extends Command
             ->setDescription('Check notification emails and confirm payments based on CSOB emails');
     }
 
-    protected function execute(InputInterface $input, OutputInterface $output)
+    protected function execute(InputInterface $input, OutputInterface $output): int
     {
         $this->output = $output;
 

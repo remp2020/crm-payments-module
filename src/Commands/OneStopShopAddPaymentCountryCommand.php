@@ -62,7 +62,7 @@ class OneStopShopAddPaymentCountryCommand extends Command
             );
     }
 
-    protected function execute(InputInterface $input, OutputInterface $output)
+    protected function execute(InputInterface $input, OutputInterface $output): int
     {
         if (!$this->oneStopShop->isEnabled()) {
             $this->line('One Stop Shop is not enabled, exiting');

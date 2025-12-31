@@ -32,7 +32,7 @@ class TatraBankaStatementMailConfirmationCommand extends Command
             ->setDescription('Check encrypted Tatra Banka statement emails - decrypt and confirm payments');
     }
 
-    protected function execute(InputInterface $input, OutputInterface $output)
+    protected function execute(InputInterface $input, OutputInterface $output): int
     {
         $this->output = $output;
 

@@ -25,7 +25,7 @@ class FillReferenceToSubscriptionTypeItemInPaymentItemsCommand extends Command
             ->setDescription('Fill reference to subscription type item in `payment_items` table');
     }
 
-    protected function execute(InputInterface $input, OutputInterface $output)
+    protected function execute(InputInterface $input, OutputInterface $output): int
     {
         $limit = 1000;
 

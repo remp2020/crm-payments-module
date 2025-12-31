@@ -54,7 +54,7 @@ class UpsertEuVatRatesCommand extends Command
             );
     }
 
-    public function execute(InputInterface $input, OutputInterface $output)
+    public function execute(InputInterface $input, OutputInterface $output): int
     {
         // use API key provided by command option, or from config (set by DI)
         $apiKey = $input->getOption(self::API_KEY_OPTION) ?? null;
