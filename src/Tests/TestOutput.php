@@ -13,16 +13,16 @@ class TestOutput implements OutputInterface
 
     private $level;
 
-    public function write($messages, $newline = false, $type = self::OUTPUT_NORMAL)
+    public function write($messages, $newline = false, $type = self::OUTPUT_NORMAL): void
     {
 //        echo $messages;
     }
 
-    public function writeln($messages, $type = self::OUTPUT_NORMAL)
+    public function writeln($messages, $type = self::OUTPUT_NORMAL): void
     {
 //        echo $this->write($messages) . "\n";
     }
-    public function setVerbosity($level)
+    public function setVerbosity($level): void
     {
         $this->level = $level;
     }
@@ -32,7 +32,7 @@ class TestOutput implements OutputInterface
         return $this->level;
     }
 
-    public function setDecorated($decorated)
+    public function setDecorated($decorated): void
     {
         $this->decorated = $decorated;
     }
@@ -42,7 +42,7 @@ class TestOutput implements OutputInterface
         return $this->decorated;
     }
 
-    public function setFormatter(OutputFormatterInterface $formatter)
+    public function setFormatter(OutputFormatterInterface $formatter): void
     {
         $this->formatter = $formatter;
     }
