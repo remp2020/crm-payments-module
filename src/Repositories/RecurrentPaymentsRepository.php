@@ -20,9 +20,11 @@ use Crm\PaymentsModule\Events\RecurrentPaymentStoppedByAdminEvent;
 use Crm\PaymentsModule\Events\RecurrentPaymentStoppedByUserEvent;
 use Crm\PaymentsModule\Models\Gateway;
 use Crm\PaymentsModule\Models\GatewayFactory;
+use Crm\PaymentsModule\Models\Gateways\ExternallyChargedRecurrentPaymentInterface;
 use Crm\PaymentsModule\Models\Gateways\RecurrentAuthorizationInterface;
 use Crm\PaymentsModule\Models\Gateways\RecurrentPaymentInterface;
 use Crm\PaymentsModule\Models\Gateways\ReusableCardPaymentInterface;
+use Crm\PaymentsModule\Models\Gateways\StoppableExternallyChargedRecurrentPaymentInterface;
 use Crm\PaymentsModule\Models\Payment\PaymentStatusEnum;
 use Crm\PaymentsModule\Models\RecurrentPayment\ChainData;
 use Crm\PaymentsModule\Models\RecurrentPayment\RecurrentPaymentStateEnum;
@@ -329,6 +331,16 @@ class RecurrentPaymentsRepository extends Repository
         return $recurrentPayment->charge_at >= $reactivationPaymentThreshold;
     }
 
+    final public function canBeReactivatedByUser($recurrentPayment): bool
+    {
+        $gateway = $this->gatewayFactory->getGateway($recurrentPayment->payment_gateway->code);
+        if ($gateway instanceof ExternallyChargedRecurrentPaymentInterface) {
+            return false;
+        }
+
+        return true;
+    }
+
     final public function stoppedByUser($id, $userId)
     {
         $rp = $this->getTable()->where(['user_id' => $userId, 'id' => $id])->fetch();
@@ -338,6 +350,11 @@ class RecurrentPaymentsRepository extends Repository
 
         if (!($this->canBeStoppedByUser($rp))) {
             throw new Exception('Recurrent payment ID ' . $rp->id . ' cannot be stopped by user');
+        }
+
+        $gateway = $this->gatewayFactory->getGateway($rp->payment_gateway->code);
+        if ($gateway instanceof StoppableExternallyChargedRecurrentPaymentInterface) {
+            $gateway->cancelExternalSubscription($rp->payment_method->external_token);
         }
 
         $this->update($rp, ['state' => RecurrentPaymentStateEnum::UserStop->value]);
@@ -367,6 +384,11 @@ class RecurrentPaymentsRepository extends Repository
         }
         if (!($this->canBeStopped($rp))) {
             throw new Exception('Recurrent payment ID ' . $rp->id . ' cannot be stopped by admin');
+        }
+
+        $gateway = $this->gatewayFactory->getGateway($rp->payment_gateway->code);
+        if ($gateway instanceof StoppableExternallyChargedRecurrentPaymentInterface) {
+            $gateway->cancelExternalSubscription($rp->payment_method->external_token);
         }
 
         $this->update($rp, ['state' => RecurrentPaymentStateEnum::AdminStop->value]);
@@ -636,6 +658,12 @@ class RecurrentPaymentsRepository extends Repository
             '1',
         )) {
             return false;
+        }
+
+        $gateway = $this->gatewayFactory->getGateway($recurrentPayment->payment_gateway->code);
+        if ($gateway instanceof ExternallyChargedRecurrentPaymentInterface) {
+            // Externally charged gateways are only stoppable if they implement the stoppable interface
+            return $gateway instanceof StoppableExternallyChargedRecurrentPaymentInterface;
         }
 
         // TODO: Consider deprecation of this check in favor of unstoppable flags in the next major release.

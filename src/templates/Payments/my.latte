@@ -96,7 +96,7 @@
                                             {/if}
                                             {control simpleWidget 'frontend.payments.listing.recurrent', $recurrent}
                                         {case \Crm\PaymentsModule\Models\RecurrentPayment\RecurrentPaymentStateEnum::UserStop->value}
-                                            <div n:if="$recurrent->payment_method->external_token && $recurrent->charge_at > new \DateTime()" class="mb-2">
+                                            <div n:if="$canBeReactivated($recurrent)" class="mb-2">
                                                 <a n:href="Reactivate! $recurrent->id" class="btn btn-sm btn-green">
                                                     <i class="fa fa-play"></i> {_payments.frontend.my.restart_recurrent}
                                                 </a>

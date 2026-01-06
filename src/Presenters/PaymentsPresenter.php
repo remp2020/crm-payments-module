@@ -39,6 +39,11 @@ class PaymentsPresenter extends FrontendPresenter
         $this->template->canBeStopped = function ($recurrentPayment) {
             return $this->recurrentPaymentsRepository->canBeStoppedByUser($recurrentPayment);
         };
+        $this->template->canBeReactivated = function ($recurrentPayment) {
+            return $recurrentPayment->payment_method->external_token
+                && $recurrentPayment->charge_at > new \DateTime()
+                && $this->recurrentPaymentsRepository->canBeReactivatedByUser($recurrentPayment);
+        };
         $this->template->shouldDisplay = function ($payment) {
             return $payment->status === PaymentStatusEnum::Paid->value
                 || $payment->status === PaymentStatusEnum::Prepaid->value
@@ -53,6 +58,10 @@ class PaymentsPresenter extends FrontendPresenter
 
         $recurrent = $this->recurrentPaymentsRepository->find($recurrentId);
         if (!$recurrent || $this->getUser()->id != $recurrent->user_id) {
+            $this->flashMessage($this->translator->translate('payments.frontend.reactivate.error'), 'error');
+            $this->redirect('my');
+        }
+        if (!$this->recurrentPaymentsRepository->canBeReactivatedByUser($recurrent)) {
             $this->flashMessage($this->translator->translate('payments.frontend.reactivate.error'), 'error');
             $this->redirect('my');
         }

@@ -5,7 +5,6 @@ namespace Crm\PaymentsModule\Tests;
 use Crm\ApplicationModule\Repositories\ConfigsRepository;
 use Crm\ApplicationModule\Seeders\CountriesSeeder;
 use Crm\ApplicationModule\Tests\DatabaseTestCase;
-use Crm\PaymentsModule\Models\GatewayFactory;
 use Crm\PaymentsModule\Models\PaymentItem\PaymentItemContainer;
 use Crm\PaymentsModule\Models\VariableSymbolInterface;
 use Crm\PaymentsModule\Repositories\ParsedMailLogsRepository;
@@ -20,6 +19,8 @@ use Crm\PaymentsModule\Repositories\PaymentsRepository;
 use Crm\PaymentsModule\Repositories\RecurrentPaymentsRepository;
 use Crm\PaymentsModule\Seeders\ConfigsSeeder;
 use Crm\PaymentsModule\Seeders\PaymentGatewaysSeeder;
+use Crm\PaymentsModule\Seeders\TestPaymentGatewaysSeeder;
+use Crm\PaymentsModule\Tests\Gateways\TestRecurrentGateway;
 use Crm\SubscriptionsModule\Models\Builder\SubscriptionTypeBuilder;
 use Crm\SubscriptionsModule\Models\PaymentItem\SubscriptionTypePaymentItem;
 use Crm\SubscriptionsModule\Repositories\SubscriptionTypeItemsRepository;
@@ -33,10 +34,10 @@ use Crm\SubscriptionsModule\Seeders\SubscriptionTypeNamesSeeder;
 use Crm\UsersModule\Repositories\AccessTokensRepository;
 use Crm\UsersModule\Repositories\CountriesRepository;
 use Crm\UsersModule\Repositories\UsersRepository;
+use Nette\Database\Table\ActiveRow;
 
 class PaymentsTestCase extends DatabaseTestCase
 {
-    public const TEST_GATEWAY_CODE = 'my_pay';
     protected PaymentsRepository $paymentsRepository;
     protected PaymentItemsRepository $paymentItemsRepository;
     protected PaymentMethodsRepository $paymentMethodsRepository;
@@ -52,6 +53,7 @@ class PaymentsTestCase extends DatabaseTestCase
             SubscriptionLengthMethodSeeder::class,
             SubscriptionTypeNamesSeeder::class,
             PaymentGatewaysSeeder::class,
+            TestPaymentGatewaysSeeder::class,
             ConfigsSeeder::class,
             CountriesSeeder::class,
             ContentAccessSeeder::class,
@@ -94,9 +96,6 @@ class PaymentsTestCase extends DatabaseTestCase
         $this->paymentMethodsRepository = $this->getRepository(PaymentMethodsRepository::class);
         $this->recurrentPaymentsRepository = $this->getRepository(RecurrentPaymentsRepository::class);
         $this->paymentCardsRepository = $this->getRepository(PaymentCardsRepository::class);
-
-        $gatewayFactory = $this->inject(GatewayFactory::class);
-        $gatewayFactory->registerGateway(self::TEST_GATEWAY_CODE);
     }
 
     protected function createPayment($variableSymbol)
@@ -119,16 +118,14 @@ class PaymentsTestCase extends DatabaseTestCase
         return $this->user;
     }
 
-    private $paymentGateway = false;
+    private ActiveRow $paymentGateway;
 
     protected function getPaymentGateway()
     {
-        if (!$this->container->hasService('my_payConfig')) {
-            $this->container->addService('my_payConfig', new TestPaymentConfig());
-        }
-        if (!$this->paymentGateway) {
-            $paymentGatewaysRepository = $this->container->getByType(PaymentGatewaysRepository::class);
-            $this->paymentGateway = $paymentGatewaysRepository->add('MyPay', self::TEST_GATEWAY_CODE);
+        if (!isset($this->paymentGateway)) {
+            /** @var PaymentGatewaysRepository $paymentGatewaysRepository */
+            $paymentGatewaysRepository = $this->getRepository(PaymentGatewaysRepository::class);
+            $this->paymentGateway = $paymentGatewaysRepository->findByCode(TestRecurrentGateway::GATEWAY_CODE);
         }
         return $this->paymentGateway;
     }

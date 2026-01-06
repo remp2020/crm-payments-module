@@ -4,6 +4,7 @@ namespace Crm\PaymentsModule\Models;
 
 use Crm\PaymentsModule\Events\BeforePaymentBeginEvent;
 use Crm\PaymentsModule\Models\Gateways\AuthorizationInterface;
+use Crm\PaymentsModule\Models\Gateways\ExternallyChargedRecurrentPaymentInterface;
 use Crm\PaymentsModule\Models\Gateways\GatewayAbstract;
 use Crm\PaymentsModule\Models\Gateways\RecurrentAuthorizationInterface;
 use Crm\PaymentsModule\Models\Gateways\RecurrentPaymentInterface;
@@ -91,6 +92,9 @@ class PaymentProcessor
             if ($gateway instanceof AuthorizationInterface || $gateway instanceof RecurrentAuthorizationInterface) {
                 $status = PaymentStatusEnum::Authorized->value;
             }
+            if ($gateway instanceof ExternallyChargedRecurrentPaymentInterface) {
+                $status = $gateway->getChargedPaymentStatus();
+            }
 
             if (!$preventPaymentStatusUpdate) {
                 $isUpdated = $this->paymentsRepository->updateStatus($payment, $status, true);
@@ -127,9 +131,15 @@ class PaymentProcessor
                 throw new \Exception("Gateway flagged with 'is_recurrent' flag needs to implement RecurrentPaymentInterface: " . get_class($gateway));
             }
             if ($gateway->hasRecurrentToken()) {
+                $chargeAt = null;
+                if ($gateway instanceof ExternallyChargedRecurrentPaymentInterface) {
+                    $chargeAt = $gateway->getSubscriptionExpiration($gateway->getRecurrentToken());
+                }
+
                 $this->recurrentPaymentsRepository->createFromPayment(
-                    $payment,
-                    $gateway->getRecurrentToken(),
+                    payment: $payment,
+                    recurrentToken: $gateway->getRecurrentToken(),
+                    chargeAt: $chargeAt,
                 );
             } else {
                 Debugger::log("Could not create recurrent payment from payment [{$payment->id}], missing recurrent token.", ILogger::ERROR);

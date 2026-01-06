@@ -31,7 +31,7 @@ class GatewayFactory
     public function getGateway($code)
     {
         if (!isset($this->gateways[$code])) {
-            throw new UnknownPaymentMethodCode("Payment code: {$code}");
+            throw new UnknownPaymentMethodCode("Payment gateway {$code} is not registered.");
         }
         $gateway = $this->container->getByType($this->gateways[$code]);
         if (!$gateway) {
