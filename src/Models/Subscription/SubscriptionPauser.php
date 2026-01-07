@@ -47,6 +47,10 @@ class SubscriptionPauser
             throw new \RuntimeException('Subscription is not active, cannot pause.');
         }
 
+        if ($this->subscriptionPausesRepository->hasScheduledOrActivePause($subscription)) {
+            throw new \RuntimeException('Subscription is already paused with a future resume date.');
+        }
+
         $this->pauseAt = $pauseAt;
 
         $this->databaseTransaction->start();

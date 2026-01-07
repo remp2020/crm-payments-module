@@ -86,7 +86,7 @@ class SubscriptionsPauseAdminPresenter extends AdminPresenter
         $form->onSuccess[] = function (Form $form, $values) use ($subscriptionId) {
             $this->redirect('previewChanges', [
                 'id' => $subscriptionId,
-                'pauseAt' => $values->pause_at,
+                'pauseAt' => $form->getValues()->pause_at->format(DATE_RFC3339),
                 'resumeAt' => $form->getValues()->resume_at->format(DATE_RFC3339),
             ]);
         };

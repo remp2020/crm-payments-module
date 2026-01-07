@@ -665,9 +665,14 @@ admin:
             pause_complete_message: Subscription was successfully paused
             pause_subscription_error: Subscription cannot be paused.
             resume_at:
-                label: Pause until
+                label: Renew date
                 placeholder: "e.g. 21st Aug 2025 00:00:00"
-                required: "Renewal date (Pause until) is required"
+                required: "Renewal date is required"
+                sooner_than_pause_at: "The renewal date must be later than the pause date"
+            pause_at:
+                label: Pause date
+                placeholder: "napríklad 21st Aug 2025 00:00:00"
+                required: "Pause date is required"
         preview:
             pause_until: "Pause subscription until:"
             moved_subscriptions: "Additional subscriptions that will be moved:"

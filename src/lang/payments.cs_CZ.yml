@@ -665,9 +665,14 @@ admin:
             pause_complete_message: Předplatné bylo úspěšně pozastaveno
             pause_subscription_error: Předplatné nelze pozastavit.
             resume_at:
-                label: Pozastavit do
+                label: Datum obnovy
                 placeholder: "například 21. srpna 2025 00:00:00"
-                required: "Datum obnovy (Pozastavit do) je povinný"
+                required: "Datum obnovy je povinný"
+                sooner_than_pause_at: "Datum obnovy musí být později než datum pozastavení"
+            pause_at:
+                label: Datum pozastavení
+                placeholder: "například 21. srpna 2025 00:00:00"
+                required: "Datum pozastavení je povinen"
         preview:
             pause_until: "Pozastavení předplatného do:"
             moved_subscriptions: "Další předplatná, která budou posunuta:"

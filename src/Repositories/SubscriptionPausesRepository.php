@@ -56,4 +56,12 @@ class SubscriptionPausesRepository extends Repository
 
         return $row;
     }
+
+    final public function hasScheduledOrActivePause(ActiveRow $subscription): bool
+    {
+        return $this->getTable()
+            ->where('subscription_id', $subscription->id)
+            ->where('resume_at > ?', $this->getNow())
+            ->count() > 0;
+    }
 }

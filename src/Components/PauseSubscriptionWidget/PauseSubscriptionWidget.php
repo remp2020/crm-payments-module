@@ -9,6 +9,7 @@ use Crm\ApplicationModule\Models\NowTrait;
 use Crm\ApplicationModule\Models\Widget\BaseLazyWidget;
 use Crm\ApplicationModule\Models\Widget\LazyWidgetManager;
 use Crm\PaymentsModule\DataProviders\IsSubscriptionPausableDataProviderInterface;
+use Crm\PaymentsModule\Repositories\SubscriptionPausesRepository;
 use Crm\SubscriptionsModule\Repositories\SubscriptionsRepository;
 use Nette\Database\Table\ActiveRow;
 
@@ -21,6 +22,7 @@ class PauseSubscriptionWidget extends BaseLazyWidget
     public function __construct(
         LazyWidgetManager $widgetManager,
         private readonly SubscriptionsRepository $subscriptionsRepository,
+        private readonly SubscriptionPausesRepository $subscriptionPausesRepository,
         private readonly ApplicationConfig $applicationConfig,
         private readonly DataProviderManager $dataProviderManager,
     ) {
@@ -53,6 +55,10 @@ class PauseSubscriptionWidget extends BaseLazyWidget
         }
 
         if ($subscription->end_time <= $now || $subscription->start_time > $now) {
+            return false;
+        }
+
+        if ($this->subscriptionPausesRepository->hasScheduledOrActivePause($subscription)) {
             return false;
         }
 
