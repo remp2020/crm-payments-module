@@ -83,7 +83,7 @@ class AttachRenewalPaymentEventHandler extends AbstractListener
             $recurrentPayment = $this->recurrentPaymentsRepository->recurrent($payment);
             if ($recurrentPayment) {
                 $nextSubscriptionType = $this->recurrentPaymentsResolver->resolveSubscriptionType($recurrentPayment);
-                $contentAccesses = $this->contentAccessRepository->allForSubscriptionType($nextSubscriptionType)->fetchPairs('name', 'name');
+                $contentAccesses = $this->contentAccessRepository->pairsForSubscriptionType($nextSubscriptionType, 'name', 'name');
             }
         }
 
