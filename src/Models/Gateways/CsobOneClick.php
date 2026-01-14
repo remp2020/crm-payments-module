@@ -8,8 +8,10 @@ use Crm\PaymentsModule\Models\GatewayFail;
 use Crm\PaymentsModule\Models\RecurrentPaymentFailStop;
 use Crm\PaymentsModule\Models\RecurrentPaymentFailTry;
 use Crm\PaymentsModule\Repositories\PaymentMetaRepository;
+use Crm\PaymentsModule\Repositories\PaymentsRepository;
 use Crm\PaymentsModule\Repositories\RecurrentPaymentsRepository;
 use Crm\UsersModule\Models\Auth\UserManager;
+use Crm\UsersModule\Repositories\AccessTokensRepository;
 use Nette\Application\LinkGenerator;
 use Nette\Database\Table\ActiveRow;
 use Nette\Http\Response;
@@ -66,6 +68,8 @@ class CsobOneClick extends GatewayAbstract implements RecurrentPaymentInterface,
         Response $httpResponse,
         Translator $translator,
         private RecurrentPaymentsRepository $recurrentPaymentsRepository,
+        private PaymentsRepository $paymentsRepository,
+        private AccessTokensRepository $accessTokensRepository,
     ) {
         parent::__construct($linkGenerator, $applicationConfig, $httpResponse, $translator);
     }
@@ -123,6 +127,13 @@ class CsobOneClick extends GatewayAbstract implements RecurrentPaymentInterface,
         }
 
         $this->paymentMetaRepository->add($payment, 'pay_id', $this->response->getTransactionReference());
+
+        if (filter_var($payment->ip, FILTER_VALIDATE_IP) === false) {
+            $ip = Request::getIp();
+            if (filter_var($ip, FILTER_VALIDATE_IP) !== false) {
+                $this->paymentsRepository->update($payment, ['ip' => $ip]);
+            }
+        }
     }
 
     public function complete($payment): ?bool
@@ -349,6 +360,10 @@ class CsobOneClick extends GatewayAbstract implements RecurrentPaymentInterface,
      */
     private function getClientIp(ActiveRow $payment, string $token): ?string
     {
+        if (filter_var($payment->ip, FILTER_VALIDATE_IP) !== false) {
+            return $payment->ip;
+        }
+
         // use IP of request (if exists)
         $requestIp = Request::getIp();
         if (filter_var($requestIp, FILTER_VALIDATE_IP) !== false) {
@@ -379,6 +394,12 @@ class CsobOneClick extends GatewayAbstract implements RecurrentPaymentInterface,
         // no initial payment found; load last known IP from customer
         if (isset($payment->user->current_sign_in_ip) && filter_var($payment->user->current_sign_in_ip, FILTER_VALIDATE_IP)) {
             return $payment->user->current_sign_in_ip;
+        }
+
+        $lastAccessToken = $this->accessTokensRepository->allUserTokens($payment->user_id)
+            ->fetch();
+        if ($lastAccessToken && filter_var($lastAccessToken->ip, FILTER_VALIDATE_IP) !== false) {
+            return $lastAccessToken->ip;
         }
 
         return null;
