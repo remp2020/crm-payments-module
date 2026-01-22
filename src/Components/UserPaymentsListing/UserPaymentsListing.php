@@ -110,7 +110,7 @@ class UserPaymentsListing extends BaseLazyWidget implements DetailWidgetInterfac
 
         $recurrentPayments = $this->recurrentPaymentsRepository
             ->userRecurrentPayments($id)
-            ->order('id DESC, charge_at DESC')
+            ->order('charge_at DESC, id DESC')
             ->limit($recurrentTablePaginator->getLimit(), $recurrentTablePaginator->getOffset());
             
         $this->template->recurrentPayments = $recurrentPayments;

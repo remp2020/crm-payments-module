@@ -210,7 +210,7 @@
                 <td>
                     {if $recurrentPayment->state === \Crm\PaymentsModule\Models\RecurrentPayment\RecurrentPaymentStateEnum::Active->value && $recurrentPayment->status === NULL}
                         {if $canBeStopped($recurrentPayment)}
-                            <a class="btn btn-primary"
+                            <a class="btn btn-sm btn-primary"
                                href="{link StopRecurrentPayment! $recurrentPayment->id}"
                                onclick="return confirm({_"payments.admin.component.user_payments_listing.recurrent_profile.stop_recurrent_profile_confirm"})">
                                 <i class="fa fa-ban"></i> {_"payments.admin.component.user_payments_listing.recurrent_profile.stop_recurrent_profile"}
