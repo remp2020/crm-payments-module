@@ -34,7 +34,18 @@ class PaymentsPresenter extends FrontendPresenter
     {
         $this->onlyLoggedIn();
 
-        $this->template->payments = $this->paymentsRepository->userPayments($this->getUser()->getId());
+        $payments = [];
+        foreach ($this->paymentsRepository->userPayments($this->getUser()->getId()) as $payment) {
+            $shouldDisplay = $payment->status === PaymentStatusEnum::Paid->value
+                || $payment->status === PaymentStatusEnum::Prepaid->value
+                || ($payment->status === PaymentStatusEnum::Authorized->value && $payment->payment_gateway->is_recurrent);
+
+            if ($shouldDisplay) {
+                $payments[] = $payment;
+            }
+        }
+
+        $this->template->payments = $payments;
         $this->template->resolver = $this->recurrentPaymentsResolver;
         $this->template->canBeStopped = function ($recurrentPayment) {
             return $this->recurrentPaymentsRepository->canBeStoppedByUser($recurrentPayment);
@@ -43,11 +54,6 @@ class PaymentsPresenter extends FrontendPresenter
             return $recurrentPayment->payment_method->external_token
                 && $recurrentPayment->charge_at > new \DateTime()
                 && $this->recurrentPaymentsRepository->canBeReactivatedByUser($recurrentPayment);
-        };
-        $this->template->shouldDisplay = function ($payment) {
-            return $payment->status === PaymentStatusEnum::Paid->value
-                || $payment->status === PaymentStatusEnum::Prepaid->value
-                || ($payment->status === PaymentStatusEnum::Authorized->value && $payment->payment_gateway->is_recurrent);
         };
         $this->template->noPaymentsRoute = $this->applicationConfig->get('default_route');
     }
