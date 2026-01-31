@@ -28,6 +28,7 @@ use Crm\PaymentsModule\Models\Gateways\StoppableExternallyChargedRecurrentPaymen
 use Crm\PaymentsModule\Models\Payment\PaymentStatusEnum;
 use Crm\PaymentsModule\Models\RecurrentPayment\ChainData;
 use Crm\PaymentsModule\Models\RecurrentPayment\RecurrentPaymentStateEnum;
+use Crm\PaymentsModule\Models\UnknownPaymentMethodCode;
 use DateInterval;
 use DateTime;
 use Exception;
@@ -333,8 +334,13 @@ class RecurrentPaymentsRepository extends Repository
 
     final public function canBeReactivatedByUser($recurrentPayment): bool
     {
-        $gateway = $this->gatewayFactory->getGateway($recurrentPayment->payment_gateway->code);
-        if ($gateway instanceof ExternallyChargedRecurrentPaymentInterface) {
+        try {
+            $gateway = $this->gatewayFactory->getGateway($recurrentPayment->payment_gateway->code);
+            if ($gateway instanceof ExternallyChargedRecurrentPaymentInterface) {
+                return false;
+            }
+        } catch (UnknownPaymentMethodCode $e) {
+            // Payment has obsolete/unregistered gateway, don't allow reactivation
             return false;
         }
 
@@ -352,9 +358,13 @@ class RecurrentPaymentsRepository extends Repository
             throw new Exception('Recurrent payment ID ' . $rp->id . ' cannot be stopped by user');
         }
 
-        $gateway = $this->gatewayFactory->getGateway($rp->payment_gateway->code);
-        if ($gateway instanceof StoppableExternallyChargedRecurrentPaymentInterface) {
-            $gateway->cancelExternalSubscription($rp->payment_method->external_token);
+        try {
+            $gateway = $this->gatewayFactory->getGateway($rp->payment_gateway->code);
+            if ($gateway instanceof StoppableExternallyChargedRecurrentPaymentInterface) {
+                $gateway->cancelExternalSubscription($rp->payment_method->external_token);
+            }
+        } catch (UnknownPaymentMethodCode $e) {
+            // Payment has obsolete/unregistered gateway, skip external cancellation
         }
 
         $this->update($rp, ['state' => RecurrentPaymentStateEnum::UserStop->value]);
@@ -386,9 +396,13 @@ class RecurrentPaymentsRepository extends Repository
             throw new Exception('Recurrent payment ID ' . $rp->id . ' cannot be stopped by admin');
         }
 
-        $gateway = $this->gatewayFactory->getGateway($rp->payment_gateway->code);
-        if ($gateway instanceof StoppableExternallyChargedRecurrentPaymentInterface) {
-            $gateway->cancelExternalSubscription($rp->payment_method->external_token);
+        try {
+            $gateway = $this->gatewayFactory->getGateway($rp->payment_gateway->code);
+            if ($gateway instanceof StoppableExternallyChargedRecurrentPaymentInterface) {
+                $gateway->cancelExternalSubscription($rp->payment_method->external_token);
+            }
+        } catch (UnknownPaymentMethodCode $e) {
+            // Payment has obsolete/unregistered gateway, skip external cancellation
         }
 
         $this->update($rp, ['state' => RecurrentPaymentStateEnum::AdminStop->value]);
@@ -660,10 +674,14 @@ class RecurrentPaymentsRepository extends Repository
             return false;
         }
 
-        $gateway = $this->gatewayFactory->getGateway($recurrentPayment->payment_gateway->code);
-        if ($gateway instanceof ExternallyChargedRecurrentPaymentInterface) {
-            // Externally charged gateways are only stoppable if they implement the stoppable interface
-            return $gateway instanceof StoppableExternallyChargedRecurrentPaymentInterface;
+        try {
+            $gateway = $this->gatewayFactory->getGateway($recurrentPayment->payment_gateway->code);
+            if ($gateway instanceof ExternallyChargedRecurrentPaymentInterface) {
+                // Externally charged gateways are only stoppable if they implement the stoppable interface
+                return $gateway instanceof StoppableExternallyChargedRecurrentPaymentInterface;
+            }
+        } catch (UnknownPaymentMethodCode $e) {
+            // Payment has obsolete/unregistered gateway, allow stopping by default
         }
 
         // TODO: Consider deprecation of this check in favor of unstoppable flags in the next major release.
