@@ -24,7 +24,7 @@ admin:
 
         actual_paid_subscribers_stat_widget:
             title: Predplatitelia s plateným predplatným
-            help: Počet predplatiteľov s aktívnym plateným predplatným. Zahŕňa aj darované predplatné a aktivované dcérske prístupy firemných predplatných. Jeden používateľ je započítaný jeden krát aj keď má viac predplatných.
+            help: Počet predplatiteľov s aktívnym plateným predplatným. Zahŕňa aj platené darčekové predplatné a aktivované dcérske prístupy firemných predplatných. Jeden používateľ je započítaný jeden krát aj keď má viac predplatných.
 
         actual_nonfree_subscribers_stat_widget:
             title: Predplatitelia s plateným predplatným
