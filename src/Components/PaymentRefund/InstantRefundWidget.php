@@ -38,7 +38,7 @@ class InstantRefundWidget extends BaseLazyWidget implements PaymentRefundFormDat
 
         /** @var ActiveRow $payment */
         $payment = $params['payment'];
-        if ($payment->status !== PaymentStatusEnum::Paid->value) {
+        if (!in_array($payment->status, [PaymentStatusEnum::Paid->value, PaymentStatusEnum::Prepaid->value], true)) {
             return $form;
         }
 
