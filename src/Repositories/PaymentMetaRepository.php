@@ -135,9 +135,8 @@ class PaymentMetaRepository extends Repository
      */
     final public function findByPaymentAndKey(ActiveRow $payment, string $key)
     {
-        return $this->getTable()->where([
-            'payment_id' => $payment->id,
-            'key' => $key,
-        ])->fetch();
+        return $payment->related('payment_meta')
+            ->where('key = ?', $key)
+            ->fetch();
     }
 }
