@@ -101,6 +101,10 @@ class RecurrentPaymentsResolver
      */
     public function resolveChargeAmount(ActiveRow $recurrentPayment): float
     {
+        if ($recurrentPayment->state === RecurrentPaymentStateEnum::Active->value && $recurrentPayment->payment_id !== null) {
+            return $recurrentPayment->payment->amount;
+        }
+
         $paymentData = $this->resolvePaymentData($recurrentPayment);
         return $paymentData->customChargeAmount ?? $paymentData->paymentItemContainer->totalPrice();
     }
