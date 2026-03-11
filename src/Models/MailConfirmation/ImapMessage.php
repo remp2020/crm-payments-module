@@ -4,11 +4,12 @@ namespace Crm\PaymentsModule\Models\MailConfirmation;
 
 use DateTimeInterface;
 
-class Email implements EmailInterface
+class ImapMessage
 {
+    /** @param ImapAttachment[] $attachments */
     public function __construct(
         private string $body,
-        private DateTimeInterface $dateTime,
+        private DateTimeInterface $date,
         private array $attachments = [],
     ) {
     }
@@ -20,9 +21,10 @@ class Email implements EmailInterface
 
     public function getDate(): DateTimeInterface
     {
-        return $this->dateTime;
+        return $this->date;
     }
 
+    /** @return ImapAttachment[] */
     public function getAttachments(): array
     {
         return $this->attachments;

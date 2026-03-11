@@ -2,13 +2,13 @@
 
 namespace Crm\PaymentsModule\Models\MailConfirmation;
 
-use Nette\Utils\DateTime;
+use DateTimeInterface;
 
 interface EmailInterface
 {
     public function getBody(): string;
 
-    public function getDate(): DateTime;
+    public function getDate(): DateTimeInterface;
 
     public function getAttachments(): array;
 }

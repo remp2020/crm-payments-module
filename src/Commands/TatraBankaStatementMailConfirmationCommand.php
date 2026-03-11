@@ -4,6 +4,7 @@ namespace Crm\PaymentsModule\Commands;
 
 use Crm\ApplicationModule\Models\Config\ApplicationConfig;
 use Crm\PaymentsModule\Models\MailConfirmation\EmailInterface;
+use Crm\PaymentsModule\Models\MailConfirmation\MailCriteria;
 use Crm\PaymentsModule\Models\MailConfirmation\MailDownloaderInterface;
 use Crm\PaymentsModule\Models\MailConfirmation\MailProcessor;
 use Symfony\Component\Console\Command\Command;
@@ -11,7 +12,6 @@ use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 use Tomaj\BankMailsParser\Parser\TatraBanka\TatraBankaMailDecryptor;
 use Tomaj\BankMailsParser\Parser\TatraBanka\TatraBankaStatementMailParser;
-use Tomaj\ImapMailDownloader\MailCriteria;
 use Tracy\Debugger;
 
 class TatraBankaStatementMailConfirmationCommand extends Command
@@ -63,7 +63,7 @@ class TatraBankaStatementMailConfirmationCommand extends Command
 
             if (!$mailContents) {
                 Debugger::log(
-                    'Unable to parse TatraBanka statement (vypis_obchodnik) email from: ' . $email->getDate(),
+                    'Unable to parse TatraBanka statement (vypis_obchodnik) email from: ' . $email->getDate()->format(DATE_RFC3339),
                     Debugger::ERROR,
                 );
                 // email not parsed; do not call callback

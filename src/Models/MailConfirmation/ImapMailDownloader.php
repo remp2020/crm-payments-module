@@ -2,32 +2,47 @@
 
 namespace Crm\PaymentsModule\Models\MailConfirmation;
 
-use Nette\Utils\DateTime;
-use Tomaj\ImapMailDownloader\Downloader;
-
 class ImapMailDownloader implements MailDownloaderInterface
 {
+    public function __construct(private ImapClient $imapClient)
+    {
+    }
+
     public function download(array $options, callable $callback): void
     {
-        $downloader = new Downloader(
+        ['port' => $port, 'encryption' => $encryption, 'validateCert' => $validateCert] = $this->parsePort($options['imapPort']);
+
+        /** @var MailCriteria $criteria */
+        $criteria = $options['criteria'];
+
+        $this->imapClient->fetch(
             $options['imapHost'],
-            $options['imapPort'],
+            $port,
+            $encryption,
+            $validateCert,
             $options['username'],
             $options['password'],
-            $options['processedFolder'],
+            $criteria,
+            function (ImapMessage $message) use ($callback) {
+                $callback(new Email(
+                    $message->getBody(),
+                    $message->getDate(),
+                    array_map(
+                        fn($att) => ['attachment' => $att->getContent(), 'name' => $att->getName()],
+                        $message->getAttachments(),
+                    ),
+                ));
+            },
+            $options['processedFolder'] ?? null,
         );
+    }
 
-        $downloader->fetch($options['criteria'], function (\Tomaj\ImapMailDownloader\Email $email) use ($callback) {
-            // handles double timezone specification causing problems (Wed, 11 Mar 2026 18:23:47 +0100 (CET))
-            $mailDate = preg_replace('/\s*\([^)]+\)$/', '', $email->getDate());
-
-            $parsedEmail = new Email(
-                (string) $email->getBody(),
-                DateTime::from($mailDate),
-                $email->getAttachments(),
-            );
-
-            $callback($parsedEmail);
-        });
+    private function parsePort(string $imapPort): array
+    {
+        // Parse the legacy PHP imap_open port format, e.g. "993/imap/ssl" or "993/imap/ssl/novalidate-cert"
+        $parts = explode('/', $imapPort);
+        $encryption = $parts[2] ?? ($parts[1] !== 'imap' ? $parts[1] : 'ssl');
+        $validateCert = !in_array('novalidate-cert', $parts, true);
+        return ['port' => (int) $parts[0], 'encryption' => $encryption, 'validateCert' => $validateCert];
     }
 }

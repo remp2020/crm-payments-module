@@ -4,6 +4,7 @@ namespace Crm\PaymentsModule\Commands;
 
 use Crm\ApplicationModule\Models\Config\ApplicationConfig;
 use Crm\PaymentsModule\Models\MailConfirmation\EmailInterface;
+use Crm\PaymentsModule\Models\MailConfirmation\MailCriteria;
 use Crm\PaymentsModule\Models\MailConfirmation\MailDownloaderInterface;
 use Crm\PaymentsModule\Models\MailConfirmation\MailProcessor;
 use Nette\Utils\DateTime;
@@ -11,7 +12,6 @@ use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 use Tomaj\BankMailsParser\Parser\Csob\CsobMailParser;
-use Tomaj\ImapMailDownloader\MailCriteria;
 use Tracy\Debugger;
 
 class CsobMailConfirmationCommand extends Command
@@ -55,22 +55,14 @@ class CsobMailConfirmationCommand extends Command
         $this->mailDownloader->download($connectionOptions, function (EmailInterface $email) {
             $csobMailParser = new CsobMailParser();
 
-            // csob changed encoding for some emails and ImapDownloader doesn't provide the header
-            // this is a dummy check to verify what encoding was used to encode the content of email
-            $mailContent = $csobMailParser->parseMulti(base64_decode($email->getBody()));
-            if (!empty($mailContent)) {
-                $this->processEmail($mailContent);
-                return;
-            }
-
-            $mailContent = $csobMailParser->parseMulti(quoted_printable_decode($email->getBody()));
+            $mailContent = $csobMailParser->parseMulti($email->getBody());
             if (!empty($mailContent)) {
                 $this->processEmail($mailContent);
                 return;
             }
 
             Debugger::log(
-                'Unable to parse CSOB statement (CEB Info: Zaúčtování platby) email from: ' . $email->getDate(),
+                'Unable to parse CSOB statement (CEB Info: Zaúčtování platby) email from: ' . $email->getDate()->format(DATE_RFC3339),
                 Debugger::ERROR,
             );
         });

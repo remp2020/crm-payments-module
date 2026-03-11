@@ -51,6 +51,7 @@ services:
 		setup:
 			- registerPaymentItemType(Crm\PaymentsModule\Models\PaymentItem\AuthorizationPaymentItem)
 			- registerPaymentItemType(Crm\PaymentsModule\Models\PaymentItem\DonationPaymentItem)
+	- Crm\PaymentsModule\Models\MailConfirmation\ImapClient
 	mailDownloader: Crm\PaymentsModule\Models\MailConfirmation\ImapMailDownloader
 	- Crm\PaymentsModule\Models\MailConfirmation\MailProcessor
 	vatStackApiClient: Crm\PaymentsModule\Models\Api\VatStack\Client

@@ -4,6 +4,7 @@ namespace Crm\PaymentsModule\Commands;
 
 use Crm\ApplicationModule\Models\Config\ApplicationConfig;
 use Crm\PaymentsModule\Models\MailConfirmation\EmailInterface;
+use Crm\PaymentsModule\Models\MailConfirmation\MailCriteria;
 use Crm\PaymentsModule\Models\MailConfirmation\MailDownloaderInterface;
 use Crm\PaymentsModule\Models\MailConfirmation\MailProcessor;
 use Symfony\Component\Console\Command\Command;
@@ -11,7 +12,6 @@ use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 use Tomaj\BankMailsParser\Parser\TatraBanka\TatraBankaMailParser;
 use Tomaj\BankMailsParser\Parser\TatraBanka\TatraBankaSimpleMailParser;
-use Tomaj\ImapMailDownloader\MailCriteria;
 use Tracy\Debugger;
 
 class TatraBankaMailConfirmationCommand extends Command
@@ -56,11 +56,11 @@ class TatraBankaMailConfirmationCommand extends Command
 
             if (!$mailContent) {
                 Debugger::log(
-                    'Unable to parse TatraBanka email (b-mail - Kredit na ucte) email from: ' . $email->getDate(),
+                    'Unable to parse TatraBanka email (b-mail - Kredit na ucte) email from: ' . $email->getDate()->format(DATE_RFC3339),
                     Debugger::ERROR,
                 );
                 // email not parsed; do not process mail
-                return;
+                return null;
             }
 
             return $this->mailProcessor->processMail($mailContent, $this->output);
@@ -78,7 +78,7 @@ class TatraBankaMailConfirmationCommand extends Command
 
             if (!$mailContent) {
                 Debugger::log(
-                    'Unable to parse TatraBanka email (b-mail - e-commerce) email from: ' . $email->getDate(),
+                    'Unable to parse TatraBanka email (b-mail - e-commerce) email from: ' . $email->getDate()->format(DATE_RFC3339),
                     Debugger::ERROR,
                 );
                 // email not parsed; do not process mail

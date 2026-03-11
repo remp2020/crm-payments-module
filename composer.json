@@ -9,7 +9,7 @@
     "ext-soap": "*",
     "php-http/curl-client": "^2.2.1",
     "tomaj/bank-mails-parser": "^4.0",
-    "tomaj/imap-mail-downloader": "^1.2.0",
+    "webklex/php-imap": "^5.0",
     "rootpd/omnipay-csob": "^4.4.0",
     "rootpd/omnipay-paypal-reference": "^4.0.0",
     "singpolyma/openpgp-php": "^0.7",
