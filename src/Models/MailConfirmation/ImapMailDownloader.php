@@ -18,9 +18,12 @@ class ImapMailDownloader implements MailDownloaderInterface
         );
 
         $downloader->fetch($options['criteria'], function (\Tomaj\ImapMailDownloader\Email $email) use ($callback) {
+            // handles double timezone specification causing problems (Wed, 11 Mar 2026 18:23:47 +0100 (CET))
+            $mailDate = preg_replace('/\s*\([^)]+\)$/', '', $email->getDate());
+
             $parsedEmail = new Email(
                 (string) $email->getBody(),
-                DateTime::from($email->getDate()),
+                DateTime::from($mailDate),
                 $email->getAttachments(),
             );
 
