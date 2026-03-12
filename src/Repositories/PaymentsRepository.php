@@ -64,7 +64,7 @@ class PaymentsRepository extends Repository
     }
 
     final public function add(
-        ?ActiveRow $subscriptionType = null,
+        ?ActiveRow $subscriptionType,
         ActiveRow $paymentGateway,
         ActiveRow $user,
         PaymentItemContainer $paymentItemContainer,
