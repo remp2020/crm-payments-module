@@ -19,7 +19,7 @@ class PaymentGatewaysRepository extends Repository
     public function __construct(
         Explorer $database,
         GatewayFactory $gatewayFactory,
-        Storage $cacheStorage = null,
+        ?Storage $cacheStorage = null,
     ) {
         parent::__construct($database, $cacheStorage);
         $this->gatewayFactory = $gatewayFactory;

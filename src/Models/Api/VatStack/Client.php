@@ -25,7 +25,7 @@ class Client
      * @param int $limit How many countries you want to receive. 100 is max allowed limit (there are 27 member EU countries).
      * @throws GuzzleException
      */
-    public function getVats(bool $memberStates = true, int $limit = 100, string $countryIsoCode = null): ResponseInterface
+    public function getVats(bool $memberStates = true, int $limit = 100, ?string $countryIsoCode = null): ResponseInterface
     {
         if ($this->apiKey === null) {
             throw new \Exception('Unable to fetch VAT rates. VatStack API key is missing. Set it with setApiKey().');

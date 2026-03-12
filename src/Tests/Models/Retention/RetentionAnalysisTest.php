@@ -346,7 +346,7 @@ class RetentionAnalysisTest extends DatabaseTestCase
         return $subscriptionTypeRow;
     }
 
-    private function addSubscription(ActiveRow $subscriptionType, ActiveRow $user, string $type = SubscriptionsRepository::TYPE_REGULAR, DateTime $from = null, DateTime $to = null, bool $isPaid = true)
+    private function addSubscription(ActiveRow $subscriptionType, ActiveRow $user, string $type = SubscriptionsRepository::TYPE_REGULAR, ?DateTime $from = null, ?DateTime $to = null, bool $isPaid = true)
     {
         return $this->subscriptionsRepository->add(
             $subscriptionType,

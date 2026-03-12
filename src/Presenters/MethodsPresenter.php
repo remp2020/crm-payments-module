@@ -30,7 +30,7 @@ class MethodsPresenter extends FrontendPresenter
         parent::__construct();
     }
 
-    public function renderAdd(string $paymentGatewayCode, int $recurrentPaymentId = null)
+    public function renderAdd(string $paymentGatewayCode, ?int $recurrentPaymentId = null)
     {
         $this->onlyLoggedIn();
 

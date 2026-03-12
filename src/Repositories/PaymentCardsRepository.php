@@ -22,10 +22,10 @@ class PaymentCardsRepository extends Repository
      */
     final public function upsert(
         ActiveRow $paymentMethod,
-        DateTime $expiration = null,
-        string $maskedCardNumber = null,
-        string $description = null,
-        string $cardHolderName = null,
+        ?DateTime $expiration = null,
+        ?string $maskedCardNumber = null,
+        ?string $description = null,
+        ?string $cardHolderName = null,
     ): int|ActiveRow|bool {
         $newData = array_filter([
             'expiration' => $expiration,

@@ -65,7 +65,7 @@ class PaymentFormFactory
      * @throws DataProviderException
      * @throws JsonException
      */
-    public function create($paymentId, ActiveRow $user = null)
+    public function create($paymentId, ?ActiveRow $user = null)
     {
         $defaults = [
             'additional_type' => 'single',

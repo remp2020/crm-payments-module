@@ -37,7 +37,7 @@ class RecurrentPaymentsProcessor
         $resultCode,
         $resultMessage,
         $customChargeAmount = null,
-        \DateTime $chargeAt = null,
+        ?\DateTime $chargeAt = null,
     ) {
         $this->paymentsRepository->updateStatus($recurrentPayment->payment, $paymentStatus, true);
         $payment = $this->paymentsRepository->find($recurrentPayment->payment->id); // refresh to get fresh object

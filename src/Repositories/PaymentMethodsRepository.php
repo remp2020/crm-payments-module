@@ -20,7 +20,7 @@ class PaymentMethodsRepository extends Repository
     public function __construct(
         private readonly Emitter $emitter,
         Explorer $database,
-        Storage $cacheStorage = null,
+        ?Storage $cacheStorage = null,
     ) {
         parent::__construct($database, $cacheStorage);
     }

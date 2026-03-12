@@ -77,7 +77,7 @@ class PaymentStatusChangeHandler extends AbstractListener
     /**
      * @return bool|int|ActiveRow
      */
-    public function createSubscriptionFromPayment(ActiveRow $payment, bool $sendEmail, \DateTime $startTime = null, \DateTime $endTime = null)
+    public function createSubscriptionFromPayment(ActiveRow $payment, bool $sendEmail, ?\DateTime $startTime = null, ?\DateTime $endTime = null)
     {
         if ($startTime === null && $payment->subscription_start_at) {
             if ($payment->subscription_start_at > $payment->paid_at) {

@@ -264,7 +264,7 @@ final class OneStopShop
     public function getCountryVatRate(
         ActiveRow $paymentCountry,
         PaymentItemInterface $paymentItem,
-        PaymentItemContainer $paymentItemContainer = null,
+        ?PaymentItemContainer $paymentItemContainer = null,
     ): float {
         $vatRates = $this->vatRatesRepository->getByCountry($paymentCountry);
         if (!$vatRates) {

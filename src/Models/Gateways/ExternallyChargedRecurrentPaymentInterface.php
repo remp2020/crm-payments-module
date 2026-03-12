@@ -32,5 +32,5 @@ interface ExternallyChargedRecurrentPaymentInterface
      * Parameter $cid is supposed to hint the correct subscription in case your gateway provider always returns multiple
      * active subscriptions.
      */
-    public function getSubscriptionExpiration(string $cid = null): \DateTime;
+    public function getSubscriptionExpiration(?string $cid = null): \DateTime;
 }

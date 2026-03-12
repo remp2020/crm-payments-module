@@ -74,8 +74,8 @@ class RecurrentPaymentsRepository extends Repository
         DateTime $chargeAt,
         ?float $customAmount,
         int $retries,
-        ActiveRow $paymentGateway = null,
-        string $note = null,
+        ?ActiveRow $paymentGateway = null,
+        ?string $note = null,
         ?string $chainId = null,
         ?int $cycle = null,
     ) {
@@ -426,7 +426,7 @@ class RecurrentPaymentsRepository extends Repository
             ->where('charge_at < ?', $date);
     }
 
-    final public function all($problem = null, $subscriptionType = null, $status = null, string $cid = null): Selection
+    final public function all($problem = null, $subscriptionType = null, $status = null, ?string $cid = null): Selection
     {
         $where = [];
         if ($subscriptionType) {

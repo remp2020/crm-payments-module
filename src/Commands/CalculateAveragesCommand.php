@@ -252,7 +252,7 @@ class CalculateAveragesCommand extends Command
         return $intervals;
     }
 
-    private function computeUserSubscriptionPaymentCounts(array $userIDs = null, array $interval = null)
+    private function computeUserSubscriptionPaymentCounts(?array $userIDs = null, ?array $interval = null)
     {
         $paymentPaidAt = $this->startDate;
         $subscriptionTypeItem = SubscriptionTypePaymentItem::TYPE;
@@ -294,7 +294,7 @@ class CalculateAveragesCommand extends Command
         $this->userStatsRepository->upsertUsersValues('subscription_payments', $values);
     }
 
-    private function computeUserSubscriptionPaymentAmounts(array $userIDs = null, array $interval = null)
+    private function computeUserSubscriptionPaymentAmounts(?array $userIDs = null, ?array $interval = null)
     {
         $paymentPaidAt = $this->startDate;
         $subscriptionTypeItem = SubscriptionTypePaymentItem::TYPE;
@@ -336,7 +336,7 @@ class CalculateAveragesCommand extends Command
         $this->userStatsRepository->upsertUsersValues('subscription_payments_amount', $values);
     }
 
-    public function computeUserAvgPaymentAmount(array $userIDs = null, array $interval = null)
+    public function computeUserAvgPaymentAmount(?array $userIDs = null, ?array $interval = null)
     {
         $paymentPaidAt = $this->startDate;
 

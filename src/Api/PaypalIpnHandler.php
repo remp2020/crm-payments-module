@@ -35,7 +35,7 @@ class PaypalIpnHandler extends ApiHandler implements ApiParamsValidatorInterface
         private PaymentsRepository $paymentsRepository,
         private PaymentProcessor $paymentProcessor,
         private ApplicationConfig $applicationConfig,
-        ScopeFactoryInterface $scopeFactory = null,
+        ?ScopeFactoryInterface $scopeFactory = null,
     ) {
         parent::__construct($scopeFactory);
     }

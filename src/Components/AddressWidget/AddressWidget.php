@@ -14,7 +14,7 @@ class AddressWidget extends BaseLazyWidget
         return 'paymentaddresswidget';
     }
 
-    public function render(ActiveRow $payment = null)
+    public function render(?ActiveRow $payment = null)
     {
         $this->template->payment = $payment;
         $this->template->setFile(__DIR__ . DIRECTORY_SEPARATOR . $this->templateName);

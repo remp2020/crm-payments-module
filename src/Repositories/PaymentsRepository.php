@@ -64,19 +64,19 @@ class PaymentsRepository extends Repository
     }
 
     final public function add(
-        ActiveRow $subscriptionType = null,
+        ?ActiveRow $subscriptionType = null,
         ActiveRow $paymentGateway,
         ActiveRow $user,
         PaymentItemContainer $paymentItemContainer,
         $referer = null,
         $amount = null,
-        DateTime $subscriptionStartAt = null,
-        DateTime $subscriptionEndAt = null,
+        ?DateTime $subscriptionStartAt = null,
+        ?DateTime $subscriptionEndAt = null,
         $note = null,
         $additionalAmount = 0,
         $additionalType = null,
         $variableSymbol = null,
-        ActiveRow $address = null,
+        ?ActiveRow $address = null,
         $recurrentCharge = false,
         array $metaData = [],
         ?ActiveRow $paymentCountry = null,
@@ -287,7 +287,7 @@ class PaymentsRepository extends Repository
         return $this->paymentItemsRepository->getByType($payment, $paymentItemType);
     }
 
-    final public function update(ActiveRow &$row, $data, PaymentItemContainer $paymentItemContainer = null)
+    final public function update(ActiveRow &$row, $data, ?PaymentItemContainer $paymentItemContainer = null)
     {
         $newPaymentCountry = null;
         if (isset($data['payment_country_id']) &&
