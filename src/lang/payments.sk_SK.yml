@@ -317,7 +317,7 @@ admin:
         name: Meno
         code: Identifikátor
         created_at: Vytvorená
-        modified_at: Upravená
+        updated_at: Upravená
         visible: Viditeľná
         is_recurrent: Rekurentná
         sorting: Poradie
@@ -528,7 +528,7 @@ admin:
         items: Položky
         status: Stav
         created_at: Vytvorené
-        modified_at: Upravené
+        updated_at: Upravené
         actions: Akcie
         note: Poznámka
         referer: Referer

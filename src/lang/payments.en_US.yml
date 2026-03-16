@@ -317,7 +317,7 @@ admin:
         name: Name
         code: Code
         created_at: Created at
-        modified_at: Modified at
+        updated_at: Modified at
         visible: Visible
         is_recurrent: Recurrent
         sorting: Sorting
@@ -528,7 +528,7 @@ admin:
         items: Items
         status: Status
         created_at: Created at
-        modified_at: Updated at
+        updated_at: Updated at
         actions: Actions
         note: Note
         referer: Referer

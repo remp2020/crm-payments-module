@@ -48,8 +48,8 @@
                         <td>{$payment->paid_at ? ($payment->paid_at|userDate) : '-'}</td>
                     </tr>
                     <tr>
-                        <td>{_payments.admin.payments.modified_at}:</td>
-                        <td>{$payment->modified_at ? ($payment->modified_at|userDate) : '-'}</td>
+                        <td>{_payments.admin.payments.updated_at}:</td>
+                        <td>{$payment->updated_at ? ($payment->updated_at|userDate) : '-'}</td>
                     </tr>
                     <tr>
                         <td>{_payments.admin.payments.created_at}:</td>

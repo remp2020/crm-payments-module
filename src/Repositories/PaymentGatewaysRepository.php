@@ -73,7 +73,7 @@ class PaymentGatewaysRepository extends Repository
             'visible' => $visible,
             'is_recurrent' => $isRecurrent,
             'created_at' => new DateTime(),
-            'modified_at' => new DateTime(),
+            'updated_at' => new DateTime(),
         ]);
     }
 
@@ -84,7 +84,7 @@ class PaymentGatewaysRepository extends Repository
 
     final public function update(ActiveRow &$row, $data)
     {
-        $data['modified_at'] = new DateTime();
+        $data['updated_at'] = new DateTime();
         return parent::update($row, $data);
     }
 }

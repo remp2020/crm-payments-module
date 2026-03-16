@@ -270,7 +270,7 @@ class DashboardPresenter extends AdminPresenter
             ->setGroupBy('payment_gateways.name')
             ->setJoin('LEFT JOIN payment_gateways ON payment_gateways.id = payments.payment_gateway_id')
             ->setSeries('payment_gateways.name')
-            ->setTimeField('modified_at')
+            ->setTimeField('updated_at')
             ->setValueField('count(*)')
             ->setStart($this->dateFrom)
             ->setEnd($this->dateTo));
@@ -285,7 +285,7 @@ class DashboardPresenter extends AdminPresenter
             ->setGroupBy('payment_gateways.name')
             ->setJoin('LEFT JOIN payment_gateways ON payment_gateways.id = payments.payment_gateway_id')
             ->setSeries('payment_gateways.name')
-            ->setTimeField('modified_at')
+            ->setTimeField('updated_at')
             ->setValueField('count(*)')
             ->setStart($this->dateFrom)
             ->setEnd($this->dateTo));
@@ -315,7 +315,7 @@ class DashboardPresenter extends AdminPresenter
             ->setJoin('JOIN payment_items ON payment_items.payment_id = payments.id')
             ->setWhere("AND payments.status = 'refund' {$this->recurrentChargeWhere()} {$this->paymentItemTypesWhere()}")
             ->setValueField('SUM(payment_items.count * payment_items.amount)')
-            ->setTimeField('modified_at')
+            ->setTimeField('updated_at')
             ->setStart($this->dateFrom)
             ->setEnd($this->dateTo));
         $graphDataItem->setName($this->translator->translate('dashboard.payments.refunds.title'));

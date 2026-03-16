@@ -24,7 +24,7 @@ class PaymentsPopulator extends AbstractPopulator
                 'variable_symbol' => $this->faker->numerify('##########'),
                 'user_id' => $user->id,
                 'created_at' => $this->faker->dateTimeBetween('-1 years'),
-                'modified_at' => $this->faker->dateTimeBetween('-1 years'),
+                'updated_at' => $this->faker->dateTimeBetween('-1 years'),
                 'ip' => $this->faker->ipv4,
                 'user_agent' => $this->faker->userAgent,
                 'referer' => $this->faker->url,

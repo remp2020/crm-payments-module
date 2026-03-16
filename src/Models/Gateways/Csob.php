@@ -103,7 +103,7 @@ class Csob extends GatewayAbstract
             'customerId' => UserManager::hashedUserId($payment->user->id),
             'email' => $payment->user->email,
             'createdAt' => $payment->user->created_at,
-            'changedAt' => $payment->user->modified_at,
+            'changedAt' => $payment->user->updated_at,
         ];
 
         if (!empty($payment->user->last_name)) {

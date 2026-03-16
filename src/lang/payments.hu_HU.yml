@@ -259,7 +259,7 @@ admin:
         name: Név
         code: Kód
         created_at: Létrehozva
-        modified_at: Szerkesztve
+        updated_at: Szerkesztve
         visible: Látható
         is_recurrent: Ismétlődő
         sorting: Rendezés

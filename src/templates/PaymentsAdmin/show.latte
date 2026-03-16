@@ -104,9 +104,9 @@
         {$payment->created_at|userDate}
       </li>
 
-      <li class="list-group-item" n:if="$payment->modified_at">
-        <b>{_payments.admin.payments.modified_at}:</b>&nbsp;
-        {$payment->modified_at|userDate}
+      <li class="list-group-item" n:if="$payment->updated_at">
+        <b>{_payments.admin.payments.updated_at}:</b>&nbsp;
+        {$payment->updated_at|userDate}
       </li>
 
       <li class="list-group-item" n:if="$payment->subscription_start_at">

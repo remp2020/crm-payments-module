@@ -317,7 +317,7 @@ admin:
         name: Jméno
         code: Identifikátor
         created_at: Vytvořená
-        modified_at: Upravená
+        updated_at: Upravená
         visible: Viditelná
         is_recurrent: Rekurentní
         sorting: Pořadí
@@ -528,7 +528,7 @@ admin:
         items: Položky
         status: Stav
         created_at: Vytvořeno
-        modified_at: Upraveno
+        updated_at: Upraveno
         actions: Akce
         note: Poznámka
         referer: Referer

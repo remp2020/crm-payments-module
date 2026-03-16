@@ -239,7 +239,7 @@ admin:
     payment_gateways:
         code: Code
         created_at: Angelegt am
-        modified_at: Bearbeitet am
+        updated_at: Bearbeitet am
         graph:
             title: Zahlungsdienstleister
             help: Zahlungen über den Zahlungsdienstleister

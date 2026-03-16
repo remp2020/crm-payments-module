@@ -99,7 +99,7 @@ class PaymentsRepository extends Repository
             'payment_gateway_id' => $paymentGateway->id,
             'status' => PaymentStatusEnum::Form->value,
             'created_at' => new DateTime(),
-            'modified_at' => new DateTime(),
+            'updated_at' => new DateTime(),
             'variable_symbol' => $variableSymbol ?: $this->variableSymbol->getNew($paymentGateway),
             'ip' => Request::getIp(),
             'user_agent' => Request::getUserAgent(),
@@ -214,7 +214,7 @@ class PaymentsRepository extends Repository
             'payment_gateway_id' => $payment->payment_gateway_id,
             'status' => PaymentStatusEnum::Form->value,
             'created_at' => new DateTime(),
-            'modified_at' => new DateTime(),
+            'updated_at' => new DateTime(),
             'variable_symbol' => $payment->variable_symbol,
             'ip' => Request::getIp(),
             'user_agent' => Request::getUserAgent(),
@@ -314,7 +314,7 @@ class PaymentsRepository extends Repository
         if (isset($data['amount'])) {
             $data['amount'] = floatval($data['amount']);
         }
-        $data['modified_at'] = new DateTime();
+        $data['updated_at'] = new DateTime();
         return parent::update($row, $data);
     }
 
@@ -334,7 +334,7 @@ class PaymentsRepository extends Repository
 
             $data = [
                 'status' => $status,
-                'modified_at' => new DateTime(),
+                'updated_at' => new DateTime(),
             ];
             if (in_array($status, [PaymentStatusEnum::Paid->value, PaymentStatusEnum::Prepaid->value, PaymentStatusEnum::Authorized->value], true) && !$payment->paid_at) {
                 $data['paid_at'] = new DateTime();
@@ -469,10 +469,10 @@ class PaymentsRepository extends Repository
             }
         }
         if ($start) {
-            $where['(paid_at IS NOT NULL AND paid_at >= ?) OR (paid_at IS NULL AND modified_at >= ?)'] = [$start, $start];
+            $where['(paid_at IS NOT NULL AND paid_at >= ?) OR (paid_at IS NULL AND updated_at >= ?)'] = [$start, $start];
         }
         if ($end) {
-            $where['(paid_at IS NOT NULL AND paid_at < ?) OR (paid_at IS NULL AND modified_at < ?)'] = [$end, $end];
+            $where['(paid_at IS NOT NULL AND paid_at < ?) OR (paid_at IS NULL AND updated_at < ?)'] = [$end, $end];
         }
         if ($recurrentCharge !== null) {
             $where['recurrent_charge'] = $recurrentCharge;
