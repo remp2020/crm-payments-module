@@ -615,6 +615,8 @@ admin:
             param_label: Content access type
         recurrent_payment_card_expired:
             label: Payment card expires earlier than charge date
+        recurrent_payment_cycle:
+            label: Recurrent payment cycle
 
     change_payment_country:
         title: Change the payment country

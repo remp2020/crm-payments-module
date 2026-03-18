@@ -615,6 +615,8 @@ admin:
             param_label: Typ přístupu k obsahu
         recurrent_payment_card_expired:
             label: Platební karta expiruje dříve než datum platby
+        recurrent_payment_cycle:
+            label: Cyklus opakované platby
 
     change_payment_country:
         title: Změnit zemi platby

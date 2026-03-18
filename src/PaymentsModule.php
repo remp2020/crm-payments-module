@@ -139,6 +139,7 @@ use Crm\PaymentsModule\Scenarios\PaymentIsRecurrentChargeCriteria;
 use Crm\PaymentsModule\Scenarios\PaymentScenarioConditionModel;
 use Crm\PaymentsModule\Scenarios\PaymentStatusCriteria;
 use Crm\PaymentsModule\Scenarios\RecurrentPaymentCardExpiredCriteria;
+use Crm\PaymentsModule\Scenarios\RecurrentPaymentCycleCriteria;
 use Crm\PaymentsModule\Scenarios\RecurrentPaymentScenarioConditionModel;
 use Crm\PaymentsModule\Scenarios\RecurrentPaymentStateCriteria;
 use Crm\PaymentsModule\Scenarios\RecurrentPaymentStatusCriteria;
@@ -557,6 +558,7 @@ class PaymentsModule extends CrmModule
         $scenariosCriteriaStorage->register('recurrent_payment', RecurrentPaymentStatusCriteria::KEY, $this->getInstance(RecurrentPaymentStatusCriteria::class));
         $scenariosCriteriaStorage->register('recurrent_payment', RecurrentPaymentSubscriptionTypeContentAccessCriteria::KEY, $this->getInstance(RecurrentPaymentSubscriptionTypeContentAccessCriteria::class));
         $scenariosCriteriaStorage->register('recurrent_payment', RecurrentPaymentCardExpiredCriteria::KEY, $this->getInstance(RecurrentPaymentCardExpiredCriteria::class));
+        $scenariosCriteriaStorage->register('recurrent_payment', RecurrentPaymentCycleCriteria::KEY, $this->getInstance(RecurrentPaymentCycleCriteria::class));
 
         $scenariosCriteriaStorage->registerConditionModel(
             'payment',

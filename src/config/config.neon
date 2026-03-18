@@ -141,6 +141,7 @@ services:
 	- Crm\PaymentsModule\Scenarios\RecurrentPaymentStateCriteria
 	- Crm\PaymentsModule\Scenarios\RecurrentPaymentSubscriptionTypeContentAccessCriteria
 	- Crm\PaymentsModule\Scenarios\RecurrentPaymentCardExpiredCriteria
+	- Crm\PaymentsModule\Scenarios\RecurrentPaymentCycleCriteria
 	- Crm\PaymentsModule\Scenarios\PaymentHasSubscriptionCriteria
 	- Crm\PaymentsModule\Scenarios\RecurrentPaymentScenarioConditionModel
 	- Crm\PaymentsModule\Scenarios\DonationAmountCriteria
