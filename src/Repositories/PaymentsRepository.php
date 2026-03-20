@@ -469,10 +469,10 @@ class PaymentsRepository extends Repository
             }
         }
         if ($start) {
-            $where['(paid_at IS NOT NULL AND paid_at >= ?) OR (paid_at IS NULL AND updated_at >= ?)'] = [$start, $start];
+            $where['(paid_at IS NOT NULL AND paid_at >= ?) OR (paid_at IS NULL AND payments.updated_at >= ?)'] = [$start, $start];
         }
         if ($end) {
-            $where['(paid_at IS NOT NULL AND paid_at < ?) OR (paid_at IS NULL AND updated_at < ?)'] = [$end, $end];
+            $where['(paid_at IS NOT NULL AND paid_at < ?) OR (paid_at IS NULL AND payments.updated_at < ?)'] = [$end, $end];
         }
         if ($recurrentCharge !== null) {
             $where['recurrent_charge'] = $recurrentCharge;
