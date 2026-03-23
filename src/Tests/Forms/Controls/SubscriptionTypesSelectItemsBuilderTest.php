@@ -51,7 +51,7 @@ class SubscriptionTypesSelectItemsBuilderTest extends CrmTestCase
             ],
         ]);
 
-        $priceHelper = $this->createMock(PriceHelper::class);
+        $priceHelper = $this->createStub(PriceHelper::class);
 
         $builder = new SubscriptionTypesSelectItemsBuilder($priceHelper);
         $items = $builder->buildSimple($subscriptionTypes);
