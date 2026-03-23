@@ -68,6 +68,12 @@ class PaymentMethodsRepository extends Repository
 
     final public function copyPaymentMethodToUser(ActiveRow $sourcePaymentMethod, ActiveRow $user): ActiveRow
     {
+        $newPaymentMethod = $this->findByExternalToken($user->id, $sourcePaymentMethod->external_token);
+        if ($newPaymentMethod) {
+            // the payment method might already exist on the target user; reuse it
+            return $newPaymentMethod;
+        }
+
         $newPaymentMethod = $this->add(
             userId: $user->id,
             paymentGatewayId: $sourcePaymentMethod->payment_gateway_id,
