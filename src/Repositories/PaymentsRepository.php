@@ -373,7 +373,7 @@ class PaymentsRepository extends Repository
 
     /**
      * @param $variableSymbol
-     * @return ActiveRow
+     * @return ActiveRow|null
      */
     final public function findByVs($variableSymbol)
     {
