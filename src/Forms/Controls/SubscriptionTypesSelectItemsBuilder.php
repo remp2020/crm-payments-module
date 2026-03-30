@@ -3,7 +3,6 @@
 namespace Crm\PaymentsModule\Forms\Controls;
 
 use Crm\ApplicationModule\Helpers\PriceHelper;
-use Exception;
 use Nette\Database\Table\ActiveRow;
 
 class SubscriptionTypesSelectItemsBuilder
@@ -81,8 +80,7 @@ class SubscriptionTypesSelectItemsBuilder
         return match (true) {
             $isDefault && $isVisible => self::CATEGORY_DEFAULT,
             $isVisible => self::CATEGORY_NON_DEFAULT,
-            !$isVisible => self::CATEGORY_HIDDEN,
-            default => throw new Exception('Unknown subscription type category'),
+            default => self::CATEGORY_HIDDEN,
         };
     }
 }
