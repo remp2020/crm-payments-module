@@ -109,7 +109,7 @@ class InstantRefundWidget extends BaseLazyWidget implements PaymentRefundFormDat
         /** @var Form $form */
         $form = $params['form'];
 
-        if (!$form->getComponent('instant_refund', false)) {
+        if (!$form->getComponent(name: 'instant_refund', throw: false)) {
             return;
         }
 

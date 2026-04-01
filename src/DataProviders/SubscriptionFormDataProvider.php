@@ -67,7 +67,7 @@ class SubscriptionFormDataProvider implements SubscriptionFormDataProviderInterf
 
         // attach description and rule for "start time after payment paid" to element
         $elementName = 'start_time';
-        if ($form->getComponent($elementName) !== null) {
+        if ($form->getComponent(name: $elementName, throw: false) !== null) {
             $description = $this->translator->translate(
                 'payments.form.subscription_form.start_time.after_payment.description',
                 ['payment_paid' => $this->userDateHelper->process($payment->paid_at)],
