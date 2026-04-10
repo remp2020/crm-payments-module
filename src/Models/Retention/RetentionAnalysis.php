@@ -9,7 +9,6 @@ use Crm\PaymentsModule\Repositories\PaymentsRepository;
 use Crm\PaymentsModule\Repositories\RetentionAnalysisJobsRepository;
 use Crm\SegmentModule\Models\Segment;
 use Crm\SegmentModule\Models\SegmentFactoryInterface;
-use Crm\SubscriptionsModule\Repositories\SubscriptionsRepository;
 use Nette\Database\Table\ActiveRow;
 use Nette\Utils\DateTime;
 use Nette\Utils\Json;
@@ -33,7 +32,6 @@ class RetentionAnalysis
 
     public function __construct(
         private PaymentsRepository $paymentsRepository,
-        private SubscriptionsRepository $subscriptionsRepository,
         private RetentionAnalysisJobsRepository $retentionAnalysisJobsRepository,
         private DataProviderManager $dataProviderManager,
         private SegmentFactoryInterface $segmentFactory,
@@ -99,9 +97,41 @@ SQL;
             'started_at' => new \DateTime(),
         ]);
 
+        try {
+            $jobParams = $this->normalizeJobParams($job);
+            $now = DateTime::from($this->getNow());
+            [$paymentsSql, $paymentsSqlParams] = $this->loadPaymentsSql($jobParams);
+
+            $retentionSql = $this->buildRetentionSql($jobParams, $paymentsSql, $paymentsSqlParams, $now);
+            $retentionSqlParams = array_merge($paymentsSqlParams, [$now, $now]);
+
+            $results = $this->paymentsRepository->getDatabase()->query($retentionSql, ...$retentionSqlParams);
+            $retention = $this->buildRetentionFromResults($results);
+
+            $this->retentionAnalysisJobsRepository->update($job, [
+                'results' => Json::encode(array_filter([
+                    'retention' => $retention,
+                    'version' => self::VERSION,
+                ])),
+                'finished_at' => new \DateTime(),
+                'state' => RetentionAnalysisJobsRepository::STATE_FINISHED,
+            ]);
+        } catch (\Exception $e) {
+            Debugger::log("Retention analysis job #{$job->id} failed: " . $e->getMessage(), ILogger::ERROR);
+            $this->retentionAnalysisJobsRepository->update($job, [
+                'state' => RetentionAnalysisJobsRepository::STATE_FAILED,
+                'finished_at' => new \DateTime(),
+            ]);
+            return false;
+        }
+
+        return true;
+    }
+
+    private function normalizeJobParams(ActiveRow $job): array
+    {
         $jobParams = Json::decode($job->params, forceArrays: true);
 
-        // Fix missing params from previous versions
         $dirtyFlag = false;
         if (!isset($jobParams['zero_period_length'])) {
             $jobParams['zero_period_length'] = 31;
@@ -121,62 +151,95 @@ SQL;
             ]);
         }
 
-        $now = DateTime::from($this->getNow());
-        [$sql, $sqlParams] = $this->loadPaymentsSql($jobParams);
+        return $jobParams;
+    }
 
-        $payments = $this->paymentsRepository->getDatabase()->query($sql, ...$sqlParams);
+    private function buildRetentionSql(array $jobParams, string $paymentsSql, array $paymentsSqlParams, DateTime $now): string
+    {
+        $zeroPeriodLength = (int) $jobParams['zero_period_length'];
+        $periodLength = (int) $jobParams['period_length'];
+        $maxPeriods = $this->calculateMaxPeriods($paymentsSql, $paymentsSqlParams, $now, $zeroPeriodLength, $periodLength);
+        $partitionKeySql = $this->getPartitionKeySql($jobParams, 'up');
 
-        $retention = [];
-        foreach ($payments as $record) {
-            [$periods, $lastIncomplete] = $this->getPeriods($record->paid_at, $now, $jobParams);
-            $paidAtKey = $this->getPartition($record->paid_at, $jobParams);
+        return <<<SQL
+WITH RECURSIVE period_numbers AS (
+    SELECT 0 AS period_num
+    UNION ALL
+    SELECT period_num + 1 FROM period_numbers WHERE period_num < {$maxPeriods}
+),
+payments_base AS (
+    {$paymentsSql}
+),
+user_periods AS (
+    SELECT
+        pb.user_id,
+        pb.paid_at,
+        pn.period_num,
+        CASE WHEN pn.period_num = 0 THEN pb.paid_at
+             ELSE DATE_ADD(pb.paid_at, INTERVAL ({$zeroPeriodLength} + {$periodLength} * (pn.period_num - 1)) DAY)
+        END AS period_start,
+        CASE WHEN pn.period_num = 0 THEN DATE_ADD(pb.paid_at, INTERVAL {$zeroPeriodLength} DAY)
+             ELSE DATE_ADD(pb.paid_at, INTERVAL ({$zeroPeriodLength} + {$periodLength} * pn.period_num) DAY)
+        END AS period_end
+    FROM payments_base pb
+    CROSS JOIN period_numbers pn
+    WHERE CASE WHEN pn.period_num = 0 THEN pb.paid_at
+               ELSE DATE_ADD(pb.paid_at, INTERVAL ({$zeroPeriodLength} + {$periodLength} * (pn.period_num - 1)) DAY)
+          END < ?
+)
+SELECT
+    {$partitionKeySql} AS partition_key,
+    up.period_num,
+    COUNT(*) AS users_in_period,
+    SUM(
+        CASE
+            WHEN up.period_num = 0 THEN 1
+            WHEN EXISTS (
+                SELECT 1 FROM subscriptions s
+                WHERE s.user_id = up.user_id
+                AND s.end_time >= up.period_start
+                AND s.start_time < up.period_end
+            ) THEN 1
+            ELSE 0
+        END
+    ) AS retained_count,
+    MAX(CASE WHEN up.period_end > ? THEN 1 ELSE 0 END) AS incomplete
+FROM user_periods up
+GROUP BY partition_key, up.period_num
+ORDER BY partition_key, up.period_num
+SQL;
+    }
 
-            foreach ($periods as $periodNumber => $period) {
-                if (!array_key_exists($paidAtKey, $retention)) {
-                    $retention[$paidAtKey] = [];
-                }
+    private function calculateMaxPeriods(string $paymentsSql, array $paymentsSqlParams, DateTime $now, int $zeroPeriodLength, int $periodLength): int
+    {
+        $earliestPaidAtRow = $this->paymentsRepository->getDatabase()
+            ->query("SELECT MIN(paid_at) as earliest FROM ({$paymentsSql}) t", ...$paymentsSqlParams)
+            ->fetch();
 
-                if (!array_key_exists($periodNumber, $retention[$paidAtKey])) {
-                    $retention[$paidAtKey][$periodNumber]['count'] = 0;
-                    $retention[$paidAtKey][$periodNumber]['users_in_period'] = 0;
-                }
+        $earliestDate = $earliestPaidAtRow && $earliestPaidAtRow->earliest !== null ? DateTime::from($earliestPaidAtRow->earliest) : $now;
+        $totalDays = max(0, (int) $now->diff($earliestDate)->days);
 
-                $retention[$paidAtKey][$periodNumber]['users_in_period']++;
-
-                if ($periodNumber === 0) {
-                    // Zero-period is included by definition,
-                    // since it has 100% of retention rate (user has bought subscription within the period)
-                    $retention[$paidAtKey][$periodNumber]['count']++;
-                } else {
-                    $subscriptionsCount = $this->subscriptionsRepository->getTable()
-                        ->where([
-                            'user_id = ?' => $record->user_id,
-                            'end_time >= ?' => $period[0],
-                            'start_time < ?' => $period[1],
-                        ])
-                        ->count('*');
-
-                    if ($subscriptionsCount > 0) {
-                        $retention[$paidAtKey][$periodNumber]['count']++;
-                    }
-
-                    if ($lastIncomplete && ($periodNumber === count($periods) - 1)) {
-                        $retention[$paidAtKey][$periodNumber]['incomplete'] = true;
-                    }
-                }
-            }
+        if ($periodLength <= 0) {
+            return 1;
         }
 
-        $this->retentionAnalysisJobsRepository->update($job, [
-            'results' => Json::encode(array_filter([
-                'retention' => $retention,
-                'version' => self::VERSION,
-            ])),
-            'finished_at' => new \DateTime(),
-            'state' => RetentionAnalysisJobsRepository::STATE_FINISHED,
-        ]);
+        return (int) ceil(max(0, $totalDays - $zeroPeriodLength) / $periodLength) + 1;
+    }
 
-        return true;
+    private function buildRetentionFromResults(iterable $results): array
+    {
+        $retention = [];
+        foreach ($results as $row) {
+            $retention[$row->partition_key][$row->period_num] = [
+                'count' => (int) $row->retained_count,
+                'users_in_period' => (int) $row->users_in_period,
+            ];
+
+            if ($row->incomplete) {
+                $retention[$row->partition_key][$row->period_num]['incomplete'] = true;
+            }
+        }
+        return $retention;
     }
 
     private function loadPaymentsSql(array $inputParams): array
@@ -260,46 +323,22 @@ SQL;
         $sql = <<<SQL
     SELECT MIN(payments.paid_at) as paid_at, payments.user_id FROM payments
     {$joins}
-    WHERE {$wheres}  
+    WHERE {$wheres}
     GROUP BY payments.user_id
 SQL;
         return [$sql, $whereParams];
     }
 
-    private function getPartition(DateTime $paidAt, array $jobParams): string
+    private function getPartitionKeySql(array $jobParams, string $alias): string
     {
-        if ($jobParams['partition'] === self::PARTITION_WEEK) {
-            return $paidAt->format('o-W');
+        if ($jobParams['partition'] === self::PARTITION_MONTH) {
+            return "DATE_FORMAT({$alias}.paid_at, '%Y-%m')";
         }
 
-        if ($jobParams['partition'] === self::PARTITION_MONTH) {
-            return $paidAt->format('Y-m');
+        if ($jobParams['partition'] === self::PARTITION_WEEK) {
+            return "CONCAT(YEARWEEK({$alias}.paid_at, 3) DIV 100, '-', LPAD(YEARWEEK({$alias}.paid_at, 3) MOD 100, 2, '0'))";
         }
 
         throw new \InvalidArgumentException("parameter 'partition' has invalid value " . $jobParams['partition']);
-    }
-
-    private function getPeriods(DateTime $paidAt, DateTime $upTo, array $jobParams): array
-    {
-        $zeroPeriodInterval = new \DateInterval('P' . (int) $jobParams['zero_period_length'] . 'D');
-        $periodInterval = new \DateInterval('P' . (int) $jobParams['period_length'] . 'D');
-        $periods = [];
-
-        $startPeriodIterator = (clone $paidAt)->add($zeroPeriodInterval);
-        $lastIncomplete = false;
-
-        // Zero period may have different length
-        $periods[] = [clone $paidAt, clone $startPeriodIterator];
-
-        while ($startPeriodIterator < $upTo) {
-            $endOfPeriod = (clone $startPeriodIterator)->add($periodInterval);
-            if ($endOfPeriod > $upTo) {
-                $lastIncomplete = true;
-            }
-
-            $periods[] = [clone $startPeriodIterator, $endOfPeriod];
-            $startPeriodIterator->add($periodInterval);
-        }
-        return [$periods, $lastIncomplete];
     }
 }
