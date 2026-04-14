@@ -5,7 +5,7 @@ namespace Crm\PaymentsModule\Hermes;
 use Crm\ApplicationModule\Application\Managers\ApplicationMountManager;
 use Crm\PaymentsModule\Models\AdminFilterFormData;
 use Crm\PaymentsModule\Models\FileSystem;
-use League\Csv\ByteSequence;
+use League\Csv\Bom;
 use League\Csv\Writer;
 use Nette\Utils\Random;
 use Tomaj\Hermes\Handler\HandlerInterface;
@@ -35,13 +35,13 @@ class ExportPaymentsHandler implements HandlerInterface
 
         $tmpFile = tmpfile();
 
-        $writer = Writer::createFromStream($tmpFile);
+        $writer = Writer::from($tmpFile);
         $writer->setDelimiter(';');
         $writer->setEnclosure('"');
-        $writer->setOutputBOM(ByteSequence::BOM_UTF8);
+        $writer->setOutputBOM(Bom::Utf8->value);
 
         // hopefully temporary, League\Csv\Stream ignores output BOM set on the writer
-        fwrite($tmpFile, ByteSequence::BOM_UTF8);
+        fwrite($tmpFile, Bom::Utf8->value);
 
         $writer->insertOne([
             'id',
