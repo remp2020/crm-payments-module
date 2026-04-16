@@ -12,6 +12,7 @@ use Crm\PaymentsModule\Models\Payment\PaymentStatusEnum;
 use Crm\PaymentsModule\Repositories\PaymentLogsRepository;
 use Crm\PaymentsModule\Repositories\PaymentsRepository;
 use Crm\PaymentsModule\Repositories\RecurrentPaymentsRepository;
+use Exception;
 use League\Event\Emitter;
 use Nette\Http\Request;
 use Nette\Utils\Json;
@@ -38,7 +39,7 @@ class PaymentProcessor
 
         $gateway = $this->gatewayFactory->getGateway($payment->payment_gateway->code);
         if (!$gateway instanceof GatewayAbstract) {
-            throw new \Exception('To use PaymentProcessor, the gateway must be implementation of GatewayAbstract: ' . get_class($gateway));
+            throw new Exception('To use PaymentProcessor, the gateway must be implementation of GatewayAbstract: ' . get_class($gateway));
         }
 
         $gateway->begin($payment);
@@ -66,7 +67,7 @@ class PaymentProcessor
     {
         $gateway = $this->gatewayFactory->getGateway($payment->payment_gateway->code);
         if (!$gateway instanceof GatewayAbstract) {
-            throw new \Exception('To use PaymentProcessor, the gateway must be implementation of GatewayAbstract: ' . get_class($gateway));
+            throw new Exception('To use PaymentProcessor, the gateway must be implementation of GatewayAbstract: ' . get_class($gateway));
         }
 
         if ($payment->status === PaymentStatusEnum::Paid->value) {
@@ -126,9 +127,9 @@ class PaymentProcessor
 
     public function createRecurrentPayment($payment, $gateway): void
     {
-        if ((boolean) $payment->payment_gateway->is_recurrent) {
+        if ((bool) $payment->payment_gateway->is_recurrent) {
             if (!$gateway instanceof RecurrentPaymentInterface) {
-                throw new \Exception("Gateway flagged with 'is_recurrent' flag needs to implement RecurrentPaymentInterface: " . get_class($gateway));
+                throw new Exception("Gateway flagged with 'is_recurrent' flag needs to implement RecurrentPaymentInterface: " . get_class($gateway));
             }
             if ($gateway->hasRecurrentToken()) {
                 $chargeAt = null;

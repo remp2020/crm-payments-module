@@ -8,27 +8,20 @@ use Tracy\Debugger;
 
 class CidGetterDownloader
 {
-    private string $imapHost;
-
-    private string $imapPort;
-
-    private string $username;
-
-    private string $password;
-
     public function __construct(
-        ApplicationConfig $config,
-        private ImapClient $imapClient,
+        private readonly ApplicationConfig $config,
+        private readonly ImapClient $imapClient,
     ) {
-        $this->imapHost = $config->get('tb_confirmation_host');
-        $this->imapPort = $config->get('tb_confirmation_port');
-        $this->username = $config->get('tb_confirmation_username');
-        $this->password = $config->get('tb_confirmation_password');
     }
 
-    public function download($callback, $variableSymbol)
+    public function download($callback, $variableSymbol): void
     {
-        $parts = explode('/', $this->imapPort);
+        $imapHost = $this->config->get('tb_confirmation_host');
+        $imapPort = $this->config->get('tb_confirmation_port');
+        $username = $this->config->get('tb_confirmation_username');
+        $password = $this->config->get('tb_confirmation_password');
+
+        $parts = explode('/', $imapPort);
         $port = (int) $parts[0];
         $encryption = $parts[2] ?? ($parts[1] !== 'imap' ? $parts[1] : 'ssl');
         $validateCert = !in_array('novalidate-cert', $parts, true);
@@ -40,12 +33,12 @@ class CidGetterDownloader
         $criteria->setText($variableSymbol);
 
         $this->imapClient->fetch(
-            $this->imapHost,
+            $imapHost,
             $port,
             $encryption,
             $validateCert,
-            $this->username,
-            $this->password,
+            $username,
+            $password,
             $criteria,
             function (ImapMessage $message) use ($callback) {
                 $tatraBankaMailParser = new TatraBankaSimpleMailParser();
