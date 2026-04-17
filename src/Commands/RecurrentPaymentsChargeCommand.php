@@ -80,6 +80,9 @@ class RecurrentPaymentsChargeCommand extends Command
         $this->line('');
 
         foreach ($chargeableRecurrentPayments as $recurrentPayment) {
+            // Refresh. The iteration can take longer and the state of some payments could have already changed (webhooks).
+            $recurrentPayment = $this->recurrentPaymentsRepository->find($recurrentPayment->id);
+
             try {
                 $this->validateRecurrentPayment($recurrentPayment);
             } catch (RecurrentPaymentFastCharge $e) {
