@@ -13,6 +13,7 @@ use Crm\PaymentsModule\Models\PaymentItem\PaymentItemContainer;
 use Crm\PaymentsModule\Models\PaymentItem\PaymentItemContainerFactory;
 use Crm\PaymentsModule\Models\RecurrentPayment\RecurrentPaymentStateEnum;
 use Crm\PaymentsModule\Models\RecurrentPaymentsResolver\PaymentData;
+use Crm\PaymentsModule\Models\VatRate\VatProcessor;
 use Crm\PaymentsModule\Repositories\RecurrentPaymentsRepository;
 use Crm\SubscriptionsModule\Models\PaymentItem\SubscriptionTypePaymentItem;
 use League\Event\Emitter;
@@ -32,6 +33,7 @@ class RecurrentPaymentsResolver
         private OneStopShop $oneStopShop,
         private PaymentItemContainerFactory $paymentItemContainerFactory,
         private DataProviderManager $dataProviderManager,
+        private VatProcessor $vatProcessor,
     ) {
     }
 
@@ -106,7 +108,15 @@ class RecurrentPaymentsResolver
         }
 
         $paymentData = $this->resolvePaymentData($recurrentPayment);
-        return $paymentData->customChargeAmount ?? $paymentData->paymentItemContainer->totalPrice();
+        if ($paymentData->customChargeAmount !== null) {
+            return $paymentData->customChargeAmount;
+        }
+        $this->vatProcessor->applyVatAdjustments(
+            $paymentData->paymentItemContainer,
+            $recurrentPayment->user,
+            $paymentData->paymentCountry,
+        );
+        return $paymentData->paymentItemContainer->totalPrice();
     }
 
     public function resolveAddress(ActiveRow $recurrentPayment): ?ActiveRow
