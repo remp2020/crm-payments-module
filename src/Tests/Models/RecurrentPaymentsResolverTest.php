@@ -5,6 +5,7 @@ namespace Crm\PaymentsModule\Tests\Models;
 
 use Crm\PaymentsModule\Models\Payment\PaymentStatusEnum;
 use Crm\PaymentsModule\Models\PaymentItem\PaymentItemContainer;
+use Crm\PaymentsModule\Models\RecurrentPayment\RecurrentPaymentStateEnum;
 use Crm\PaymentsModule\Models\RecurrentPaymentsResolver;
 use Crm\PaymentsModule\Tests\PaymentsTestCase;
 use Crm\SubscriptionsModule\Models\Builder\SubscriptionTypeBuilder;
@@ -351,6 +352,81 @@ class RecurrentPaymentsResolverTest extends PaymentsTestCase
         $resolvedSubscriptionType = $this->recurrentPaymentsResolver->resolveSubscriptionType($recurrentPayment);
 
         $this->assertEquals($subscriptionType->id, $resolvedSubscriptionType->id);
+    }
+
+    /* ***********************************************************************
+     * ResolveChargeAmount
+     * ********************************************************************* */
+
+    #[DataProvider('dataProviderForResolveChargeAmount')]
+    public function testResolveChargeAmount(
+        ?float $paymentAmount,
+        ?float $customAmount,
+        bool $setPaymentId,
+        ?string $recurrentPaymentState,
+        float $expectedAmount,
+    ): void {
+        $subscriptionType = $this->getSubscriptionTypeByCode('subscription_type_test');
+        $recurrentPayment = $this->createRecurrentPaymentWithSubscriptionType($subscriptionType);
+
+        if ($paymentAmount !== null) {
+            $this->paymentsRepository->update($recurrentPayment->parent_payment, ['amount' => $paymentAmount]);
+        }
+
+        $recurrentUpdate = [];
+        if ($customAmount !== null) {
+            $recurrentUpdate['custom_amount'] = $customAmount;
+        }
+        if ($setPaymentId) {
+            $recurrentUpdate['payment_id'] = $recurrentPayment->parent_payment_id;
+        }
+        if ($recurrentPaymentState !== null) {
+            $recurrentUpdate['state'] = $recurrentPaymentState;
+        }
+        if (!empty($recurrentUpdate)) {
+            $this->recurrentPaymentsRepository->update($recurrentPayment, $recurrentUpdate);
+            $recurrentPayment = $this->recurrentPaymentsRepository->find($recurrentPayment->id);
+        }
+
+        $this->assertEquals($expectedAmount, $this->recurrentPaymentsResolver->resolveChargeAmount($recurrentPayment));
+    }
+
+    public static function dataProviderForResolveChargeAmount(): array
+    {
+        return [
+            // Active + payment_id set: linked payment amount is returned, custom_amount is ignored
+            'active_with_payment_id' => [
+                'paymentAmount' => 9.99,
+                'customAmount' => 5.00,
+                'setPaymentId' => true,
+                'recurrentPaymentState' => null,
+                'expectedAmount' => 9.99,
+            ],
+            // Non-active + payment_id set: payment_id is ignored, subscription type price is returned
+            'non_active_ignores_payment_id' => [
+                'paymentAmount' => 9.99,
+                'customAmount' => null,
+                'setPaymentId' => true,
+                'recurrentPaymentState' => RecurrentPaymentStateEnum::Charged->value,
+                'expectedAmount' => 1.99,
+            ],
+            // Active, no payment_id, no custom_amount: subscription type price is returned
+            'active_without_payment_id' => [
+                'paymentAmount' => null,
+                'customAmount' => null,
+                'setPaymentId' => false,
+                'recurrentPaymentState' => null,
+                'expectedAmount' => 1.99,
+            ],
+            // Active, no payment_id, custom_amount set: custom_amount is returned
+            'active_with_custom_amount' => [
+                'paymentAmount' => null,
+                'customAmount' => 5.00,
+                'setPaymentId' => false,
+                'recurrentPaymentState' => null,
+                'expectedAmount' => 5.00,
+            ],
+        ];
     }
 
     /* ***********************************************************************
