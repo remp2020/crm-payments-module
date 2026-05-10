@@ -3,14 +3,27 @@ declare(strict_types=1);
 
 namespace Crm\PaymentsModule\Tests\Models;
 
+use Crm\ApplicationModule\Models\DataProvider\DataProviderManager;
+use Crm\InvoicesModule\DataProviders\VatModeDataProvider;
+use Crm\InvoicesModule\Models\Vat\VatModeDetector;
+use Crm\InvoicesModule\Models\Vat\VatValidatorService;
+use Crm\InvoicesModule\Models\Vat\VatValidatorServiceResponse;
+use Crm\InvoicesModule\Seeders\AddressTypesSeeder;
+use Crm\PaymentsModule\DataProviders\VatModeDataProviderInterface;
 use Crm\PaymentsModule\Models\Payment\PaymentStatusEnum;
 use Crm\PaymentsModule\Models\PaymentItem\PaymentItemContainer;
 use Crm\PaymentsModule\Models\RecurrentPayment\RecurrentPaymentStateEnum;
 use Crm\PaymentsModule\Models\RecurrentPaymentsResolver;
+use Crm\PaymentsModule\Models\VatRate\VatMode;
+use Crm\PaymentsModule\Repositories\VatRatesRepository;
 use Crm\PaymentsModule\Tests\PaymentsTestCase;
 use Crm\SubscriptionsModule\Models\Builder\SubscriptionTypeBuilder;
 use Crm\SubscriptionsModule\Models\PaymentItem\SubscriptionTypePaymentItem;
 use Crm\SubscriptionsModule\Repositories\SubscriptionTypesRepository;
+use Crm\UsersModule\Repositories\AddressTypesRepository;
+use Crm\UsersModule\Repositories\AddressesMetaRepository;
+use Crm\UsersModule\Repositories\AddressesRepository;
+use Crm\UsersModule\Repositories\CountriesRepository;
 use Nette\Database\Table\ActiveRow;
 use PHPUnit\Framework\Attributes\DataProvider;
 
@@ -18,6 +31,9 @@ class RecurrentPaymentsResolverTest extends PaymentsTestCase
 {
     private RecurrentPaymentsResolver $recurrentPaymentsResolver;
     private SubscriptionTypesRepository $subscriptionTypesRepository;
+    private AddressesRepository $addressesRepository;
+    private CountriesRepository $countriesRepository;
+    private VatRatesRepository $vatRatesRepository;
 
     /** @var array<ActiveRow> */
     private array $subscriptionTypes;
@@ -28,11 +44,41 @@ class RecurrentPaymentsResolverTest extends PaymentsTestCase
 
         $this->recurrentPaymentsResolver = $this->inject(RecurrentPaymentsResolver::class);
         $this->subscriptionTypesRepository = $this->getRepository(SubscriptionTypesRepository::class);
+        $this->addressesRepository = $this->getRepository(AddressesRepository::class);
+        $this->countriesRepository = $this->getRepository(CountriesRepository::class);
+        $this->vatRatesRepository = $this->getRepository(VatRatesRepository::class);
+
+        $this->countriesRepository->setDefaultCountry('SK');
+        $this->vatRatesRepository->upsert($this->countriesRepository->defaultCountry(), 20);
+
+        /** @var DataProviderManager $dataProviderManager */
+        $dataProviderManager = $this->inject(DataProviderManager::class);
+        $dataProviderManager->registerDataProvider(
+            VatModeDataProviderInterface::PATH,
+            $this->inject(VatModeDataProvider::class),
+        );
     }
 
     public function tearDown(): void
     {
         parent::tearDown();
+    }
+
+    public function requiredRepositories(): array
+    {
+        return array_merge(parent::requiredRepositories(), [
+            AddressesRepository::class,
+            AddressTypesRepository::class,
+            AddressesMetaRepository::class,
+            VatRatesRepository::class,
+        ]);
+    }
+
+    public function requiredSeeders(): array
+    {
+        return array_merge(parent::requiredSeeders(), [
+            AddressTypesSeeder::class,
+        ]);
     }
 
     /* ***********************************************************************
@@ -364,9 +410,18 @@ class RecurrentPaymentsResolverTest extends PaymentsTestCase
         ?float $customAmount,
         bool $setPaymentId,
         ?string $recurrentPaymentState,
+        ?VatMode $vatMode,
         float $expectedAmount,
     ): void {
         $subscriptionType = $this->getSubscriptionTypeByCode('subscription_type_test');
+
+        // vat mode has to be applied before payment is created
+        if ($vatMode === VatMode::B2BReverseCharge) {
+            $foreignCountry = $this->countriesRepository->findByIsoCode('FR');
+            $this->addCompanyInvoiceAddress($this->getUser(), $foreignCountry, 'some_company_id', 'some_vat_id');
+            $this->mockVatValidator();
+        }
+
         $recurrentPayment = $this->createRecurrentPaymentWithSubscriptionType($subscriptionType);
 
         if ($paymentAmount !== null) {
@@ -400,6 +455,7 @@ class RecurrentPaymentsResolverTest extends PaymentsTestCase
                 'customAmount' => 5.00,
                 'setPaymentId' => true,
                 'recurrentPaymentState' => null,
+                'vatMode' => null,
                 'expectedAmount' => 9.99,
             ],
             // Non-active + payment_id set: payment_id is ignored, subscription type price is returned
@@ -407,7 +463,8 @@ class RecurrentPaymentsResolverTest extends PaymentsTestCase
                 'paymentAmount' => 9.99,
                 'customAmount' => null,
                 'setPaymentId' => true,
-                'recurrentPaymentState' => RecurrentPaymentStateEnum::Charged->value,
+                'recurrentPaymentState' => RecurrentPaymentStateEnum::UserStop->value,
+                'vatMode' => null,
                 'expectedAmount' => 1.99,
             ],
             // Active, no payment_id, no custom_amount: subscription type price is returned
@@ -416,6 +473,7 @@ class RecurrentPaymentsResolverTest extends PaymentsTestCase
                 'customAmount' => null,
                 'setPaymentId' => false,
                 'recurrentPaymentState' => null,
+                'vatMode' => null,
                 'expectedAmount' => 1.99,
             ],
             // Active, no payment_id, custom_amount set: custom_amount is returned
@@ -424,6 +482,49 @@ class RecurrentPaymentsResolverTest extends PaymentsTestCase
                 'customAmount' => 5.00,
                 'setPaymentId' => false,
                 'recurrentPaymentState' => null,
+                'vatMode' => null,
+                'expectedAmount' => 5.00,
+            ],
+
+            // ****************************************************************
+            // REVERSE CHARGE
+
+            // Active + payment_id set: linked payment amount is returned, custom_amount is ignored
+            // (vat mode doesn't affect amount of existing payment)
+            'reverse_charge_-_active_with_payment_id' => [
+                'paymentAmount' => 9.99,
+                'customAmount' => 5.00,
+                'setPaymentId' => true,
+                'recurrentPaymentState' => null,
+                'vatMode' => VatMode::B2BReverseCharge,
+                'expectedAmount' => 9.99,
+            ],
+            // Non-active + payment_id set: payment_id is ignored, subscription type price WITHOUT VAT is returned
+            'reverse_charge_-_non_active_ignores_payment_id' => [
+                'paymentAmount' => 9.99,
+                'customAmount' => null,
+                'setPaymentId' => true,
+                'recurrentPaymentState' => RecurrentPaymentStateEnum::UserStop->value,
+                'vatMode' => VatMode::B2BReverseCharge,
+                'expectedAmount' => 1.66,
+            ],
+            // Active, no payment_id, no custom_amount: subscription type price WITHOUT VAT is returned
+            'reverse_charge_-_active_without_payment_id' => [
+                'paymentAmount' => null,
+                'customAmount' => null,
+                'setPaymentId' => false,
+                'recurrentPaymentState' => null,
+                'vatMode' => VatMode::B2BReverseCharge,
+                'expectedAmount' => 1.66,
+            ],
+            // Active, no payment_id, custom_amount set: custom_amount is returned
+            // (vat mode doesn't affect custom amount)
+            'reverse_charge_-_active_with_custom_amount' => [
+                'paymentAmount' => null,
+                'customAmount' => 5.00,
+                'setPaymentId' => false,
+                'recurrentPaymentState' => null,
+                'vatMode' => VatMode::B2BReverseCharge,
                 'expectedAmount' => 5.00,
             ],
         ];
@@ -450,6 +551,44 @@ class RecurrentPaymentsResolverTest extends PaymentsTestCase
                 ->save();
         }
         return $this->subscriptionTypes[$code];
+    }
+
+    private function addCompanyInvoiceAddress(
+        ActiveRow $user,
+        ActiveRow $country,
+        ?string $companyId = null,
+        ?string $companyVatId = null,
+    ): ActiveRow {
+        return $this->addressesRepository->add(
+            user: $user,
+            type: 'invoice',
+            firstName: $user->email,
+            lastName: $user->email,
+            street: 'Sample street',
+            number: '123',
+            city: 'Sample city',
+            zip: '12345',
+            countryId: $country->id,
+            phoneNumber: '1234567890',
+            companyId: $companyId,
+            companyVatId: $companyVatId,
+        );
+    }
+
+    private function mockVatValidator(bool $isValid = true): void
+    {
+        $validatorService = \Mockery::mock(VatValidatorService::class)
+            ->shouldReceive('validateVatId')
+            ->andReturn(new VatValidatorServiceResponse(
+                isValid: $isValid,
+                vatNumber: 'some_vat_id',
+                countryCode: 'FR',
+            ))
+            ->getMock();
+
+        /** @var VatModeDetector $vatModeDetector */
+        $vatModeDetector = $this->inject(VatModeDetector::class);
+        $vatModeDetector->setVatValidatorService($validatorService);
     }
 
     private function createRecurrentPaymentWithSubscriptionType(ActiveRow $subscriptionType)
