@@ -21,7 +21,7 @@ class ImapClient
         callable $callback,
         ?string $processedFolder = null,
     ): void {
-        $cm = new ClientManager(['options' => ['fetch' => IMAP::FT_UID]]);
+        $cm = new ClientManager(['options' => ['fetch' => IMAP::FT_PEEK]]);
         $client = $cm->make([
             'host' => $host,
             'port' => $port,
@@ -75,6 +75,7 @@ class ImapClient
 
             $callback($message);
 
+            $webklexMessage->setFlag("Seen");
             if ($processedFolder !== null) {
                 $webklexMessage->move($processedFolder);
             }

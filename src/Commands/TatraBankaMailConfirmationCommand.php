@@ -44,13 +44,16 @@ class TatraBankaMailConfirmationCommand extends Command
             'processedFolder' => $this->applicationConfig->get('tb_confirmation_processed_folder'),
         ];
 
+        $output->writeln('Processing bank transfer notification emails:');
+
         $criteria = new MailCriteria();
         $criteria->setFrom('b-mail@tatrabanka.sk');
         $criteria->setSubject('Kredit na ucte');
         $criteria->setUnseen(true);
         $connectionOptions['criteria'] = $criteria;
 
-        $this->mailDownloader->download($connectionOptions, function (EmailInterface $email) {
+        $this->mailDownloader->download($connectionOptions, function (EmailInterface $email) use ($output) {
+            $output->write("  * Processing email from {$email->getDate()->format(DATE_RFC3339)}");
             $tatraBankaMailParser = new TatraBankaMailParser();
             $mailContent = $tatraBankaMailParser->parse($email->getBody());
 
@@ -60,11 +63,16 @@ class TatraBankaMailConfirmationCommand extends Command
                     Debugger::ERROR,
                 );
                 // email not parsed; do not process mail
+                $output->writeln(" Unable to parse, see error.log for more information.");
                 return null;
             }
 
-            return $this->mailProcessor->processMail($mailContent, $this->output);
+            $result = $this->mailProcessor->processMail($mailContent, $this->output);
+            $output->writeln($result ? 'OK' : 'FAILED');
+            return $result;
         });
+
+        $output->writeln('Processing e-commerce confirmation emails:');
 
         $criteria = new MailCriteria();
         $criteria->setFrom('b-mail@tatrabanka.sk');
@@ -72,7 +80,8 @@ class TatraBankaMailConfirmationCommand extends Command
         $criteria->setUnseen(true);
 
         $options = array_merge($connectionOptions, ['criteria' => $criteria]);
-        $this->mailDownloader->download($options, function (EmailInterface $email) {
+        $this->mailDownloader->download($options, function (EmailInterface $email) use ($output) {
+            $output->write("  * Processing email from {$email->getDate()->format(DATE_RFC3339)}");
             $tatraBankaSimpleMailParser = new TatraBankaSimpleMailParser();
             $mailContent = $tatraBankaSimpleMailParser->parse($email->getBody());
 
@@ -82,12 +91,16 @@ class TatraBankaMailConfirmationCommand extends Command
                     Debugger::ERROR,
                 );
                 // email not parsed; do not process mail
-                return;
+                $output->writeln(" Unable to parse, see error.log for more information.");
+                return null;
             }
 
-            return $this->mailProcessor->processMail($mailContent, $this->output);
+            $result = $this->mailProcessor->processMail($mailContent, $this->output);
+            $output->writeln($result ? 'OK' : 'FAILED');
+            return $result;
         });
 
+        $output->writeln('Done!');
         return Command::SUCCESS;
     }
 }
