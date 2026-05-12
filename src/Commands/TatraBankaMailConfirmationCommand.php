@@ -53,7 +53,7 @@ class TatraBankaMailConfirmationCommand extends Command
         $connectionOptions['criteria'] = $criteria;
 
         $this->mailDownloader->download($connectionOptions, function (EmailInterface $email) use ($output) {
-            $output->write("  * Processing email from {$email->getDate()->format(DATE_RFC3339)}");
+            $output->writeln("* Processing email from {$email->getDate()->format(DATE_RFC3339)}");
             $tatraBankaMailParser = new TatraBankaMailParser();
             $mailContent = $tatraBankaMailParser->parse($email->getBody());
 
@@ -68,7 +68,7 @@ class TatraBankaMailConfirmationCommand extends Command
             }
 
             $result = $this->mailProcessor->processMail($mailContent, $this->output);
-            $output->writeln($result ? 'OK' : 'FAILED');
+            $output->writeln(sprintf("  * %s", $result ? 'OK' : 'FAILED'));
             return $result;
         });
 
@@ -81,7 +81,7 @@ class TatraBankaMailConfirmationCommand extends Command
 
         $options = array_merge($connectionOptions, ['criteria' => $criteria]);
         $this->mailDownloader->download($options, function (EmailInterface $email) use ($output) {
-            $output->write("  * Processing email from {$email->getDate()->format(DATE_RFC3339)}");
+            $output->writeln("* Processing email from {$email->getDate()->format(DATE_RFC3339)}");
             $tatraBankaSimpleMailParser = new TatraBankaSimpleMailParser();
             $mailContent = $tatraBankaSimpleMailParser->parse($email->getBody());
 
@@ -96,7 +96,7 @@ class TatraBankaMailConfirmationCommand extends Command
             }
 
             $result = $this->mailProcessor->processMail($mailContent, $this->output);
-            $output->writeln($result ? 'OK' : 'FAILED');
+            $output->writeln(sprintf("  * %s", $result ? 'OK' : 'FAILED'));
             return $result;
         });
 
