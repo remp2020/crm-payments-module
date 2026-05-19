@@ -597,7 +597,7 @@ class RecurrentPaymentsRepository extends Repository
                 }
             }
         }
-        if ($chargeBefore) {
+        if ($chargeBefore !== null) {
             if (!$subscription) {
                 // charge before is not allowed for payments without subscription, because in this case:
                 // `charge_at` is calculated from `payment->paid_at`, so with chargeBefore set to value other than zero
