@@ -410,23 +410,25 @@ class PaymentsRepository extends Repository
         return parent::update($payment, ['subscription_id' => $subscription->id]);
     }
 
-    final public function subscriptionPayment(ActiveRow $subscription)
+    final public function subscriptionPayment(ActiveRow $subscription, bool $suppressTracing = false)
     {
         $subscriptionToCheck = $subscription;
 
-        // Data provider may replace subscription to check against
-        // e.g. in case of upgrades, we want to check the original subscription, not the upgraded one
-        // (recurrent_payment parent payment references the original subscription payment)
-        /** @var BaseSubscriptionDataProviderInterface[] $providers */
-        $providers = $this->dataProviderManager->getProviders(
-            'payments.dataprovider.base_subscription',
-            BaseSubscriptionDataProviderInterface::class,
-        );
-        foreach ($providers as $provider) {
-            $replacedSubscription = $provider->getPeriodBaseSubscription($subscription);
-            if ($replacedSubscription) {
-                $subscriptionToCheck = $replacedSubscription;
-                break;
+        if (!$suppressTracing) {
+            // Data provider may replace subscription to check against.
+            // For example in case of upgrades, we want to check the original subscription, not the upgraded one
+            // (recurrent_payment parent payment references the original subscription payment)
+            /** @var BaseSubscriptionDataProviderInterface[] $providers */
+            $providers = $this->dataProviderManager->getProviders(
+                'payments.dataprovider.base_subscription',
+                BaseSubscriptionDataProviderInterface::class,
+            );
+            foreach ($providers as $provider) {
+                $replacedSubscription = $provider->getPeriodBaseSubscription($subscription);
+                if ($replacedSubscription) {
+                    $subscriptionToCheck = $replacedSubscription;
+                    break;
+                }
             }
         }
 
