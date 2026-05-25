@@ -62,6 +62,7 @@ class RecurrentPaymentsRepository extends Repository
         private readonly PaymentMethodsRepository $paymentMethodsRepository,
         private readonly PaymentGatewaysRepository $paymentGatewaysRepository,
         private readonly DataProviderManager $dataProviderManager,
+        private readonly PaymentsRepository $paymentsRepository,
     ) {
         parent::__construct($database);
         $this->auditLogRepository = $auditLogRepository;
@@ -479,10 +480,12 @@ class RecurrentPaymentsRepository extends Repository
 
     final public function isStoppedBySubscription(ActiveRow $subscription): bool
     {
-        $recurrent = $this->recurrentBySubscription($subscription);
-        if ($recurrent !== null) {
+        $payment = $this->paymentsRepository->subscriptionPayment($subscription);
+        if ($payment) {
+            $recurrent = $this->recurrentBySubscription($subscription);
             return $this->isStopped($recurrent);
         }
+
         return false;
     }
 
