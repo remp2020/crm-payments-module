@@ -450,7 +450,7 @@ class RecurrentPaymentsRepository extends Repository
         return $this->getTable()->select('status')->group('status')->fetchPairs('status', 'status');
     }
 
-    final public function recurrentBySubscription(ActiveRow $subscription): ?ActiveRow
+    final public function basePaymentBySubscription(ActiveRow $subscription): ?ActiveRow
     {
         $subscriptionToCheck = $subscription;
 
@@ -470,19 +470,15 @@ class RecurrentPaymentsRepository extends Repository
             }
         }
 
-        $payment = $this->database->table('payments')
-            ->where(['subscription_id' => $subscriptionToCheck->id])
-            ->limit(1)
-            ->fetch();
-
-        return $payment ? $this->recurrent($payment) : null;
+        return $this->paymentsRepository->subscriptionPayment($subscriptionToCheck);
     }
 
     final public function isStoppedBySubscription(ActiveRow $subscription): bool
     {
-        $payment = $this->paymentsRepository->subscriptionPayment($subscription);
+        $payment = $this->basePaymentBySubscription($subscription);
+
         if ($payment) {
-            $recurrent = $this->recurrentBySubscription($subscription);
+            $recurrent = $this->recurrent($payment);
             return $this->isStopped($recurrent);
         }
 

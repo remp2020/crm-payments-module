@@ -3,14 +3,12 @@
 namespace Crm\PaymentsModule\Repositories;
 
 use Crm\ApplicationModule\Hermes\HermesMessage;
-use Crm\ApplicationModule\Models\DataProvider\DataProviderManager;
 use Crm\ApplicationModule\Models\Database\Repository;
 use Crm\ApplicationModule\Models\Redis\RedisClientFactory;
 use Crm\ApplicationModule\Models\Redis\RedisClientTrait;
 use Crm\ApplicationModule\Models\Request;
 use Crm\ApplicationModule\Repositories\AuditLogRepository;
 use Crm\ApplicationModule\Repositories\CacheRepository;
-use Crm\PaymentsModule\DataProviders\BaseSubscriptionDataProviderInterface;
 use Crm\PaymentsModule\Events\NewPaymentEvent;
 use Crm\PaymentsModule\Events\PaymentChangeStatusEvent;
 use Crm\PaymentsModule\Models\OneStopShop\OneStopShop;
@@ -59,7 +57,6 @@ class PaymentsRepository extends Repository
         private UsersRepository $usersRepository,
         private AddressesRepository $addressesRepository,
         private SubscriptionTypesRepository $subscriptionTypesRepository,
-        private DataProviderManager $dataProviderManager,
     ) {
         parent::__construct($database);
         $this->auditLogRepository = $auditLogRepository;
@@ -410,32 +407,9 @@ class PaymentsRepository extends Repository
         return parent::update($payment, ['subscription_id' => $subscription->id]);
     }
 
-    final public function subscriptionPayment(ActiveRow $subscription, bool $suppressTracing = false)
+    final public function subscriptionPayment(ActiveRow $subscription)
     {
-        $subscriptionToCheck = $subscription;
-
-        if (!$suppressTracing) {
-            // Data provider may replace subscription to check against.
-            // For example in case of upgrades, we want to check the original subscription, not the upgraded one
-            // (recurrent_payment parent payment references the original subscription payment)
-            /** @var BaseSubscriptionDataProviderInterface[] $providers */
-            $providers = $this->dataProviderManager->getProviders(
-                'payments.dataprovider.base_subscription',
-                BaseSubscriptionDataProviderInterface::class,
-            );
-            foreach ($providers as $provider) {
-                $replacedSubscription = $provider->getPeriodBaseSubscription($subscription);
-                if ($replacedSubscription) {
-                    $subscriptionToCheck = $replacedSubscription;
-                    break;
-                }
-            }
-        }
-
-        return $this->getTable()
-            ->where('subscription_id = ?', $subscriptionToCheck->id)
-            ->limit(1)
-            ->fetch();
+        return $this->getTable()->where(['subscription_id' => $subscription->id])->limit(1)->fetch();
     }
 
     /**
