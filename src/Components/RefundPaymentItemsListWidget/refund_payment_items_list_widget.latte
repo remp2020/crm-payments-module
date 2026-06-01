@@ -38,7 +38,7 @@
                     </tr>
 
                     {php $totalAmount += $paymentItem->amount * $paymentItem->count}
-                    {php $totalAmountWithoutVat += $paymentItem->amount_without_vat * $paymentItem->count}
+                    {php $totalAmountWithoutVat += Crm\PaymentsModule\Models\PaymentItem\PaymentItemHelper::getPriceWithoutVAT($paymentItem->amount * $paymentItem->count, $paymentItem->vat)}
                 {/foreach}
             </tbody>
         </table>

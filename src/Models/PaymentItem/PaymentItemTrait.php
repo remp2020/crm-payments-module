@@ -58,7 +58,7 @@ trait PaymentItemTrait
 
     public function totalPriceWithoutVAT(): float
     {
-        return $this->unitPriceWithoutVAT() * $this->count();
+        return PaymentItemHelper::getPriceWithoutVAT($this->unitPrice() * $this->count(), $this->vat());
     }
 
     public function forceVat(float $vat): static
