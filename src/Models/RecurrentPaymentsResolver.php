@@ -142,7 +142,9 @@ class RecurrentPaymentsResolver
             $this->lastFailedChargeAt = $recurrentPayment->payment->created_at;
 
             $nextRecurrent = $this->recurrentPaymentsRepository->recurrent($recurrentPayment->payment);
-            $recurrentPayment = $this->resolveFailedRecurrent($nextRecurrent);
+            if ($nextRecurrent) {
+                $recurrentPayment = $this->resolveFailedRecurrent($nextRecurrent);
+            }
         }
         if ($recurrentPayment->state === RecurrentPaymentStateEnum::SystemStop->value && $recurrentPayment->payment_id) {
             $nextRecurrent = $this->recurrentPaymentsRepository->recurrent($recurrentPayment->payment);
