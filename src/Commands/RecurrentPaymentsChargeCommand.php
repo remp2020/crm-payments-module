@@ -230,7 +230,7 @@ class RecurrentPaymentsChargeCommand extends Command
 
     private function validateRecurrentPayment($recurrentPayment): void
     {
-        $parentRecurrentPayment = $this->recurrentPaymentsRepository->getLastWithState($recurrentPayment, RecurrentPaymentStateEnum::Charged->value);
+        $parentRecurrentPayment = $this->recurrentPaymentsRepository->getLastChargedInChain($recurrentPayment);
         if (!$parentRecurrentPayment) {
             return;
         }

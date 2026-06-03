@@ -534,6 +534,17 @@ class RecurrentPaymentsRepository extends Repository
         ])->order('charge_at DESC')->fetch();
     }
 
+    final public function getLastChargedInChain(ActiveRow $recurrentPayment): ?ActiveRow
+    {
+        return $this->getTable()->where([
+            'payment_method.external_token' => $recurrentPayment->payment_method->external_token,
+            'recurrent_payments.payment_gateway_id' => $recurrentPayment->payment_gateway_id,
+            'recurrent_payments.user_id' => $recurrentPayment->user_id,
+            'recurrent_payments.chain_id' => $recurrentPayment->chain_id,
+            'state' => RecurrentPaymentStateEnum::Charged->value,
+        ])->order('charge_at DESC')->fetch();
+    }
+
     final public function getNewestLinkedRecurrent(ActiveRow $recurrentPayment): ActiveRow
     {
         if (!$recurrentPayment->payment_id) {

@@ -359,6 +359,98 @@ class ChainTrackingTest extends PaymentsTestCase
         );
     }
 
+    public function testFastChargeBlockedWithinSameChain(): void
+    {
+        $subscriptionType = $this->createSubscriptionType();
+        $paymentMethod = $this->createTestPaymentMethod();
+
+        // recently charged parent in the chain
+        $parentPayment = $this->createPaymentForSubscription($subscriptionType);
+        $parent = $this->recurrentPaymentsRepository->add(
+            $paymentMethod,
+            $parentPayment,
+            new DateTime(),
+            null,
+            1,
+            chainId: 'chain_a',
+            cycle: 1,
+        );
+        $this->recurrentPaymentsRepository->update($parent, [
+            'state' => RecurrentPaymentStateEnum::Charged->value,
+            'charge_at' => new DateTime(),
+            'payment_id' => $parentPayment->id,
+        ]);
+
+        // chargeable recurrent in the SAME chain, due now
+        $payment = $this->createPaymentForSubscription($subscriptionType);
+        $recurrent = $this->recurrentPaymentsRepository->add(
+            $paymentMethod,
+            $payment,
+            new DateTime(),
+            null,
+            1,
+            chainId: 'chain_a',
+            cycle: 2,
+        );
+
+        $this->recurrentPaymentsChargeCommand->setFastChargeThreshold(24);
+        $this->assertEquals(
+            Command::SUCCESS,
+            $this->recurrentPaymentsChargeCommand->run(new StringInput(''), new NullOutput()),
+        );
+
+        $recurrent = $this->recurrentPaymentsRepository->find($recurrent->id);
+        $this->assertEquals(RecurrentPaymentStateEnum::SystemStop->value, $recurrent->state);
+        $this->assertEquals('Fast charge', $recurrent->note);
+    }
+
+    public function testFastChargeAllowedAcrossDifferentChains(): void
+    {
+        $subscriptionType = $this->createSubscriptionType();
+        // same payment method (token) shared by both chains
+        $paymentMethod = $this->createTestPaymentMethod();
+
+        // recently charged parent in chain A
+        $parentPayment = $this->createPaymentForSubscription($subscriptionType);
+        $parent = $this->recurrentPaymentsRepository->add(
+            $paymentMethod,
+            $parentPayment,
+            new DateTime(),
+            null,
+            1,
+            chainId: 'chain_a',
+            cycle: 1,
+        );
+        $this->recurrentPaymentsRepository->update($parent, [
+            'state' => RecurrentPaymentStateEnum::Charged->value,
+            'charge_at' => new DateTime(),
+            'payment_id' => $parentPayment->id,
+        ]);
+
+        // chargeable recurrent in a DIFFERENT chain, due now
+        $payment = $this->createPaymentForSubscription($subscriptionType);
+        $recurrent = $this->recurrentPaymentsRepository->add(
+            $paymentMethod,
+            $payment,
+            new DateTime(),
+            null,
+            1,
+            chainId: 'chain_b',
+            cycle: 1,
+        );
+
+        $this->recurrentPaymentsChargeCommand->setFastChargeThreshold(24);
+        $this->assertEquals(
+            Command::SUCCESS,
+            $this->recurrentPaymentsChargeCommand->run(new StringInput(''), new NullOutput()),
+        );
+
+        // different chain => not fast charge => charged normally
+        $recurrent = $this->recurrentPaymentsRepository->find($recurrent->id);
+        $this->assertNotEquals('Fast charge', $recurrent->note);
+        $this->assertEquals(RecurrentPaymentStateEnum::Charged->value, $recurrent->state);
+    }
+
     private function chargeNow(ActiveRow $recurrentPayment): ActiveRow
     {
         // Execution order critical: charge_at must be NOW before command runs
