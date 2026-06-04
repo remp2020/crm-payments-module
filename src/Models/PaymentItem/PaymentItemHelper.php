@@ -6,6 +6,7 @@ class PaymentItemHelper
 {
     public static function getPriceWithoutVAT($unitPrice, $vat): float
     {
-        return round($unitPrice / (1 + ($vat / 100)), 2);
+        // $unitPrice / (1 + ($vat / 100))
+        return round(bcdiv($unitPrice, bcadd(1, bcdiv($vat, 100, 4), 4), 4), 2);
     }
 }

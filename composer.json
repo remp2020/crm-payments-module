@@ -7,6 +7,7 @@
   "require": {
     "php": "^8.3",
     "ext-soap": "*",
+    "ext-bcmath": "*",
     "php-http/curl-client": "^2.2.1",
     "tomaj/bank-mails-parser": "^4.0",
     "webklex/php-imap": "^6.0",
