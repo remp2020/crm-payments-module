@@ -133,6 +133,7 @@ services:
 	- Crm\PaymentsModule\DataProviders\SalesFunnelTwigVariablesDataProvider
 	- Crm\PaymentsModule\DataProviders\ChangePaymentCountryDataProvider
 	- Crm\PaymentsModule\DataProviders\PaymentAuditLogHistoryDataProvider
+	- Crm\PaymentsModule\DataProviders\UserStoredCardDataProvider
 	- Crm\PaymentsModule\Scenarios\PaymentStatusCriteria
 	- Crm\PaymentsModule\Scenarios\RecurrentPaymentStatusCriteria
 	- Crm\PaymentsModule\Scenarios\PaymentIsRecurrentChargeCriteria

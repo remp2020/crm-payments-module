@@ -105,6 +105,7 @@ use Crm\PaymentsModule\DataProviders\SubscriptionTransferDataProvider;
 use Crm\PaymentsModule\DataProviders\SubscriptionsWithActiveUnchargedRecurrentEndingWithinPeriodDataProvider;
 use Crm\PaymentsModule\DataProviders\SubscriptionsWithoutExtensionEndingWithinPeriodDataProvider;
 use Crm\PaymentsModule\DataProviders\UniversalSearchDataProvider;
+use Crm\PaymentsModule\DataProviders\UserStoredCardDataProvider;
 use Crm\PaymentsModule\Events\AttachRenewalPaymentEvent;
 use Crm\PaymentsModule\Events\AttachRenewalPaymentEventHandler;
 use Crm\PaymentsModule\Events\BeforeRecurrentPaymentChargeEvent;
@@ -649,6 +650,11 @@ class PaymentsModule extends CrmModule
         $dataProviderManager->registerDataProvider(
             'admin.dataprovider.audit_log_history_widget',
             $this->getInstance(PaymentAuditLogHistoryDataProvider::class),
+        );
+
+        $dataProviderManager->registerDataProvider(
+            'sales_funnel.dataprovider.payment_select_card',
+            $this->getInstance(UserStoredCardDataProvider::class),
         );
     }
 
