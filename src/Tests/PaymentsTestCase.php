@@ -98,10 +98,10 @@ class PaymentsTestCase extends DatabaseTestCase
         $this->paymentCardsRepository = $this->getRepository(PaymentCardsRepository::class);
     }
 
-    protected function createPayment($variableSymbol)
+    protected function createPayment($variableSymbol, ?ActiveRow $user = null)
     {
         $paymentItemContainer = (new PaymentItemContainer())->addItems(SubscriptionTypePaymentItem::fromSubscriptionType($this->getSubscriptionType()));
-        $payment = $this->paymentsRepository->add($this->getSubscriptionType(), $this->getPaymentGateway(), $this->getUser(), $paymentItemContainer);
+        $payment = $this->paymentsRepository->add($this->getSubscriptionType(), $this->getPaymentGateway(), $user ?? $this->getUser(), $paymentItemContainer);
         $this->paymentsRepository->update($payment, ['variable_symbol' => $variableSymbol]);
         return $payment;
     }

@@ -4,9 +4,7 @@ namespace Crm\PaymentsModule\Tests;
 
 use Crm\ApiModule\Tests\ApiTestTrait;
 use Crm\PaymentsModule\Api\ListRecurrentPaymentsApiHandler;
-use Crm\PaymentsModule\Models\PaymentItem\PaymentItemContainer;
 use Crm\PaymentsModule\Repositories\RecurrentPaymentsRepository;
-use Crm\SubscriptionsModule\Models\PaymentItem\SubscriptionTypePaymentItem;
 use Crm\UsersModule\Tests\TestUserTokenAuthorization;
 use Nette\Database\Table\ActiveRow;
 use Nette\Utils\DateTime;
@@ -161,14 +159,6 @@ class ListRecurrentPaymentsApiHandlerTest extends PaymentsTestCase
             null,
             1,
         );
-    }
-
-    protected function createPayment($variableSymbol)
-    {
-        $paymentItemContainer = (new PaymentItemContainer())->addItems(SubscriptionTypePaymentItem::fromSubscriptionType($this->getSubscriptionType()));
-        $payment = $this->paymentsRepository->add($this->getSubscriptionType(), $this->getPaymentGateway(), $this->getUser(), $paymentItemContainer);
-        $this->paymentsRepository->update($payment, ['variable_symbol' => $variableSymbol]);
-        return $payment;
     }
 
     private function getTestAuthorization($payment)
