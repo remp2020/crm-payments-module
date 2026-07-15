@@ -4,6 +4,10 @@ declare(strict_types=1);
 namespace Crm\PaymentsModule\Models\Subscription;
 
 use Crm\ApplicationModule\Database\DatabaseTransaction;
+use Crm\ApplicationModule\Models\Config\ApplicationConfig;
+use Crm\ApplicationModule\Models\DataProvider\DataProviderManager;
+use Crm\ApplicationModule\Models\NowTrait;
+use Crm\PaymentsModule\DataProviders\IsSubscriptionPausableDataProviderInterface;
 use Crm\PaymentsModule\Repositories\RecurrentPaymentsRepository;
 use Crm\PaymentsModule\Repositories\SubscriptionPausesRepository;
 use Crm\SubscriptionsModule\Models\Subscription\SubscriptionEndsSuppressionManager;
@@ -13,6 +17,8 @@ use Nette\Database\Table\ActiveRow;
 
 class SubscriptionPauser
 {
+    use NowTrait;
+
     const ACTIVE_SUBSCRIPTION_CHANGES = 'active_subscription_changes';
     const FUTURE_SUBSCRIPTION_CHANGES = 'future_subscription_changes';
     const RECURRENT_PAYMENTS_CHANGES = 'recurrent_payments_changes';
@@ -30,6 +36,8 @@ class SubscriptionPauser
         private readonly SubscriptionPausesRepository $subscriptionPausesRepository,
         private readonly SubscriptionEndsSuppressionManager $subscriptionEndsSuppressionManager,
         private readonly DatabaseTransaction $databaseTransaction,
+        private readonly DataProviderManager $dataProviderManager,
+        private readonly ApplicationConfig $applicationConfig,
     ) {
     }
 
@@ -83,6 +91,48 @@ class SubscriptionPauser
         }
 
         return $subscriptionPauseResult;
+    }
+
+    public function isSubscriptionPausable(ActiveRow $subscription): bool
+    {
+        $config = $this->applicationConfig->get('allow_pause_subscriptions');
+        if (!$config) {
+            return false;
+        }
+
+        $now = $this->getNow();
+
+        // already stopped
+        if ($subscription->start_time == $subscription->end_time) {
+            return false;
+        }
+
+        if ($subscription->end_time <= $now || $subscription->start_time > $now) {
+            return false;
+        }
+
+        if ($this->subscriptionPausesRepository->hasScheduledOrActivePause($subscription)) {
+            return false;
+        }
+
+        /** @var IsSubscriptionPausableDataProviderInterface[] $providers */
+        $providers = $this->dataProviderManager->getProviders(
+            'payments.dataprovider.pause_subscription_widget.is_pausable',
+            IsSubscriptionPausableDataProviderInterface::class,
+        );
+        foreach ($providers as $sorting => $provider) {
+            $isPausable = $provider->isSubscriptionPausable($subscription);
+            if (!$isPausable) {
+                return false;
+            }
+        }
+
+        if ($this->subscriptionsRepository->actualUserSubscriptions($subscription->user_id)->count('*') > 1) {
+            // user has more than one active subscription, so we don't allow pausing
+            return false;
+        }
+
+        return true;
     }
 
     private function moveActiveRecurrentPayments(ActiveRow $user, DateTime $resumeAt): array
