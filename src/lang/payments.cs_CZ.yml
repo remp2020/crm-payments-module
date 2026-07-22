@@ -850,9 +850,9 @@ frontend:
         use_card: 'Použít uloženou kartu a zaplatit %sum%'
         use_new_card: 'Zaplatit jinou kartou'
     proforma_invoice:
-        title: Platba předfakturou
+        title: Platba zálohovou fakturou
         form_title: 'Pro dokončení objednávky prosím vyplňte fakturační údaje'
-        thank_you: 'Děkujeme za vaši objednávku, předfakturu Vám zašleme do 3 pracovních dnů e-mailem.'
+        thank_you: 'Děkujeme za vaši objednávku, zálohovou fakturu Vám zašleme do 3 pracovních dnů e-mailem.'
     add_card:
         zero_amount_success: "Přidání karty bylo úspěšné."
         success: "Přidání karty bylo úspěšné. Platba vytvořená pro potřeby ověření karty Vám bude brzy vrácena."
