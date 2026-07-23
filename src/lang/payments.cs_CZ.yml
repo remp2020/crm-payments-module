@@ -852,7 +852,7 @@ frontend:
     proforma_invoice:
         title: Platba zálohovou fakturou
         form_title: 'Pro dokončení objednávky prosím vyplňte fakturační údaje'
-        thank_you: 'Děkujeme za vaši objednávku, zálohovou fakturu Vám zašleme do 3 pracovních dnů e-mailem.'
+        thank_you: 'Děkujeme za objednávku, zálohovou fakturu vám obratem zašleme e-mailem.'
     add_card:
         zero_amount_success: "Přidání karty bylo úspěšné."
         success: "Přidání karty bylo úspěšné. Platba vytvořená pro potřeby ověření karty Vám bude brzy vrácena."
