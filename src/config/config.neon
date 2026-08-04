@@ -45,6 +45,7 @@ services:
 	- Crm\PaymentsModule\Models\AdminFilterFormData
 	- Crm\PaymentsModule\Models\AverageMonthPayment
 	- Crm\PaymentsModule\Models\PaymentItem\PaymentItemHelper
+	- Crm\PaymentsModule\Models\Payment\CopyPaymentService
 	- Crm\PaymentsModule\Models\Payment\RenewalPayment
 	paymentItemContainerFactory:
 		class: Crm\PaymentsModule\Models\PaymentItem\PaymentItemContainerFactory
@@ -242,6 +243,7 @@ services:
 
 	geoIp: Crm\PaymentsModule\Models\GeoIp\MaxmindLazyGeoReader
 	- Crm\PaymentsModule\Models\OneStopShop\OneStopShop
+
 
 	# scenarios
 	scenariosGenericEventsManager:

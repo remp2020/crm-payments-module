@@ -8,9 +8,9 @@ use Crm\PaymentsModule\DataProviders\RecurrentPaymentPaymentItemContainerDataPro
 use Crm\PaymentsModule\Events\RecurrentPaymentItemContainerReadyEvent;
 use Crm\PaymentsModule\Models\OneStopShop\CountryResolutionTypeEnum;
 use Crm\PaymentsModule\Models\OneStopShop\OneStopShop;
+use Crm\PaymentsModule\Models\Payment\CopyPaymentService;
 use Crm\PaymentsModule\Models\PaymentItem\DonationPaymentItem;
 use Crm\PaymentsModule\Models\PaymentItem\PaymentItemContainer;
-use Crm\PaymentsModule\Models\PaymentItem\PaymentItemContainerFactory;
 use Crm\PaymentsModule\Models\RecurrentPayment\RecurrentPaymentStateEnum;
 use Crm\PaymentsModule\Models\RecurrentPaymentsResolver\PaymentData;
 use Crm\PaymentsModule\Models\VatRate\VatProcessor;
@@ -31,9 +31,9 @@ class RecurrentPaymentsResolver
         private ApplicationConfig $applicationConfig,
         private Emitter $emitter,
         private OneStopShop $oneStopShop,
-        private PaymentItemContainerFactory $paymentItemContainerFactory,
         private DataProviderManager $dataProviderManager,
         private VatProcessor $vatProcessor,
+        private CopyPaymentService $copyPaymentService,
     ) {
     }
 
@@ -194,39 +194,21 @@ class RecurrentPaymentsResolver
 
         if (!$paymentItemContainer) {
             $paymentItemContainer = new PaymentItemContainer();
-
             $parentPayment = $recurrentPayment->parent_payment;
 
-            // we want to load previous payment items only if new subscription has same subscription type
-            // and it isn't upgraded recurrent payment
-            if ($subscriptionType->id === $parentPayment->subscription_type_id
-                && $subscriptionType->id === $recurrentPayment->subscription_type_id
-                && $parentPayment->amount === $recurrentPayment->subscription_type->price
-                && !$customChargeAmount
-            ) {
-                $paymentItemContainer = $this->paymentItemContainerFactory->createFromPayment(
-                    $parentPayment,
-                    [SubscriptionTypePaymentItem::TYPE],
-                );
-
-                // In case of subscription type VAT change, parent payment would copy incorrect VAT rates
-                // into the new payment items. If we see a change in a total price without VAT, we don't
-                // copy the items anymore (the price with VAT was already checked in IF above).
-                $containerToCompare = new PaymentItemContainer();
-                $containerToCompare->addItems(SubscriptionTypePaymentItem::fromSubscriptionType($subscriptionType));
-
-                if (round($paymentItemContainer->totalPriceWithoutVAT(), 2) !==
-                    round($containerToCompare->totalPriceWithoutVAT(), 2)
-                ) {
-                    $paymentItemContainer = $containerToCompare;
-                }
-            } elseif (!$customChargeAmount) {
-                // if subscription type has changed or there is a price difference (e.g. caused by donation),
-                // load subscription type payment items from subscription type
-                $paymentItemContainer->addItems(SubscriptionTypePaymentItem::fromSubscriptionType($subscriptionType));
-            } else {
+            if ($customChargeAmount) {
                 $items = $this->getSubscriptionTypeItemsForCustomChargeAmount($subscriptionType, $customChargeAmount);
                 $paymentItemContainer->addItems($items);
+            } elseif ($subscriptionType->id === $parentPayment->subscription_type_id
+                && $subscriptionType->id === $recurrentPayment->subscription_type_id
+            ) {
+                // we want to load previous payment items only if the new subscription
+                // has the same subscription type, and it isn't upgraded recurrent payment
+                // and there is no price change
+                $paymentItemContainer = $this->copyPaymentService->copySubscriptionTypeItems($parentPayment, false);
+            } else {
+                // if the subscription type has changed, load subscription type payment items from the subscription type
+                $paymentItemContainer->addItems(SubscriptionTypePaymentItem::fromSubscriptionType($subscriptionType));
             }
         }
 

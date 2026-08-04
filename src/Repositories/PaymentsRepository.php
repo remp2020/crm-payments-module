@@ -12,6 +12,7 @@ use Crm\ApplicationModule\Repositories\CacheRepository;
 use Crm\PaymentsModule\Events\NewPaymentEvent;
 use Crm\PaymentsModule\Events\PaymentChangeStatusEvent;
 use Crm\PaymentsModule\Models\OneStopShop\OneStopShop;
+use Crm\PaymentsModule\Models\Payment\CopyPaymentService;
 use Crm\PaymentsModule\Models\Payment\PaymentStatusEnum;
 use Crm\PaymentsModule\Models\PaymentItem\PaymentItemContainer;
 use Crm\PaymentsModule\Models\PaymentItem\PaymentItemContainerFactory;
@@ -57,6 +58,7 @@ class PaymentsRepository extends Repository
         private UsersRepository $usersRepository,
         private AddressesRepository $addressesRepository,
         private SubscriptionTypesRepository $subscriptionTypesRepository,
+        private CopyPaymentService $copyPaymentService,
     ) {
         parent::__construct($database);
         $this->auditLogRepository = $auditLogRepository;
@@ -172,35 +174,11 @@ class PaymentsRepository extends Repository
 
     final public function copyPayment(ActiveRow $payment, array $changes = [])
     {
-        $paymentItemContainer = $this->paymentItemContainerFactory->createFromPayment($payment, [SubscriptionTypePaymentItem::TYPE]);
+        // The price of the previous payment will be preserved, but the subscription payment items might be rebuilt
+        // from the subscription type e.g., if VAT has changed
+        $paymentItemContainer = $this->copyPaymentService->copySubscriptionTypeItems($payment);
 
-        if ($payment->subscription_type_id) {
-            $subscriptionTypePaymentItemContainer = new PaymentItemContainer();
-            $subscriptionTypePaymentItemContainer->addItems(SubscriptionTypePaymentItem::fromSubscriptionType($payment->subscription_type));
-
-            $paymentTotalPriceWithoutVAT = round($paymentItemContainer->totalPriceWithoutVAT(), 2);
-            $subscriptionTypeTotalPriceWithoutVAT = round($subscriptionTypePaymentItemContainer->totalPriceWithoutVAT(), 2);
-
-            $totalPricesEqual = round($subscriptionTypePaymentItemContainer->totalPrice(), 2) === round($payment->amount, 2);
-            $totalPricesWithoutVatEqual = $paymentTotalPriceWithoutVAT === $subscriptionTypeTotalPriceWithoutVAT;
-            $totalItemsCountEqual = count($paymentItemContainer->items()) === count($subscriptionTypePaymentItemContainer->items());
-
-            // To use items from the subscription type we need to make sure that the $totalAmounts are the same.
-            // Otherwise, user would be charged different amount which we don't want.
-            if ($totalPricesEqual) {
-                // 1) Subscription type items could have changed their VATs. If total price without VAT isn't equal,
-                // payment items should be created from the subscription type, so we get current (correct) amounts
-                // without VAT and not charge the user old VAT.
-                //
-                // 2) We can only copy original items if the amount of items equals. If it changed (e.g. one item was
-                // split into two separate items), let's use the current (correct) items from the subscription type.
-                if (!$totalPricesWithoutVatEqual || !$totalItemsCountEqual) {
-                    $paymentItemContainer = $subscriptionTypePaymentItemContainer;
-                }
-            }
-        }
-
-        // Copy all other payment types except for subscription type payment items (copied in previous step)
+        // Copy all other payment types except for subscription type payment items (copied in the previous step)
         $paymentItemContainer = $this->paymentItemContainerFactory->addItemsFromPayment(
             payment: $payment,
             container: $paymentItemContainer,
