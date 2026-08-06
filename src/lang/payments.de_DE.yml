@@ -424,7 +424,6 @@ admin:
         new_for_user: Neue Zahlung für
         item: Artikel
         vat_rate: MwSt-Satz
-        enter_number_of_products: Anzahl der Produkte
         count: Anzahl
         export:
             modal_title: Zahlungen exportieren

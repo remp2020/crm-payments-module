@@ -402,7 +402,6 @@ admin:
         price_with_vat: Egységár ÁFÁ-val
         short_unit_price: Egy. az ár
         vat_rate: ÁFA
-        enter_number_of_products: Termékek száma
         count: Count
         export:
             label: Export

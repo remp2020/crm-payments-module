@@ -549,7 +549,6 @@ admin:
         price_with_vat: Jednotková cena s DPH
         short_unit_price: Jedn. cena
         vat_rate: Sazba DPH
-        enter_number_of_products: Zadejte počet kusů
         count: Počet kusů
         export:
             label: Export

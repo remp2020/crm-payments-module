@@ -549,7 +549,6 @@ admin:
         price_with_vat: Unit price with VAT
         short_unit_price: Unit price
         vat_rate: VAT rate
-        enter_number_of_products: Enter number of products
         count: Count
         export:
             label: Export

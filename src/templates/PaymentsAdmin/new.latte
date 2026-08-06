@@ -25,9 +25,6 @@
 <div class="row">
   <div class="col-md-8">
     {control paymentForm}
-    {ifset $control[paymentForm][products]}
-        {include onProductChangeCallback, id => $control[paymentForm][products][product_ids]->htmlId}
-    {/ifset}
   </div>
 </div>
 
@@ -129,10 +126,7 @@
             // donation
             amount += Number($donation.val().replace(',', '.'));
 
-            // event trigger
-            $priceElem = $('#' + {$control[paymentForm][amount]->htmlId});
-            $priceElem.val(amount.toFixed(2));
-            $(document).trigger('price:update', [$priceElem]);
+            $('#' + {$control[paymentForm][amount]->htmlId}).val(amount.toFixed(2));
         }
 
         function resetListeners() {
@@ -167,57 +161,3 @@
         }
     </script>
 {/block}
-
-{define onProductChangeCallback}
-    <script>
-        var $elem = $('#'+{$id});
-        var values = function() {
-            return $elem.val() !== null ? $elem.val() : [];
-        };
-        var selected = values();
-
-        var $productsElem = $('input[name="products[products_json]"]');
-        var $productCountsElem = $('input[name="products[product_counts]"]');
-        var products = JSON.parse($productsElem.val());
-
-        $elem.on('focus', function() {
-            selected = values();
-        }).off('change').on('change', function () {
-            var productCounts = JSON.parse($productCountsElem.val());
-            if (selected.length < values().length) {
-                var productId = values().filter(function (a) {
-                    return selected.indexOf(a) === -1;
-                });
-				var count = (function ask() {
-                    var n = prompt({_'payments.admin.payments.enter_number_of_products'}, 1);
-					return isNaN(n) ? ask() : n;
-				}());
-
-                productCounts[productId] = count;
-            }
-
-            selected = values();
-
-            // unset productCounts for unselected products
-            $.each(productCounts, function (productId) {
-                if (selected.indexOf(productId) === -1) {
-                    delete productCounts[productId];
-                }
-            });
-
-            $productCountsElem.val(JSON.stringify(productCounts));
-            updatePaymentAmount();
-        });
-
-        $(document).on('price:update', function (e, $priceElem) {
-            var amount = Number($priceElem.val());
-            var productCounts = JSON.parse($productCountsElem.val());
-
-            $.each(productCounts, function (productId, count) {
-                amount += products[productId]["price"] * count
-            });
-
-            $priceElem.val(amount.toFixed(2));
-        });
-    </script>
-{/define}
