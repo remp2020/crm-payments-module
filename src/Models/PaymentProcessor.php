@@ -3,6 +3,7 @@
 namespace Crm\PaymentsModule\Models;
 
 use Crm\PaymentsModule\Events\BeforePaymentBeginEvent;
+use Crm\PaymentsModule\Events\RecurrentPaymentTokenMissingEvent;
 use Crm\PaymentsModule\Models\Gateways\AuthorizationInterface;
 use Crm\PaymentsModule\Models\Gateways\ExternallyChargedRecurrentPaymentInterface;
 use Crm\PaymentsModule\Models\Gateways\GatewayAbstract;
@@ -10,6 +11,7 @@ use Crm\PaymentsModule\Models\Gateways\RecurrentAuthorizationInterface;
 use Crm\PaymentsModule\Models\Gateways\RecurrentPaymentInterface;
 use Crm\PaymentsModule\Models\Payment\PaymentStatusEnum;
 use Crm\PaymentsModule\Repositories\PaymentLogsRepository;
+use Crm\PaymentsModule\Repositories\PaymentMetaRepository;
 use Crm\PaymentsModule\Repositories\PaymentsRepository;
 use Crm\PaymentsModule\Repositories\RecurrentPaymentsRepository;
 use Exception;
@@ -17,16 +19,17 @@ use League\Event\Emitter;
 use Nette\Http\Request;
 use Nette\Utils\Json;
 use Nette\Utils\JsonException;
-use Tracy\Debugger;
-use Tracy\ILogger;
 
 class PaymentProcessor
 {
+    public const META_RECURRENT_TOKEN_MISSING = 'recurrent_token_missing';
+
     public function __construct(
         private GatewayFactory $gatewayFactory,
         private PaymentsRepository $paymentsRepository,
         private RecurrentPaymentsRepository $recurrentPaymentsRepository,
         private PaymentLogsRepository $paymentLogsRepository,
+        private PaymentMetaRepository $paymentMetaRepository,
         protected Request $request,
         private Emitter $emitter,
     ) {
@@ -143,7 +146,12 @@ class PaymentProcessor
                     chargeAt: $chargeAt,
                 );
             } else {
-                Debugger::log("Could not create recurrent payment from payment [{$payment->id}], missing recurrent token.", ILogger::ERROR);
+                // Payment was successfully completed, but the gateway didn't return a recurrent
+                // token (e.g. the bank failed to register the card) - the subscription won't renew
+                // automatically. Flag the payment and let listeners handle the follow-up
+                // (e.g. notifying the user to use a different card).
+                $this->paymentMetaRepository->add($payment, self::META_RECURRENT_TOKEN_MISSING, 1);
+                $this->emitter->emit(new RecurrentPaymentTokenMissingEvent($payment));
             }
         }
     }
