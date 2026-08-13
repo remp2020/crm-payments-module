@@ -317,33 +317,9 @@
     </table>
 {/if}
 
-<script src="https://cdnjs.cloudflare.com/ajax/libs/clipboard.js/2.0.0/clipboard.min.js"></script>
 <script>
     // hacking tooltip for dropdown menu; otherwise dropdown menu has slow native title tooltip with delay
     $('[data-toggle-second="tooltip"]').tooltip();
-
-    $(document).ready(function () {
-        var clipboard = new ClipboardJS('.clip');
-
-        $('.clip').tooltip({
-            trigger: 'click',
-            placement: 'right'
-        });
-
-        function showTooltip(element, message) {
-            $(element).tooltip('hide')
-                .attr('data-original-title', message)
-                .tooltip('show');
-
-            setTimeout(function () {
-                $(element).tooltip('hide');
-            }, 1000);
-        }
-
-        clipboard.on('success', function (element) {
-            showTooltip(element.trigger, {_"system.copied_to_clipboard"});
-        });
-    });
 </script>
 
 <style>
