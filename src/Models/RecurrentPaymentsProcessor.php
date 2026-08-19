@@ -3,6 +3,8 @@
 namespace Crm\PaymentsModule\Models;
 
 use Crm\ApplicationModule\Models\Config\ApplicationConfig;
+use Crm\ApplicationModule\Models\DataProvider\DataProviderManager;
+use Crm\PaymentsModule\DataProviders\RecurrentPaymentChargesDataProviderInterface;
 use Crm\PaymentsModule\Events\BeforeRecurrentPaymentChargeEvent;
 use Crm\PaymentsModule\Events\RecurrentPaymentFailEvent;
 use Crm\PaymentsModule\Events\RecurrentPaymentFailTryEvent;
@@ -28,6 +30,7 @@ class RecurrentPaymentsProcessor
         private readonly PaymentLogsRepository $paymentLogsRepository,
         private readonly ApplicationConfig $applicationConfig,
         private readonly Emitter $emitter,
+        private readonly DataProviderManager $dataProviderManager,
     ) {
     }
 
@@ -78,8 +81,8 @@ class RecurrentPaymentsProcessor
         $this->paymentsRepository->updateStatus($recurrentPayment->payment, PaymentStatusEnum::Fail->value);
         $payment = $this->paymentsRepository->find($recurrentPayment->payment_id); // refresh to get fresh object
 
-        $charges = explode(', ', $this->applicationConfig->get('recurrent_payment_charges'));
-        $charges = array_reverse((array)$charges);
+        $charges = $this->getRecurrentPaymentCharges($recurrentPayment);
+        $charges = array_reverse($charges);
         $next = new DateInterval(end($charges));
         if (isset($charges[$recurrentPayment->retries])) {
             $next = new DateInterval($charges[$recurrentPayment->retries]);
@@ -109,6 +112,27 @@ class RecurrentPaymentsProcessor
         ]);
 
         $this->emitter->emit(new RecurrentPaymentFailTryEvent($recurrentPayment));
+    }
+
+    /**
+     * @return string[] List of DateInterval specifications used as retry schedule.
+     */
+    private function getRecurrentPaymentCharges(ActiveRow $recurrentPayment): array
+    {
+        // let modules override retry schedule, e.g. per payment gateway
+        /** @var RecurrentPaymentChargesDataProviderInterface[] $providers */
+        $providers = $this->dataProviderManager->getProviders(
+            RecurrentPaymentChargesDataProviderInterface::PATH,
+            RecurrentPaymentChargesDataProviderInterface::class,
+        );
+        foreach ($providers as $provider) {
+            $charges = $provider->provide($recurrentPayment);
+            if ($charges) {
+                return array_values($charges);
+            }
+        }
+
+        return explode(', ', $this->applicationConfig->get('recurrent_payment_charges'));
     }
 
     public function processStoppedRecurrent($recurrentPayment, $resultCode, $resultMessage)

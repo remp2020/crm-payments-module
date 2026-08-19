@@ -2,7 +2,10 @@
 
 namespace Crm\PaymentsModule\Forms;
 
+use Crm\ApplicationModule\Models\DataProvider\DataProviderException;
+use Crm\ApplicationModule\Models\DataProvider\DataProviderManager;
 use Crm\ApplicationModule\UI\Form;
+use Crm\PaymentsModule\DataProviders\PaymentGatewayFormDataProviderInterface;
 use Crm\PaymentsModule\Repositories\PaymentGatewaysRepository;
 use Nette\Localization\Translator;
 use Tomaj\Form\Renderer\BootstrapRenderer;
@@ -20,6 +23,7 @@ class PaymentGatewayFormFactory
     public function __construct(
         PaymentGatewaysRepository $paymentGatewaysRepository,
         Translator $translator,
+        private readonly DataProviderManager $dataProviderManager,
     ) {
         $this->paymentGatewaysRepository = $paymentGatewaysRepository;
         $this->translator = $translator;
@@ -28,6 +32,7 @@ class PaymentGatewayFormFactory
     /**
      * @param int $paymentGatewayId
      * @return Form
+     * @throws DataProviderException
      */
     public function create($paymentGatewayId)
     {
@@ -69,6 +74,15 @@ class PaymentGatewayFormFactory
 
         $form->setDefaults($defaults);
 
+        /** @var PaymentGatewayFormDataProviderInterface[] $providers */
+        $providers = $this->dataProviderManager->getProviders(
+            PaymentGatewayFormDataProviderInterface::PATH,
+            PaymentGatewayFormDataProviderInterface::class,
+        );
+        foreach ($providers as $provider) {
+            $form = $provider->provide(['form' => $form, 'paymentGateway' => $paymentGateway]);
+        }
+
         $form->onSuccess[] = [$this, 'formSucceeded'];
 
         return $form;
@@ -76,6 +90,15 @@ class PaymentGatewayFormFactory
 
     public function formSucceeded($form, $values)
     {
+        /** @var PaymentGatewayFormDataProviderInterface[] $providers */
+        $providers = $this->dataProviderManager->getProviders(
+            PaymentGatewayFormDataProviderInterface::PATH,
+            PaymentGatewayFormDataProviderInterface::class,
+        );
+        foreach ($providers as $provider) {
+            [$form, $values] = $provider->formSucceeded($form, $values);
+        }
+
         $paymentGatewayId = $values['payment_gateway_id'];
         unset($values['payment_gateway_id']);
 
