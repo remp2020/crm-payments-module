@@ -80,7 +80,7 @@ class PaymentGatewayFormFactory
             PaymentGatewayFormDataProviderInterface::class,
         );
         foreach ($providers as $provider) {
-            $form = $provider->provide(['form' => $form, 'paymentGateway' => $paymentGateway]);
+            $form = $provider->provide($form, $paymentGateway);
         }
 
         $form->onSuccess[] = [$this, 'formSucceeded'];
