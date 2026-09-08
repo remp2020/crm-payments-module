@@ -19,6 +19,7 @@ class PaymentMethodsRepository extends Repository
 
     public function __construct(
         private readonly Emitter $emitter,
+        private readonly PaymentMetaRepository $paymentMetaRepository,
         Explorer $database,
         ?Storage $cacheStorage = null,
     ) {
@@ -64,6 +65,21 @@ class PaymentMethodsRepository extends Repository
         }
 
         return $this->add($userId, $paymentGatewayId, $externalToken);
+    }
+
+    final public function findPaymentMethodByRecurrentPayment(ActiveRow $payment): ?ActiveRow
+    {
+        $recurrentPayment = $payment->related('recurrent_payments', 'parent_payment_id')->fetch()
+            ?? $payment->related('recurrent_payments', 'payment_id')->fetch();
+
+        if (!$recurrentPayment) {
+            $recurrentPaymentToUpdate = $this->paymentMetaRepository->findByPaymentAndKey($payment, 'recurrent_payment_id_to_update_cid');
+            if ($recurrentPaymentToUpdate) {
+                $recurrentPayment = $this->getDatabase()->table('recurrent_payments')->get($recurrentPaymentToUpdate->value);
+            }
+        }
+
+        return $recurrentPayment?->payment_method;
     }
 
     final public function copyPaymentMethodToUser(ActiveRow $sourcePaymentMethod, ActiveRow $user): ActiveRow
