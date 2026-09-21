@@ -11,6 +11,7 @@ use Crm\ApplicationModule\Repositories\AuditLogRepository;
 use Crm\ApplicationModule\Repositories\CacheRepository;
 use Crm\PaymentsModule\Events\NewPaymentEvent;
 use Crm\PaymentsModule\Events\PaymentChangeStatusEvent;
+use Crm\PaymentsModule\Events\PaymentCopiedEvent;
 use Crm\PaymentsModule\Models\OneStopShop\OneStopShop;
 use Crm\PaymentsModule\Models\Payment\CopyPaymentService;
 use Crm\PaymentsModule\Models\Payment\PaymentStatusEnum;
@@ -217,7 +218,7 @@ class PaymentsRepository extends Repository
             $paymentData['payment_country_resolution_reason'] = $resolvedCountry->getReasonValue();
         }
 
-        return $this->add(
+        $newPayment = $this->add(
             subscriptionType: $this->subscriptionTypesRepository->find($paymentData['subscription_type_id']),
             paymentGateway: $this->paymentGatewaysRepository->find($paymentData['payment_gateway_id']),
             user: $this->usersRepository->find($paymentData['user_id']),
@@ -236,6 +237,10 @@ class PaymentsRepository extends Repository
             paymentCountryResolutionReason: $paymentData['payment_country_resolution_reason'] ?? null,
             allowUnreliablePaymentItemContainer: true,
         );
+
+        $this->emitter->emit(new PaymentCopiedEvent($payment, $newPayment));
+
+        return $newPayment;
     }
 
     final public function getPaymentItems(ActiveRow $payment): array

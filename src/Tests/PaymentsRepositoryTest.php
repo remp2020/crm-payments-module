@@ -2,23 +2,35 @@
 
 namespace Crm\PaymentsModule\Tests;
 
+use Crm\PaymentsModule\Events\PaymentCopiedEvent;
 use Crm\PaymentsModule\Models\PaymentItem\DonationPaymentItem;
 use Crm\PaymentsModule\Models\PaymentItem\PaymentItemContainer;
 use Crm\PaymentsModule\Models\PaymentItem\PaymentItemHelper;
 use Crm\SubscriptionsModule\Models\PaymentItem\SubscriptionTypePaymentItem;
 use Crm\SubscriptionsModule\Repositories\SubscriptionTypeItemsRepository;
 use Crm\SubscriptionsModule\Repositories\SubscriptionTypesRepository;
+use League\Event\AbstractListener;
+use League\Event\Emitter;
+use Mockery;
 
 class PaymentsRepositoryTest extends PaymentsTestCase
 {
     private SubscriptionTypesRepository $subscriptionTypesRepository;
     private SubscriptionTypeItemsRepository $subscriptionTypeItemsRepository;
+    private Emitter $emitter;
 
     public function setUp(): void
     {
         parent::setUp();
         $this->subscriptionTypesRepository = $this->getRepository(SubscriptionTypesRepository::class);
         $this->subscriptionTypeItemsRepository = $this->getRepository(SubscriptionTypeItemsRepository::class);
+        $this->emitter = $this->inject(Emitter::class);
+    }
+
+    protected function tearDown(): void
+    {
+        parent::tearDown();
+        $this->emitter->removeAllListeners(PaymentCopiedEvent::class);
     }
 
     public function testLoadVariableSymbolWithoutLeedingZeros()
@@ -83,6 +95,27 @@ class PaymentsRepositoryTest extends PaymentsTestCase
         $newPaymentItemMeta = $newPaymentItem->related('payment_item_meta')->fetchPairs('key', 'value');
 
         $this->assertEquals($paymentItemMeta, $newPaymentItemMeta);
+    }
+
+    public function testCopyPaymentEmitsPaymentCopiedEvent(): void
+    {
+        $payment = $this->createPayment('4106789466');
+
+        $copiedEvent = null;
+        $listener = Mockery::mock(AbstractListener::class)
+            ->shouldReceive('handle')
+            ->withArgs(function (PaymentCopiedEvent $event) use (&$copiedEvent) {
+                $copiedEvent = $event;
+                return true;
+            })
+            ->getMock();
+        $this->emitter->addListener(PaymentCopiedEvent::class, $listener);
+
+        $newPayment = $this->paymentsRepository->copyPayment($payment);
+
+        $this->assertInstanceOf(PaymentCopiedEvent::class, $copiedEvent);
+        $this->assertSame($payment->id, $copiedEvent->getPayment()->id);
+        $this->assertSame($newPayment->id, $copiedEvent->getNewPayment()->id);
     }
 
     public function testCopyPaymentWithMultiplePaymentItemTypes()
