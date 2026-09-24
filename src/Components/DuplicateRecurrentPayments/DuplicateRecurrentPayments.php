@@ -60,6 +60,6 @@ class DuplicateRecurrentPayments extends BaseLazyWidget
         }
 
         $this->flashMessage($this->translator->translate('payments.admin.component.duplicate_recurrent_payments.messages.recurrent_profile_stopped'));
-        $this->presenter->redirect('this');
+        $this->getPresenter()->redirect('this');
     }
 }

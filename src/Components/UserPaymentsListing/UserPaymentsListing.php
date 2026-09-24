@@ -151,7 +151,7 @@ class UserPaymentsListing extends BaseLazyWidget implements DetailWidgetInterfac
             throw new BadRequestException();
         }
         $user = $recurrent->user;
-        $this->presenter->redirect(':Users:UsersAdmin:Show', $user->id);
+        $this->getPresenter()->redirect(':Users:UsersAdmin:Show', $user->id);
     }
 
     private function totalCount(int $userId): int

@@ -68,11 +68,11 @@ class ChangePaymentStatus extends BaseLazyWidget
         if ($payment->status != PaymentStatusEnum::Paid->value) {
             $this->paymentsRepository->updateStatus($payment, PaymentStatusEnum::Paid->value, $sendEmail);
 
-            $this->presenter->flashMessage($this->translator->translate('payments.admin.component.change_payment_status.messages.status_changed_successfully'));
-            $this->presenter->redirect(':Users:UsersAdmin:Show', $payment->user_id);
+            $this->getPresenter()->flashMessage($this->translator->translate('payments.admin.component.change_payment_status.messages.status_changed_successfully'));
+            $this->getPresenter()->redirect(':Users:UsersAdmin:Show', $payment->user_id);
         } else {
-            $this->presenter->flashMessage($this->translator->translate('payments.admin.component.change_payment_status.messages.status_not_changed'));
-            $this->presenter->redirect(':Users:UsersAdmin:Show', $payment->user_id);
+            $this->getPresenter()->flashMessage($this->translator->translate('payments.admin.component.change_payment_status.messages.status_not_changed'));
+            $this->getPresenter()->redirect(':Users:UsersAdmin:Show', $payment->user_id);
         }
 
         return true;
