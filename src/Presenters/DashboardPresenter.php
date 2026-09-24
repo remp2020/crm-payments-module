@@ -132,7 +132,7 @@ class DashboardPresenter extends AdminPresenter
             $this->dateTo = $values['date_to'];
             $this->recurrentCharge = $values[DateFilterFormFactory::OPTIONAL]['recurrent_charge'];
             $this->paymentItemTypes = Json::encode($values[DateFilterFormFactory::OPTIONAL]['payment_item_types'] ?? null);
-            $this->redirect($this->action);
+            $this->redirect($this->getAction());
         };
         return $form;
     }
@@ -145,7 +145,7 @@ class DashboardPresenter extends AdminPresenter
         $form->onSuccess[] = function ($form, $values) {
             $this->dateFrom = $values['date_from'];
             $this->dateTo = $values['date_to'];
-            $this->redirect($this->action);
+            $this->redirect($this->getAction());
         };
         return $form;
     }

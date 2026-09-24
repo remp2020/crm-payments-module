@@ -208,7 +208,7 @@ class PaymentsAdminPresenter extends AdminPresenter
 
     public function adminFilterSubmitted($form, $values)
     {
-        $this->redirect($this->action, ['formData' => array_map(function ($item) {
+        $this->redirect($this->getAction(), ['formData' => array_map(function ($item) {
             if ($item === '' || $item === []) {
                 return null;
             }
