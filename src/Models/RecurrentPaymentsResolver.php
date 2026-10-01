@@ -121,7 +121,12 @@ class RecurrentPaymentsResolver
 
     public function resolveAddress(ActiveRow $recurrentPayment): ?ActiveRow
     {
-        return $recurrentPayment->parent_payment->address ?? null;
+        $address = $recurrentPayment->parent_payment->address ?? null;
+        if ($address && $address->deleted_at === null) {
+            return $address;
+        }
+
+        return null;
     }
 
     /**

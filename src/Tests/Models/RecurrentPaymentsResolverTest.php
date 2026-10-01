@@ -534,6 +534,29 @@ class RecurrentPaymentsResolverTest extends PaymentsTestCase
      * Helper methods
      * ********************************************************************* */
 
+    public function testResolveAddressFromParentPayment(): void
+    {
+        $recurrentPayment = $this->createRecurrentPaymentWithSubscriptionType($this->getSubscriptionType());
+        $address = $this->addCompanyInvoiceAddress($this->getUser(), $this->countriesRepository->defaultCountry());
+        $this->paymentsRepository->update($recurrentPayment->parent_payment, ['address_id' => $address->id]);
+        $recurrentPayment = $this->recurrentPaymentsRepository->find($recurrentPayment->id);
+
+        $resolvedAddress = $this->recurrentPaymentsResolver->resolveAddress($recurrentPayment);
+
+        $this->assertSame($address->id, $resolvedAddress->id);
+    }
+
+    public function testResolveAddressSkipsDeletedParentAddress(): void
+    {
+        $recurrentPayment = $this->createRecurrentPaymentWithSubscriptionType($this->getSubscriptionType());
+        $address = $this->addCompanyInvoiceAddress($this->getUser(), $this->countriesRepository->defaultCountry());
+        $this->paymentsRepository->update($recurrentPayment->parent_payment, ['address_id' => $address->id]);
+        $this->addressesRepository->softDelete($address, true);
+        $recurrentPayment = $this->recurrentPaymentsRepository->find($recurrentPayment->id);
+
+        $this->assertNull($this->recurrentPaymentsResolver->resolveAddress($recurrentPayment));
+    }
+
     protected function getSubscriptionTypeByCode(string $code): ActiveRow
     {
         if (!isset($this->subscriptionTypes[$code])) {
