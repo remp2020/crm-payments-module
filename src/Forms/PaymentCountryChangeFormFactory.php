@@ -64,7 +64,7 @@ class PaymentCountryChangeFormFactory
         $submitButton = $form->addSubmit('change_country', 'payments.admin.change_payment_country.confirm_button')
             ->setDisabled(!$isResolved || !$this->shouldResolveCountry($payment, $countryResolution?->country));
         $submitButton->getControlPrototype()
-            ->addAttributes(['class' => 'btn btn-danger btn-lg']);
+            ->addAttributes(['class' => 'btn btn-danger']);
 
         $form->onSuccess[] = [$this, 'formSucceeded'];
 
