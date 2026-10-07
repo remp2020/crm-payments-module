@@ -111,6 +111,7 @@ use Crm\PaymentsModule\Events\AttachRenewalPaymentEventHandler;
 use Crm\PaymentsModule\Events\BeforeRecurrentPaymentChargeEvent;
 use Crm\PaymentsModule\Events\BeforeRecurrentPaymentExpiresEvent;
 use Crm\PaymentsModule\Events\NewPaymentEvent;
+use Crm\PaymentsModule\Events\PausedSubscriptionRefundHandler;
 use Crm\PaymentsModule\Events\PaymentChangeStatusEvent;
 use Crm\PaymentsModule\Events\PaymentStatusChangeHandler;
 use Crm\PaymentsModule\Events\RecurrentPaymentCardExpiredEvent;
@@ -664,6 +665,10 @@ class PaymentsModule extends CrmModule
             PaymentChangeStatusEvent::class,
             PaymentStatusChangeHandler::class,
             500,
+        );
+        $emitter->addListener(
+            PaymentChangeStatusEvent::class,
+            PausedSubscriptionRefundHandler::class,
         );
         $emitter->addListener(
             SubscriptionPreUpdateEvent::class,

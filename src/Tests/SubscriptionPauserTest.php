@@ -5,6 +5,7 @@ namespace Crm\PaymentsModule\Tests;
 use Crm\PaymentsModule\Models\Subscription\SubscriptionPauser;
 use Crm\PaymentsModule\Repositories\SubscriptionPausesRepository;
 use Crm\SubscriptionsModule\Repositories\SubscriptionsRepository;
+use DateTime;
 use Nette\Database\Table\ActiveRow;
 use PHPUnit\Framework\Attributes\DataProvider;
 
@@ -27,8 +28,8 @@ class SubscriptionPauserTest extends PaymentsTestCase
     {
         parent::setUp();
 
-        $this->subscriptionsRepository = $this->inject(\Crm\SubscriptionsModule\Repositories\SubscriptionsRepository::class);
-        $this->subscriptionPauser = $this->inject(\Crm\PaymentsModule\Models\Subscription\SubscriptionPauser::class);
+        $this->subscriptionsRepository = $this->inject(SubscriptionsRepository::class);
+        $this->subscriptionPauser = $this->inject(SubscriptionPauser::class);
         $this->subscriptionPausesRepository = $this->inject(SubscriptionPausesRepository::class);
     }
 
@@ -355,8 +356,8 @@ class SubscriptionPauserTest extends PaymentsTestCase
                 isPaid: false,
                 user: $user,
                 type: SubscriptionsRepository::TYPE_REGULAR,
-                startTime: new \DateTime($subscriptionData['start_time']),
-                endTime: new \DateTime($subscriptionData['end_date']),
+                startTime: new DateTime($subscriptionData['start_time']),
+                endTime: new DateTime($subscriptionData['end_date']),
             );
 
             if (isset($subscriptionData['pause_subscription']) && $subscriptionData['pause_subscription']) {
@@ -370,15 +371,15 @@ class SubscriptionPauserTest extends PaymentsTestCase
             $this->createRecurrentPayment(
                 paymentMethod: $paymentMethod,
                 payment: $payment,
-                chargeAt: new \DateTime($recurrentPaymentData['charge_at']),
+                chargeAt: new DateTime($recurrentPaymentData['charge_at']),
             );
         }
 
         $this->subscriptionPauser->setDryRun($dryRun);
         $changes = $this->subscriptionPauser->pauseSubscription(
             $pauseSubscription,
-            new \DateTime($pauseAt),
-            new \DateTime($resumeAt),
+            new DateTime($pauseAt),
+            new DateTime($resumeAt),
         );
 
         if ($expected['change_previews']['active_subscription_changes']) {
@@ -404,15 +405,15 @@ class SubscriptionPauserTest extends PaymentsTestCase
 
         foreach ($expected['subscriptions'] as $expectedSubscription) {
             $subscription = $this->subscriptionsRepository->getTable()
-                ->where('start_time', new \DateTime($expectedSubscription['start_time']))
-                ->where('end_time', new \DateTime($expectedSubscription['end_date']))
+                ->where('start_time', new DateTime($expectedSubscription['start_time']))
+                ->where('end_time', new DateTime($expectedSubscription['end_date']))
                 ->fetch();
             $this->assertNotNull($subscription);
         }
 
         foreach ($expected['recurrentPayments'] as $expectedRecurrentPayment) {
             $recurrentPayment = $this->recurrentPaymentsRepository->getTable()
-                ->where('charge_at', new \DateTime($expectedRecurrentPayment['charge_at']))
+                ->where('charge_at', new DateTime($expectedRecurrentPayment['charge_at']))
                 ->fetch();
             $this->assertNotNull($recurrentPayment);
         }
@@ -422,10 +423,17 @@ class SubscriptionPauserTest extends PaymentsTestCase
             $this->assertEquals(0, $this->subscriptionPausesRepository->all()->count('*'));
         } else {
             $this->assertEquals(1, $this->subscriptionPausesRepository->all()->count('*'));
+
+            $pause = $this->subscriptionPausesRepository->all()->fetch();
+            $this->assertSame($pauseSubscription->id, $pause->subscription_id);
+            $this->assertSame(
+                $changes[SubscriptionPauser::ACTIVE_SUBSCRIPTION_CHANGES][SubscriptionPauser::NEW_SUBSCRIPTION]['id'],
+                $pause->resumed_subscription_id,
+            );
         }
     }
 
-    protected function createRecurrentPayment(ActiveRow $paymentMethod, ActiveRow $payment, \DateTime $chargeAt): void
+    protected function createRecurrentPayment(ActiveRow $paymentMethod, ActiveRow $payment, DateTime $chargeAt): void
     {
         $this->recurrentPaymentsRepository->add(
             paymentMethod: $paymentMethod,

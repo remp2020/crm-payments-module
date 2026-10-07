@@ -159,6 +159,7 @@ services:
 
 	# events
 	- Crm\PaymentsModule\Events\PaymentStatusChangeHandler
+	- Crm\PaymentsModule\Events\PausedSubscriptionRefundHandler
 	- Crm\PaymentsModule\Events\RecurrentPaymentCardExpiredEventHandler
 	- Crm\PaymentsModule\Events\SubscriptionPreUpdateHandler
 	- Crm\PaymentsModule\Events\SubscriptionMovedHandler

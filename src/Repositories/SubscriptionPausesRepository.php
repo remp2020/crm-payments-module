@@ -6,6 +6,7 @@ namespace Crm\PaymentsModule\Repositories;
 use Crm\ApplicationModule\Models\Database\Repository;
 use Crm\ApplicationModule\Models\NowTrait;
 use Crm\PaymentsModule\Events\SubscriptionPausedEvent;
+use DateTime;
 use League\Event\Emitter;
 use Nette\Caching\Storage;
 use Nette\Database\Explorer;
@@ -34,12 +35,14 @@ class SubscriptionPausesRepository extends Repository
 
     final public function add(
         ActiveRow $subscription,
-        \DateTime $pauseAt,
-        \DateTime $resumeAt,
+        DateTime $pauseAt,
+        DateTime $resumeAt,
         array $changes,
+        int $resumedSubscriptionId,
     ): ActiveRow|bool {
         $row = $this->insert([
             'subscription_id' => $subscription->id,
+            'resumed_subscription_id' => $resumedSubscriptionId,
             'pause_at' => $pauseAt,
             'resume_at' => $resumeAt,
             'changes' => Json::encode($changes),
@@ -55,6 +58,13 @@ class SubscriptionPausesRepository extends Repository
         }
 
         return $row;
+    }
+
+    final public function subscriptionPauses(ActiveRow $subscription): Selection
+    {
+        return $this->getTable()
+            ->where('subscription_id', $subscription->id)
+            ->order('created_at DESC');
     }
 
     final public function hasScheduledOrActivePause(ActiveRow $subscription): bool

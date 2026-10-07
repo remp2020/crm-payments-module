@@ -7,24 +7,31 @@ use Crm\ApplicationModule\Database\DatabaseTransaction;
 use Crm\ApplicationModule\Models\Config\ApplicationConfig;
 use Crm\ApplicationModule\Models\DataProvider\DataProviderManager;
 use Crm\ApplicationModule\Models\NowTrait;
+use Crm\ApplicationModule\Models\ResettableInterface;
 use Crm\PaymentsModule\DataProviders\IsSubscriptionPausableDataProviderInterface;
 use Crm\PaymentsModule\Repositories\RecurrentPaymentsRepository;
 use Crm\PaymentsModule\Repositories\SubscriptionPausesRepository;
+use Crm\SubscriptionsModule\Events\SubscriptionShortenedEvent;
+use Crm\SubscriptionsModule\Models\Subscription\StopSubscriptionHandler;
 use Crm\SubscriptionsModule\Models\Subscription\SubscriptionEndsSuppressionManager;
+use Crm\SubscriptionsModule\Repositories\SubscriptionMetaRepository;
 use Crm\SubscriptionsModule\Repositories\SubscriptionsRepository;
 use DateTime;
+use League\Event\Emitter;
 use Nette\Database\Table\ActiveRow;
+use Throwable;
+use Tracy\Debugger;
 
-class SubscriptionPauser
+class SubscriptionPauser implements ResettableInterface
 {
     use NowTrait;
 
-    const ACTIVE_SUBSCRIPTION_CHANGES = 'active_subscription_changes';
-    const FUTURE_SUBSCRIPTION_CHANGES = 'future_subscription_changes';
-    const RECURRENT_PAYMENTS_CHANGES = 'recurrent_payments_changes';
+    const string ACTIVE_SUBSCRIPTION_CHANGES = 'active_subscription_changes';
+    const string FUTURE_SUBSCRIPTION_CHANGES = 'future_subscription_changes';
+    const string RECURRENT_PAYMENTS_CHANGES = 'recurrent_payments_changes';
 
-    const NEW_SUBSCRIPTION = 'new_subscription';
-    const STOPPED_SUBSCRIPTION = 'stopped_subscription';
+    const string NEW_SUBSCRIPTION = 'new_subscription';
+    const string STOPPED_SUBSCRIPTION = 'stopped_subscription';
 
     private bool $dryRun = true;
 
@@ -38,6 +45,8 @@ class SubscriptionPauser
         private readonly DatabaseTransaction $databaseTransaction,
         private readonly DataProviderManager $dataProviderManager,
         private readonly ApplicationConfig $applicationConfig,
+        private readonly Emitter $emitter,
+        private readonly SubscriptionMetaRepository $subscriptionMetaRepository,
     ) {
     }
 
@@ -46,8 +55,13 @@ class SubscriptionPauser
         $this->dryRun = $dryRun;
     }
 
+    public function reset(): void
+    {
+        $this->dryRun = true;
+    }
+
     /**
-     * @throws \Throwable
+     * @throws Throwable
      */
     public function pauseSubscription(ActiveRow $subscription, DateTime $pauseAt, DateTime $resumeAt): array
     {
@@ -80,6 +94,7 @@ class SubscriptionPauser
                     $this->pauseAt,
                     $resumeAt,
                     $this->cleanUpSubscriptionPauseResultChanges($subscriptionPauseResult),
+                    $newSubscriptionIds[0],
                 );
                 $this->databaseTransaction->commit();
             } else {
@@ -133,6 +148,67 @@ class SubscriptionPauser
         }
 
         return true;
+    }
+
+    public function stopResumedSubscriptions(ActiveRow $pausedSubscription): void
+    {
+        // No dry run here, the refund already happened.
+        $this->databaseTransaction->wrap(function () use ($pausedSubscription) {
+            $pauses = $this->subscriptionPausesRepository->subscriptionPauses($pausedSubscription);
+            foreach ($pauses as $pause) {
+                if ($pause->resumed_subscription_id === null) {
+                    Debugger::log(
+                        "Subscription pause #{$pause->id} has no resumed subscription linked, cannot stop it.",
+                        Debugger::ERROR,
+                    );
+                    continue;
+                }
+
+                // $pausedSubscription may be stale (loaded before the pause), so reload it from the pause row.
+                $resumedSubscription = $pause->ref('subscriptions', 'resumed_subscription_id');
+                $this->stopResumedSubscription($pause->ref('subscriptions', 'subscription_id'), $resumedSubscription);
+                $this->stopResumedSubscriptions($resumedSubscription);
+            }
+        });
+    }
+
+    private function stopResumedSubscription(ActiveRow $pausedSubscription, ActiveRow $resumedSubscription): void
+    {
+        $now = $this->getNow();
+        $alreadyStopped = $resumedSubscription->end_time <= $resumedSubscription->start_time;
+        $alreadyEnded = $resumedSubscription->end_time <= $now;
+        if ($alreadyStopped || $alreadyEnded) {
+            return;
+        }
+
+        $originalEndTime = clone $resumedSubscription->end_time;
+        $note = $resumedSubscription->note . "\n[pause] Subscription stopped with paused subscription #{$pausedSubscription->id}. "
+            . "Original start_time {$resumedSubscription->start_time->format(DATE_RFC3339)}, end_time {$originalEndTime->format(DATE_RFC3339)}";
+
+        if ($resumedSubscription->start_time > $now) {
+            // Not started yet, so end it where the paused subscription ends and a new purchase does not
+            // wait for it. Not before now, SubscriptionShortenedHandler moves following subscriptions to this end.
+            $stopAt = max($pausedSubscription->end_time, $now);
+            $this->subscriptionEndsSuppressionManager->suppressNotifications($resumedSubscription);
+            $this->subscriptionsRepository->update($resumedSubscription, [
+                'start_time' => $stopAt,
+                'end_time' => $stopAt,
+                'note' => $note,
+            ]);
+        } else {
+            $this->subscriptionsRepository->update($resumedSubscription, [
+                'end_time' => $now,
+                'note' => $note,
+            ]);
+        }
+
+        $this->subscriptionMetaRepository->setMeta(
+            $resumedSubscription,
+            StopSubscriptionHandler::META_KEY_EXPIRED_BY_ADMIN,
+            true,
+        );
+
+        $this->emitter->emit(new SubscriptionShortenedEvent($resumedSubscription, $originalEndTime));
     }
 
     private function moveActiveRecurrentPayments(ActiveRow $user, DateTime $resumeAt): array
@@ -240,6 +316,7 @@ class SubscriptionPauser
         }
 
         $subscriptionSplitResult[self::NEW_SUBSCRIPTION] = [
+            'id' => $newSubscription?->id,
             'start_time' => $newSubscriptionStartTime,
             'end_time' => $newSubscriptionEndTime,
         ];

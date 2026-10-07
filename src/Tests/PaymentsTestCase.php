@@ -6,6 +6,7 @@ use Crm\ApplicationModule\Repositories\ConfigsRepository;
 use Crm\ApplicationModule\Seeders\CountriesSeeder;
 use Crm\ApplicationModule\Tests\DatabaseTestCase;
 use Crm\PaymentsModule\Models\PaymentItem\PaymentItemContainer;
+use Crm\PaymentsModule\Models\Subscription\SubscriptionPauser;
 use Crm\PaymentsModule\Models\VariableSymbolInterface;
 use Crm\PaymentsModule\Repositories\ParsedMailLogsRepository;
 use Crm\PaymentsModule\Repositories\PaymentCardsRepository;
@@ -34,6 +35,7 @@ use Crm\SubscriptionsModule\Seeders\SubscriptionTypeNamesSeeder;
 use Crm\UsersModule\Repositories\AccessTokensRepository;
 use Crm\UsersModule\Repositories\CountriesRepository;
 use Crm\UsersModule\Repositories\UsersRepository;
+use DateTime;
 use Nette\Database\Table\ActiveRow;
 
 class PaymentsTestCase extends DatabaseTestCase
@@ -106,6 +108,30 @@ class PaymentsTestCase extends DatabaseTestCase
         return $payment;
     }
 
+    protected function createSubscription(DateTime $startTime, DateTime $endTime): ActiveRow
+    {
+        return $this->getRepository(SubscriptionsRepository::class)->add(
+            subscriptionType: $this->getSubscriptionType(),
+            isRecurrent: false,
+            isPaid: true,
+            user: $this->getUser(),
+            startTime: $startTime,
+            endTime: $endTime,
+        );
+    }
+
+    protected function pauseSubscription(ActiveRow $subscription, DateTime $pauseAt, DateTime $resumeAt): ActiveRow
+    {
+        /** @var SubscriptionPauser $subscriptionPauser */
+        $subscriptionPauser = $this->inject(SubscriptionPauser::class);
+        $subscriptionPauser->setDryRun(false);
+        $changes = $subscriptionPauser->pauseSubscription($subscription, $pauseAt, $resumeAt);
+
+        return $this->getRepository(SubscriptionsRepository::class)->find(
+            $changes[SubscriptionPauser::ACTIVE_SUBSCRIPTION_CHANGES][SubscriptionPauser::NEW_SUBSCRIPTION]['id'],
+        );
+    }
+
     private $user;
 
     protected function getUser()
@@ -130,7 +156,7 @@ class PaymentsTestCase extends DatabaseTestCase
         return $this->paymentGateway;
     }
 
-    private $subscriptionType;
+    private ?ActiveRow $subscriptionType = null;
 
     protected function getSubscriptionType()
     {
