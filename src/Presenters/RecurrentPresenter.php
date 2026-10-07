@@ -50,27 +50,14 @@ class RecurrentPresenter extends FrontendPresenter
             throw new BadRequestException();
         }
 
-        $user = $this->getUser();
-        $this->checkPaymentBelongsToUser($user, $payment);
-        $gateway = $this->gatewayFactory->getGateway($payment->payment_gateway->code);
-
-        $allUserCards = $this->recurrentPaymentsRepository
-            ->userRecurrentPayments($user->id)
-            ->where(['payment_gateway.code = ?' => $payment->ref('payment_gateway')->code])
-            ->where(['cid IS NOT NULL AND expires_at > ?' => new DateTime()])
-            ->where('state != ?', RecurrentPaymentStateEnum::SystemStop->value)
-            ->order('id DESC, charge_at DESC');
+        $this->checkPaymentBelongsToUser($this->getUser(), $payment);
 
         $cardsByExpiration = [];
 
-        foreach ($allUserCards as $card) {
-            if (($gateway instanceof ReusableCardPaymentInterface) && !$gateway->isCardReusable($card)) {
-                continue;
-            }
-
-            $expiration = $card->expires_at->format(DateTime::RFC3339);
-            if (!array_key_exists($expiration, $cardsByExpiration) || $cardsByExpiration[$expiration]->created_at < $card->created_at) {
-                $cardsByExpiration[$expiration] = $card;
+        foreach ($this->getUsableRecurrentPayments($payment) as $recurrentPayment) {
+            $expiration = $recurrentPayment->expires_at->format(DateTime::RFC3339);
+            if (!array_key_exists($expiration, $cardsByExpiration) || $cardsByExpiration[$expiration]->created_at < $recurrentPayment->created_at) {
+                $cardsByExpiration[$expiration] = $recurrentPayment;
             }
         }
 
@@ -107,7 +94,8 @@ class RecurrentPresenter extends FrontendPresenter
 
         $this->checkPaymentBelongsToUser($this->getUser(), $payment);
 
-        $recurrentPayment = $this->recurrentPaymentsRepository->find($recurrentPaymentId);
+        // max single card should be returned
+        $recurrentPayment = $this->getUsableRecurrentPayments($payment, $recurrentPaymentId)[0] ?? null;
         if (!$recurrentPayment) {
             $this->resolveRedirect($payment, PaymentCompleteRedirectResolver::ERROR);
         }
@@ -123,6 +111,32 @@ class RecurrentPresenter extends FrontendPresenter
         }
 
         $this->resolveRedirect($payment, PaymentCompleteRedirectResolver::ERROR);
+    }
+
+    private function getUsableRecurrentPayments(ActiveRow $payment, ?int $recurrentPaymentId = null): array
+    {
+        $gateway = $this->gatewayFactory->getGateway($payment->payment_gateway->code);
+
+        $recurrentPayments = $this->recurrentPaymentsRepository
+            ->userRecurrentPayments($payment->user_id)
+            ->where(['payment_gateway.code = ?' => $payment->payment_gateway->code])
+            ->where(['cid IS NOT NULL AND expires_at > ?' => new DateTime()])
+            ->where('state != ?', RecurrentPaymentStateEnum::SystemStop->value)
+            ->order('id DESC, charge_at DESC');
+
+        if ($recurrentPaymentId) {
+            $recurrentPayments->where(['recurrent_payments.id' => $recurrentPaymentId]);
+        }
+
+        $usableRecurrentPayments = [];
+        foreach ($recurrentPayments as $recurrentPayment) {
+            if (($gateway instanceof ReusableCardPaymentInterface) && !$gateway->isCardReusable($recurrentPayment)) {
+                continue;
+            }
+            $usableRecurrentPayments[] = $recurrentPayment;
+        }
+
+        return $usableRecurrentPayments;
     }
 
     private function resolveRedirect($payment, $resolverStatus)
