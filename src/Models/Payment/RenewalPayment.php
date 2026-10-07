@@ -32,7 +32,7 @@ class RenewalPayment
     public function attachRenewalPayment(ActiveRow $subscription, ActiveRow $renewalPayment, bool $byAdmin = false): void
     {
         $this->subscriptionMetaRepository->setMeta($subscription, self::RENEWAL_PAYMENT_META_KEY, $renewalPayment->id);
-        $this->subscriptionMetaRepository->setMeta($subscription, self::RENEWAL_PAYMENT_SET_BY_ADMIN_META_KEY, $byAdmin);
+        $this->subscriptionMetaRepository->setMeta($subscription, self::RENEWAL_PAYMENT_SET_BY_ADMIN_META_KEY, $byAdmin ? '1' : '0');
 
         $this->emitter->emit(new SubscriptionRenewalPaymentAttachedEvent(
             renewalPayment: $renewalPayment,
@@ -43,6 +43,7 @@ class RenewalPayment
     public function unsetRenewalPayment(ActiveRow $subscription): void
     {
         $this->subscriptionMetaRepository->getMeta($subscription, self::RENEWAL_PAYMENT_META_KEY)->delete();
+        $this->subscriptionMetaRepository->getMeta($subscription, self::RENEWAL_PAYMENT_SET_BY_ADMIN_META_KEY)->delete();
     }
 
     public function getSubscriptionByRenewalPayment(ActiveRow $renewalPayment): ?ActiveRow
