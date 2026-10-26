@@ -807,7 +807,7 @@ frontend:
         price: Cena
         is_recurrent: Opakovaná platba
         receipts: Doklady
-        stop_recurrent: Zastaviť opakovanie
+        stop_recurrent: Zastaviť automatickú obnovu
         restart_recurrent: Znovu zapnúť
         user_stopped: Zastavené Vami
         user_stopped_requested: Zastavené na Vašu žiadosť
