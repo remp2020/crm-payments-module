@@ -305,7 +305,12 @@ class PaymentsRepository extends Repository
     {
         // Updates of payment status may come from multiple sources simultaneously,
         // therefore we avoid running this code in parallel using mutex
-        $mutex = new RedisMutex($this->redis(), 'payments_repository_update_status_' . $payment->id, 10);
+        $mutex = new RedisMutex(
+            client: $this->redis(),
+            name: 'payments_repository_update_status_' . $payment->id,
+            acquireTimeout: 10,
+            expireTimeout: 30,
+        );
         $updated = $mutex->synchronized(function () use ($payment, $status, $note, $errorMessage) {
             // refresh payment since it may be stalled (because of waiting for mutex)
             $payment = $this->find($payment->id);

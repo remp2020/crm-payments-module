@@ -113,7 +113,12 @@ class RecurrentPaymentsRepository extends Repository
             return null;
         }
 
-        $mutex = new RedisMutex($this->redis(), 'recurrent_payments_repository_create_from_payment_' . $payment->id, 10);
+        $mutex = new RedisMutex(
+            client: $this->redis(),
+            name: 'recurrent_payments_repository_create_from_payment_' . $payment->id,
+            acquireTimeout: 10,
+            expireTimeout: 30,
+        );
         $recurrentPayment = $mutex->synchronized(function () use ($payment, $recurrentToken, $chargeAt, $customChargeAmount) {
             $paymentGateway = $payment->payment_gateway;
             if ($payment->status === PaymentStatusEnum::Authorized->value) {
