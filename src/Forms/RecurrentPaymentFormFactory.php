@@ -45,6 +45,11 @@ class RecurrentPaymentFormFactory
             ->setHtmlAttribute('placeholder', 'payments.admin.component.recurrent_payment_form.retries.placeholder');
 
         $subscriptionTypes = $this->subscriptionTypesRepository->getAllActive()->fetchAll();
+        // keep currently set next subscription type selectable even if it was deactivated meanwhile
+        $currentNextSubscriptionType = $recurrent->next_subscription_type;
+        if ($currentNextSubscriptionType && !isset($subscriptionTypes[$currentNextSubscriptionType->id])) {
+            $subscriptionTypes[$currentNextSubscriptionType->id] = $currentNextSubscriptionType;
+        }
         $nextSubscriptionType = $form->addSelect(
             'next_subscription_type_id',
             'payments.admin.component.recurrent_payment_form.next_subscription_type_id.label',
