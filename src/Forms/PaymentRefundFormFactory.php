@@ -123,6 +123,15 @@ class PaymentRefundFormFactory
         $newPaymentStatus = $values[self::NEW_PAYMENT_STATUS] ?? $payment->status;
         $stopRecurrentPayment = $values[self::STOP_RECURRENT_CHARGE_KEY] ?? true;
 
+        /** @var PaymentRefundFormDataProviderInterface[] $providers */
+        $providers = $this->dataProviderManager->getProviders(
+            PaymentRefundFormDataProviderInterface::PATH,
+            PaymentRefundFormDataProviderInterface::class,
+        );
+        foreach ($providers as $provider) {
+            [$form, $values] = $provider->formSucceeded($form, $values);
+        }
+
         if ($newEndTime && $payment->subscription_id) {
             $this->updateSubscriptionOnSuccess($payment->subscription, new DateTime($newEndTime));
         }
@@ -132,15 +141,6 @@ class PaymentRefundFormFactory
         }
 
         $this->paymentsRepository->updateStatus($payment, $newPaymentStatus, true);
-
-        /** @var PaymentRefundFormDataProviderInterface[] $providers */
-        $providers = $this->dataProviderManager->getProviders(
-            PaymentRefundFormDataProviderInterface::PATH,
-            PaymentRefundFormDataProviderInterface::class,
-        );
-        foreach ($providers as $provider) {
-            [$form, $values] = $provider->formSucceeded($form, $values);
-        }
 
         if (isset($this->onSave)) {
             ($this->onSave)($payment, $form->getOwnErrors());

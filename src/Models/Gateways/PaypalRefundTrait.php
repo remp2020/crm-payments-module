@@ -8,7 +8,6 @@ use Tracy\Debugger;
 trait PaypalRefundTrait
 {
     public const REFUND_TRANSACTION_ID = 'refund_transaction_id';
-    public const REFUND_AMOUNT = 'refund_amount';
     public const REFUND_DATE = 'refund_date';
     public const REFUND_CODE = 'refund_code';
     public const REFUND_MESSAGE = 'refund_message';
@@ -58,11 +57,6 @@ trait PaypalRefundTrait
                 value: $data['REFUNDTRANSACTIONID'],
             );
         }
-        $this->paymentMetaRepository->add(
-            payment: $payment,
-            key: self::REFUND_AMOUNT,
-            value: $amount,
-        );
         $this->paymentMetaRepository->add(
             payment: $payment,
             key: self::REFUND_DATE,
