@@ -30,7 +30,7 @@
 
 <div class="row">
     <div class="col-xs-12 col-lg-3 col-lg-push-7">
-        {control simpleWidget 'admin.payment.payment_country_change.right', [
+        {control simpleWidget, 'admin.payment.payment_country_change.right', [
             'payment' => $payment,
         ]}
     </div>
@@ -148,7 +148,7 @@
         {php $isSameCountry = $payment->payment_country_id && $countryResolution?->country->id === $payment->payment_country_id}
 
         {if !$isSameCountry}
-            {control simpleWidget 'admin.payment.payment_country_change.content', [
+            {control simpleWidget, 'admin.payment.payment_country_change.content', [
                 'payment' => $payment,
             ]}
 

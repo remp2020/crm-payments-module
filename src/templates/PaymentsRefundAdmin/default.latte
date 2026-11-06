@@ -36,7 +36,7 @@
             <!-- left column -->
             <div class="col-md-8">
 
-                {control simpleWidget 'admin.payment_refund.show.alert', $payment}
+                {control simpleWidget, 'admin.payment_refund.show.alert', $payment}
 
                 {snippetArea refundFormArea}
                     {form paymentRefundForm}
@@ -98,7 +98,7 @@
                             {/snippet}
                         {/if}
                         {snippet additionalRefundFormData}
-                            {control simpleWidget 'admin.refund_payment.show.left', ['form' => $control['paymentRefundForm'], 'payment' => $payment]}
+                            {control simpleWidget, 'admin.refund_payment.show.left', ['form' => $control['paymentRefundForm'], 'payment' => $payment]}
                             {ifset $control['paymentRefundForm']['submit']}
                                 {input submit, data-confirm => ("payments.admin.payment_refund.submit_confirm"|translate)}
                             {/ifset}
@@ -148,7 +148,7 @@
                     </div>
                 </div>
 
-                {control simpleWidget 'admin.refund_payment.show.right', [
+                {control simpleWidget, 'admin.refund_payment.show.right', [
                     'payment' => $payment,
                 ]}
             </div>
@@ -156,7 +156,7 @@
     </div>
 </div>
 
-{control simpleWidget 'admin.refund_payment.show.bottom', $payment}
+{control simpleWidget, 'admin.refund_payment.show.bottom', $payment}
 
 <script>
     const subscriptionEndsProgressBar = document.getElementById('subscription-ends-progress-bar');

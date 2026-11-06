@@ -11,7 +11,7 @@
         <small>[{$payment->id}]</small>
       	{$payment->variable_symbol}
 
-        {control simpleWidget 'admin.payment.actions.header', $payment}
+        {control simpleWidget, 'admin.payment.actions.header', $payment}
         {if $payment->status != \Crm\PaymentsModule\Models\Payment\PaymentStatusEnum::Refund->value}
             <a href="{plink :Payments:PaymentsRefundAdmin:default $payment->id}" class="btn btn-default btn-lg pull-right" title="{_payments.admin.payment_refund.confirm_refund}">
                 <i class="fa fa-rotate-right"></i> {_payments.admin.payment_refund.confirm_refund}
@@ -30,7 +30,7 @@
 
 {include 'paymentItemsTemplate.latte'}
 
-{control simpleWidget 'payments.admin.edit_form.after', $payment}
+{control simpleWidget, 'payments.admin.edit_form.after', $payment}
 
 {/block}
 

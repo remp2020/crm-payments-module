@@ -30,12 +30,12 @@
                                              data-placement="top"
                                              title="{$payment->note|breaklines}"></i>
 
-                    {control simpleWidget 'admin.payments.user_payments_listing.badge', $payment}
+                    {control simpleWidget, 'admin.payments.user_payments_listing.badge', $payment}
                 </td>
 
                 <td>
                     <div style="white-space: nowrap;">{$payment->amount|price}</div>
-                    {control simpleWidget 'payments.admin.listing.sum', $payment}
+                    {control simpleWidget, 'payments.admin.listing.sum', $payment}
                 </td>
 
                 <td>{$payment->payment_gateway->name}</td>
@@ -44,7 +44,7 @@
                     <div class="list-group">
                         {foreach $payment->related('payment_items') as $paymentItem}
                             <div class="list-group-item">
-                                {control simpleWidget 'payments.admin.payment_item_listing', $paymentItem}
+                                {control simpleWidget, 'payments.admin.payment_item_listing', $paymentItem}
                             </div>
                         {/foreach}
 
@@ -56,8 +56,8 @@
                 </td>
 
                 <td>
-                    {control simpleWidget 'admin.payment.status.dropdown_menu', $payment}
-                    {control simpleWidget 'admin.payment.status.bottom', $payment}
+                    {control simpleWidget, 'admin.payment.status.dropdown_menu', $payment}
+                    {control simpleWidget, 'admin.payment.status.bottom', $payment}
                 </td>
 
                 <td>
@@ -90,13 +90,13 @@
                                 ]|noescape}
                             </small></p>
                     {/if}
-                    {control simpleWidget 'payments.admin.listing.dates', $payment}
+                    {control simpleWidget, 'payments.admin.listing.dates', $payment}
                     <br>
                 </td>
 
                 <td>
                     <ul class="list-group" style="font-size: 0.9em;">
-                        {control simpleWidget 'payments.admin.payment_source_listing', $payment}
+                        {control simpleWidget, 'payments.admin.payment_source_listing', $payment}
 
                         <li n:if="$payment->referer" class="list-group-item">
                             <strong>{_"payments.admin.component.user_payments_listing.referrer"}: </strong>
@@ -118,7 +118,7 @@
                         </a>
 
                         {capture $moreActions}
-                            {control simpleWidget 'admin.payments.listing.action.menu', $payment}
+                            {control simpleWidget, 'admin.payments.listing.action.menu', $payment}
                         {/capture}
                         <div n:if="($moreActions|trim)" class="btn-group" style="margin-bottom: 2px">
                             <button type="button" class="btn btn-default btn-sm dropdown-toggle"
@@ -133,14 +133,14 @@
                         </div>
                     </div>
 
-                    {control simpleWidget 'admin.payments.listing.action', $payment}
+                    {control simpleWidget, 'admin.payments.listing.action', $payment}
                 </td>
             </tr>
             </tbody>
         </table>
 
         {foreach $payments as $payment}
-            {control changePaymentStatus $payment}
+            {control changePaymentStatus, $payment}
         {/foreach}
     {/if}
     {$paymentsTablePaginator->render()}
@@ -221,7 +221,7 @@
                                     <i class="fa fa-ban"></i> {_"payments.admin.component.user_payments_listing.recurrent_profile.stop_recurrent_profile"}
                                 </span>
                             </span>
-                            {control simpleWidget 'payments.user_payments.listing.recurrent', $recurrentPayment}
+                            {control simpleWidget, 'payments.user_payments.listing.recurrent', $recurrentPayment}
                         {/if}
                     {elseif $recurrentPayment->state === \Crm\PaymentsModule\Models\RecurrentPayment\RecurrentPaymentStateEnum::UserStop->value}
                         <span class="label label-info">{_"payments.admin.component.user_payments_listing.recurrent_profile.user_stop"}</span>
@@ -240,7 +240,7 @@
                        class="btn btn-sm btn-primary">
                         <i class="fa fa-edit"></i> {_"payments.admin.component.user_payments_listing.edit"}
                     </a>
-                    {control simpleWidget 'payments.admin.user_payments.listing.recurrent.actions', $recurrentPayment}
+                    {control simpleWidget, 'payments.admin.user_payments.listing.recurrent.actions', $recurrentPayment}
                 </td>
             </tr>
             </tbody>

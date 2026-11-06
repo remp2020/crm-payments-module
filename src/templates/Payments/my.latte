@@ -29,7 +29,7 @@
 
 <div class="row">
     <div class="col-md-12">
-        {control simpleWidget 'payments.frontend.payments_my.top'}
+        {control simpleWidget, 'payments.frontend.payments_my.top'}
     </div>
 
     <div id="payment-list" class="col-md-12">
@@ -94,7 +94,7 @@
                                                 </span>
                                               </span>
                                             {/if}
-                                            {control simpleWidget 'frontend.payments.listing.recurrent', $recurrent}
+                                            {control simpleWidget, 'frontend.payments.listing.recurrent', $recurrent}
                                         {case \Crm\PaymentsModule\Models\RecurrentPayment\RecurrentPaymentStateEnum::UserStop->value}
                                             <div n:if="$canBeReactivated($recurrent)" class="mb-2">
                                                 <a n:href="Reactivate! $recurrent->id" class="btn btn-sm btn-green">
@@ -113,7 +113,7 @@
                                 {/foreach}
                             </div>
                             <div class="col-xs-12 col-sm-6 text-center">
-                                {control simpleWidget 'frontend.payments.listing.receipts', $payment}
+                                {control simpleWidget, 'frontend.payments.listing.receipts', $payment}
                             </div>
                         </div>
                     </div>
@@ -131,6 +131,6 @@
 
 <div class="row">
     <div class="col-md-12">
-        {control simpleWidget 'payments.frontend.payments_my.bottom', $user}
+        {control simpleWidget, 'payments.frontend.payments_my.bottom', $user}
     </div>
 </div>

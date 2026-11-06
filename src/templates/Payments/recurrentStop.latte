@@ -1,6 +1,6 @@
 {block #head}
 
-{control simpleWidget 'payments.frontend.recurrent_stop.head', $recurrentPayment}
+{control simpleWidget, 'payments.frontend.recurrent_stop.head', $recurrentPayment}
 
 {/block}
 
@@ -14,7 +14,7 @@
     <div class="col-md-12">
 
         {php $chargeAt = ($recurrentPayment->charge_at|userDate:true) }
-        {control snippet 'recurrent-stop', 'chargeAt' => $chargeAt, 'chargeAmount' => $resolver->resolveChargeAmount($recurrentPayment)}
+        {control snippet, 'recurrent-stop', 'chargeAt' => $chargeAt, 'chargeAmount' => $resolver->resolveChargeAmount($recurrentPayment)}
 
         <p class="text-center">
             <a n:href="my" class="btn btn-success">

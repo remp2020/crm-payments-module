@@ -30,7 +30,7 @@
                         {$payment->amount|price}
                     </td>
                     <td>
-                        {control simpleWidget 'frontend.payments.refund.receipts', $payment}
+                        {control simpleWidget, 'frontend.payments.refund.receipts', $payment}
                     </td>
                 </tr>
             {/foreach}

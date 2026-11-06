@@ -34,7 +34,7 @@
         {_payments.admin.payments.show.header}
         VS {$payment->variable_symbol}
 
-        {control simpleWidget 'admin.payment.actions.header', $payment}
+        {control simpleWidget, 'admin.payment.actions.header', $payment}
         {if $payment->status != \Crm\PaymentsModule\Models\Payment\PaymentStatusEnum::Refund->value}
           <a href="{plink :Payments:PaymentsRefundAdmin:default $payment->id}" class="btn btn-default btn-lg pull-right" style="margin-left: 7px;" title="{_payments.admin.payment_refund.confirm_refund}">
               <i class="fa fa-rotate-right"></i> {_payments.admin.payment_refund.confirm_refund}
@@ -53,7 +53,7 @@
   <!-- left column -->
   <div class="col-md-6">
 
-    {control simpleWidget 'admin.payment.show.alert', $payment}
+    {control simpleWidget, 'admin.payment.show.alert', $payment}
 
     <ul class="list-group">
 
@@ -157,10 +157,10 @@
       </li>
 
       {* this widgets add own LI items *}
-      {control simpleWidget 'payments.admin.payment_source_listing', $payment}
+      {control simpleWidget, 'payments.admin.payment_source_listing', $payment}
     </ul>
 
-    {control simpleWidget 'admin.payments.show.left', $payment}
+    {control simpleWidget, 'admin.payments.show.left', $payment}
 
   </div>
 
@@ -170,7 +170,7 @@
     <ul class="list-group" n:if="$payment->related('payment_items')">
       {foreach $payment->related('payment_items') as $paymentItem}
         <li class="list-group-item">
-          {control simpleWidget 'payments.admin.payment_item_listing', $paymentItem}
+          {control simpleWidget, 'payments.admin.payment_item_listing', $paymentItem}
         </li>
       {/foreach}
     </ul>
@@ -214,7 +214,7 @@
     </ul>
     {/if}
 
-    {control simpleWidget 'admin.payments.show.right.top', $payment}
+    {control simpleWidget, 'admin.payments.show.right.top', $payment}
 
     {if $payment->related('payment_meta')->count('*') > 0}
     <h3 class="page-header">{_payments.admin.payments.show.payment_meta.header}</h3>
@@ -226,8 +226,8 @@
     </ul>
     {/if}
 
-    {control simpleWidget 'admin.payments.show.right', $payment}
+    {control simpleWidget, 'admin.payments.show.right', $payment}
   </div>
 </div>
 
-{control simpleWidget 'admin.payments.show.bottom', $payment}
+{control simpleWidget, 'admin.payments.show.bottom', $payment}
